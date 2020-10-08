@@ -145,11 +145,13 @@ def create_grouped_selector(data: Mapping[Any, Item]) -> Callable[[Any], Item]:
     return sel
 
 
+# pylint: disable=dangerous-default-value
 def path_to_table(path: Sequence[str], _ref=ITEMS) -> Sequence[Item]:
     '''Get a specific table based on a sequence of keys.'''
     if len(path) > 1:
         return path_to_table(path[1:], _ref=_ref[path[0]])
     return _ref[path[0]]
+# pylint: enable=dangerous-default-value
 
 
 async def render(item: str) -> str:
