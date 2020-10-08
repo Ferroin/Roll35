@@ -306,7 +306,7 @@ armor:
           - {weight: 30, cost:   1020, name: 'Mithral Heavy Shield'}
         greater:
           - {weight: 30, cost:   2159, name: 'Zombie Skin Shield'}
-          - {weight: 35, cost:   3153, name: 'Caster’s Shield'}
+          - {weight: 45, cost:   3153, name: 'Caster’s Shield'}
           - {weight: 25, cost:   4655, name: 'Burglar’s Buckler'}
       medium:
         lesser:
@@ -476,6 +476,8 @@ weapon:
         - {weight: 20, cost:   4315, name: 'Shatterspike'}
     medium:
       lesser:
+        # This totals to only 95 slots instead of 100. The original
+        # table is missing the range of 40-44.
         - {weight:  3, cost:   6308, name: 'Bloodletting Kukri'}
         - {weight:  6, cost:   6812, name: 'Boulderhead Mace'}
         - {weight:  5, cost:   7300, name: 'Beaststrike Club'}
@@ -499,7 +501,7 @@ weapon:
         - {weight:  6, cost:  15065, name: 'Triton’s Trident'}
         - {weight:  8, cost:  16012, name: 'Lesser Mace of Smiting'}
         - {weight:  8, cost:  17820, name: 'Disarming Blade'}
-        - {weight:  6, cost:  18305, name: 'Lash of the Howler'}
+        - {weight:  5, cost:  18305, name: 'Lash of the Howler'}
         - {weight:  5, cost:  18310, name: 'Shieldsplitter Lance'}
         - {weight:  6, cost:  18650, name: 'Trident of Fish Command'}
         - {weight:  6, cost:  19100, name: 'Quarterstaff of Vaulting'}
@@ -525,7 +527,7 @@ weapon:
         - {weight:  2, cost:  39305, name: 'Hellscourge'}
         - {weight:  2, cost:  40310, name: 'Dragon’s Doom'}
         - {weight:  4, cost:  40320, name: 'Life-Drinker'}
-        - {weight:  2, cost:  41335, name: 'Valor’s Minion'}
+        - {weight:  3, cost:  41335, name: 'Valor’s Minion'}
         - {weight:  2, cost:  42816, name: 'Summoner’s Sorrow'}
         - {weight:  3, cost:  47315, name: 'Sylvan Scimitar'}
         - {weight:  2, cost:  48502, name: 'Spirit Blade'}
@@ -542,7 +544,7 @@ weapon:
         - {weight:  3, cost:  73300, name: 'Pistol of the Infinite Sky'}
         - {weight:  5, cost:  75312, name: 'Mace of Smiting'}
         - {weight:  4, cost:  75350, name: 'Blade of the Sword-Saint'}
-        - {weight:  5, cost:  75815, name: 'Scimitar of the Spellthief'}
+        - {weight:  3, cost:  75815, name: 'Scimitar of the Spellthief'}
         - {weight:  3, cost:  79102, name: 'Spider’s Fang'}
         - {weight:  3, cost:  90469, name: 'Demonsorrow Curve Blade'}
         - {weight:  3, cost:  95318, name: 'Void Scythe'}
@@ -571,91 +573,91 @@ weapon:
       4: []
       5: []
 potion:
-  - {minor: 10, medium:  0, major:  0, cost:   50, name: 'Cure Light Wounds'}
-  - {minor:  3, medium:  0, major:  0, cost:   50, name: 'Endure Elements'}
-  - {minor:  2, medium:  0, major:  0, cost:   50, name: 'Hide from Animals'}
-  - {minor:  2, medium:  0, major:  0, cost:   50, name: 'Hide from Undead'}
-  - {minor:  2, medium:  0, major:  0, cost:   50, name: 'Jump'}
-  - {minor:  3, medium:  0, major:  0, cost:   50, name: 'Mage Armor'}
-  - {minor:  3, medium:  0, major:  0, cost:   50, name: 'Magic Fang'}
-  - {minor:  1, medium:  0, major:  0, cost:   50, name: 'Magic Stone'}
-  - {minor:  3, medium:  0, major:  0, cost:   50, name: 'Magic Weapon'}
-  - {minor:  1, medium:  0, major:  0, cost:   50, name: 'Pass Without Trace'}
-  - {minor:  2, medium:  0, major:  0, cost:   50, name: 'Protection from {{ keys.alignment() }}'}
-  - {minor:  2, medium:  0, major:  0, cost:   50, name: 'Remove Fear'}
-  - {minor:  1, medium:  0, major:  0, cost:   50, name: 'Sanctuary'}
-  - {minor:  3, medium:  0, major:  0, cost:   50, name: 'Shield of Faith +2'}
-  - {minor:  1, medium:  0, major:  0, cost:   50, name: 'Shillelagh'}
-  - {minor:  2, medium:  2, major:  0, cost:   50, name: 'Bless Weapon'}
-  - {minor:  3, medium:  2, major:  0, cost:   50, name: 'Enlarge Person'}
-  - {minor:  1, medium:  1, major:  0, cost:   50, name: 'Reduce Person'}
-  - {minor:  2, medium:  1, major:  0, cost:  300, name: 'Aid'}
-  - {minor:  3, medium:  1, major:  0, cost:  300, name: 'Barkskin +2'}
-  - {minor:  3, medium:  3, major:  0, cost:  300, name: 'Bear’s Endurance'}
-  - {minor:  3, medium:  3, major:  2, cost:  300, name: 'Blur'}
-  - {minor:  3, medium:  3, major:  0, cost:  300, name: 'Bull’s Strength'}
-  - {minor:  3, medium:  3, major:  0, cost:  300, name: 'Cat’s Grace'}
-  - {minor:  5, medium:  8, major:  5, cost:  300, name: 'Cure Moderate Wounds'}
-  - {minor:  1, medium:  1, major:  0, cost:  300, name: 'Darkness'}
-  - {minor:  3, medium:  2, major:  2, cost:  300, name: 'Darkvision'}
-  - {minor:  3, medium:  1, major:  0, cost:  300, name: 'Delay Poison'}
-  - {minor:  2, medium:  2, major:  0, cost:  300, name: 'Eagle’s Splendor'}
-  - {minor:  2, medium:  2, major:  0, cost:  300, name: 'Fox’s Cunning'}
-  - {minor:  3, medium:  2, major:  2, cost:  300, name: 'Invisibility'}
-  - {minor:  3, medium:  1, major:  1, cost:  300, name: 'Lesser Restoration'}
-  - {minor:  2, medium:  1, major:  0, cost:  300, name: 'Levitate'}
-  - {minor:  1, medium:  1, major:  0, cost:  300, name: 'Misdirection'}
-  - {minor:  2, medium:  2, major:  0, cost:  300, name: 'Owl’s Wisdom'}
-  - {minor:  2, medium:  1, major:  0, cost:  300, name: 'Protection from Arrows, 30 points'}
-  - {minor:  2, medium:  1, major:  1, cost:  300, name: 'Remove Paralysis'}
-  - {minor:  3, medium:  2, major:  0, cost:  300, name: 'Resist Energy ({{ keys.energy() }}) 10'}
-  - {minor:  1, medium:  2, major:  1, cost:  300, name: 'Shield of Faith +3'}
-  - {minor:  2, medium:  1, major:  0, cost:  300, name: 'Spider Climb'}
-  - {minor:  1, medium:  1, major:  1, cost:  300, name: 'Undetectable Alignment'}
-  - {minor:  0, medium:  1, major:  1, cost:  600, name: 'Barkskin +3'}
-  - {minor:  0, medium:  1, major:  2, cost:  600, name: 'Shield of Faith +4'}
-  - {minor:  0, medium:  3, major:  2, cost:  700, name: 'Resist Energy ({{ keys.energy() }}) 20'}
-  - {minor:  0, medium:  5, major:  8, cost:  750, name: 'Cure Serious Wounds'}
-  - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Daylight'}
-  - {minor:  0, medium:  3, major:  3, cost:  750, name: 'Displacement'}
-  - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Flame Arrow'}
-  - {minor:  0, medium:  3, major:  5, cost:  750, name: 'Fly'}
-  - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Gaseous Form'}
-  - {minor:  0, medium:  2, major:  0, cost:  750, name: 'Greater Magic Fang +1'}
-  - {minor:  0, medium:  2, major:  0, cost:  750, name: 'Greater Magic Weapon +1'}
-  - {minor:  0, medium:  2, major:  2, cost:  750, name: 'Haste'}
-  - {minor:  0, medium:  3, major:  3, cost:  750, name: 'Heroism'}
-  - {minor:  0, medium:  2, major:  2, cost:  750, name: 'Keen Edge'}
-  - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Magic Circle Against {{ keys.alignment() }}'}
-  - {minor:  0, medium:  2, major:  0, cost:  750, name: 'Magic Vestament +1'}
-  - {minor:  0, medium:  3, major:  3, cost:  750, name: 'Neutralize Poison'}
-  - {minor:  0, medium:  2, major:  2, cost:  750, name: 'Nondetection'}
-  - {minor:  0, medium:  3, major:  2, cost:  750, name: 'Protection from Energy ({{ keys.energy() }})'}
-  - {minor:  0, medium:  2, major:  1, cost:  750, name: 'Rage'}
-  - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Remove Blindness/Deafness'}
-  - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Remove Curse'}
-  - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Remove Disease'}
-  - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Tongues'}
-  - {minor:  0, medium:  2, major:  1, cost:  750, name: 'Water Breathing'}
-  - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Water Walk'}
-  - {minor:  0, medium:  0, major:  2, cost:  900, name: 'Barkskin +4'}
-  - {minor:  0, medium:  0, major:  1, cost:  900, name: 'Shield of Faith +5'}
-  - {minor:  0, medium:  0, major:  1, cost: 1000, name: 'Protection from Arrows, 100 points'}
-  - {minor:  0, medium:  0, major:  3, cost: 1050, name: 'Good Hope'}
-  - {minor:  0, medium:  0, major:  1, cost: 1100, name: 'Resist Energy ({{ keys.energy() }}) 30'}
-  - {minor:  0, medium:  0, major:  4, cost: 1200, name: 'Barkskin +5'}
-  - {minor:  0, medium:  0, major:  4, cost: 1200, name: 'Greater Magic Fang +2'}
-  - {minor:  0, medium:  0, major:  4, cost: 1200, name: 'Greater Magic Weapon +2'}
-  - {minor:  0, medium:  0, major:  1, cost: 1200, name: 'Magic Vestament +2'}
-  - {minor:  0, medium:  0, major:  3, cost: 1800, name: 'Greater Magic Fang +3'}
-  - {minor:  0, medium:  0, major:  3, cost: 1800, name: 'Greater Magic Weapon +3'}
-  - {minor:  0, medium:  0, major:  3, cost: 1800, name: 'Magic Vestament +3'}
-  - {minor:  0, medium:  0, major:  2, cost: 2400, name: 'Greater Magic Fang +4'}
-  - {minor:  0, medium:  0, major:  2, cost: 2400, name: 'Greater Magic Weapon +4'}
-  - {minor:  0, medium:  0, major:  2, cost: 2400, name: 'Magic Vestament +4'}
-  - {minor:  0, medium:  0, major:  1, cost: 3000, name: 'Greater Magic Fang +5'}
-  - {minor:  0, medium:  0, major:  1, cost: 3000, name: 'Greater Magic Weapon +5'}
-  - {minor:  0, medium:  0, major:  1, cost: 3000, name: 'Magic Vestament +5'}
+  - {minor: 10, medium:  0, major:  0, cost:   50, name: 'Potion of Cure Light Wounds'}
+  - {minor:  3, medium:  0, major:  0, cost:   50, name: 'Potion of Endure Elements'}
+  - {minor:  2, medium:  0, major:  0, cost:   50, name: 'Potion of Hide from Animals'}
+  - {minor:  2, medium:  0, major:  0, cost:   50, name: 'Potion of Hide from Undead'}
+  - {minor:  2, medium:  0, major:  0, cost:   50, name: 'Potion of Jump'}
+  - {minor:  3, medium:  0, major:  0, cost:   50, name: 'Potion of Mage Armor'}
+  - {minor:  3, medium:  0, major:  0, cost:   50, name: 'Potion of Magic Fang'}
+  - {minor:  1, medium:  0, major:  0, cost:   50, name: 'Potion of Magic Stone'}
+  - {minor:  3, medium:  0, major:  0, cost:   50, name: 'Potion of Magic Weapon'}
+  - {minor:  1, medium:  0, major:  0, cost:   50, name: 'Potion of Pass Without Trace'}
+  - {minor:  2, medium:  0, major:  0, cost:   50, name: 'Potion of Protection from {{ keys.alignment() }}'}
+  - {minor:  2, medium:  0, major:  0, cost:   50, name: 'Potion of Remove Fear'}
+  - {minor:  1, medium:  0, major:  0, cost:   50, name: 'Potion of Sanctuary'}
+  - {minor:  3, medium:  0, major:  0, cost:   50, name: 'Potion of Shield of Faith +2'}
+  - {minor:  1, medium:  0, major:  0, cost:   50, name: 'Potion of Shillelagh'}
+  - {minor:  2, medium:  2, major:  0, cost:   50, name: 'Potion of Bless Weapon'}
+  - {minor:  3, medium:  2, major:  0, cost:   50, name: 'Potion of Enlarge Person'}
+  - {minor:  1, medium:  1, major:  0, cost:   50, name: 'Potion of Reduce Person'}
+  - {minor:  2, medium:  1, major:  0, cost:  300, name: 'Potion of Aid'}
+  - {minor:  3, medium:  1, major:  0, cost:  300, name: 'Potion of Barkskin +2'}
+  - {minor:  3, medium:  3, major:  0, cost:  300, name: 'Potion of Bear’s Endurance'}
+  - {minor:  3, medium:  3, major:  2, cost:  300, name: 'Potion of Blur'}
+  - {minor:  3, medium:  3, major:  0, cost:  300, name: 'Potion of Bull’s Strength'}
+  - {minor:  3, medium:  3, major:  0, cost:  300, name: 'Potion of Cat’s Grace'}
+  - {minor:  5, medium:  8, major:  5, cost:  300, name: 'Potion of Cure Moderate Wounds'}
+  - {minor:  1, medium:  1, major:  0, cost:  300, name: 'Potion of Darkness'}
+  - {minor:  3, medium:  2, major:  2, cost:  300, name: 'Potion of Darkvision'}
+  - {minor:  3, medium:  1, major:  0, cost:  300, name: 'Potion of Delay Poison'}
+  - {minor:  2, medium:  2, major:  0, cost:  300, name: 'Potion of Eagle’s Splendor'}
+  - {minor:  2, medium:  2, major:  0, cost:  300, name: 'Potion of Fox’s Cunning'}
+  - {minor:  3, medium:  2, major:  2, cost:  300, name: 'Potion of Invisibility'}
+  - {minor:  3, medium:  1, major:  1, cost:  300, name: 'Potion of Lesser Restoration'}
+  - {minor:  2, medium:  1, major:  0, cost:  300, name: 'Potion of Levitate'}
+  - {minor:  1, medium:  1, major:  0, cost:  300, name: 'Potion of Misdirection'}
+  - {minor:  2, medium:  2, major:  0, cost:  300, name: 'Potion of Owl’s Wisdom'}
+  - {minor:  2, medium:  1, major:  0, cost:  300, name: 'Potion of Protection from Arrows, 30 points'}
+  - {minor:  2, medium:  1, major:  1, cost:  300, name: 'Potion of Remove Paralysis'}
+  - {minor:  3, medium:  2, major:  0, cost:  300, name: 'Potion of Resist Energy ({{ keys.energy() }}) 10'}
+  - {minor:  1, medium:  2, major:  1, cost:  300, name: 'Potion of Shield of Faith +3'}
+  - {minor:  2, medium:  1, major:  0, cost:  300, name: 'Potion of Spider Climb'}
+  - {minor:  1, medium:  1, major:  1, cost:  300, name: 'Potion of Undetectable Alignment'}
+  - {minor:  0, medium:  1, major:  1, cost:  600, name: 'Potion of Barkskin +3'}
+  - {minor:  0, medium:  1, major:  2, cost:  600, name: 'Potion of Shield of Faith +4'}
+  - {minor:  0, medium:  3, major:  2, cost:  700, name: 'Potion of Resist Energy ({{ keys.energy() }}) 20'}
+  - {minor:  0, medium:  5, major:  8, cost:  750, name: 'Potion of Cure Serious Wounds'}
+  - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Potion of Daylight'}
+  - {minor:  0, medium:  3, major:  3, cost:  750, name: 'Potion of Displacement'}
+  - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Potion of Flame Arrow'}
+  - {minor:  0, medium:  3, major:  5, cost:  750, name: 'Potion of Fly'}
+  - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Potion of Gaseous Form'}
+  - {minor:  0, medium:  2, major:  0, cost:  750, name: 'Potion of Greater Magic Fang +1'}
+  - {minor:  0, medium:  2, major:  0, cost:  750, name: 'Potion of Greater Magic Weapon +1'}
+  - {minor:  0, medium:  2, major:  2, cost:  750, name: 'Potion of Haste'}
+  - {minor:  0, medium:  3, major:  3, cost:  750, name: 'Potion of Heroism'}
+  - {minor:  0, medium:  2, major:  2, cost:  750, name: 'Potion of Keen Edge'}
+  - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Potion of Magic Circle Against {{ keys.alignment() }}'}
+  - {minor:  0, medium:  2, major:  0, cost:  750, name: 'Potion of Magic Vestament +1'}
+  - {minor:  0, medium:  3, major:  3, cost:  750, name: 'Potion of Neutralize Poison'}
+  - {minor:  0, medium:  2, major:  2, cost:  750, name: 'Potion of Nondetection'}
+  - {minor:  0, medium:  3, major:  2, cost:  750, name: 'Potion of Protection from Energy ({{ keys.energy() }})'}
+  - {minor:  0, medium:  2, major:  1, cost:  750, name: 'Potion of Rage'}
+  - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Potion of Remove Blindness/Deafness'}
+  - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Potion of Remove Curse'}
+  - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Potion of Remove Disease'}
+  - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Potion of Tongues'}
+  - {minor:  0, medium:  2, major:  1, cost:  750, name: 'Potion of Water Breathing'}
+  - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Potion of Water Walk'}
+  - {minor:  0, medium:  0, major:  2, cost:  900, name: 'Potion of Barkskin +4'}
+  - {minor:  0, medium:  0, major:  1, cost:  900, name: 'Potion of Shield of Faith +5'}
+  - {minor:  0, medium:  0, major:  1, cost: 1000, name: 'Potion of Protection from Arrows, 100 points'}
+  - {minor:  0, medium:  0, major:  3, cost: 1050, name: 'Potion of Good Hope'}
+  - {minor:  0, medium:  0, major:  1, cost: 1100, name: 'Potion of Resist Energy ({{ keys.energy() }}) 30'}
+  - {minor:  0, medium:  0, major:  4, cost: 1200, name: 'Potion of Barkskin +5'}
+  - {minor:  0, medium:  0, major:  4, cost: 1200, name: 'Potion of Greater Magic Fang +2'}
+  - {minor:  0, medium:  0, major:  4, cost: 1200, name: 'Potion of Greater Magic Weapon +2'}
+  - {minor:  0, medium:  0, major:  1, cost: 1200, name: 'Potion of Magic Vestament +2'}
+  - {minor:  0, medium:  0, major:  3, cost: 1800, name: 'Potion of Greater Magic Fang +3'}
+  - {minor:  0, medium:  0, major:  3, cost: 1800, name: 'Potion of Greater Magic Weapon +3'}
+  - {minor:  0, medium:  0, major:  3, cost: 1800, name: 'Potion of Magic Vestament +3'}
+  - {minor:  0, medium:  0, major:  2, cost: 2400, name: 'Potion of Greater Magic Fang +4'}
+  - {minor:  0, medium:  0, major:  2, cost: 2400, name: 'Potion of Greater Magic Weapon +4'}
+  - {minor:  0, medium:  0, major:  2, cost: 2400, name: 'Potion of Magic Vestament +4'}
+  - {minor:  0, medium:  0, major:  1, cost: 3000, name: 'Potion of Greater Magic Fang +5'}
+  - {minor:  0, medium:  0, major:  1, cost: 3000, name: 'Potion of Greater Magic Weapon +5'}
+  - {minor:  0, medium:  0, major:  1, cost: 3000, name: 'Potion of Magic Vestament +5'}
 ring:
   minor:
     lesser:
@@ -1566,7 +1568,7 @@ slotless:
       - {weight:  1, cost:   1000, name: 'Concealing Pocket'}
       - {weight:  1, cost:   1000, name: 'Dowsing Syrup'}
       - {weight:  1, cost:   1000, name: 'Incense of Transcendence'}
-      - {weight:  2, cost:   1000, name: 'Page of Spell Knowledge ({{ keys.spell(1, level="high") }})'}
+      - {weight:  2, cost:   1000, name: 'Page of Spell Knowledge ({{ keys.spell(1, cls="spellpage") }})'}
       - {weight:  3, cost:   1000, name: 'Pearl of Power (1st)'}
       - {weight:  1, cost:   1000, name: 'Preserving Flask (1st)'}
       - {weight:  2, cost:   1000, name: 'Pyxes of Redirected Focus'}
@@ -1623,7 +1625,7 @@ slotless:
       - {weight:  1, cost:   4000, name: 'Far-Reaching Sight'}
       - {weight:  2, cost:   4000, name: 'Ioun Stone (Clear Spindle)'}
       - {weight:  1, cost:   4000, name: 'Marvellous Pigments'}
-      - {weight:  8, cost:   4000, name: 'Page of Spell Knowledge ({{ keys.spell(2, level="high") }})'}
+      - {weight:  8, cost:   4000, name: 'Page of Spell Knowledge ({{ keys.spell(2, cls="spellpage") }})'}
       - {weight: 10, cost:   4000, name: 'Pearl of Power (2nd)'}
       - {weight:  1, cost:   4000, name: 'Preserving Flask (2nd)'}
       - {weight:  1, cost:   4000, name: 'Restorative Ointment'}
@@ -1696,7 +1698,7 @@ slotless:
       - {weight:  1, cost:   9000, name: 'Boro Bead (3rd)'}
       - {weight:  1, cost:   9000, name: 'Decanter of Endless Water'}
       - {weight:  1, cost:   9000, name: 'Loathsome Mirror'}
-      - {weight:  3, cost:   9000, name: 'Page of Spell Knowledge ({{ keys.spell(3, level="high") }})'}
+      - {weight:  3, cost:   9000, name: 'Page of Spell Knowledge ({{ keys.spell(3, cls="spellpage") }})'}
       - {weight:  3, cost:   9000, name: 'Pearl of Power (3rd)'}
       - {weight:  1, cost:   9000, name: 'Preserving Flask (3rd)'}
       - {weight:  1, cost:   9100, name: 'Figurine of Wondrous Power (Serpentine Owl)'}
@@ -1745,7 +1747,7 @@ slotless:
       - {weight:  1, cost:  15500, name: 'Figurine of Wondrous Power (Onyx Dog)'}
       - {weight:  2, cost:  16000, name: 'Tan Bag of Tricks'}
       - {weight:  1, cost:  16000, name: 'Boro Bead (4th)'}
-      - {weight:  1, cost:  16000, name: 'Page of Spell Knowledge ({{ keys.spell(4, level="high") }})'}
+      - {weight:  1, cost:  16000, name: 'Page of Spell Knowledge ({{ keys.spell(4, cls="spellpage") }})'}
       - {weight:  4, cost:  16000, name: 'Pearl of Power (4th)'}
       - {weight:  1, cost:  16000, name: 'Preserving Flask (4th)'}
       - {weight:  3, cost:  16000, name: 'Scabbard of Keen Edges'}
@@ -1773,7 +1775,7 @@ slotless:
       - {weight:  3, cost:  24000, name: 'Drinking Horn of Bottomless Valor'}
       - {weight:  3, cost:  25000, name: 'Boro Bead (5th)'}
       - {weight:  2, cost:  25000, name: 'Chaos Emerald'}
-      - {weight:  4, cost:  25000, name: 'Page of Spell Knowledge ({{ keys.spell(5, level="high") }})'}
+      - {weight:  4, cost:  25000, name: 'Page of Spell Knowledge ({{ keys.spell(5, cls="spellpage") }})'}
       - {weight:  6, cost:  25000, name: 'Pearl of Power (5th)'}
       - {weight:  3, cost:  25000, name: 'Preserving Flask (5th)'}
       - {weight:  2, cost:  25305, name: 'Maul of the titans'}
@@ -1795,7 +1797,7 @@ slotless:
       - {weight:  2, cost:  36000, name: 'Boro Bead (6th)'}
       - {weight:  4, cost:  36000, name: 'Ioun Stone (Vibrant Purple Prism)'}
       - {weight:  4, cost:  36000, name: 'Orb of utter Chaos'}
-      - {weight:  2, cost:  36000, name: 'Page of Spell Knowledge ({{ keys.spell(6, level="high") }})'}
+      - {weight:  2, cost:  36000, name: 'Page of Spell Knowledge ({{ keys.spell(6, cls="spellpage") }})'}
       - {weight:  8, cost:  36000, name: 'Pearl of Power (6th)'}
       - {weight:  2, cost:  36000, name: 'Preserving Flask (6th)'}
       - {weight:  4, cost:  40000, name: 'Cauldron of Flying'}
@@ -1808,7 +1810,7 @@ slotless:
       - {weight:  4, cost:  45000, name: 'Drums of Haste'}
       - {weight:  4, cost:  45800, name: 'Standard Strand of Prayer Beads'}
       - {weight:  3, cost:  48000, name: 'Orb of Storms'}
-      - {weight:  2, cost:  49000, name: 'Page of Spell Knowledge ({{ keys.spell(7, level="high") }})'}
+      - {weight:  2, cost:  49000, name: 'Page of Spell Knowledge ({{ keys.spell(7, cls="spellpage") }})'}
       - {weight:  4, cost:  49000, name: 'Pearl of Power (7th)'}
     greater:
       - {weight:  3, cost:  50000, name: 'Crystal Ball with _See Invisibility_'}
@@ -1821,7 +1823,7 @@ slotless:
       - {weight:  2, cost:  60000, name: 'Darkskull'}
       - {weight:  1, cost:  60000, name: 'Orb of Pure Law'}
       - {weight:  1, cost:  62000, name: 'Cube of Force'}
-      - {weight:  2, cost:  64000, name: 'Pageof Spell Knowledge ({{ keys.spell(8, level="high") }})'}
+      - {weight:  2, cost:  64000, name: 'Pageof Spell Knowledge ({{ keys.spell(8, cls="spellpage") }})'}
       - {weight:  3, cost:  64000, name: 'Pearl of Power (8th)'}
       - {weight:  1, cost:  70000, name: 'Crystal Ball with _Telepathy_'}
       - {weight:  1, cost:  70000, name: 'Greater Horn of Blasting'}
@@ -1829,7 +1831,7 @@ slotless:
       - {weight:  1, cost:  75000, name: 'Gem of Seeing'}
       - {weight:  1, cost:  75000, name: 'Lord’s Banner of Victory'}
       - {weight:  1, cost:  80000, name: 'Crystal Ball with _True Seeing_'}
-      - {weight:  2, cost:  81000, name: 'Page of Spell Knowledge ({{ keys.spell(9, level="high") }})'}
+      - {weight:  2, cost:  81000, name: 'Page of Spell Knowledge ({{ keys.spell(9, cls="spellpage") }})'}
       - {weight:  3, cost:  81000, name: 'Pearl of Power (9th)'}
       - {weight:  1, cost:  82000, name: 'Well of Many Worlds'}
       - {weight: 12, cost:  82500, name: '{{ keys.stat_book() }} +3'}

@@ -7,6 +7,7 @@ import random
 import sys
 
 from copy import copy
+from math import gcd
 from types import SimpleNamespace
 from typing import TypeVar, Any, Callable, \
                    Sequence, List, \
@@ -69,18 +70,22 @@ def compose_simple_itemlist(items: Sequence[Dict[str, Any]]) -> List[Item]:
 
        These lists allow a simple weighted selection of a random item
        by directly calling random.choice() on the list.'''
-    # TODO: This should divide the weights by their GCD to better optimize the static table it produces.
     ret = list()
 
-    logging.debug(f'Created simple list with {len(items)} items and {sum([x["weight"] for x in items])} slots.')
+    weights = [x['weight'] for x in items]
+    total_slots = sum(weights)
+    divisor = gcd(*weights)
 
     for item in items:
         i = copy(item)
 
         del i['weight']
 
-        j = [i] * item['weight']
+        j = [i] * int(item['weight'] / divisor)
         ret += j
+
+    logging.debug(f'Created simple list with {len(items)} items and {len(ret)} slots' +
+                  f'(adjusted from {total_slots}).')
 
     return ret
 
@@ -100,17 +105,19 @@ def compose_compound_itemlist(items: Sequence[Dict[str, Any]]) -> Dict[str, List
 
       This structure is used similarly to the simple lists produced by
       compose_simple_itemlist().'''
-    # TODO: This should divide the weights by their GCD to better optimize the static tables it produces.
     ret = {
         'minor': list(),
         'medium': list(),
         'major': list(),
     }
 
-    logging.debug(f'Created compound list with {len(items)} items, ' +
-                  f'{sum([x["minor"] for x in items])} minor slots, ' +
-                  f'{sum([x["medium"] for x in items])} medium slots, ' +
-                  f'and {sum([x["major"] for x in items])} major slots.')
+    total = dict()
+    divisor = dict()
+
+    for i in ('minor', 'medium', 'major'):
+        weights = [x[i] for x in items]
+        total[i] = sum(weights)
+        divisor[i] = gcd(*weights)
 
     for item in items:
         i = copy(item)
@@ -120,7 +127,15 @@ def compose_compound_itemlist(items: Sequence[Dict[str, Any]]) -> Dict[str, List
         del i['major']
 
         for j in ('minor', 'medium', 'major'):
-            ret[j] += [i] * item[j]
+            ret[j] += [i] * int(item[j] / divisor[j])
+
+    logging.debug(f'Created compound list with {len(items)} items, ' +
+                  f'{len(ret["minor"])} minor slots ' +
+                  f'(adjusted from {total["minor"]}), ' +
+                  f'{len(ret["medium"])} medium slots ' +
+                  f'(adjusted from {total["medium"]}), ' +
+                  f'and {len(ret["major"])} major slots ' +
+                  f'(adjusted from {total["major"]}).')
 
     return ret
 
@@ -152,8 +167,26 @@ def path_to_table(path: Sequence[str], _ref=ITEMS) -> Sequence[Item]:
     '''Get a specific table based on a sequence of keys.'''
     if len(path) > 1:
         return path_to_table(path[1:], _ref=_ref[path[0]])
+
+    if len(path) == 1 and isinstance(_ref, list):
+        return _ref
+
     return _ref[path[0]]
 # pylint: enable=dangerous-default-value
+
+
+def get_spell(level, cls="low"):
+    '''Pick a random spell.
+
+       Level indicates the spell level.
+
+       cls indicates how to determine the spell level, and is either a
+       class or the exact value 'low' (which uses the lowest level among
+       all classes), 'high' (which uses the highest), or 'spellpage'
+       (which uses the wizard or cleric level if it's one one of those
+       lists, or the highest if not).'''
+    # TODO: Add proper handling for rolling spells
+    return f'<spell:{level}>'
 
 
 ##############
@@ -235,7 +268,12 @@ async def roll_magic_item(path: Sequence[str]) -> str:
     if hasattr(item, 'type') and item['type'] == 'weapon':
         return await assemble_magic_weapon(item)
 
-    return f'{await render(item["name"])} (cost: {item["cost"]}gp)'
+    ret = await render(item['name'])
+
+    if 'cost' in item:
+        ret += f' (cost: {item["cost"]}gp)'
+
+    return ret
 
 
 #################
@@ -386,13 +424,15 @@ async def magic_item(ctx, *, specifier: str) -> None:
         rank2 = random.choice(('minor', 'medium', 'major'))
 
     if category is None:
-        category = random.choice(ITEMS['types'][rank2])
+        category = random.choice(ITEMS['types'][rank2])['name']
 
     if category == 'wondrous':
         if subcategory is None:
-            subcategory = random.choice(ITEMS['wondrous']).category
+            subcategory = random.choice(ITEMS['wondrous'])['category']
 
         category = subcategory
+
+    logging.debug(f'Recieved command to roll {rank2} {rank1} {category} item.')
 
     item = await roll_magic_item([category, rank2, rank1])
 
@@ -402,7 +442,7 @@ async def magic_item(ctx, *, specifier: str) -> None:
 @magic_item.error
 async def magic_item_error(ctx, error: Exception) -> None:
     '''Run when the `magic_item` function throws into an error.'''
-    if isinstance(error, (commands.BadArgument, commands.MissingArgumentError)):
+    if isinstance(error, commands.UserInputError):
         await ctx.send('Invalid parameters for roll35 magic-item command, usage: ' +
                        '`/roll35 magic-item [[least|lesser|greater] minor|medium|major] ' +
                        '[armor|weapon|potion|ring|rod|scroll|staff|wand|wondrous]`.')
@@ -434,7 +474,7 @@ async def spell(ctx, specifier: str) -> None:
 @spell.error
 async def spell_error(ctx, error: Exception) -> None:
     '''Run when the `spell` function throws an error.'''
-    if isinstance(error, (commands.BadArgument, commands.MissingArgumentError)):
+    if isinstance(error, commands.UserInputError):
         await ctx.send('Invalid parameters for roll35 spell command, usage: ' +
                        '`/roll35 spell [level:<level>] [class:<class>]`.')
     elif isinstance(error, commands.NoPrivateMessage):
@@ -500,7 +540,7 @@ for t in ('armor', 'weapon', 'ring',
           'rod', 'staff', 'belt', 'body',
           'chest', 'eyes', 'feet', 'hands',
           'head', 'headband', 'neck',
-          'shoulders', 'wrsts', 'slotless'):
+          'shoulders', 'wrists', 'slotless'):
     ITEMS[t] = dict()
 
     for u in ('minor', 'medium', 'major'):
@@ -521,27 +561,50 @@ for t in ('armor', 'weapon'):
     logging.debug(f'Created flat list with {len(DATA[t]["base"])} items')
     ITEMS[t]['base'] = DATA[t]['base']
 
-    for key, value in DATA[t]['specific']:
-        for u in ('minor', 'medium', 'major'):
-            ITEMS[k]['specific'][key][u] = dict()
+ITEMS['armor']['specific'] = dict()
 
-            for v in ('lesser', 'greater'):
-                logging.debug(f'Composing {t}.specific.{key}.{u}.{v}')
-                ITEMS[t]['specific'][key][u][v] = compose_simple_itemlist(value[u][v])
+for key, value in DATA['armor']['specific'].items():
+    ITEMS['armor']['specific'][key] = dict()
+
+    for u in ('minor', 'medium', 'major'):
+        ITEMS['armor']['specific'][key][u] = dict()
+
+        for v in ('lesser', 'greater'):
+            logging.debug(f'Composing armor.specific.{key}.{u}.{v}')
+            ITEMS['armor']['specific'][key][u][v] = compose_simple_itemlist(value[u][v])
+
+ITEMS['weapon']['specific'] = dict()
+
+for u in ('minor', 'medium', 'major'):
+    ITEMS['weapon']['specific'][u] = dict()
+
+    for v in ('lesser', 'greater'):
+        logging.debug(f'Composing weapon.specific.{u}.{v}')
+        ITEMS['weapon']['specific'][u][v] = compose_simple_itemlist(DATA['weapon']['specific'][u][v])
+
+ITEMS['armor']['enchantments'] = dict()
 
 for t in ('armor', 'shield'):
+    ITEMS['armor']['enchantments'][t] = dict()
+
     for u in (1, 2, 3, 4, 5):
         logging.debug(f'Composing +{u} {t} enchantments')
         ITEMS['armor']['enchantments'][t][u] = compose_simple_itemlist(DATA['armor']['enchantments'][t][u])
 
+ITEMS['weapon']['enchantments'] = dict()
+
 for t in ('melee', 'ranged', 'ammo'):
+    ITEMS['weapon']['enchantments'][t] = dict()
+
     for u in (1, 2, 3, 4, 5):
         logging.debug(f'Composing +{u} {t} enchantments')
         ITEMS['weapon']['enchantments'][t][u] = compose_simple_itemlist(DATA['weapon']['enchantments'][t][u])
 
 logging.debug('Composing spells')
-logging.debug(f'Created flat list with {len(DATA["spells"])} items')
-ITEMS['spells'] = DATA['spells']
+logging.debug(f'Created flat list with {len(DATA["spell"])} items')
+ITEMS['spell'] = DATA['spell']
+
+KEYS.spell = get_spell
 
 del DATA
 
