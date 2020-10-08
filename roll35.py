@@ -7,6 +7,7 @@ import random
 import sys
 
 from copy import copy
+from types import SimpleNamespace
 from typing import TypeVar, Any, Callable, \
                    Sequence, List, \
                    Mapping, Dict
@@ -28,7 +29,11 @@ if not TOKEN:
     logging.error('No discord token specified')
     sys.exit(1)
 
-KEYS = object()
+####################
+# Static Constants #
+####################
+
+KEYS = SimpleNamespace()
 ITEMS = {
     'types': dict(),
     'armor': dict(),
@@ -49,13 +54,10 @@ JENV = jinja2.Environment(
     enable_async=True,
 )
 
-try:
-    with open('./data.yaml', 'r') as source:
-        DATA = yaml.load(source)
-except (IOError, OSError, yaml.YAMLError):
-    logging.exception('Unable to load item data.')
-    sys.exit(1)
 
+############
+# Function #
+############
 
 def compose_simple_itemlist(items: Sequence[Dict[str, Any]]) -> List[Item]:
     '''Compose a simple list of items for random.choice().
@@ -70,7 +72,7 @@ def compose_simple_itemlist(items: Sequence[Dict[str, Any]]) -> List[Item]:
     # TODO: This should divide the weights by their GCD to better optimize the static table it produces.
     ret = list()
 
-    logging.debug(f'Created simple list with {len(items)} items and {sum([x.weight for x in items])} slots.')
+    logging.debug(f'Created simple list with {len(items)} items and {sum([x["weight"] for x in items])} slots.')
 
     for item in items:
         i = copy(item)
@@ -106,9 +108,9 @@ def compose_compound_itemlist(items: Sequence[Dict[str, Any]]) -> Dict[str, List
     }
 
     logging.debug(f'Created compound list with {len(items)} items, ' +
-                  f'{sum([x.minor for x in items])} minor slots, ' +
-                  f'{sum([x.medium for x in items])} medium slots, ' +
-                  f'and {sum([x.major for x in items])} major slots.')
+                  f'{sum([x["minor"] for x in items])} minor slots, ' +
+                  f'{sum([x["medium"] for x in items])} medium slots, ' +
+                  f'and {sum([x["major"] for x in items])} major slots.')
 
     for item in items:
         i = copy(item)
@@ -154,6 +156,10 @@ def path_to_table(path: Sequence[str], _ref=ITEMS) -> Sequence[Item]:
 # pylint: enable=dangerous-default-value
 
 
+##############
+# Coroutines #
+##############
+
 async def render(item: str) -> str:
     '''Render the given string as a Jinja2 template.
 
@@ -169,15 +175,15 @@ async def assemble_magic_armor(item: Item) -> str:
     '''Construct a piece of magic armor.'''
     # TODO: Actually roll for enchantments
     base = random.choice(ITEMS['armor']['base'])
-    total_mod = item.bonus + sum(item.enchants)
-    cost = base.cost + (total_mod ** 2)
+    total_mod = item['bonus'] + sum(item['enchants'])
+    cost = base['cost'] + (total_mod ** 2)
     ret = f'+{item.bonus} {base.name}'
 
-    if item.enchants:
+    if item['enchants']:
         ret += ' with'
         index = 0
 
-        for i in item.enchants:
+        for i in item['enchants']:
             ret += f' one +{i} enchantment'
 
             if index > 0:
@@ -193,15 +199,15 @@ async def assemble_magic_armor(item: Item) -> str:
 async def assemble_magic_weapon(item: Item) -> str:
     '''Construct a magic weapon.'''
     # TODO: Actually roll for enchantments and base item.
-    total_mod = item.bonus + sum(item.enchants)
+    total_mod = item['bonus'] + sum(item['enchants'])
     cost = 2 * (total_mod ** 2)
-    ret = f'+{item.bonus} Weapon'
+    ret = f'+{item["bonus"]} Weapon'
 
-    if item.enchants:
+    if item['enchants']:
         ret += ' with'
         index = 0
 
-        for i in item.enchants:
+        for i in item['enchants']:
             ret += f' one +{i} enchantment'
 
             if index > 0:
@@ -223,97 +229,18 @@ async def roll_magic_item(path: Sequence[str]) -> str:
     if hasattr(item, 'reroll'):
         return await roll_magic_item(item['reroll'].split(':'))
 
-    if hasattr(item, 'type') and item.type == 'armor':
+    if hasattr(item, 'type') and item['type'] == 'armor':
         return await assemble_magic_armor(item)
 
-    if hasattr(item, 'type') and item.type == 'weapon':
+    if hasattr(item, 'type') and item['type'] == 'weapon':
         return await assemble_magic_weapon(item)
 
     return f'{await render(item["name"])} (cost: {item["cost"]}gp)'
 
 
-for name, desc in DATA.keys:
-    if desc['type'] == 'flat':
-        logging.debug(f'Composing keys.{name}\nCreated flat list with {len(desc["data"])} items.')
-
-        selector = create_flat_selector(desc['data'])
-    elif desc['type'] == 'flat proportional':
-        logging.debug(f'Composing keys.{name}')
-        a = compose_simple_itemlist(desc['data'])
-        selector = create_flat_selector(a)
-    elif desc['type'] == 'grouped':
-        for g, d in desc['data']:
-            logging.debug(f'Composing keys.{name}.{g}\nCreated flat list with {len(desc["data"][g])} items')
-
-        selector = create_grouped_selector(desc['data'])
-    elif desc['type'] == 'grouped proportional':
-        k = dict()
-
-        for g, d in desc['data']:
-            logging.debug(f'Composing keys.{name}.{g}')
-            k[g] = compose_simple_itemlist(d)
-
-        selector = create_grouped_selector(k)
-    else:
-        logging.error(f'Invalid type for key with name {name}.')
-
-    setattr(KEYS, name, selector)
-
-for t in ('minor', 'medium', 'major'):
-    logging.debug(f'Composing types.{t}')
-    ITEMS['types'][t] = compose_simple_itemlist(DATA['types'][t])
-
-for t in ('potion', 'scroll', 'wand', 'wondrous'):
-    logging.debug(f'Composing {t}')
-    ITEMS[t] = compose_compound_itemlist(DATA[t])
-
-for t in ('armor', 'weapon', 'ring',
-          'rod', 'staff', 'belt', 'body',
-          'chest', 'eyes', 'feet', 'hands',
-          'head', 'headband', 'neck',
-          'shoulders', 'wrsts', 'slotless'):
-    ITEMS[t] = dict()
-
-    for u in ('minor', 'medium', 'major'):
-        if not hasattr(DATA[t], u):
-            continue
-
-        ITEMS[t][u] = dict()
-
-        for v in ('least', 'lesser', 'greater'):
-            if not hasattr(DATA[t][u], v):
-                continue
-
-            logging.debug(f'Composing {t}.{u}.{v}')
-            ITEMS[t][u][v] = compose_simple_itemlist(DATA[t][u][v])
-
-for t in ('armor', 'weapon'):
-    logging.debug(f'Composing base {t}\nCreated flat list with {len(DATA[t]["base"])} items')
-    ITEMS[t]['base'] = DATA[t]['base']
-
-    for key, value in DATA[t]['specific']:
-        for u in ('minor', 'medium', 'major'):
-            ITEMS[k]['specific'][key][u] = dict()
-
-            for v in ('lesser', 'greater'):
-                logging.debug(f'Composing {t}.specific.{key}.{u}.{v}')
-                ITEMS[t]['specific'][key][u][v] = compose_simple_itemlist(value[u][v])
-
-for t in ('armor', 'shield'):
-    for u in (1, 2, 3, 4, 5):
-        logging.debug(f'Composing +{u} {t} enchantments')
-        ITEMS['armor']['enchantments'][t][u] = compose_simple_itemlist(DATA['armor']['enchantments'][t][u])
-
-for t in ('melee', 'ranged', 'ammo'):
-    for u in (1, 2, 3, 4, 5):
-        logging.debug(f'Composing +{u} {t} enchantments')
-        ITEMS['weapon']['enchantments'][t][u] = compose_simple_itemlist(DATA['weapon']['enchantments'][t][u])
-
-logging.debug(f'Composing spells\nCreated flat list with {len(DATA["spells"])} items')
-ITEMS['spells'] = DATA['spells']
-
-del DATA
-
+#################
+# Bot callbacks #
+#################
 
 BOT = commands.Bot(command_prefix='/')
 
@@ -521,4 +448,106 @@ async def spell_error(ctx, error: Exception) -> None:
         logging.exception(GENERIC_ERROR_LOG.format(ctx.message, ctx.author.name, ctx.guild.name), exc_info=error)
 
 
-# BOT.run(TOKEN)
+#############
+# Data prep #
+#############
+
+try:
+    with open('./data.yaml', 'r') as source:
+        DATA = yaml.safe_load(source.read())
+except (IOError, OSError, yaml.YAMLError):
+    logging.exception('Unable to load item data.')
+    sys.exit(1)
+
+for name, desc in DATA['keys'].items():
+    if desc['type'] == 'flat':
+        logging.debug(f'Composing keys.{name}')
+        logging.debug(f'Created flat list with {len(desc["data"])} items.')
+
+        selector = create_flat_selector(desc['data'])
+    elif desc['type'] == 'flat proportional':
+        logging.debug(f'Composing keys.{name}')
+        a = compose_simple_itemlist(desc['data'])
+        selector = create_flat_selector(a)
+    elif desc['type'] == 'grouped':
+        for g, d in desc['data']:
+            logging.debug(f'Composing keys.{name}.{g}')
+            logging.debug(f'Created flat list with {len(desc["data"][g])} items')
+
+        selector = create_grouped_selector(desc['data'])
+    elif desc['type'] == 'grouped proportional':
+        k = dict()
+
+        for g, d in desc['data'].items():
+            logging.debug(f'Composing keys.{name}.{g}')
+            k[g] = compose_simple_itemlist(d)
+
+        selector = create_grouped_selector(k)
+    else:
+        logging.error(f'Invalid type for key with name {name}.')
+
+    setattr(KEYS, name, selector)
+
+for t in ('minor', 'medium', 'major'):
+    logging.debug(f'Composing types.{t}')
+    ITEMS['types'][t] = compose_simple_itemlist(DATA['types'][t])
+
+for t in ('potion', 'scroll', 'wand'):
+    logging.debug(f'Composing {t}')
+    ITEMS[t] = compose_compound_itemlist(DATA[t])
+
+for t in ('armor', 'weapon', 'ring',
+          'rod', 'staff', 'belt', 'body',
+          'chest', 'eyes', 'feet', 'hands',
+          'head', 'headband', 'neck',
+          'shoulders', 'wrsts', 'slotless'):
+    ITEMS[t] = dict()
+
+    for u in ('minor', 'medium', 'major'):
+        if not hasattr(DATA[t], u):
+            continue
+
+        ITEMS[t][u] = dict()
+
+        for v in ('least', 'lesser', 'greater'):
+            if not hasattr(DATA[t][u], v):
+                continue
+
+            logging.debug(f'Composing {t}.{u}.{v}')
+            ITEMS[t][u][v] = compose_simple_itemlist(DATA[t][u][v])
+
+for t in ('armor', 'weapon'):
+    logging.debug(f'Composing base {t}')
+    logging.debug(f'Created flat list with {len(DATA[t]["base"])} items')
+    ITEMS[t]['base'] = DATA[t]['base']
+
+    for key, value in DATA[t]['specific']:
+        for u in ('minor', 'medium', 'major'):
+            ITEMS[k]['specific'][key][u] = dict()
+
+            for v in ('lesser', 'greater'):
+                logging.debug(f'Composing {t}.specific.{key}.{u}.{v}')
+                ITEMS[t]['specific'][key][u][v] = compose_simple_itemlist(value[u][v])
+
+for t in ('armor', 'shield'):
+    for u in (1, 2, 3, 4, 5):
+        logging.debug(f'Composing +{u} {t} enchantments')
+        ITEMS['armor']['enchantments'][t][u] = compose_simple_itemlist(DATA['armor']['enchantments'][t][u])
+
+for t in ('melee', 'ranged', 'ammo'):
+    for u in (1, 2, 3, 4, 5):
+        logging.debug(f'Composing +{u} {t} enchantments')
+        ITEMS['weapon']['enchantments'][t][u] = compose_simple_itemlist(DATA['weapon']['enchantments'][t][u])
+
+logging.debug('Composing spells')
+logging.debug(f'Created flat list with {len(DATA["spells"])} items')
+ITEMS['spells'] = DATA['spells']
+
+del DATA
+
+
+##############
+# Main Logic #
+##############
+
+BOT.run(TOKEN)

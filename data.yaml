@@ -64,8 +64,8 @@ keys:
         - {weight:  5, name: 'Disruptive'}
         - {weight:  5, name: 'Ectoplasmic'}
         - {weight:  5, name: 'Elemental ({{ keys.elemental() }})'}
-        - {weight: 10, name: 'Enlarge'}
-        - {weight: 11, name: 'Extend'}
+        - {weight: 12, name: 'Enlarge'}
+        - {weight: 12, name: 'Extend'}
         - {weight:  5, name: 'Flaring'}
         - {weight:  5, name: 'Focused'}
         - {weight:  5, name: 'Intensified'}
@@ -86,10 +86,10 @@ keys:
         - {weight: 13, name: 'Threnodic'}
         - {weight: 12, name: 'Thundering'}
       3:
-        - {weight: 2, name: 'Dazing'}
-        - {weight: 2, name: 'Echoing'}
-        - {weight: 3, name: 'Maximize'}
-        - {weight: 3, name: 'Widen'}
+        - {weight: 20, name: 'Dazing'}
+        - {weight: 20, name: 'Echoing'}
+        - {weight: 30, name: 'Maximize'}
+        - {weight: 30, name: 'Widen'}
 types:
   minor:
     - {weight:  4, name: armor}
@@ -107,18 +107,18 @@ types:
     - {weight: 10, name: rod}
     - {weight: 15, name: scroll}
     - {weight:  3, name: staff}
-    - {weight:  5, name: wand}
+    - {weight: 15, name: wand}
     - {weight: 17, name: woundrous}
   major:
-    - {weight:  2, name: armor}
-    - {weight:  2, name: weapon}
-    - {weight:  1, name: potion}
-    - {weight:  2, name: ring}
-    - {weight:  2, name: rod}
-    - {weight:  2, name: scroll}
-    - {weight:  4, name: staff}
-    - {weight:  1, name: wand}
-    - {weight:  4, name: wondrous}
+    - {weight: 10, name: armor}
+    - {weight: 10, name: weapon}
+    - {weight:  5, name: potion}
+    - {weight: 10, name: ring}
+    - {weight: 10, name: rod}
+    - {weight: 10, name: scroll}
+    - {weight: 20, name: staff}
+    - {weight:  5, name: wand}
+    - {weight: 20, name: wondrous}
 armor:
   minor:
     lesser:
@@ -822,7 +822,7 @@ scroll:
   - {minor:  5, medium: 60, major:  0, name: 'Scroll of {{ keys.spell(3) }}'}
   - {minor:  0, medium: 30, major:  5, name: 'Scroll of {{ keys.spell(4) }}'}
   - {minor:  0, medium:  5, major: 45, name: 'Scroll of {{ keys.spell(5) }}'}
-  - {minor:  0, medium:  0, major: 30, name: 'Scroll of {{ keys.spell(6) }}'}
+  - {minor:  0, medium:  0, major: 20, name: 'Scroll of {{ keys.spell(6) }}'}
   - {minor:  0, medium:  0, major: 15, name: 'Scroll of {{ keys.spell(7) }}'}
   - {minor:  0, medium:  0, major: 10, name: 'Scroll of {{ keys.spell(8) }}'}
   - {minor:  0, medium:  0, major:  5, name: 'Scroll of {{ keys.spell(9) }}'}
@@ -907,7 +907,7 @@ wand:
   - {minor: 40, medium: 60, major:  0, name: 'Wand of {{ keys.spell(2) }}'}
   - {minor:  0, medium: 40, major: 60, name: 'Wand of {{ keys.spell(3) }}'}
   - {minor:  0, medium:  0, major: 40, name: 'Wand of {{ keys.spell(4) }}'}
-woundrous:
+wondrous:
   - {weight:  6, category: 'belt'}
   - {weight:  6, category: 'body'}
   - {weight:  5, category: 'chest'}
