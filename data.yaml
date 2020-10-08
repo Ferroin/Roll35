@@ -123,13 +123,13 @@ armor:
   minor:
     lesser:
       - {weight: 80, type: armor, bonus: 1, enchants: []}
-      - {weight:  4, reroll: 'armor:specific:sheild:minor:lesser'}
+      - {weight:  4, reroll: 'armor:specific:shield:minor:lesser'}
       - {weight: 16, reroll: 'armor:specific:armor:minor:lesser'}
     greater:
       - {weight: 26, type: armor, bonus: 1, enchants: []}
       - {weight: 27, type: armor, bonus: 2, enchants: []}
       - {weight: 27, type: armor, bonus: 1, enchants: [1]}
-      - {weight:  4, reroll: 'armor:specific:sheild:minor:greater'}
+      - {weight:  4, reroll: 'armor:specific:shield:minor:greater'}
       - {weight: 16, reroll: 'armor:specific:armor:minor:greater'}
   medium:
     lesser:
@@ -140,7 +140,7 @@ armor:
       - {weight: 12, type: armor, bonus: 1, enchants: [1, 1]}
       - {weight: 12, type: armor, bonus: 1, enchants: [2]}
       - {weight: 12, type: armor, bonus: 2, enchants: [1]}
-      - {weight:  4, reroll: 'armor:specific:sheild:medium:lesser'}
+      - {weight:  4, reroll: 'armor:specific:shield:medium:lesser'}
       - {weight: 16, reroll: 'armor:specific:armor:medium:lesser'}
     greater:
       - {weight: 10, type: armor, bonus: 2, enchants: []}
@@ -150,7 +150,7 @@ armor:
       - {weight: 12, type: armor, bonus: 2, enchants: [1]}
       - {weight: 12, type: armor, bonus: 2, enchants: [2]}
       - {weight: 12, type: armor, bonus: 3, enchants: [1]}
-      - {weight:  4, reroll: 'armor:specific:sheild:medium:greater'}
+      - {weight:  4, reroll: 'armor:specific:shield:medium:greater'}
       - {weight: 16, reroll: 'armor:specific:armor:medium:greater'}
   major:
     lesser:
@@ -161,7 +161,7 @@ armor:
       - {weight: 12, type: armor, bonus: 2, enchants: [2]}
       - {weight: 12, type: armor, bonus: 3, enchants: [1]}
       - {weight: 12, type: armor, bonus: 4, enchants: [1]}
-      - {weight:  4, reroll: 'armor:specific:sheild:major:lesser'}
+      - {weight:  4, reroll: 'armor:specific:shield:major:lesser'}
       - {weight: 16, reroll: 'armor:specific:armor:major:lesser'}
     greater:
       - {weight: 10, type: armor, bonus: 4, enchants: []}
@@ -176,7 +176,7 @@ armor:
       - {weight:  3, type: armor, bonus: 5, enchants: [2, 2]}
       - {weight:  3, type: armor, bonus: 5, enchants: [4]}
       - {weight:  3, type: armor, bonus: 5, enchants: [5]}
-      - {weight:  4, reroll: 'armor:specific:sheild:major:greater'}
+      - {weight:  4, reroll: 'armor:specific:shield:major:greater'}
       - {weight: 16, reroll: 'armor:specific:armor:major:greater'}
   base:
     # Certain armors that are only rarely used or very unlikely to be
@@ -230,26 +230,26 @@ armor:
     - {cost: 1500, type:  heavy, name: 'Gray Maiden Plate'}
     - {cost: 2000, type:  heavy, name: 'Hell Knight Plate'}
     - {cost: 1800, type:  heavy, name: 'Stoneplate'}
-    - {cost:    5, type: sheild, name: 'Buckler'}
-    - {cost:   12, type: sheild, name: 'Klar'}
-    - {cost:   30, type: sheild, name: 'Leather Madu'}
-    - {cost:   40, type: sheild, name: 'Steel Madu'}
-    - {cost:    9, type: sheild, name: 'Light Steel Sheild'}
-    - {cost:   59, type: sheild, name: 'Quickdraw Light Steel Sheild'}
-    - {cost:    3, type: sheild, name: 'Light Wooden Sheild'}
-    - {cost:   53, type: sheild, name: 'Quickdraw Light Wooden Sheild'}
-    - {cost:   20, type: sheild, name: 'Heavy Steel Sheild'}
-    - {cost:    7, type: sheild, name: 'Heavy Wooden Sheild'}
-    # - {cost:   30, type: sheild, name: 'Tower Sheild'}
-    - {cost:   50, type: sheild, name: 'Steel Snarlsheild'}
-    - {cost:   37, type: sheild, name: 'Wooden Snarlsheild'}
-    - {cost:   50, type: sheild, name: 'Dwarven War-Sheild'}
+    - {cost:    5, type: shield, name: 'Buckler'}
+    - {cost:   12, type: shield, name: 'Klar'}
+    - {cost:   30, type: shield, name: 'Leather Madu'}
+    - {cost:   40, type: shield, name: 'Steel Madu'}
+    - {cost:    9, type: shield, name: 'Light Steel Sheild'}
+    - {cost:   59, type: shield, name: 'Quickdraw Light Steel Sheild'}
+    - {cost:    3, type: shield, name: 'Light Wooden Sheild'}
+    - {cost:   53, type: shield, name: 'Quickdraw Light Wooden Sheild'}
+    - {cost:   20, type: shield, name: 'Heavy Steel Sheild'}
+    - {cost:    7, type: shield, name: 'Heavy Wooden Sheild'}
+    # - {cost:   30, type: shield, name: 'Tower Sheild'}
+    - {cost:   50, type: shield, name: 'Steel Snarlshield'}
+    - {cost:   37, type: shield, name: 'Wooden Snarlshield'}
+    - {cost:   50, type: shield, name: 'Dwarven War-Sheild'}
   specific:
     armor:
       minor:
         lesser:
           - {weight: 50, cost:   1000, name: 'Mithral Shirt'}
-          - {weight: 50, cost: varies, name: 'Masterwork (or special material) armor or sheild'}
+          - {weight: 50, cost: varies, name: 'Masterwork (or special material) armor or shield'}
         greater:
           # Weights set to 1/1/1 instead of 33/33/34 as the obvious intent is a 1/3 chance.
           - {weight:  1, cost:   2250, name: 'Mistmail'}
@@ -297,7 +297,7 @@ armor:
           - {weight:  6, cost:  81250, name: 'Daystar Half Plate'}
           - {weight:  8, cost: 137650, name: 'Invincible Armor'}
           - {weight:  4, cost: 160650, name: 'Prismatic Plate'}
-    sheild:
+    shield:
       minor:
         lesser:
           - {weight: 20, cost:    120, name: 'Living Steel Heavy Shield'}
@@ -342,7 +342,7 @@ armor:
       3: []
       4: []
       5: []
-    sheild:
+    shield:
       1: []
       2: []
       3: []
@@ -1711,7 +1711,7 @@ slotless:
       - {weight:  1, cost:  10000, name: 'Eye of the Void'}
       - {weight:  1, cost:  10000, name: 'Figurine of Wondrous Power (Bronze Griffin)'}
       - {weight:  1, cost:  10000, name: 'Figurine of Wondrous Power (Ebony Fly'}
-        # Slate Spider figurine is in OGL table but does not appear to be available as OGL content itself.
+      # Slate Spider figurine is in OGL table but does not appear to be available as OGL content itself.
       - {weight:  1, cost:  10000, name: 'Figurine of Wondrous Power (Slate Spider)'}
       - {weight:  1, cost:  10000, name: 'Hourglass of Last Chances'}
       - {weight:  2, cost:  10000, name: 'Ioun Stone (Dark Blue Rhomboid)'}
