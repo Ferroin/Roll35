@@ -1,0 +1,1862 @@
+---
+keys:
+  alignment:
+    type: flat
+    data: ['Good', 'Evil', 'Law', 'Chaos']
+  energy:
+    type: flat
+    data: ['Fire', 'Cold', 'Acid', 'Electricity', 'Sonic']
+  elemental:
+    type: flat
+    data: ['Fire', 'Cold', 'Acid', 'Electricity']
+  elemental_plane:
+    type: flat
+    data: ['Fire', 'Water', 'Earth', 'Air']
+  dragon:
+    type: flat
+    data: ['Red', 'Blue', 'Green', 'White', 'Black', 'Gold', 'Silver', 'Bronze', 'Copper', 'Brass']
+  metallic_dragon:
+    type: flat
+    data: ['Gold', 'Silver', 'Bronze', 'Copper', 'Brass']
+  chromatic_dragon:
+    type: flat
+    data: ['Red', 'Blue', 'Green', 'White', 'Black']
+  school:
+    type: flat
+    data:
+      - 'Abjuration'
+      - 'Conjuration'
+      - 'Divination'
+      - 'Enchantment'
+      - 'Evocation'
+      - 'Illusion'
+      - 'Necromancy'
+      - 'Transmutation'
+  physical_might:
+    type: flat
+    data: ['STR, DEX', 'STR, CON', 'DEX, CON']
+  mental_score:
+    type: flat
+    data: ['INT', 'WIS', 'CHA']
+  mental_prowess:
+    type: flat
+    data: ['INT, WIS', 'INT, CHA', 'WIS, CHA']
+  naga:
+    type: flat
+    data: ['Dark', 'Guardian', 'Spirit', 'Lunar', 'Royal', 'Water']
+  giant_armor3:
+    type: flat
+    data: ['Stone', 'Fire', 'Frost']
+  stat_book:
+    type: flat
+    data:
+      - 'Manual of Bodily health'
+      - 'Manual of Gainful Exercise'
+      - 'Manual of Quickness of Action'
+      - 'Tome of Clear Thought'
+      - 'Tome of Leadership and Influence'
+      - 'Tome of Understanding'
+  metamagic:
+    type: grouped proportional
+    data:
+      1:
+        - {weight:  4, name: 'Bouncing'}
+        - {weight:  5, name: 'Disruptive'}
+        - {weight:  5, name: 'Ectoplasmic'}
+        - {weight:  5, name: 'Elemental ({{ keys.elemental() }})'}
+        - {weight: 10, name: 'Enlarge'}
+        - {weight: 11, name: 'Extend'}
+        - {weight:  5, name: 'Flaring'}
+        - {weight:  5, name: 'Focused'}
+        - {weight:  5, name: 'Intensified'}
+        - {weight:  5, name: 'Lingering'}
+        - {weight:  5, name: 'Piercing'}
+        - {weight:  5, name: 'Reach'}
+        - {weight:  5, name: 'Rime'}
+        - {weight:  5, name: 'Selective'}
+        - {weight: 12, name: 'Silent'}
+        - {weight:  5, name: 'Toppling'}
+      2:
+        - {weight: 11, name: 'Burning'}
+        - {weight: 11, name: 'Concussive'}
+        - {weight: 18, name: 'Empower'}
+        - {weight: 11, name: 'Persistent'}
+        - {weight: 11, name: 'Sickening'}
+        - {weight: 13, name: 'Thanatropic'}
+        - {weight: 13, name: 'Threnodic'}
+        - {weight: 12, name: 'Thundering'}
+      3:
+        - {weight: 2, name: 'Dazing'}
+        - {weight: 2, name: 'Echoing'}
+        - {weight: 3, name: 'Maximize'}
+        - {weight: 3, name: 'Widen'}
+types:
+  minor:
+    - {weight:  4, name: armor}
+    - {weight:  5, name: weapon}
+    - {weight: 35, name: potion}
+    - {weight:  2, name: ring}
+    - {weight: 35, name: scroll}
+    - {weight: 10, name: wand}
+    - {weight:  9, name: woundrous}
+  medium:
+    - {weight: 10, name: armor}
+    - {weight: 10, name: weapon}
+    - {weight: 10, name: potion}
+    - {weight: 10, name: ring}
+    - {weight: 10, name: rod}
+    - {weight: 15, name: scroll}
+    - {weight:  3, name: staff}
+    - {weight:  5, name: wand}
+    - {weight: 17, name: woundrous}
+  major:
+    - {weight:  2, name: armor}
+    - {weight:  2, name: weapon}
+    - {weight:  1, name: potion}
+    - {weight:  2, name: ring}
+    - {weight:  2, name: rod}
+    - {weight:  2, name: scroll}
+    - {weight:  4, name: staff}
+    - {weight:  1, name: wand}
+    - {weight:  4, name: wondrous}
+armor:
+  minor:
+    lesser:
+      - {weight: 80, type: armor, bonus: 1, enchants: []}
+      - {weight:  4, reroll: 'armor:specific:sheild:minor:lesser'}
+      - {weight: 16, reroll: 'armor:specific:armor:minor:lesser'}
+    greater:
+      - {weight: 26, type: armor, bonus: 1, enchants: []}
+      - {weight: 27, type: armor, bonus: 2, enchants: []}
+      - {weight: 27, type: armor, bonus: 1, enchants: [1]}
+      - {weight:  4, reroll: 'armor:specific:sheild:minor:greater'}
+      - {weight: 16, reroll: 'armor:specific:armor:minor:greater'}
+  medium:
+    lesser:
+      - {weight: 10, type: armor, bonus: 1, enchants: []}
+      - {weight: 10, type: armor, bonus: 2, enchants: []}
+      - {weight: 12, type: armor, bonus: 3, enchants: []}
+      - {weight: 12, type: armor, bonus: 1, enchants: [1]}
+      - {weight: 12, type: armor, bonus: 1, enchants: [1, 1]}
+      - {weight: 12, type: armor, bonus: 1, enchants: [2]}
+      - {weight: 12, type: armor, bonus: 2, enchants: [1]}
+      - {weight:  4, reroll: 'armor:specific:sheild:medium:lesser'}
+      - {weight: 16, reroll: 'armor:specific:armor:medium:lesser'}
+    greater:
+      - {weight: 10, type: armor, bonus: 2, enchants: []}
+      - {weight: 12, type: armor, bonus: 3, enchants: []}
+      - {weight: 10, type: armor, bonus: 1, enchants: [1]}
+      - {weight: 12, type: armor, bonus: 1, enchants: [2]}
+      - {weight: 12, type: armor, bonus: 2, enchants: [1]}
+      - {weight: 12, type: armor, bonus: 2, enchants: [2]}
+      - {weight: 12, type: armor, bonus: 3, enchants: [1]}
+      - {weight:  4, reroll: 'armor:specific:sheild:medium:greater'}
+      - {weight: 16, reroll: 'armor:specific:armor:medium:greater'}
+  major:
+    lesser:
+      - {weight: 10, type: armor, bonus: 3, enchants: []}
+      - {weight: 12, type: armor, bonus: 4, enchants: []}
+      - {weight: 10, type: armor, bonus: 1, enchants: [2]}
+      - {weight: 12, type: armor, bonus: 1, enchants: [3]}
+      - {weight: 12, type: armor, bonus: 2, enchants: [2]}
+      - {weight: 12, type: armor, bonus: 3, enchants: [1]}
+      - {weight: 12, type: armor, bonus: 4, enchants: [1]}
+      - {weight:  4, reroll: 'armor:specific:sheild:major:lesser'}
+      - {weight: 16, reroll: 'armor:specific:armor:major:lesser'}
+    greater:
+      - {weight: 10, type: armor, bonus: 4, enchants: []}
+      - {weight: 10, type: armor, bonus: 5, enchants: []}
+      - {weight: 10, type: armor, bonus: 4, enchants: [1]}
+      - {weight:  8, type: armor, bonus: 4, enchants: [2]}
+      - {weight:  8, type: armor, bonus: 4, enchants: [3]}
+      - {weight:  5, type: armor, bonus: 4, enchants: [4]}
+      - {weight:  8, type: armor, bonus: 5, enchants: [1]}
+      - {weight:  8, type: armor, bonus: 5, enchants: [2]}
+      - {weight:  4, type: armor, bonus: 5, enchants: [3]}
+      - {weight:  3, type: armor, bonus: 5, enchants: [2, 2]}
+      - {weight:  3, type: armor, bonus: 5, enchants: [4]}
+      - {weight:  3, type: armor, bonus: 5, enchants: [5]}
+      - {weight:  4, reroll: 'armor:specific:sheild:major:greater'}
+      - {weight: 16, reroll: 'armor:specific:armor:major:greater'}
+  base:
+    # Certain armors that are only rarely used or very unlikely to be
+    # found as magic items are commented out below so that they aren't
+    # included in normal item generation. They can be re-enabled by
+    # removing the '# ' at the beginning of the entry.
+    - {cost:    3, type:  light, name: 'Haramaki'}
+    - {cost:    5, type:  light, name: 'Padded Armor'}
+    # - {cost:  100, type:  light, name: 'Quilted Cloth Armor'}
+    - {cost:    1, type:  light, name: 'Reinforced Tunic'}
+    # - {cost:   30, type:  light, name: 'Silken Ceremonial Armor'}
+    - {cost:   15, type:  light, name: 'Lamellar Cuirass'}
+    - {cost:   10, type:  light, name: 'Leather Armor'}
+    - {cost:   50, type:  light, name: 'Rosewood Armor'}
+    # - {cost:   30, type:  light, name: 'Hellknight Leather Armor'}
+    - {cost:   20, type:  light, name: 'Hide Shirt'}
+    - {cost:  500, type:  light, name: 'Leaf Armor'}
+    # - {cost:   25, type:  light, name: 'Parade Armor'}
+    - {cost:  850, type:  light, name: 'Spider-silk Bodysuit'}
+    - {cost:   25, type:  light, name: 'Studded Leather'}
+    - {cost:   20, type:  light, name: 'Wooden Armor'}
+    - {cost:  100, type:  light, name: 'Chain Shirt'}
+    - {cost:   60, type:  light, name: 'Lamellar Leather Armor'}
+    - {cost:   50, type: medium, name: 'Armored Coat'}
+    - {cost:   75, type: medium, name: 'Chain Coat'}
+    - {cost:   15, type: medium, name: 'Hide Armor'}
+    - {cost:   80, type: medium, name: 'Ice Coat'}
+    - {cost:  200, type: medium, name: 'Do-Maru'}
+    - {cost:  250, type: medium, name: 'Kikko'}
+    - {cost:  100, type: medium, name: 'Lamellar Horn Armor'}
+    - {cost:   50, type: medium, name: 'Scale Mail'}
+    - {cost:  200, type: medium, name: 'Breastplate'}
+    - {cost:  400, type: medium, name: 'Agile Breastplate'}
+    - {cost:  150, type: medium, name: 'Chainmail'}
+    - {cost:  125, type: medium, name: 'Four Mirror Armor'}
+    - {cost:  150, type: medium, name: 'Lamellar Steel Armor'}
+    - {cost:  250, type: medium, name: 'Mountain Pattern Armor'}
+    - {cost:  250, type:  heavy, name: 'Banded Mail'}
+    - {cost: 1200, type:  heavy, name: 'Field Plate'}
+    - {cost:  350, type:  heavy, name: 'Kusari Gusoku'}
+    - {cost:  200, type:  heavy, name: 'Lamellar Iron Armor'}
+    - {cost:  200, type:  heavy, name: 'Splint Mail'}
+    - {cost: 1000, type:  heavy, name: 'Tatami-do'}
+    - {cost: 2100, type:  heavy, name: 'Fortress Plate'}
+    - {cost:  600, type:  heavy, name: 'Half-Plate'}
+    - {cost:  850, type:  heavy, name: 'Agile Half-Plate'}
+    - {cost:  850, type:  heavy, name: 'Hell Knight Half-Plate'}
+    - {cost:  500, type:  heavy, name: 'Lamellar Stone Armor'}
+    - {cost: 1700, type:  heavy, name: 'O-Yoroi'}
+    - {cost: 1500, type:  heavy, name: 'Full Plate'}
+    - {cost: 1500, type:  heavy, name: 'Gray Maiden Plate'}
+    - {cost: 2000, type:  heavy, name: 'Hell Knight Plate'}
+    - {cost: 1800, type:  heavy, name: 'Stoneplate'}
+    - {cost:    5, type: sheild, name: 'Buckler'}
+    - {cost:   12, type: sheild, name: 'Klar'}
+    - {cost:   30, type: sheild, name: 'Leather Madu'}
+    - {cost:   40, type: sheild, name: 'Steel Madu'}
+    - {cost:    9, type: sheild, name: 'Light Steel Sheild'}
+    - {cost:   59, type: sheild, name: 'Quickdraw Light Steel Sheild'}
+    - {cost:    3, type: sheild, name: 'Light Wooden Sheild'}
+    - {cost:   53, type: sheild, name: 'Quickdraw Light Wooden Sheild'}
+    - {cost:   20, type: sheild, name: 'Heavy Steel Sheild'}
+    - {cost:    7, type: sheild, name: 'Heavy Wooden Sheild'}
+    # - {cost:   30, type: sheild, name: 'Tower Sheild'}
+    - {cost:   50, type: sheild, name: 'Steel Snarlsheild'}
+    - {cost:   37, type: sheild, name: 'Wooden Snarlsheild'}
+    - {cost:   50, type: sheild, name: 'Dwarven War-Sheild'}
+  specific:
+    armor:
+      minor:
+        lesser:
+          - {weight: 50, cost:   1000, name: 'Mithral Shirt'}
+          - {weight: 50, cost: varies, name: 'Masterwork (or special material) armor or sheild'}
+        greater:
+          # Weights set to 1/1/1 instead of 33/33/34 as the obvious intent is a 1/3 chance.
+          - {weight:  1, cost:   2250, name: 'Mistmail'}
+          - {weight:  1, cost:   2565, name: 'Otyugh Hide'}
+          - {weight:  1, cost:   3300, name: 'Drigonhide Plate'}
+      medium:
+        lesser:
+          # Weights set to 1/1/1 instead of 33/33/34 as the obvious intent is a 1/3 chance.
+          - {weight:  1, cost:   5150, name: 'Elven Chain'}
+          - {weight:  1, cost:   5165, name: 'Rhino Hide'}
+          - {weight:  1, cost:   8910, name: 'Morlock Hide'}
+        greater:
+          - {weight: 15, cost:  10200, name: 'Adamantine Breastplate'}
+          - {weight: 10, cost:  10300, name: 'Soothsayer’s Rainment'}
+          - {weight: 13, cost:  10650, name: 'Equestrian Plate'}
+          - {weight: 12, cost:  11160, name: 'Enchanted Eelskin'}
+          - {weight: 12, cost:  12160, name: 'Boneless Leather'}
+          - {weight: 10, cost:  12405, name: 'Murderer’s Blackcloth'}
+          - {weight: 14, cost:  12650, name: 'Folding Plate'}
+          - {weight: 14, cost:  15200, name: 'Breastplate of Vanishing'}
+      major:
+        lesser:
+          - {weight: 13, cost:  16175, name: 'Armor of Insults'}
+          - {weight: 16, cost:  16500, name: 'Dwarven Plate'}
+          - {weight: 16, cost:  18900, name: 'Banded Mail of Luck'}
+          - {weight: 13, cost:  18910, name: 'Catskin Leather'}
+          - {weight: 13, cost:  22400, name: 'Celestial Armor'}
+          - {weight: 13, cost:  23850, name: 'Buccaneer’s Breastplate'}
+          - {weight: 16, cost:  24650, name: 'Plate Armor of the Deep'}
+        greater:
+          - {weight: 10, cost:  25400, name: 'Breastplate of Command'}
+          - {weight:  4, cost:  25400, name: 'Forsaken Banded Mail'}
+          - {weight: 10, cost:  26500, name: 'Mithral Full Plate of Speed'}
+          - {weight:  4, cost:  29350, name: 'Warden of the Woods'}
+          - {weight:  4, cost:  32350, name: 'Scarab Breastplate'}
+          - {weight:  6, cost:  39165, name: 'Giant Hide Armor (Ogre)'}
+          - {weight:  4, cost:  44215, name: 'Hamatula Hide'}
+          - {weight:  6, cost:  46665, name: 'Giant Hide Armor (Hill Giant)'}
+          - {weight:  4, cost:  52260, name: 'Demon Armor'}
+          - {weight:  6, cost:  54165, name: 'Giant Hide Armor ({{ keys.giant_armor3() }})'}
+          - {weight:  6, cost:  59165, name: 'Giant Hide Armor (Troll)'}
+          - {weight:  6, cost:  61300, name: 'Mail of Malevolence'}
+          - {weight:  6, cost:  69165, name: 'Giant Hide Armor (Cloud Giant)'}
+          - {weight:  6, cost:  76665, name: 'Giant Hide Armor (Storm Giant)'}
+          - {weight:  6, cost:  81250, name: 'Daystar Half Plate'}
+          - {weight:  8, cost: 137650, name: 'Invincible Armor'}
+          - {weight:  4, cost: 160650, name: 'Prismatic Plate'}
+    sheild:
+      minor:
+        lesser:
+          - {weight: 20, cost:    120, name: 'Living Steel Heavy Shield'}
+          - {weight: 25, cost:    203, name: 'Darkwood Buckler'}
+          - {weight: 25, cost:    257, name: 'Darkwood Shield'}
+          - {weight: 30, cost:   1020, name: 'Mithral Heavy Shield'}
+        greater:
+          - {weight: 30, cost:   2159, name: 'Zombie Skin Shield'}
+          - {weight: 35, cost:   3153, name: 'Caster’s Shield'}
+          - {weight: 25, cost:   4655, name: 'Burglar’s Buckler'}
+      medium:
+        lesser:
+          - {weight: 35, cost:   5580, name: 'Spined Shield'}
+          - {weight: 15, cost:   7170, name: 'Dragonslayer’s Shield'}
+          - {weight: 15, cost:   8170, name: 'Collapsible Tower'}
+          - {weight: 35, cost:   9170, name: 'Lion’s Shield'}
+        greater:
+          - {weight: 20, cost:  10153, name: 'Greater Caster’s Shield'}
+          - {weight: 20, cost:  13170, name: 'Celestial Shield'}
+          - {weight: 20, cost:  14170, name: 'Maelstrom Shield'}
+          - {weight: 20, cost:  14170, name: 'Volcanic Shield'}
+          - {weight: 20, cost:  15170, name: 'Tempest Shield'}
+      major:
+        lesser:
+          - {weight: 20, cost:  16180, name: 'Battlement Shield'}
+          - {weight: 20, cost:  17257, name: 'Winged Shield'}
+          - {weight: 20, cost:  19170, name: 'Avalanche Shield'}
+          - {weight: 20, cost:  19180, name: 'Fortress Shield'}
+          - {weight: 20, cost:  20170, name: 'Wyrmslayer’s Shield'}
+        greater:
+          - {weight: 20, cost:  25180, name: 'Spell Ward Tower Shield'}
+          - {weight: 15, cost:  36155, name: 'Quick Block Buckler'}
+          - {weight: 15, cost:  36170, name: 'Belligerent Shield'}
+          - {weight: 15, cost:  46030, name: 'Force Tower'}
+          - {weight: 20, cost:  50170, name: 'Absorbing Shield'}
+          - {weight: 15, cost:  52620, name: 'Elysian Shield'}
+  enchantments:
+    # TODO: Add armor enchantments
+    armor:
+      1: []
+      2: []
+      3: []
+      4: []
+      5: []
+    sheild:
+      1: []
+      2: []
+      3: []
+      4: []
+      5: []
+weapon:
+  minor:
+    lesser:
+      - {weight: 80, type: weapon, bonus: 1, enchants: []}
+      - {weight: 20, reroll: 'weapon:specific:minor:lesser'}
+    greater:
+      - {weight: 26, type: weapon, bonus: 1, enchants: []}
+      - {weight: 27, type: weapon, bonus: 2, enchants: []}
+      - {weight: 27, type: weapon, bonus: 1, enchants: [1]}
+      - {weight: 20, reroll: 'weapon:specific:minor:greater'}
+  medium:
+    lesser:
+      - {weight: 10, type: weapon, bonus: 1, enchants: []}
+      - {weight: 10, type: weapon, bonus: 2, enchants: []}
+      - {weight: 12, type: weapon, bonus: 3, enchants: []}
+      - {weight: 12, type: weapon, bonus: 1, enchants: [1]}
+      - {weight: 12, type: weapon, bonus: 1, enchants: [1, 1]}
+      - {weight: 12, type: weapon, bonus: 1, enchants: [2]}
+      - {weight: 12, type: weapon, bonus: 2, enchants: [1]}
+      - {weight: 20, reroll: 'weapon:specific:medium:lesser'}
+    greater:
+      - {weight: 10, type: weapon, bonus: 2, enchants: []}
+      - {weight: 12, type: weapon, bonus: 3, enchants: []}
+      - {weight: 10, type: weapon, bonus: 1, enchants: [1]}
+      - {weight: 12, type: weapon, bonus: 1, enchants: [2]}
+      - {weight: 12, type: weapon, bonus: 2, enchants: [1]}
+      - {weight: 12, type: weapon, bonus: 2, enchants: [2]}
+      - {weight: 12, type: weapon, bonus: 3, enchants: [1]}
+      - {weight: 20, reroll: 'weapon:specific:medium:greater'}
+  major:
+    lesser:
+      - {weight: 10, type: weapon, bonus: 3, enchants: []}
+      - {weight: 12, type: weapon, bonus: 4, enchants: []}
+      - {weight: 10, type: weapon, bonus: 1, enchants: [2]}
+      - {weight: 12, type: weapon, bonus: 1, enchants: [3]}
+      - {weight: 12, type: weapon, bonus: 2, enchants: [2]}
+      - {weight: 12, type: weapon, bonus: 3, enchants: [1]}
+      - {weight: 12, type: weapon, bonus: 4, enchants: [1]}
+      - {weight: 20, reroll: 'weapon:specific:major:lesser'}
+    greater:
+      - {weight: 10, type: weapon, bonus: 4, enchants: []}
+      - {weight: 10, type: weapon, bonus: 5, enchants: []}
+      - {weight: 10, type: weapon, bonus: 4, enchants: [1]}
+      - {weight:  8, type: weapon, bonus: 4, enchants: [2]}
+      - {weight:  8, type: weapon, bonus: 4, enchants: [3]}
+      - {weight:  5, type: weapon, bonus: 4, enchants: [4]}
+      - {weight:  8, type: weapon, bonus: 5, enchants: [1]}
+      - {weight:  8, type: weapon, bonus: 5, enchants: [2]}
+      - {weight:  4, type: weapon, bonus: 5, enchants: [3]}
+      - {weight:  3, type: weapon, bonus: 5, enchants: [4]}
+      - {weight:  3, type: weapon, bonus: 5, enchants: [4, 1]}
+      - {weight:  3, type: weapon, bonus: 5, enchants: [3, 2]}
+      - {weight: 20, reroll: 'weapon:specific:major:greater'}
+  base:
+    # Certain weapons that are only rarely used or very unlikely to be
+    # found as magic items are commented out below so that they aren't
+    # included in normal item generation. They can be re-enabled by
+    # replacing the '#' at the beginning of the line with a space.
+    - {cost:    2, tags: [simple, light, melee, bludgeoning], name: 'Gauntlet'}
+    - {cost:    5, tags: [simple, light, melee, bludgeoning], name: 'Battle Aspergillum'}
+    - {cost:    2, tags: [simple, light, melee, piercing, slashing], name: 'Brass Knife'}
+    - {cost:    1, tags: [simple, light, melee, bludgeoning], name: 'Brass Knuckles'}
+    - {cost:    5, tags: [simple, light, melee, bludgeoning, piercing], name: 'Cestus'}
+    - {cost:    2, tags: [simple, light, melee, piercing, slashing], name: 'Dagger'}
+    - {cost:    2, tags: [simple, light, melee, piercing], name: 'Punching Dagger'}
+    - {cost:    5, tags: [simple, light, melee, piercing], name: 'Spiked Gauntlet'}
+    - {cost:  0.1, tags: [simple, light, melee, bludgeoning], name: 'Handwraps'}
+    # - {cost:    5, tags: [simple, light, melee, bludgeoning], name: 'Traveling Kettle'}
+    # - {cost:   10, tags: [simple, light, melee, slashing], name: 'Hook Hand'}
+    - {cost:    2, tags: [simple, light, melee, bludgeoning, piercing], name: 'Kunai'}
+    - {cost:    5, tags: [simple, light, melee, bludgeoning], name: 'Light mace'}
+    - {cost:    6, tags: [simple, light, melee, slashing], name: 'Sickle'}
+    - {cost:   70, tags: [simple, light, melee, piercing, slashing], name: 'Spring Blade'}
+    # - {cost:    0, tags: [simple, light, melee, piercing], name: 'Wooden Stake'}
+    - {cost:    0, tags: [simple, 1hand, melee, bludgeoning], name: 'Club'}
+    - {cost:    2, tags: [simple, 1hand, melee, bludgeoning, piercing], name: 'Mere Club'}
+    - {cost:   12, tags: [simple, 1hand, melee, bludgeoning], name: 'Heavy mace'}
+    - {cost:    8, tags: [simple, 1hand, melee, bludgeoning, piercing], name: 'Morningstar'}
+    - {cost:    1, tags: [simple, 1hand, melee, piercing], name: 'Shortspear'}
+    - {cost:    5, tags: [simple, 2hand, melee, piercing], name: 'Bayonet'}
+    - {cost:    8, tags: [simple, 2hand, melee, piercing], name: 'Boarding Pike'}
+    - {cost:    5, tags: [simple, 2hand, melee, piercing], name: 'Kumade'}
+    - {cost:   10, tags: [simple, 2hand, melee, piercing], name: 'Collapsible Kumade'}
+    - {cost:   15, tags: [simple, 2hand, melee, bludgeoning], name: 'Lantern Staff'}
+    - {cost:    5, tags: [simple, 2hand, melee, piercing], name: 'Longspear'}
+    - {cost:    0, tags: [simple, 2hand, melee, bludgeoning], name: 'Quarterstaff'}
+    - {cost:    2, tags: [simple, 2hand, melee, piercing], name: 'Spear'}
+    - {cost:    5, tags: [simple, 2hand, melee, piercing], name: 'Boar Spear'}
+    - {cost:   10, tags: [simple, 2hand, melee, bludgeoning, piercing], name: 'Weighted Spear'}
+    - {cost:    2, tags: [simple, ranged, thrown, piercing], name: 'Blowgun'}
+    - {cost:   50, tags: [simple, ranged, crossbow, piercing], name: 'Heavy Crossbow'}
+    # - {cost:  100, tags: [simple, ranged, crossbow, piercing], name: 'Underwater Heavy crossbow'}
+    - {cost:   35, tags: [simple, ranged, crossbow, piercing], name: 'Light Crossbow'}
+    # - {cost:   70, tags: [simple, ranged, crossbow, piercing], name: 'Underwater Light Crossbow'}
+    - {cost:  0.5, tags: [simple, ranged, thrown, piercing], name: 'Dart'}
+    - {cost:    1, tags: [simple, ranged, thrown, piercing], name: 'Javelin'}
+    - {cost:    0, tags: [simple, ranged, thrown, bludgeoning], name: 'Sling'}
+    - {cost:    0, tags: [simple, ranged, thrown, bludgeoning], name: 'Stingchuck'}
+    - {cost:   35, tags: [simple, ranged, crossbow, bludgeoning], name: 'Stonebow'}
+    # TODO: Finish adding weapons
+  specific:
+    minor:
+      lesser:
+        - {weight:  2, cost:    100, name: 'Tracer Bullet'}
+        - {weight:  6, cost:    132, name: 'Sleep Arrow'}
+        - {weight:  2, cost:    196, name: 'Dustburst Bullet'}
+        - {weight:  6, cost:    226, name: 'Tangle Bolt'}
+        - {weight:  6, cost:    267, name: 'Screaming Bolt'}
+        - {weight: 10, cost:    322, name: 'Masterwork Silver Dagger'}
+        - {weight:  2, cost:    330, name: 'Alchemist’s Bullet'}
+        - {weight: 10, cost:    330, name: 'Cold Iron Masterwork Longsword'}
+        - {weight:  6, cost:    547, name: 'Hushing Arrow'}
+        - {weight:  6, cost:   1047, name: 'Greater Husing Arrow'}
+        - {weight: 10, cost:   1500, name: 'Javelin of Lightning'}
+        - {weight:  8, cost:   1516, name: 'Searing Arrow'}
+        - {weight:  8, cost:   1516, name: 'Sizzling Arrow'}
+        - {weight:  2, cost:   1722, name: 'Lesser Burrowing Bullet'}
+        - {weight:  8, cost:   1730, name: 'Dust Bolt'}
+        - {weight:  8, cost:   2282, name: 'Slaying Arrow'}
+      greater:
+        - {weight: 20, cost:   3002, name: 'Adamantine Dagger'}
+        - {weight: 20, cost:   3010, name: 'Adamantine Battleaxe'}
+        - {weight: 10, cost:   3447, name: 'Greater Burrowing Bullet'}
+        - {weight: 20, cost:   4057, name: 'Greater Slaying Arrow'}
+        - {weight: 10, cost:   4310, name: 'Lance of Jousting'}
+        - {weight: 20, cost:   4315, name: 'Shatterspike'}
+    medium:
+      lesser:
+        - {weight:  3, cost:   6308, name: 'Bloodletting Kukri'}
+        - {weight:  6, cost:   6812, name: 'Boulderhead Mace'}
+        - {weight:  5, cost:   7300, name: 'Beaststrike Club'}
+        - {weight:  6, cost:   7315, name: 'Fighter’s Fork'}
+        - {weight:  3, cost:   7805, name: 'Everflowing Aspergillum'}
+        - {weight:  5, cost:   7840, name: 'Hurricane Quarterstaff'}
+        - {weight:  6, cost:   8302, name: 'Dagger of Venom'}
+        - {weight:  5, cost:   8810, name: 'Gloom Blade'}
+        - {weight:  5, cost:   9815, name: 'Trident of Stability'}
+        - {weight:  5, cost:  10115, name: 'Trident of Warning'}
+        - {weight:  6, cost:  10302, name: 'Assassian’s Dagger'}
+        - {weight:  6, cost:  10302, name: 'Dagger of Doubling'}
+        - {weight:  5, cost:  11315, name: 'Earthenflail'}
+        - {weight:  8, cost:  11320, name: 'Swift Obsidian Greataxe'}
+        - {weight:  6, cost:  12310, name: 'Polarity Hammer'}
+        - {weight:  8, cost:  12350, name: 'Blade of Binding'}
+        - {weight:  7, cost:  12780, name: 'Shifter’s Sorrow'}
+      greater:
+        - {weight:  7, cost:  13308, name: 'Dragoncatch Guisarme'}
+        - {weight:  8, cost:  14315, name: 'Ten-Ring Sword'}
+        - {weight:  6, cost:  15065, name: 'Triton’s Trident'}
+        - {weight:  8, cost:  16012, name: 'Lesser Mace of Smiting'}
+        - {weight:  8, cost:  17820, name: 'Disarming Blade'}
+        - {weight:  6, cost:  18305, name: 'Lash of the Howler'}
+        - {weight:  5, cost:  18310, name: 'Shieldsplitter Lance'}
+        - {weight:  6, cost:  18650, name: 'Trident of Fish Command'}
+        - {weight:  6, cost:  19100, name: 'Quarterstaff of Vaulting'}
+        - {weight:  6, cost:  20300, name: 'Firedrake Pistol'}
+        - {weight:  6, cost:  20715, name: 'Ricochet Hammer'}
+        - {weight:  6, cost:  21324, name: 'Flame Tongue'}
+        - {weight:  8, cost:  21324, name: 'Sparkwake Starknife'}
+        - {weight:  5, cost:  22060, name: 'Luck Blade (0 Wishes)'}
+        - {weight:  5, cost:  22310, name: 'Sword of Subtlety'}
+        - {weight:  5, cost:  22315, name: 'Sword of the Planes'}
+    major:
+      lesser:
+        - {weight: 12, cost:  23057, name: 'Nine Lives Stealer'}
+        - {weight: 14, cost:  23310, name: 'Undercutting Axe'}
+        - {weight: 14, cost:  25302, name: 'Spirit Caller'}
+        - {weight: 15, cost:  25312, name: 'Dwarfbond Hammer'}
+        - {weight: 15, cost:  25600, name: 'Oathbow'}
+        - {weight: 15, cost:  25715, name: 'Sword of Life Stealing'}
+        - {weight: 15, cost:  33910, name: 'Cutthroat’s Apprentice'}
+      greater:
+        - {weight:  2, cost:  35312, name: 'Ghoul’s Lament'}
+        - {weight:  3, cost:  38552, name: 'Mace of Terror'}
+        - {weight:  2, cost:  39305, name: 'Hellscourge'}
+        - {weight:  2, cost:  40310, name: 'Dragon’s Doom'}
+        - {weight:  4, cost:  40320, name: 'Life-Drinker'}
+        - {weight:  2, cost:  41335, name: 'Valor’s Minion'}
+        - {weight:  2, cost:  42816, name: 'Summoner’s Sorrow'}
+        - {weight:  3, cost:  47315, name: 'Sylvan Scimitar'}
+        - {weight:  2, cost:  48502, name: 'Spirit Blade'}
+        - {weight:  3, cost:  50302, name: 'Heartswood Spear'}
+        - {weight:  3, cost:  50320, name: 'Rapier of Puncturing'}
+        - {weight:  3, cost:  50335, name: 'Sun Blade'}
+        - {weight:  5, cost:  51850, name: 'Blade of the Rising Sun'}
+        - {weight:  3, cost:  54475, name: 'Frost Brand'}
+        - {weight:  5, cost:  60312, name: 'Dwarven Thrower'}
+        - {weight:  5, cost:  60802, name: 'Bloodthirst Dagger'}
+        - {weight:  3, cost:  61375, name: 'Warbringer'}
+        - {weight:  4, cost:  62360, name: 'Luck Blade (1 Wish)'}
+        - {weight:  4, cost:  65310, name: 'Guarding blade'}
+        - {weight:  3, cost:  73300, name: 'Pistol of the Infinite Sky'}
+        - {weight:  5, cost:  75312, name: 'Mace of Smiting'}
+        - {weight:  4, cost:  75350, name: 'Blade of the Sword-Saint'}
+        - {weight:  5, cost:  75815, name: 'Scimitar of the Spellthief'}
+        - {weight:  3, cost:  79102, name: 'Spider’s Fang'}
+        - {weight:  3, cost:  90469, name: 'Demonsorrow Curve Blade'}
+        - {weight:  3, cost:  95318, name: 'Void Scythe'}
+        - {weight:  4, cost: 102660, name: 'Luck Blade (2 Wishes)'}
+        - {weight:  3, cost: 120630, name: 'Holy Avenger'}
+        - {weight:  4, cost: 123035, name: 'Bastard’s Sting'}
+        - {weight:  4, cost: 142690, name: 'Luck Blade (3 Wishes)'}
+  enchantments:
+    # TODO: Add weapon enchantments
+    melee:
+      1: []
+      2: []
+      3: []
+      4: []
+      5: []
+    ranged:
+      1: []
+      2: []
+      3: []
+      4: []
+      5: []
+    ammo:
+      1: []
+      2: []
+      3: []
+      4: []
+      5: []
+potion:
+  - {minor: 10, medium:  0, major:  0, cost:   50, name: 'Cure Light Wounds'}
+  - {minor:  3, medium:  0, major:  0, cost:   50, name: 'Endure Elements'}
+  - {minor:  2, medium:  0, major:  0, cost:   50, name: 'Hide from Animals'}
+  - {minor:  2, medium:  0, major:  0, cost:   50, name: 'Hide from Undead'}
+  - {minor:  2, medium:  0, major:  0, cost:   50, name: 'Jump'}
+  - {minor:  3, medium:  0, major:  0, cost:   50, name: 'Mage Armor'}
+  - {minor:  3, medium:  0, major:  0, cost:   50, name: 'Magic Fang'}
+  - {minor:  1, medium:  0, major:  0, cost:   50, name: 'Magic Stone'}
+  - {minor:  3, medium:  0, major:  0, cost:   50, name: 'Magic Weapon'}
+  - {minor:  1, medium:  0, major:  0, cost:   50, name: 'Pass Without Trace'}
+  - {minor:  2, medium:  0, major:  0, cost:   50, name: 'Protection from {{ keys.alignment() }}'}
+  - {minor:  2, medium:  0, major:  0, cost:   50, name: 'Remove Fear'}
+  - {minor:  1, medium:  0, major:  0, cost:   50, name: 'Sanctuary'}
+  - {minor:  3, medium:  0, major:  0, cost:   50, name: 'Shield of Faith +2'}
+  - {minor:  1, medium:  0, major:  0, cost:   50, name: 'Shillelagh'}
+  - {minor:  2, medium:  2, major:  0, cost:   50, name: 'Bless Weapon'}
+  - {minor:  3, medium:  2, major:  0, cost:   50, name: 'Enlarge Person'}
+  - {minor:  1, medium:  1, major:  0, cost:   50, name: 'Reduce Person'}
+  - {minor:  2, medium:  1, major:  0, cost:  300, name: 'Aid'}
+  - {minor:  3, medium:  1, major:  0, cost:  300, name: 'Barkskin +2'}
+  - {minor:  3, medium:  3, major:  0, cost:  300, name: 'Bear’s Endurance'}
+  - {minor:  3, medium:  3, major:  2, cost:  300, name: 'Blur'}
+  - {minor:  3, medium:  3, major:  0, cost:  300, name: 'Bull’s Strength'}
+  - {minor:  3, medium:  3, major:  0, cost:  300, name: 'Cat’s Grace'}
+  - {minor:  5, medium:  8, major:  5, cost:  300, name: 'Cure Moderate Wounds'}
+  - {minor:  1, medium:  1, major:  0, cost:  300, name: 'Darkness'}
+  - {minor:  3, medium:  2, major:  2, cost:  300, name: 'Darkvision'}
+  - {minor:  3, medium:  1, major:  0, cost:  300, name: 'Delay Poison'}
+  - {minor:  2, medium:  2, major:  0, cost:  300, name: 'Eagle’s Splendor'}
+  - {minor:  2, medium:  2, major:  0, cost:  300, name: 'Fox’s Cunning'}
+  - {minor:  3, medium:  2, major:  2, cost:  300, name: 'Invisibility'}
+  - {minor:  3, medium:  1, major:  1, cost:  300, name: 'Lesser Restoration'}
+  - {minor:  2, medium:  1, major:  0, cost:  300, name: 'Levitate'}
+  - {minor:  1, medium:  1, major:  0, cost:  300, name: 'Misdirection'}
+  - {minor:  2, medium:  2, major:  0, cost:  300, name: 'Owl’s Wisdom'}
+  - {minor:  2, medium:  1, major:  0, cost:  300, name: 'Protection from Arrows, 30 points'}
+  - {minor:  2, medium:  1, major:  1, cost:  300, name: 'Remove Paralysis'}
+  - {minor:  3, medium:  2, major:  0, cost:  300, name: 'Resist Energy ({{ keys.energy() }}) 10'}
+  - {minor:  1, medium:  2, major:  1, cost:  300, name: 'Shield of Faith +3'}
+  - {minor:  2, medium:  1, major:  0, cost:  300, name: 'Spider Climb'}
+  - {minor:  1, medium:  1, major:  1, cost:  300, name: 'Undetectable Alignment'}
+  - {minor:  0, medium:  1, major:  1, cost:  600, name: 'Barkskin +3'}
+  - {minor:  0, medium:  1, major:  2, cost:  600, name: 'Shield of Faith +4'}
+  - {minor:  0, medium:  3, major:  2, cost:  700, name: 'Resist Energy ({{ keys.energy() }}) 20'}
+  - {minor:  0, medium:  5, major:  8, cost:  750, name: 'Cure Serious Wounds'}
+  - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Daylight'}
+  - {minor:  0, medium:  3, major:  3, cost:  750, name: 'Displacement'}
+  - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Flame Arrow'}
+  - {minor:  0, medium:  3, major:  5, cost:  750, name: 'Fly'}
+  - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Gaseous Form'}
+  - {minor:  0, medium:  2, major:  0, cost:  750, name: 'Greater Magic Fang +1'}
+  - {minor:  0, medium:  2, major:  0, cost:  750, name: 'Greater Magic Weapon +1'}
+  - {minor:  0, medium:  2, major:  2, cost:  750, name: 'Haste'}
+  - {minor:  0, medium:  3, major:  3, cost:  750, name: 'Heroism'}
+  - {minor:  0, medium:  2, major:  2, cost:  750, name: 'Keen Edge'}
+  - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Magic Circle Against {{ keys.alignment() }}'}
+  - {minor:  0, medium:  2, major:  0, cost:  750, name: 'Magic Vestament +1'}
+  - {minor:  0, medium:  3, major:  3, cost:  750, name: 'Neutralize Poison'}
+  - {minor:  0, medium:  2, major:  2, cost:  750, name: 'Nondetection'}
+  - {minor:  0, medium:  3, major:  2, cost:  750, name: 'Protection from Energy ({{ keys.energy() }})'}
+  - {minor:  0, medium:  2, major:  1, cost:  750, name: 'Rage'}
+  - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Remove Blindness/Deafness'}
+  - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Remove Curse'}
+  - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Remove Disease'}
+  - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Tongues'}
+  - {minor:  0, medium:  2, major:  1, cost:  750, name: 'Water Breathing'}
+  - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Water Walk'}
+  - {minor:  0, medium:  0, major:  2, cost:  900, name: 'Barkskin +4'}
+  - {minor:  0, medium:  0, major:  1, cost:  900, name: 'Shield of Faith +5'}
+  - {minor:  0, medium:  0, major:  1, cost: 1000, name: 'Protection from Arrows, 100 points'}
+  - {minor:  0, medium:  0, major:  3, cost: 1050, name: 'Good Hope'}
+  - {minor:  0, medium:  0, major:  1, cost: 1100, name: 'Resist Energy ({{ keys.energy() }}) 30'}
+  - {minor:  0, medium:  0, major:  4, cost: 1200, name: 'Barkskin +5'}
+  - {minor:  0, medium:  0, major:  4, cost: 1200, name: 'Greater Magic Fang +2'}
+  - {minor:  0, medium:  0, major:  4, cost: 1200, name: 'Greater Magic Weapon +2'}
+  - {minor:  0, medium:  0, major:  1, cost: 1200, name: 'Magic Vestament +2'}
+  - {minor:  0, medium:  0, major:  3, cost: 1800, name: 'Greater Magic Fang +3'}
+  - {minor:  0, medium:  0, major:  3, cost: 1800, name: 'Greater Magic Weapon +3'}
+  - {minor:  0, medium:  0, major:  3, cost: 1800, name: 'Magic Vestament +3'}
+  - {minor:  0, medium:  0, major:  2, cost: 2400, name: 'Greater Magic Fang +4'}
+  - {minor:  0, medium:  0, major:  2, cost: 2400, name: 'Greater Magic Weapon +4'}
+  - {minor:  0, medium:  0, major:  2, cost: 2400, name: 'Magic Vestament +4'}
+  - {minor:  0, medium:  0, major:  1, cost: 3000, name: 'Greater Magic Fang +5'}
+  - {minor:  0, medium:  0, major:  1, cost: 3000, name: 'Greater Magic Weapon +5'}
+  - {minor:  0, medium:  0, major:  1, cost: 3000, name: 'Magic Vestament +5'}
+ring:
+  minor:
+    lesser:
+      - {weight:  7, cost:    250, name: 'Dungeon Ring, Prisoner’s'}
+      - {weight:  9, cost:   1000, name: 'Ring of Arcane Signets'}
+      - {weight:  9, cost:   1500, name: 'Ring of Spell Knowledge I'}
+      - {weight: 15, cost:   2000, name: 'Ring of Protection +1'}
+      - {weight:  7, cost:   2000, name: 'Ring of the Grasping Grave'}
+      - {weight:  9, cost:   2200, name: 'Ring of Feather Falling'}
+      - {weight:  9, cost:   2500, name: 'Ring of Climbing'}
+      - {weight:  9, cost:   2500, name: 'Ring of Jumping'}
+      - {weight:  9, cost:   2500, name: 'Ring of Sustenance'}
+      - {weight:  9, cost:   2500, name: 'Ring of Swimming'}
+      - {weight:  9, cost:   2500, name: 'Ring of Climbing'}
+      - {weight:  7, cost:   3000, name: 'Ring of Ferocious Action'}
+    greater:
+      - {weight: 15, cost:   4000, name: 'Ring of Counterspells'}
+      - {weight: 10, cost:   5000, name: 'Ring of Maniacal Devices'}
+      - {weight: 10, cost:   5000, name: 'Ring of Rat Fangs'}
+      - {weight:  7, cost:   6000, name: 'Ring of Sacred Mistletoe'}
+      - {weight: 19, cost:   6000, name: 'Ring of Spell Knowledge II'}
+      - {weight: 17, cost:   6000, name: 'Ring of Swarming Stabs'}
+      - {weight: 14, cost:   6840, name: 'Ring of Grit Mastery'}
+  medium:
+    lesser:
+      - {weight:  2, cost:   8000, name: 'Ring of Forcefangs'}
+      - {weight:  4, cost:   8000, name: 'Ring of Mind Shielding'}
+      - {weight:  5, cost:   8000, name: 'Ring of Protection +2'}
+      - {weight:  2, cost:   8000, name: 'Ring of Strength Sapping'}
+      - {weight:  4, cost:   8500, name: 'Ring of Force Shield'}
+      - {weight:  5, cost:   8600, name: 'Ring of the Ram'}
+      - {weight:  2, cost:   8700, name: 'Scholar’s Ring'}
+      - {weight:  3, cost:  10000, name: 'Improved Ring of Climbing'}
+      - {weight:  2, cost:  10000, name: 'Ring of Curing'}
+      - {weight:  2, cost:  10000, name: 'Ring of Foe Focus'}
+      - {weight:  4, cost:  10000, name: 'Improved Ring of Jumping'}
+      - {weight:  2, cost:  10000, name: 'Ring of Ki Focus'}
+      - {weight:  3, cost:  10000, name: 'Lesser Ring of Revelation'}
+      - {weight:  3, cost:  10000, name: 'Improved Ring of Swimming'}
+      - {weight:  3, cost:  10800, name: 'Ring of Animal Friendship'}
+      - {weight:  2, cost:  10800, name: 'Ring of Transposition'}
+      - {weight:  2, cost:  11000, name: 'Ring of Tactical Precision'}
+      - {weight:  2, cost:  11000, name: 'Ring of the Sophisticate'}
+      - {weight:  3, cost:  12000, name: 'Decoy Ring'}
+      - {weight:  3, cost:  12000, name: 'Ring of Craft Magic'}
+      - {weight:  3, cost:  12000, name: 'Ring of Ectoplasmic Invigoration'}
+      - {weight:  3, cost:  12000, name: 'Minor Ring of Energy Resistance ({{ keys.energy() }})'}
+      - {weight:  3, cost:  12000, name: 'Ring of the Troglodyte'}
+      - {weight:  3, cost:  12000, name: 'Steelband Circle'}
+      - {weight:  6, cost:  12700, name: 'Ring of Chameleon Power'}
+      - {weight:  3, cost:  13500, name: 'Ring of Spell Knowledge III'}
+      - {weight:  3, cost:  14000, name: 'Ring of the Sea Strider'}
+      - {weight:  3, cost:  15000, name: 'Ring of Retribution'}
+      - {weight:  4, cost:  15000, name: 'Ring of Water Walking'}
+      - {weight:  6, cost:  16000, name: 'Dungeon Ring, Jailer’s'}
+      - {weight:  3, cost:  16000, name: 'Greater Ring of Revelation'}
+    greater:
+      - {weight:  4, cost:  18000, name: 'Minor Ring of Inner Fortitude'}
+      - {weight: 12, cost:  18000, name: 'Ring of Protection +3'}
+      - {weight: 10, cost:  18000, name: 'Minor Ring of Spell Storing'}
+      - {weight:  4, cost:  19500, name: 'Ring of Energy Shroud'}
+      - {weight: 15, cost:  28000, name: 'Ring of Arcane Mastery'}
+      - {weight: 11, cost:  28000, name: 'Ring of Invisibility'}
+      - {weight:  8, cost:  28000, name: 'Ring of Wizardry I'}
+      - {weight: 11, cost:  24000, name: 'Superior Ring of Revelation'}
+      - {weight:  8, cost:  24000, name: 'Ring of Spell Knowledge IV'}
+      - {weight: 12, cost:  25000, name: 'Ring of Evasion'}
+      - {weight:  8, cost:  25000, name: 'Ring of X-Ray Vision'}
+      - {weight: 12, cost:  27000, name: 'Ring of Blinking'}
+  major:
+    lesser:
+      - {weight:  9, cost:  28000, name: 'Major Ring of Energy Resistance ({{ keys.energy() }})'}
+      - {weight:  7, cost:  28500, name: 'Ring of the Ecclesiarch'}
+      - {weight: 17, cost:  32000, name: 'Ring of Protection +4'}
+      - {weight:  6, cost:  33000, name: 'Ring of Return'}
+      - {weight:  6, cost:  40000, name: 'Ring of Freedom of Movement'}
+      - {weight: 15, cost:  40000, name: 'Ring of Wizardry II'}
+      - {weight:  5, cost:  42000, name: 'Major Ring of Inner Fortitude'}
+      - {weight:  9, cost:  44000, name: 'Greater Ring of Energy Resistance ({{ keys.energy() }})'}
+      - {weight:  8, cost:  45000, name: 'Ring of Delayed Doom'}
+    greater:
+      - {weight:  6, cost:  50000, name: 'Ring of Friend Shield'}
+      - {weight: 12, cost:  50000, name: 'Ring of Protection +5'}
+      - {weight:  9, cost:  50000, name: 'Ring of Shooting Stars'}
+      - {weight: 10, cost:  50000, name: 'Ring of Spell Storing'}
+      - {weight:  6, cost:  58000, name: 'Ring of Continuation'}
+      - {weight:  8, cost:  66000, name: 'Greater Ring of Inner Fortitude'}
+      - {weight:  9, cost:  70000, name: 'Ring of Wizardry III'}
+      - {weight:  6, cost:  70000, name: 'Spiritualist Rings'}
+      - {weight:  8, cost:  75000, name: 'Ring of Telekinesis'}
+      - {weight:  5, cost:  90000, name: 'Ring of Regeneration'}
+      - {weight:  6, cost: 100000, name: 'Ring of Spell Turning'}
+      - {weight:  4, cost: 100000, name: 'Ring of Wizardry IV'}
+      - {weight:  4, cost: 120000, name: 'Ring of Three Wishes'}
+      - {weight:  3, cost: 125000, name: 'Ring of Djinni Calling'}
+      - {weight:  4, cost: 200000, name: 'Ring of Elemental Command'}
+      - {weight:  3, cost: 200000, name: 'Major Ring of Spell Storing'}
+rod:
+  medium:
+    lesser:
+      - {weight:  1, cost:   1500, name: 'Minor Metamagic Merciful Rod'}
+      - {weight: 33, cost:   3000, name: 'Minor Metamagic {{ keys.metamagic(1) }} Rod'}
+      - {weight: 15, cost:   5000, name: 'Immovable Rod'}
+      - {weight: 10, cost:   5400, name: 'Rod of Thunderous Force'}
+      - {weight:  1, cost:   5500, name: 'Metamagic Merciful Rod'}
+      - {weight:  1, cost:   8500, name: 'Rod of Ice'}
+      - {weight: 10, cost:   9000, name: 'Minor Metamagic {{ keys.metamagic(2) }} Rod'}
+      - {weight: 10, cost:  10500, name: 'Rod of Metal and Mineral Detection'}
+      - {weight:  5, cost:  11000, name: 'Metamagic {{ keys.metamagic(1) }} Rod'}
+      - {weight: 14, cost:  11000, name: 'Rod of Cancellation'}
+    greater:
+      - {weight:  3, cost:  12000, name: 'Conduit Rod'}
+      - {weight:  3, cost:  12000, name: 'Grounding Rod'}
+      - {weight:  4, cost:  12000, name: 'Rod of the Wayang'}
+      - {weight:  8, cost:  12000, name: 'Rod of Wonder'}
+      - {weight:  1, cost:  12500, name: 'Greater Metamagic Merciful Rod'}
+      - {weight: 10, cost:  13000, name: 'Rod of the Python'}
+      - {weight:  4, cost:  13500, name: 'Trap-Stealer’s Rod'}
+      - {weight: 22, cost:  14000, name: 'Minor Metamagic {{ keys.metamagic(3) }} Rod'}
+      - {weight:  4, cost:  15000, name: 'Rod of Balance'}
+      - {weight:  4, cost:  15000, name: 'Rod of Escape'}
+      - {weight:  9, cost:  15000, name: 'Rod of Flame Extinguishing'}
+      - {weight:  4, cost:  16000, name: 'Rod of Ruin'}
+      - {weight:  4, cost:  16650, name: 'Sapping Rod'}
+      - {weight:  6, cost:  18000, name: 'Rod of Beguiling'}
+      - {weight:  4, cost:  18000, name: 'Rod of Nettles'}
+      - {weight: 10, cost:  19000, name: 'Rod of the Viper'}
+  major:
+    lesser:
+      - {weight:  4, cost:  20000, name: 'Suzerain Scepter'}
+      - {weight:  2, cost:  22305, name: 'Rod of Fiery Nimbus'}
+      - {weight:  7, cost:  23500, name: 'Rod of Enemy Detection'}
+      - {weight: 14, cost:  24500, name: 'Greater Metamagic {{ keys.metamagic(1) }} Rod'}
+      - {weight:  9, cost:  25000, name: 'Rod of Splendor'}
+      - {weight:  8, cost:  25000, name: 'Rod of Withering'}
+      - {weight:  6, cost:  26500, name: 'Earthbind Rod'}
+      - {weight:  6, cost:  29000, name: 'Rod of the Aboleth'}
+      - {weight:  7, cost:  30000, name: 'Liberator’s Rod'}
+      - {weight:  7, cost:  32500, name: 'Metamagic {{ keys.metamagic(2) }} Rod'}
+      - {weight:  9, cost:  33000, name: 'Rod of Thunder and Lightning'}
+      - {weight:  4, cost:  35000, name: 'Minor Metamagic Quicken Rod'}
+      - {weight: 11, cost:  37000, name: 'Rod of Negation'}
+      - {weight:  6, cost:  38305, name: 'Rod of Steadfast Resolve'}
+    greater:
+      - {weight:  8, cost:  50000, name: 'Rod of Absorption'}
+      - {weight:  3, cost:  50000, name: 'Rod of Flailing'}
+      - {weight: 15, cost:  54000, name: 'Metamagic {{ keys.metamagic(3) }} Rod'}
+      - {weight:  2, cost:  60000, name: 'Rod of Rulership'}
+      - {weight:  2, cost:  61000, name: 'Rod of Security'}
+      - {weight:  2, cost:  64305, name: 'Rod of Shadows'}
+      - {weight:  2, cost:  67000, name: 'Rod of Mind Mastery'}
+      - {weight:  3, cost:  70000, name: 'Rod of Lordly Might'}
+      - {weight: 20, cost:  73000, name: 'Greater Metamagic {{ keys.metamagic(2) }} Rod'}
+      - {weight:  1, cost:  74000, name: 'Scepter of Heaven'}
+      - {weight: 10, cost:  75500, name: 'Metamagic Quicken Rod'}
+      - {weight:  2, cost:  80000, name: 'Rod of Dwarven Might'}
+      - {weight:  5, cost:  85000, name: 'Rod of Alertness'}
+      - {weight: 20, cost: 121500, name: 'Greater Metamagic {{ keys.metamagic(3) }} Rod'}
+      - {weight:  5, cost: 170000, name: 'Greater Metamagic Quicken Rod'}
+scroll:
+  - {minor:  5, medium:  0, major:  0, name: 'Scroll of {{ keys.spell(0) }}'}
+  - {minor: 45, medium:  0, major:  0, name: 'Scroll of {{ keys.spell(1) }}'}
+  - {minor: 45, medium:  5, major:  0, name: 'Scroll of {{ keys.spell(2) }}'}
+  - {minor:  5, medium: 60, major:  0, name: 'Scroll of {{ keys.spell(3) }}'}
+  - {minor:  0, medium: 30, major:  5, name: 'Scroll of {{ keys.spell(4) }}'}
+  - {minor:  0, medium:  5, major: 45, name: 'Scroll of {{ keys.spell(5) }}'}
+  - {minor:  0, medium:  0, major: 30, name: 'Scroll of {{ keys.spell(6) }}'}
+  - {minor:  0, medium:  0, major: 15, name: 'Scroll of {{ keys.spell(7) }}'}
+  - {minor:  0, medium:  0, major: 10, name: 'Scroll of {{ keys.spell(8) }}'}
+  - {minor:  0, medium:  0, major:  5, name: 'Scroll of {{ keys.spell(9) }}'}
+staff:
+  medium:
+    lesser:
+      - {weight: 10, cost:   7200, name: 'Staff of Blessed Relief'}
+      - {weight: 10, cost:   8000, name: 'Staff of Minor Arcana'}
+      - {weight: 10, cost:   8800, name: 'Staff of Tricks'}
+      - {weight: 15, cost:   9600, name: 'Staff of the Scout'}
+      - {weight: 10, cost:  14400, name: 'Staff of Eidolons'}
+      - {weight: 12, cost:  14800, name: 'Staff of Acompaniment'}
+      - {weight: 17, cost:  16000, name: 'Staff of Understanding'}
+      - {weight: 16, cost:  17600, name: 'Staff of Charming'}
+    greater:
+      - {weight: 10, cost:  18950, name: 'Staff of Fire'}
+      - {weight: 10, cost:  19200, name: 'Staff of Courage'}
+      - {weight:  8, cost:  20000, name: 'Staff of Belittling'}
+      - {weight:  9, cost:  20800, name: 'Staff of Feast and Famine'}
+      - {weight: 11, cost:  20800, name: 'Staff of Rigor'}
+      - {weight: 11, cost:  22800, name: 'Staff of Swarming Insects'}
+      - {weight:  8, cost:  23000, name: 'Staff of Authority'}
+      - {weight: 13, cost:  23200, name: 'Staff of Radiance'}
+      - {weight: 11, cost:  26150, name: 'Staff of Size Alteration'}
+      - {weight:  8, cost:  27000, name: 'Staff of Journeys'}
+  major:
+    lesser:
+      - {weight:  4, cost:  28600, name: 'Staff of Acid'}
+      - {weight:  4, cost:  28800, name: 'Staff of Shrieking'}
+      - {weight:  3, cost:  29600, name: 'Chaotic Staff'}
+      - {weight:  3, cost:  29600, name: 'Holy Staff'}
+      - {weight:  3, cost:  29600, name: 'Lawful Staff'}
+      - {weight:  4, cost:  29600, name: 'Staff of Healing'}
+      - {weight:  3, cost:  29600, name: 'Unholy Staff'}
+      - {weight:  4, cost:  30000, name: 'Staff of the Master (Necromancy)'}
+      - {weight:  4, cost:  30200, name: 'Staff of Spiders'}
+      - {weight:  4, cost:  31900, name: 'Staff of Electricity'}
+      - {weight:  3, cost:  32000, name: 'Heretic’s Bane'}
+      - {weight:  3, cost:  32000, name: 'Musical Staff'}
+      - {weight:  4, cost:  32800, name: 'Staff of Souls'}
+      - {weight:  4, cost:  34200, name: 'Staff of Toxins'}
+      - {weight:  4, cost:  36800, name: 'Staff of Stealth'}
+      - {weight:  4, cost:  37310, name: 'Staff of the Avenger'}
+      - {weight:  4, cost:  37600, name: 'Staff of Aspects'}
+      - {weight:  4, cost:  39600, name: 'Staff of Speaking'}
+      - {weight:  4, cost:  41400, name: 'Staff of Frost'}
+      - {weight:  4, cost:  41600, name: 'Staff of Bolstering'}
+      - {weight:  7, cost:  47000, name: 'Staff of Dark Flame'}
+      - {weight:  4, cost:  47200, name: 'Staff of Cackling Wrath'}
+      - {weight:  4, cost:  48800, name: 'Staff of Performance'}
+      - {weight:  4, cost:  49800, name: 'Animate Staff'}
+      - {weight:  3, cost:  51000, name: 'Staff of Revelations'}
+    greater:
+      - {weight:  4, cost:  51500, name: 'Staff of Illumination'}
+      - {weight:  3, cost:  51600, name: 'Staff of Obstacles'}
+      - {weight:  3, cost:  54000, name: 'Staff of Heaven and Earth'}
+      - {weight:  4, cost:  54400, name: 'Staff of Travel'}
+      - {weight:  3, cost:  55866, name: 'Staff of Hoarding'}
+      - {weight:  3, cost:  56925, name: 'Staff of Traps'}
+      - {weight:  3, cost:  57200, name: 'Staff of Many Rays'}
+      - {weight:  3, cost:  58000, name: 'Staff of Mithral Might'}
+      - {weight:  3, cost:  62000, name: 'Staff of Defense'}
+      - {weight:  3, cost:  63960, name: 'Staff of the Planes'}
+      - {weight:  3, cost:  69300, name: 'Staff of Hungry Shadows'}
+      - {weight:  3, cost:  81000, name: '{{ keys.chromatic_dragon() }} Dragon Staff'}
+      - {weight:  3, cost:  81766, name: 'Staff of Slumber'}
+      - {weight: 40, cost:  82000, name: 'Staff of {{ keys.school() }}'}
+      # Each staff of a school of magic listed separately in official tables,
+      # shortened here because all are equally likely
+      - {weight:  2, cost:  84066, name: 'Staff of Weather'}
+      - {weight:  3, cost:  85800, name: 'Staff of Earth and Stone'}
+      - {weight:  2, cost:  86666, name: 'Staff of Vision'}
+      - {weight:  3, cost: 100400, name: 'Staff of the Woodlands'}
+      - {weight:  3, cost: 109400, name: 'Staff of Life'}
+      - {weight:  1, cost: 180200, name: 'Staff of One Hundred Hands'}
+      - {weight:  3, cost: 206900, name: 'Staff of Passage'}
+      - {weight:  1, cost: 220000, name: 'Staff of the Hierophant'}
+      - {weight:  1, cost: 235000, name: 'Staff of Power'}
+wand:
+  - {minor:  5, medium:  0, major:  0, name: 'Wand of {{ keys.spell(0) }}'}
+  - {minor: 55, medium:  0, major:  0, name: 'Wand of {{ keys.spell(1) }}'}
+  - {minor: 40, medium: 60, major:  0, name: 'Wand of {{ keys.spell(2) }}'}
+  - {minor:  0, medium: 40, major: 60, name: 'Wand of {{ keys.spell(3) }}'}
+  - {minor:  0, medium:  0, major: 40, name: 'Wand of {{ keys.spell(4) }}'}
+woundrous:
+  - {weight:  6, reroll: 'belt'}
+  - {weight:  6, reroll: 'body'}
+  - {weight:  5, reroll: 'chest'}
+  - {weight:  4, reroll: 'eyes'}
+  - {weight:  6, reroll: 'feet'}
+  - {weight:  6, reroll: 'hands'}
+  - {weight:  7, reroll: 'head'}
+  - {weight:  6, reroll: 'headband'}
+  - {weight:  7, reroll: 'neck'}
+  - {weight:  7, reroll: 'shoulders'}
+  - {weight:  6, reroll: 'wrists'}
+  - {weight: 33, reroll: 'slotless'}
+belt:
+  minor:
+    lesser:
+      - {weight: 16, cost:    800, name: 'Belt of Tumbling'}
+      - {weight: 12, cost:   1000, name: 'Beneficial Bandolier'}
+      - {weight: 22, cost:   1000, name: 'Meridian Belt'}
+      - {weight: 14, cost:   2000, name: 'Bladed Belt'}
+      - {weight: 16, cost:   2000, name: 'Heavyload Belt'}
+      - {weight: 14, cost:   2600, name: 'Aquatic Cummerbund'}
+      - {weight: 16, cost:   3200, name: 'Equestrian Belt'}
+    greater:
+      - {weight: 18, cost:   4000, name: 'Belt of Giant Strength +2'}
+      - {weight: 18, cost:   4000, name: 'Belt of Incredible Dexterity +2'}
+      - {weight: 18, cost:   4000, name: 'Belt of Mighty Constitution +2'}
+      - {weight:  8, cost:   4000, name: 'Belt of Teeth'}
+      - {weight: 12, cost:   5000, name: 'Blinkback Belt'}
+      - {weight: 10, cost:   5200, name: 'Plague Rat Belt'}
+      - {weight: 16, cost:   6000, name: 'Belt of Foraging'}
+  medium:
+    lesser:
+      - {weight:  4, cost:   9000, name: 'Serpent Belt'}
+      - {weight:  4, cost:   9400, name: 'Monkey Belt'}
+      - {weight:  8, cost:  10000, name: 'Belt of Physical Might +2 ({{ keys.physical_might() }})'}
+      - {weight:  6, cost:  10000, name: 'Belt of the Weasel'}
+      - {weight:  5, cost:  10000, name: 'Belt of Thunderous Charging'}
+      - {weight:  5, cost:  11000, name: 'Minotaur Belt'}
+      - {weight:  4, cost:  11200, name: 'Greater Plague Rat Belt'}
+      - {weight:  5, cost:  12000, name: 'Belt of Equilibrium'}
+      - {weight:  5, cost:  12500, name: 'Security Belt'}
+      - {weight:  5, cost:  14000, name: 'Lesser Belt of Might Hurling'}
+      - {weight:  6, cost:  14900, name: 'Belt of Dwarvenkind'}
+      - {weight:  4, cost:  15000, name: 'Cord of Stubborn Resolve'}
+      - {weight: 10, cost:  18000, name: 'Belt of Giant Strength +4'}
+      - {weight:  9, cost:  18000, name: 'Belt of Physical Perfection +2'}
+      - {weight: 10, cost:  18000, name: 'Belt of Incredible Dexterity +4'}
+      - {weight: 10, cost:  18000, name: 'Belt of Mighty Constitution +4'}
+    greater:
+      - {weight: 12, cost:  18000, name: 'Greater Monkey Belt'}
+      - {weight: 14, cost:  18500, name: 'Anaconda’s Coils'}
+      - {weight: 12, cost:  20000, name: 'Greater Serpent Belt'}
+      - {weight: 16, cost:  21000, name: 'Belt of Fallen Heroes'}
+      - {weight: 14, cost:  23000, name: 'Gorgon Belt'}
+      - {weight: 18, cost:  24000, name: 'Elemental Earth Belt'}
+      - {weight: 16, cost:  25000, name: 'Sash of Flowing Water'}
+  major:
+    lesser:
+      - {weight: 12, cost:  32000, name: 'Merform Belt'}
+      - {weight: 18, cost:  36000, name: 'Belt of Giant Strength +6'}
+      - {weight: 18, cost:  36000, name: 'Belt of Incredible Dexterity +6'}
+      - {weight: 18, cost:  36000, name: 'Belt of Mighty Constitution +6'}
+      - {weight: 12, cost:  40000, name: 'Belt of Physical Might +4 ({{ keys.physical_might() }})'}
+      - {weight: 10, cost:  42000, name: 'Greater Belt of Mighty Hurling'}
+    greater:
+      - {weight: 25, cost:  60000, name: 'Belt of Stoneskin'}
+      - {weight: 30, cost:  64000, name: 'Belt of Physical Perfection +4'}
+      - {weight: 20, cost:  90000, name: 'Belt of Physical Might +6 ({{ keys.physical_might() }})'}
+      - {weight: 15, cost: 110000, name: 'Shadowform Belt'}
+      - {weight: 10, cost: 144000, name: 'Belt of Physical Perfection +6'}
+body:
+  minor:
+    lesser:
+      - {weight: 20, cost:   1000, name: 'Robe of infinite Twine'}
+      - {weight: 15, cost:   1000, name: 'Robe of Needles'}
+      - {weight: 25, cost:   2400, name: 'Robe of Bones'}
+      - {weight: 10, cost:   3000, name: 'Bodywrap of Mighty Strikes +1'}
+      - {weight: 10, cost:   3000, name: 'Corset of the Vishkanya'}
+      - {weight: 20, cost:   3750, name: 'Druid’s Vestament'}
+    greater:
+      - {weight: 15, cost:   4600, name: 'Corset of the Clergy'}
+      - {weight: 15, cost:   5000, name: 'Mnemonic Vestaments'}
+      - {weight: 15, cost:   5000, name: 'Robe of Components'}
+      - {weight: 15, cost:   5000, name: 'Sorceror’s Robe'}
+      - {weight: 15, cost:   6000, name: 'Eidolon Anchoring Harness'}
+      - {weight: 25, cost:   7000, name: 'Robe of Useful Items'}
+  medium:
+    lesser:
+      - {weight: 15, cost:   8400, name: 'Robe of Blending'}
+      - {weight: 11, cost:  11000, name: 'Blazing Robe'}
+      - {weight: 11, cost:  11000, name: 'Shocking Robe'}
+      - {weight: 11, cost:  11000, name: 'Voidfrost Robe'}
+      - {weight: 11, cost:  12000, name: 'Bodywrap of Mighty Strikes +2'}
+      - {weight: 16, cost:  13000, name: 'Monk’s Robe'}
+      - {weight: 25, cost:  16000, name: 'Robe of Arcane Heritage'}
+    greater:
+      - {weight: 25, cost:  20000, name: 'Xorn Robe'}
+      - {weight: 27, cost:  22000, name: 'Corset of Dire Witchcraft'}
+      - {weight: 24, cost:  27000, name: 'Bodywrap of Mighy Strikes +3'}
+      - {weight: 24, cost:  27000, name: 'Robe of Scintillating Colors'}
+  major:
+    lesser:
+      - {weight: 40, cost:  36000, name: 'Gunman’s Duster'}
+      - {weight: 40, cost:  48000, name: 'Bodywrap of Mighy Strikes +4'}
+      - {weight: 20, cost:  48000, name: 'Smuggler’s Collapsible Robe'}
+    greater:
+      - {weight: 10, cost:  58000, name: 'Robe of Stars'}
+      - {weight:  5, cost:  64000, name: 'Robe of Gates'}
+      - {weight:  5, cost:  67000, name: 'Otherworldly Kimono'}
+      - {weight: 20, cost:  75000, name: 'Bodywrap of Mighty Strikes +5'}
+      - {weight: 11, cost:  75000, name: 'Resplendent Robe of the Thespian'}
+      - {weight: 16, cost:  75000, name: 'Robe of the Archmagi'}
+      - {weight: 10, cost: 108000, name: 'Bodywrap of Mighty Strikes +6'}
+      - {weight: 10, cost: 120000, name: 'Robe of Eyes'}
+      - {weight:  3, cost: 147000, name: 'Bodywrap of Mighty Strikes +7'}
+chest:
+  minor:
+    lesser:
+      - {weight: 15, cost:    200, name: 'Bandages of Rapid Recovery'}
+      - {weight: 15, cost:   1000, name: 'Quick Runner’s Shirt'}
+      - {weight: 20, cost:   1500, name: 'Endless Bandolier'}
+      - {weight: 25, cost:   1800, name: 'All Tools Vest'}
+      - {weight: 25, cost:   3000, name: 'Best of Surgery'}
+    greater:
+      - {weight: 10, cost:   4000, name: 'Sash of the War Champion'}
+      - {weight: 10, cost:   5000, name: 'Sipping Jacket'}
+      - {weight: 11, cost:   5000, name: 'Tunic of Careful Casting'}
+      - {weight: 11, cost:   5200, name: 'Vest of Escape'}
+      - {weight: 10, cost:   6000, name: 'Caclking Hag’s Blouse'}
+      - {weight: 10, cost:   6000, name: 'Deadshot Vest'}
+      - {weight:  8, cost:   6000, name: 'Prophet’s Pectoral'}
+      - {weight:  9, cost:   6000, name: 'Tunic of Deadly Might'}
+      - {weight: 11, cost:   6000, name: 'Vest of the Vengeful Tracker'}
+      - {weight: 10, cost:   7000, name: 'Resplendent Uniform'}
+  medium:
+    lesser:
+      - {weight: 13, cost:   8000, name: 'Shirt of Immolation'}
+      - {weight: 15, cost:   8000, name: 'Snakeskin Tunic'}
+      - {weight: 12, cost:  10000, name: 'Bane Baldric'}
+      - {weight: 20, cost:  10000, name: 'Unfettered Shirt'}
+      - {weight: 20, cost:  12000, name: 'Lesser Poisoner’s Jacket'}
+      - {weight: 20, cost:  16000, name: 'Vest of the Cockroach'}
+    greater:
+      - {weight: 50, cost:  20000, name: 'Vest of Stable Mutation'}
+      - {weight: 50, cost:  26000, name: 'Spectal Shroud'}
+  major:
+    lesser:
+      - {weight: 60, cost:  50000, name: 'Mantle of Immortality'}
+      - {weight: 40, cost:  58000, name: 'Greater Poisoner’s Jacket'}
+    greater:
+      - {weight: 35, cost:  60000, name: 'Merciful Baldric'}
+      - {weight: 35, cost:  76000, name: 'Mantle of Faith'}
+      - {weight: 30, cost:  90000, name: 'Mantle of Spell Resistance'}
+eyes:
+  minor:
+    lesser:
+      - {weight: 18, cost:   2000, name: 'Deathwatch Eyes'}
+      - {weight: 20, cost:   2500, name: 'Eyes of the Eagle'}
+      - {weight: 20, cost:   2500, name: 'Googles of Minute Seeing'}
+      - {weight: 14, cost:   2600, name: 'Pirate’s Eye Patch'}
+      - {weight: 15, cost:   3000, name: 'Spectacles of Understanding'}
+      - {weight: 13, cost:   3500, name: 'Lenses of Detection'}
+    greater:
+      - {weight: 20, cost:   4000, name: 'Eyes of the Owl'}
+      - {weight: 24, cost:   6000, name: 'Eyes of Keen Sight'}
+      - {weight: 22, cost:   6400, name: 'Treasure Hunter’s Googles'}
+      - {weight:  8, cost:   6800, name: 'Inquisitor’s Monocle'}
+      - {weight: 16, cost:   7500, name: 'Kinsight Googles'}
+  medium:
+    lesser:
+      - {weight: 16, cost:   8500, name: 'Googles of Elvenkind'}
+      - {weight: 15, cost:   8800, name: 'Googles of Brilliant Light'}
+      - {weight: 17, cost:  12000, name: 'Blind Man’s Fold'}
+      - {weight: 19, cost:  12000, name: 'Googles of Night'}
+      - {weight: 15, cost:  12000, name: 'Lenses of Figment Piercing'}
+      - {weight: 18, cost:  15000, name: 'Arachnid Googles'}
+    greater:
+      - {weight: 21, cost:  20000, name: 'Darksight Googles'}
+      - {weight: 19, cost:  20000, name: 'Sniper Googles'}
+      - {weight: 18, cost:  21000, name: 'Rainbow Lenses'}
+      - {weight: 19, cost:  25000, name: 'Annihilation Spectacles'}
+      - {weight: 23, cost:  25000, name: 'Eyes of Doom'}
+  major:
+    lesser:
+      - {weight: 60, cost:  30000, name: 'Eyes of Eyebite'}
+      - {weight: 40, cost:  50000, name: 'Greater Sniper Googles'}
+    greater:
+      - {weight: 18, cost:  56000, name: 'Eyes of Charming'}
+      - {weight: 16, cost:  66000, name: 'Monocle of the Investigator'}
+      - {weight: 14, cost:  70000, name: 'Sea Tyrant’s Patch'}
+      - {weight: 15, cost:  80000, name: 'Swordmaster’s Blindfold'}
+      - {weight: 14, cost:  95000, name: 'Mindmaster’s Eyes'}
+      - {weight: 13, cost: 110000, name: 'Eyes of the Dragon'}
+      - {weight: 10, cost: 184800, name: 'Truesight Goggles'}
+feet:
+  minor:
+    lesser:
+      - {weight: 11, cost:   1000, name: 'Boots of the Cat'}
+      - {weight: 11, cost:   1400, name: 'Daredevil Boots'}
+      - {weight:  8, cost:   1500, name: 'Boots of the Enduring March'}
+      - {weight: 10, cost:   2000, name: 'Feather Step Slippers'}
+      - {weight:  9, cost:   2400, name: 'Boots of Friendly Terrain'}
+      - {weight: 10, cost:   2500, name: 'Boots of the Winterlands'}
+      - {weight: 16, cost:   2500, name: 'Boots of Elvenkind'}
+      - {weight:  9, cost:   3000, name: 'Acrobat Slippers'}
+      - {weight:  7, cost:   3000, name: 'Horseshoes of Speed'}
+      - {weight:  8, cost:   3500, name: 'Boots of the Mire'}
+    greater:
+      - {weight:  7, cost:   4000, name: 'Minor Burglar Boots'}
+      - {weight:  6, cost:   4000, name: 'Horseshoes of Crushing Blows +1'}
+      - {weight:  6, cost:   4000, name: 'Sandals of Quick Reaction'}
+      - {weight:  7, cost:   4400, name: 'Slippers of Cloudwalking'}
+      - {weight: 14, cost:   4800, name: 'Slippers of Spider Climbing'}
+      - {weight:  6, cost:   5000, name: 'Sandals of the Lightest Step'}
+      - {weight: 14, cost:   5500, name: 'Boots of Striding and Springing'}
+      - {weight:  8, cost:   6600, name: 'Horseshoes of a Zephyr'}
+      - {weight:  7, cost:   6480, name: 'Haunted Shoes'}
+      - {weight:  7, cost:   7200, name: 'Jaunt Boots'}
+      - {weight: 18, cost:   7500, name: 'Boots of Levitation'}
+  medium:
+    lesser:
+      - {weight:  8, cost:   8000, name: 'Boots of Excape'}
+      - {weight:  6, cost:   8000, name: 'Earth Root Boots'}
+      - {weight:  7, cost:   8500, name: 'Nightmare Boots'}
+      - {weight:  5, cost:   9000, name: 'Nightmare Horseshoes'}
+      - {weight:  6, cost:  10000, name: 'Caltrop Boots'}
+      - {weight:  7, cost:  10000, name: 'Tremor Boots'}
+      - {weight:  8, cost:  10500, name: 'Boots of the Mastodon'}
+      - {weight:  7, cost:  10500, name: 'Shoes of the Lightning Leaper'}
+      - {weight: 16, cost:  12000, name: 'Boots of Speed'}
+      - {weight:  7, cost:  12000, name: 'Verdant Boots'}
+      - {weight:  7, cost:  16000, name: 'Horseshoes of Crushing Blows +2'}
+      - {weight: 16, cost:  16000, name: 'Winged Boots'}
+    greater:
+      - {weight: 38, cost:  21000, name: 'Shoes of the Firewalker'}
+      - {weight: 34, cost:  24000, name: 'Dryad Sandals'}
+      - {weight: 28, cost:  27000, name: 'Horseshoes of the Mist'}
+  major:
+    lesser:
+      - {weight: 20, cost:  30000, name: 'Getaway Bots'}
+      - {weight: 15, cost:  36000, name: 'Horseshoes of Crushing Blows +3'}
+      - {weight: 20, cost:  39600, name: 'Horseshoes of Glory'}
+      - {weight: 20, cost:  46000, name: 'Major Burglar Boots'}
+      - {weight: 25, cost:  49000, name: 'Boots of Teleportation'}
+    greater:
+      - {weight: 40, cost:  56000, name: 'Slippers of the Triton'}
+      - {weight: 30, cost:  64000, name: 'Horseshoes of Crushing Blows +4'}
+      - {weight: 30, cost: 100000, name: 'Horseshoes of Crushing Blows +5'}
+hands:
+  minor:
+    lesser:
+      - {weight: 13, cost:    180, name: 'Assisting Gloves'}
+      - {weight:  9, cost:   1300, name: 'Claws of the Ice Bear'}
+      - {weight: 12, cost:   2000, name: 'Gloves of Reconnaisance'}
+      - {weight: 12, cost:   2000, name: 'Glowing Glove'}
+      - {weight: 12, cost:   2200, name: 'Apprentice’s Cheating Gloves'}
+      - {weight: 12, cost:   2200, name: 'Challenger’s Gloves'}
+      - {weight: 10, cost:   2500, name: 'Gloves of Larceny'}
+      - {weight: 10, cost:   2500, name: 'Healer’s Gloves'}
+      - {weight: 10, cost:   3000, name: 'Engineer’s Workgloves'}
+    greater:
+      - {weight: 12, cost:   4000, name: 'Gauntlets of the Skilled Manuver'}
+      - {weight:  9, cost:   4000, name: 'Ghostvision Gloves'}
+      - {weight: 12, cost:   4000, name: 'Gauntlets of Arrow Snaring'}
+      - {weight: 10, cost:   4000, name: 'Trapspringer’s Gloves'}
+      - {weight: 12, cost:   5000, name: 'Gloves of Arcane Striking'}
+      - {weight: 10, cost:   5000, name: 'Poisoner’s Gloves'}
+      - {weight: 10, cost:   6000, name: 'Magnetist’s Gloves'}
+      - {weight: 25, cost:   6250, name: 'Gloves of Swimming and Climbing'}
+  medium:
+    lesser:
+      - {weight:  2, cost:   8000, name: 'Deliquescent Gloves'}
+      - {weight:  3, cost:   8000, name: 'Form-Fixing Gauntlets'}
+      - {weight:  3, cost:   8000, name: 'Iron Cobra Gauntlet'}
+      - {weight:  8, cost:   8000, name: 'Shadow Falconer’s Glove'}
+      - {weight:  4, cost:   8000, name: 'Spellstrike Gloves'}
+      - {weight:  8, cost:   9000, name: 'Glyphban Gloves'}
+      - {weight: 12, cost:  10000, name: 'Glove of Storing'}
+      - {weight:  6, cost:  10000, name: 'Gloves of Shaping'}
+      - {weight:  8, cost:  10000, name: 'Plant Gloves'}
+      - {weight: 22, cost:  11500, name: 'Gauntlet of Rust'}
+      - {weight: 24, cost:  15000, name: 'Gloves of Dueling'}
+    greater:
+      - {weight: 30, cost:  18000, name: 'Vampiric Gloves'}
+      - {weight: 35, cost:  20000, name: 'Giant Fist Gauntlets'}
+      - {weight: 35, cost:  27000, name: 'Gloves of the Shortened Path'}
+  major:
+    lesser:
+      - {weight: 40, cost:  30000, name: 'Gloves of the Commanding Conjurer'}
+      - {weight: 60, cost:  34500, name: 'Greater Gauntlet of Rust'}
+    greater:
+      - {weight: 60, cost:  67000, name: 'Talon of Leng'}
+      - {weight: 40, cost: 120000, name: 'Gauntlets of the Weaponmaster'}
+head:
+  minor:
+    lesser:
+      - {weight: 10, cost:   8000, name: 'Mask of Stony Demeanor'}
+      - {weight: 12, cost:    800, name: 'Cap of Human Guise'}
+      - {weight: 14, cost:    900, name: 'Cap of Light'}
+      - {weight: 20, cost:   1800, name: 'hat of Disguise'}
+      - {weight: 15, cost:   2000, name: 'Buffering Cap'}
+      - {weight: 14, cost:   3000, name: 'Miser’s Mask'}
+      - {weight: 15, cost:   3500, name: 'Stalker’s Mask'}
+    greater:
+      - {weight: 12, cost:   4500, name: 'Circlet of Persuasion'}
+      - {weight:  9, cost:   5000, name: 'Grappler’s Mask'}
+      - {weight: 10, cost:   5000, name: 'Helm of Fearsome Mein'}
+      - {weight:  9, cost:   5000, name: 'Jigasa of the FortunateSoldier'}
+      - {weight: 14, cost:   5200, name: 'Helm of Comprehend Languages and Read magic'}
+      - {weight: 12, cost:   6000, name: 'Crown of Swords'}
+      - {weight: 18, cost:   6480, name: 'Minor Crown of Blasting'}
+      - {weight: 11, cost:   7200, name: 'Mask of the Krenshar'}
+      - {weight:  5, cost:   7500, name: 'Plague Mask'}
+  medium:
+    lesser:
+      - {weight: 16, cost:   8500, name: 'Helm of the Mammoth Lord'}
+      - {weight: 14, cost:   9000, name: 'Veil of Fleeting Glances'}
+      - {weight: 16, cost:  10000, name: 'Mask of a Thousand Tomes'}
+      - {weight: 17, cost:  10000, name: 'Medusa mask'}
+      - {weight: 17, cost:  12000, name: 'Cap of the Free Thinker'}
+      - {weight: 20, cost:  16000, name: 'Halo of Inner Calm'}
+    greater:
+      - {weight:  6, cost:  18000, name: 'Cat’s Eye Crown'}
+      - {weight:  6, cost:  18000, name: 'Maw of the Wyrm'}
+      - {weight:  8, cost:  18000, name: 'Mitre of the Hierophant'}
+      - {weight:  9, cost:  20000, name: 'Magician’s Hat'}
+      - {weight:  7, cost:  22000, name: 'Circlet of Mindsight'}
+      - {weight:  9, cost:  22000, name: 'Mask of the Skull'}
+      - {weight:  8, cost:  22600, name: 'Howling Helm'}
+      - {weight: 13, cost:  23760, name: 'Major Crown of Blasting'}
+      - {weight: 10, cost:  24000, name: 'Helm of Underwater Action'}
+      - {weight:  7, cost:  24600, name: 'Crown of Conquest'}
+      - {weight:  6, cost:  26000, name: 'Batrachian Helm'}
+      - {weight: 11, cost:  27000, name: 'Helm of Telepathy'}
+  major:
+    lesser:
+      - {weight: 14, cost:  30000, name: 'Iron Circlet of Guarded Souls'}
+      - {weight: 15, cost:  30000, name: 'Laurel of Command'}
+      - {weight: 16, cost:  30000, name: 'Lesser Mask of Giants'}
+      - {weight: 16, cost:  33600, name: 'Steel-Mind Cap'}
+      - {weight: 17, cost:  35000, name: 'Stormlord’s Helm'}
+      - {weight: 22, cost:  36000, name: 'Lesser Helm of Brilliance'}
+    greater:
+      - {weight: 14, cost:  59200, name: 'Judge’s Wig'}
+      - {weight: 25, cost:  73500, name: 'Helm of Teleportation'}
+      - {weight: 15, cost:  84000, name: 'Halo of Menace'}
+      - {weight: 13, cost:  90000, name: 'Greater mask of Giants'}
+      - {weight: 15, cost: 125000, name: 'Helm of Brilliance'}
+      - {weight:  9, cost: 125000, name: 'Helm of Electric Radiance'}
+      - {weight:  8, cost: 150000, name: 'Crown of Heaven'}
+headband:
+  minor:
+    lesser:
+      - {weight: 60, cost:   1000, name: 'Phylactery of Faithfulness'}
+      - {weight: 40, cost:   3600, name: 'Dead Man’s Headband'}
+    greater:
+      - {weight:  9, cost:   4000, name: 'Headband of Alluring Charisma +2'}
+      - {weight:  9, cost:   4000, name: 'Headband of Inspiring Wisdom +2'}
+      - {weight:  9, cost:   4000, name: 'Headband of Vast Intelligence +2'}
+      - {weight:  6, cost:   4500, name: 'Headband of Aerial Agility +2 ({{ keys.mental_stat() }})'}
+      - {weight:  6, cost:   4500, name: 'Shifter’s Headband +2'}
+      - {weight:  6, cost:   5100, name: 'Headband of Ponderous Recollection'}
+      - {weight:  6, cost:   5400, name: 'Headband of Ki Focus'}
+      - {weight:  7, cost:   5600, name: 'Headband of Unbreakable Resolve'}
+      - {weight:  8, cost:   5700, name: 'Hollywreath Band'}
+      - {weight:  8, cost:   6400, name: 'Headband of Deathless Devotion'}
+      - {weight:  8, cost:   7000, name: 'Phylactery of the Shepherd'}
+      - {weight:  9, cost:   7000, name: 'Headband of Intuition'}
+      - {weight:  9, cost:   7700, name: 'Headband of Fortune’s Favor'}
+  medium:
+    lesser:
+      - {weight:  6, cost:   8000, name: 'Headband of havoc'}
+      - {weight:  6, cost:   9000, name: 'Serpent’s Band'}
+      - {weight:  8, cost:  10000, name: 'Headband of Mental Prowess +2 ({{ keys.mental_prowess() }})'}
+      - {weight:  6, cost:  11000, name: 'Hunter’s Band'}
+      - {weight:  8, cost:  11000, name: 'Phylactery of Negative Channeling'}
+      - {weight:  8, cost:  11000, name: 'Phylactery of Positive Channeling'}
+      - {weight:  6, cost:  12000, name: 'Veiled Eye'}
+      - {weight:  6, cost:  14000, name: 'Band of the Stalwart Warrior'}
+      - {weight:  6, cost:  15000, name: 'Headband of Ninjutsu'}
+      - {weight:  8, cost:  16000, name: 'Headband of Alluring Charisma +4'}
+      - {weight:  8, cost:  16000, name: 'Headband of Inspired Wisdom +4'}
+      - {weight:  8, cost:  16000, name: 'Headband of Mental Superiority +2'}
+      - {weight:  8, cost:  16000, name: 'Headband of Vast Intelligence +4'}
+      - {weight:  7, cost:  17500, name: 'Shifter’s Headband +4'}
+    greater:
+      - {weight: 30, cost:  20000, name: 'Headband of Arcane Energy'}
+      - {weight: 30, cost:  20000, name: 'Headband of Counterspelling'}
+      - {weight: 40, cost:  27500, name: 'Headband of Knucklebones'}
+  major:
+    lesser:
+      - {weight:  9, cost:  30000, name: 'Soulbound Eye'}
+      - {weight: 10, cost:  32000, name: 'Winter Wolf Headband'}
+      - {weight: 13, cost:  36000, name: 'Headband of Alluring Charisma +6'}
+      - {weight: 13, cost:  36000, name: 'headband of Inspired Wisdom +6'}
+      - {weight: 13, cost:  36000, name: 'Headband of Vast Intelligence +6'}
+      - {weight:  8, cost:  39000, name: 'Shifter’s Headband'}
+      - {weight: 15, cost:  40000, name: 'Headband of Mental Prowess +4 ({{ keys.mental_prowess() }})'}
+      - {weight:  9, cost:  40000, name: 'Headband of Seduction'}
+      - {weight: 10, cost:  42000, name: 'Headband of Aerial Agility +4 ({{ keys.mental_stat() }})'}
+    greater:
+      - {weight: 20, cost:  64000, name: 'Headband of Mental Resiliance ({{ keys.mental_stat() }})'}
+      - {weight: 30, cost:  64000, name: 'Headband of Mental Superiority +4'}
+      - {weight: 15, cost:  81000, name: 'Headband of Aerial Agility +6 ({{ keys.mental_stat() }})'}
+      - {weight: 20, cost:  90000, name: 'Headband of Mental Prowess +6 ({{ keys.mental_prowess() }})'}
+      - {weight: 15, cost: 144000, name: 'Headband of mental Superiority +6'}
+neck:
+  minor:
+    lesser:
+      - {weight: 10, cost:    900, name: 'Hand of the Mage'}
+      - {weight:  8, cost:   1500, name: 'Aegis of Recovery'}
+      - {weight:  7, cost:   1500, name: 'Amulet of Bullet Protection +1'}
+      - {weight: 12, cost:   1500, name: 'Brooch of Shielding'}
+      - {weight: 12, cost:   1650, name: 'Necklace of Fireballs (type I)'}
+      - {weight: 14, cost:   2000, name: 'Amulet of Natural Armor +1'}
+      - {weight:  9, cost:   2500, name: 'Golembane Scarab'}
+      - {weight: 10, cost:   2700, name: 'Necklace of Fireballs (type II)'}
+      - {weight:  7, cost:   3000, name: 'Swarmbane Clasp'}
+      - {weight:  6, cost:   3500, name: 'Mind Sentinel Medallion'}
+      - {weight:  5, cost:   3500, name: 'Mummer’s Ruff'}
+    greater:
+      - {weight:  8, cost:   4000, name: 'Amulet of Elemental Strife'}
+      - {weight:  7, cost:   4000, name: 'Righteous Fist Amulet'}
+      - {weight: 11, cost:   4000, name: 'Amulet of Mighty Fists +1'}
+      - {weight: 10, cost:   4350, name: 'Necklace of Fireballs (type III)'}
+      - {weight: 11, cost:   5400, name: 'Necklace of Fireballs (type IV)'}
+      - {weight:  8, cost:   5400, name: 'Stormlure'}
+      - {weight: 11, cost:   5850, name: 'Necklace of Fireballs (type V)'}
+      - {weight:  7, cost:   6000, name: 'Amulet of Bullet Protection +2'}
+      - {weight:  8, cost:   6000, name: 'Feychild Necklace'}
+      - {weight:  8, cost:   7200, name: 'Carcanet of Detention'}
+      - {weight: 11, cost:   7500, name: 'Periapt of Health'}
+  medium:
+    lesser:
+      - {weight:  8, cost:   8000, name: 'Amulet of Natural Armor +2'}
+      - {weight:  4, cost:   8000, name: 'Amulet of Proof Against Petrification'}
+      - {weight:  3, cost:   8000, name: 'Everwake Amulet'}
+      - {weight:  3, cost:   8000, name: 'Gravewatch Pendant'}
+      - {weight:  5, cost:   8000, name: 'Hand of Glory'}
+      - {weight:  3, cost:   8000, name: 'Torc of Lionheart Fury'}
+      - {weight:  7, cost:   8100, name: 'Necklace of Fireballs (type VI)'}
+      - {weight:  7, cost:   8700, name: 'Necklace of Fireballs (type VII)'}
+      - {weight:  3, cost:   9000, name: 'Amulet of Hidden Strength'}
+      - {weight:  4, cost:   9000, name: 'Necklace of Adaptation'}
+      - {weight:  4, cost:  10000, name: 'Amulet of Spell Cunning'}
+      - {weight:  3, cost:  10000, name: 'Collar of the True Companion'}
+      - {weight:  4, cost:  10000, name: 'Frost Fist Amulet'}
+      - {weight:  5, cost:  12000, name: 'Crystal of Healing Hands'}
+      - {weight:  5, cost:  12000, name: 'Guardian Gorget'}
+      - {weight:  3, cost:  12000, name: 'Medallion of Thoughts'}
+      - {weight:  7, cost:  13000, name: 'Periapt of Protection from Curses'}
+      - {weight:  4, cost:  13500, name: 'Forge Fist Amulet'}
+      - {weight:  4, cost:  15000, name: 'Amulet of Bullet Protection +3'}
+      - {weight:  7, cost:  15000, name: 'Periapt of Wound Closure'}
+      - {weight:  3, cost:  16000, name: 'Amulet of Mighty Fists +2'}
+      - {weight:  3, cost:  16000, name: 'Necklace of Ki Serenity'}
+      - {weight:  2, cost:  16800, name: 'Brooch of Amber Sparks'}
+    greater:
+      - {weight: 15, cost:  17500, name: 'Symbol of Sanguine Protection'}
+      - {weight:  9, cost:  18000, name: 'Amulet of Natural Armor +3'}
+      - {weight: 11, cost:  20000, name: 'Ampoule of False Blood'}
+      - {weight: 15, cost:  20000, name: 'Amulet of Magecraft'}
+      - {weight: 12, cost:  20000, name: 'Dragonfoe Amulet'}
+      - {weight:  5, cost:  22000, name: 'Amulet of Spell Mastery'}
+      - {weight:  5, cost:  24000, name: 'Amulet of Bullet Protection +4'}
+      - {weight: 13, cost:  27000, name: 'Hand of Stone'}
+      - {weight: 15, cost:  27000, name: 'Periapt of Proof Against Poison'}
+  major:
+    lesser:
+      - {weight: 18, cost:  32000, name: 'Amulet of Natural Armor +4'}
+      - {weight: 17, cost:  35000, name: 'Amulet of Proof Against Detection and Location'}
+      - {weight: 14, cost:  36000, name: 'Amulet of Mighty Fists +3'}
+      - {weight: 18, cost:  37500, name: 'Amulet of Bullet Protection +5'}
+      - {weight: 15, cost:  38000, name: 'Scarab of Protection'}
+      - {weight: 18, cost:  42000, name: 'Necklace of Netted Stars'}
+    greater:
+      - {weight: 35, cost:  50000, name: 'Amulet of Natural Armor +5'}
+      - {weight: 25, cost:  64000, name: 'Amulet of Mighty Fists +4'}
+      - {weight: 25, cost: 100000, name: 'Amulet of Mighty Fists +5'}
+      - {weight: 15, cost: 120000, name: 'Amulet of the Planes'}
+shoulders:
+  minor:
+    lesser:
+      - {weight:  6, cost:    200, name: 'Catching Cape'}
+      - {weight: 10, cost:    900, name: 'Cloak of Human Guise'}
+      - {weight: 20, cost:   1000, name: 'Cloak of Resistance +1'}
+      - {weight:  6, cost:   1000, name: 'Muleback Cords'}
+      - {weight:  2, cost:   1000, name: 'Shawl of Lifekeeping'}
+      - {weight:  6, cost:   1000, name: 'Shield Cloak'}
+      - {weight:  6, cost:   1500, name: 'Quickchange Cloak'}
+      - {weight:  6, cost:   1800, name: 'Cowardly Crouching Cloak'}
+      - {weight:  8, cost:   2500, name: 'Cloak of Elvenkind'}
+      - {weight:  6, cost:   2500, name: 'Cloak of the Hedge Wizard'}
+      - {weight:  5, cost:   2600, name: 'Cloak of Fiery Vanishing'}
+      - {weight:  9, cost:   2800, name: 'Cloak of Fangs'}
+      - {weight:  3, cost:   3000, name: 'Pauldrons of the Serpent'}
+      - {weight:  3, cost:   3500, name: 'Stonemist Cloak'}
+    greater:
+      - {weight: 26, cost:   4000, name: 'Cloak of Resistance +2'}
+      - {weight: 12, cost:   6000, name: 'Cloak of the Scuttling Rat'}
+      - {weight:  1, cost:   6000, name: 'Seafoam Shawl'}
+      - {weight: 13, cost:   6000, name: 'Treeform Cloak'}
+      - {weight: 24, cost:   7000, name: 'Eagle Cape'}
+      - {weight: 20, cost:   7200, name: 'Cloak of the Manta Ray'}
+      - {weight:  6, cost:   7500, name: 'Hunter’s Cloak'}
+  medium:
+    lesser:
+      - {weight: 20, cost:   9000, name: 'Cloak of Resistance +3'}
+      - {weight:  2, cost:  10000, name: 'Cloak of the Duskwalker'}
+      - {weight:  3, cost:  10000, name: 'Cocoon Cloak'}
+      - {weight:  2, cost:  10000, name: 'Pauldrons of the Bull'}
+      - {weight:  5, cost:  10000, name: 'Minor Stone Cloak'}
+      - {weight:  8, cost:  10800, name: 'Cape of the Mountebank'}
+      - {weight:  5, cost:  10800, name: 'Pauldrons of the Watchful Lion'}
+      - {weight:  6, cost:  12000, name: 'Lion Cloak'}
+      - {weight:  2, cost:  13400, name: 'Mantle of Spores'}
+      - {weight:  5, cost:  14000, name: 'Cape of Effulgent Escape'}
+      - {weight: 10, cost:  14000, name: 'Cloak of Arachnidia'}
+      - {weight:  3, cost:  14000, name: 'Gunfighter’s Poncho'}
+      - {weight:  2, cost:  14000, name: 'Tentacle Cloak'}
+      - {weight:  2, cost:  14350, name: 'Demonspike Pauldrons'}
+      - {weight:  2, cost:  15600, name: 'Comfort’s Cloak'}
+      - {weight: 10, cost:  16000, name: 'Cloak of Resistance +4'}
+      - {weight:  3, cost:  16000, name: 'Shawl of the Crone'}
+      - {weight:  9, cost:  17000, name: 'Prestidgitator’s Cloak'}
+    greater:
+      - {weight: 12, cost:  18000, name: 'Stole of Justice'}
+      - {weight: 12, cost:  19200, name: 'Jellyfish Cape'}
+      - {weight:  8, cost:  20000, name: 'Cloak of the Diplomat'}
+      - {weight: 12, cost:  20000, name: 'Slashing Cloak'}
+      - {weight: 12, cost:  20000, name: 'Major Stone Cloak'}
+      - {weight: 12, cost:  24000, name: 'Minor Cloak fo Displacement'}
+      - {weight: 10, cost:  25000, name: 'Cloak of Resistance +5'}
+      - {weight: 12, cost:  26000, name: 'Cloak of the Bat'}
+  major:
+    lesser:
+      - {weight: 40, cost:  32500, name: 'Highwayman’s Cape'}
+      - {weight: 20, cost:  40000, name: 'Juggernaut’s Pauldrons'}
+      - {weight: 40, cost:  45000, name: 'Charlatan’s Cape'}
+    greater:
+      - {weight: 15, cost:  50000, name: 'Major Cloak of Displacement'}
+      - {weight: 20, cost:  54000, name: 'Wings of Flying'}
+      - {weight: 20, cost:  55000, name: 'Cloak of Etherealness'}
+      - {weight: 25, cost:  72000, name: 'Wings of the Gargoyle'}
+      - {weight: 20, cost:  78600, name: 'Wyvern Cloak'}
+wrists:
+  minor:
+    lesser:
+      - {weight: 10, cost:    200, name: 'Sleeves of Many Garments'}
+      - {weight: 10, cost:    500, name: 'Armbands of the Brawler'}
+      - {weight: 28, cost:   1000, name: 'Bracers of Armor +1'}
+      - {weight: 15, cost:   1000, name: 'Burglar’s Bracers'}
+      - {weight: 28, cost:   2000, name: 'Bracers of Steadiness'}
+      - {weight:  5, cost:   2000, name: 'Manacles of Cooperation'}
+      - {weight:  4, cost:   3280, name: 'Shackles of Compliance'}
+    greater:
+      - {weight: 27, cost:   4000, name: 'Bracers of Armor +2'}
+      - {weight:  1, cost:   4000, name: 'Bracers of Falcon’s Aim'}
+      - {weight: 10, cost:   4000, name: 'Inquisitor’s Bastoion Vambraces'}
+      - {weight: 27, cost:   5000, name: 'Lesser Bracers of Archery'}
+      - {weight:  3, cost:   5000, name: 'Spellguard Bracers'}
+      - {weight:  3, cost:   6000, name: 'Bonebreaker Gauntlets'}
+      - {weight: 10, cost:   6000, name: 'Vambraces of Defense'}
+      - {weight: 17, cost:   6000, name: 'Verdant Vine'}
+      - {weight:  1, cost:   7200, name: 'Longarm Bracers'}
+      - {weight:  1, cost:   7900, name: 'Bracers of the Glib Entertainer'}
+  medium:
+    lesser:
+      - {weight:  4, cost:   8000, name: 'Charm Bracelet'}
+      - {weight:  4, cost:   8000, name: 'Duelist’s Vambraces'}
+      - {weight:  5, cost:   8000, name: 'Merciful Vambraces'}
+      - {weight:  5, cost:   8000, name: 'Vambraces of the Tactician'}
+      - {weight: 25, cost:   9000, name: 'Bracers of Armor +3'}
+      - {weight: 10, cost:   9900, name: 'Seducer’s Bane Bracelet'}
+      - {weight:  5, cost:  11500, name: 'Bracers of the Avenging Knight'}
+      - {weight:  5, cost:  13900, name: 'Arrowmaster’s Bracers'}
+      - {weight: 10, cost:  14400, name: 'Vambraces of the Genie (Efreeti)'}
+      - {weight:  5, cost:  14500, name: 'Bracelet of Bargining'}
+      - {weight:  4, cost:  15000, name: 'Bracelet of Mercy'}
+      - {weight:  4, cost:  15600, name: 'Bracelet of the Merciful Knight'}
+      - {weight:  4, cost:  15750, name: 'Bracelet of Second Chances'}
+      - {weight:  9, cost:  16000, name: 'Bracers of Armor +4'}
+      - {weight:  1, cost:  16200, name: 'Shackles of Durance Vile'}
+    greater:
+      - {weight: 10, cost:  18900, name: 'Vambraces of the Genie (Djinni)'}
+      - {weight: 10, cost:  18900, name: 'Vambraces of the Genie (Marid)'}
+      - {weight: 10, cost:  18900, name: 'Vambraces of the Genie (Shaitan)'}
+      - {weight: 20, cost:  19000, name: 'Bracelet of Friends'}
+      - {weight: 20, cost:  25000, name: 'Greater Bracers of Archery'}
+      - {weight: 20, cost:  25000, name: 'Bracers of Armor +5'}
+      - {weight: 10, cost:  25000, name: 'Bracers of Sworn Vengeance'}
+  major:
+    lesser:
+      - {weight: 30, cost:  28000, name: 'Dimensional Shackles'}
+      - {weight: 15, cost:  30000, name: 'Gauntlets of Skill at Arms'}
+      - {weight: 65, cost:  36000, name: 'Bracers of Armor +6'}
+    greater:
+      - {weight: 60, cost:  49000, name: 'Bracers of Armor +6'}
+      - {weight: 40, cost:  64000, name: 'Bracers of Armor +7'}
+slotless:
+  minor:
+    least:
+      - {weight:  1, cost:     50, name: 'Feather Token (Anchor)'}
+      - {weight:  1, cost:     50, name: 'Universal Solvent'}
+      - {weight:  2, cost:     75, name: 'Ioun Torch'}
+      - {weight:  1, cost:    100, name: 'Stubborn Nail'}
+      - {weight:  1, cost:    100, name: 'War Paint of the Horrible Visage'}
+      - {weight:  1, cost:    150, name: 'Elixir of Love'}
+      - {weight:  1, cost:    150, name: 'Ungent of Timelessness'}
+      - {weight:  1, cost:    200, name: 'Feather Token (Fan)'}
+      - {weight:  1, cost:    200, name: 'Formula Alembic'}
+      - {weight:  1, cost:    200, name: 'Hybridization Funnel'}
+      - {weight:  1, cost:    200, name: 'Soul Soap'}
+      - {weight:  1, cost:    250, name: 'Dust of Tracelessness'}
+      - {weight:  3, cost:    250, name: 'Elixir of Hiding'}
+      - {weight:  3, cost:    250, name: 'Elixir of Swimming'}
+      - {weight:  3, cost:    250, name: 'Elixir of Tumbling'}
+      - {weight:  3, cost:    250, name: 'Elixir of Vision'}
+      - {weight:  2, cost:    250, name: 'Nihgtdrops'}
+      - {weight:  1, cost:    250, name: 'Oil of Silence'}
+      - {weight:  3, cost:    250, name: 'Silversheen'}
+      - {weight:  1, cost:    250, name: 'Traveler’s Anytool'}
+      - {weight:  2, cost:    300, name: 'Bottle of Messages'}
+      - {weight:  2, cost:    300, name: 'Feather Token (Bird)'}
+      - {weight:  1, cost:    300, name: 'Origami Swarm'}
+      - {weight:  1, cost:    400, name: 'Alluring Golden Apple'}
+      - {weight:  1, cost:    400, name: 'Feather Token (Tree)'}
+      - {weight:  1, cost:    400, name: 'Key of Lock Jamming'}
+      - {weight:  2, cost:    450, name: 'Feather Token (Swam Boat)'}
+      - {weight:  1, cost:    500, name: 'Animated Portrait'}
+      - {weight:  1, cost:    500, name: 'Bottled Misfortune'}
+      - {weight:  2, cost:    500, name: 'Elixir of Truth'}
+      - {weight:  2, cost:    500, name: 'Feather Token (Whip)'}
+      - {weight:  2, cost:    500, name: 'Scabbard of Honing'}
+      - {weight:  2, cost:    550, name: 'Seer’s Tea'}
+      - {weight:  4, cost:    600, name: 'Abjurant Salt'}
+      - {weight:  4, cost:    600, name: 'Arrow Magnet'}
+      - {weight:  2, cost:    600, name: 'Dust of Darkness'}
+      - {weight:  6, cost:    720, name: 'Campfiree Bead'}
+      - {weight:  3, cost:    750, name: 'Archon’s Torch'}
+      - {weight:  3, cost:    750, name: 'Lesser Book of Extended Summoning ({{ keys.alignment() }})'}
+      - {weight:  4, cost:    750, name: 'Iron Rope'}
+      - {weight:  4, cost:    750, name: 'Snapleaf'}
+      - {weight:  3, cost:    800, name: 'Bottled Yeti Fur'}
+      - {weight:  3, cost:    800, name: 'Defoliant Polish'}
+      - {weight:  3, cost:    800, name: 'Dust of Emulation'}
+      - {weight:  5, cost:    800, name: 'Steadfast Gut Stone'}
+      - {weight:  3, cost:    800, name: 'Dust of Dryness'}
+    lesser:
+      - {weight:  3, reroll: 'slotless:minor:least'}
+      - {weight:  1, cost:   1000, name: 'Anatomy Doll'}
+      - {weight:  1, cost:   1000, name: 'Bead of Newt Prevention'}
+      - {weight:  1, cost:   1000, name: 'Beast-Bond Brand'}
+      - {weight:  1, cost:   1000, name: 'Bookplate of Recall'}
+      - {weight:  2, cost:   1000, name: 'Boro Bead (1st)'}
+      - {weight:  1, cost:   1000, name: 'Concealing Pocket'}
+      - {weight:  1, cost:   1000, name: 'Dowsing Syrup'}
+      - {weight:  1, cost:   1000, name: 'Incense of Transcendence'}
+      - {weight:  2, cost:   1000, name: 'Page of Spell Knowledge ({{ keys.spell(1, level="high") }})'}
+      - {weight:  3, cost:   1000, name: 'Pearl of Power (1st)'}
+      - {weight:  1, cost:   1000, name: 'Preserving Flask (1st)'}
+      - {weight:  2, cost:   1000, name: 'Pyxes of Redirected Focus'}
+      - {weight:  2, cost:   1000, name: 'Salve of Slipperyness'}
+      - {weight:  1, cost:   1000, name: 'Wasp Nest of Swarming'}
+      - {weight:  3, cost:   1100, name: 'Elixir of Fire Breath'}
+      - {weight:  1, cost:   1100, name: 'Grave Salt'}
+      - {weight:  2, cost:   1150, name: 'Pipes of the Sewers'}
+      - {weight:  2, cost:   1200, name: 'Dust of Illusion'}
+      - {weight:  2, cost:   1200, name: 'Goblin Skull Bomb'}
+      - {weight:  3, cost:   1400, name: 'Elixir of Dragon Breath ({{ keys.dragon() }})'}
+      - {weight:  1, cost:   1500, name: 'Bookmark of Deception'}
+      - {weight:  1, cost:   1500, name: 'Bottle of Wind'}
+      - {weight:  1, cost:   1600, name: 'Dust of Acid Consumption'}
+      - {weight:  2, cost:   1800, name: 'Dust of Appearance'}
+      - {weight:  2, cost:   1800, name: 'Efficient Quiver'}
+      - {weight:  1, cost:   1800, name: 'Pipes of Sounding'}
+      - {weight:  1, cost:   1800, name: 'Scabbard of Vigor'}
+      - {weight:  1, cost:   2000, name: 'Agile Alpenstock'}
+      - {weight:  1, cost:   2000, name: 'Clamor Box'}
+      - {weight:  1, cost:   2000, name: 'Dry Load Powder Horn'}
+      - {weight:  1, cost:   2000, name: 'Goblin Fire Drum'}
+      - {weight:  2, cost:   2000, name: 'Handy Haversack'}
+      - {weight:  2, cost:   2000, name: 'Horn of Fog'}
+      - {weight:  1, cost:   2000, name: 'Iron Spike of Safe Passage'}
+      - {weight:  1, cost:   2200, name: 'Knight’s Pennon of Honor'}
+      - {weight:  4, cost:   2200, name: 'Volatile Vaporizer (1st)'}
+      - {weight:  3, cost:   2250, name: 'Elemental Gem ({{ keys.elemental_plane() }})'}
+      - {weight:  2, cost:   2250, name: 'Flying Ointment'}
+      - {weight:  1, cost:   2400, name: 'Soverign Glue'}
+      - {weight:  1, cost:   2500, name: 'Apple of Eternal Sleep'}
+      - {weight:  2, cost:   2500, name: 'Bag of Holding (Type I)'}
+      - {weight:  1, cost:   2500, name: 'Candle of Truth'}
+      - {weight:  1, cost:   2500, name: 'Hexing Doll'}
+      - {weight:  2, cost:   2700, name: 'Stone of Alarm'}
+      - {weight:  1, cost:   2750, name: 'Standard Book of Extended Summoning ({{ keys.alignment() }})'}
+      - {weight:  4, cost:   3000, name: 'Bead of Force'}
+      - {weight:  1, cost:   3000, name: 'Cauldron of Brewing'}
+      - {weight:  2, cost:   3000, name: 'Chime of Opening'}
+      - {weight:  1, cost:   3000, name: 'Philter of Love'}
+      - {weight:  5, cost:   3000, name: 'Rope of Climbing'}
+      - {weight:  2, cost:   3000, name: 'Volatile Vaporizer (2nd)'}
+      - {weight:  1, cost:   3300, name: 'Shroud of Disintegration'}
+      - {weight:  3, cost:   3400, name: 'Gray Bag of Tricks'}
+      - {weight:  3, cost:   3500, name: 'Dust of Disappearance'}
+      - {weight:  1, cost:   3600, name: 'Dust of Weighty Burdens'}
+      - {weight:  1, cost:   3600, name: 'Noble’s Vigilant Pillbox'}
+      - {weight:  2, cost:   3800, name: 'Figurine of Wondrous Power (Silver Raven)'}
+      - {weight:  1, cost:   3800, name: 'Volatile Vaporizer (3rd)'}
+    greater:
+      - {weight:  1, cost:   4000, name: 'Boro Bead (2nd)'}
+      - {weight:  1, cost:   4000, name: 'Cautionary Creance'}
+      - {weight:  1, cost:   4000, name: 'Escape Ladder'}
+      - {weight:  1, cost:   4000, name: 'Far-Reaching Sight'}
+      - {weight:  2, cost:   4000, name: 'Ioun Stone (Clear Spindle)'}
+      - {weight:  1, cost:   4000, name: 'Marvellous Pigments'}
+      - {weight:  8, cost:   4000, name: 'Page of Spell Knowledge ({{ keys.spell(2, level="high") }})'}
+      - {weight: 10, cost:   4000, name: 'Pearl of Power (2nd)'}
+      - {weight:  1, cost:   4000, name: 'Preserving Flask (2nd)'}
+      - {weight:  1, cost:   4000, name: 'Restorative Ointment'}
+      - {weight:  3, cost:   4000, name: 'Stone Salve'}
+      - {weight:  1, cost:   4400, name: 'Wind Caller Compass'}
+      - {weight:  1, cost:   4500, name: 'Greater Goblin Fire Drum'}
+      - {weight:  1, cost:   4500, name: 'Knight’s Pennon of Battle'}
+      - {weight:  1, cost:   4500, name: 'Knight’s Pennon of Parley'}
+      - {weight:  1, cost:   4500, name: 'Void Dust'}
+      - {weight:  1, cost:   4900, name: 'Incense of Meditation'}
+      - {weight:  1, cost:   5000, name: 'Admixture Vial'}
+      - {weight: 14, cost:   5000, name: 'Bag of Holding (type II)'}
+      - {weight:  1, cost:   5000, name: 'Bone Razor'}
+      - {weight:  1, cost:   5000, name: 'Horn of the Huntmaster'}
+      - {weight:  1, cost:   5000, name: 'Insistent Doorknocker'}
+      - {weight:  2, cost:   5000, name: 'Ioun Stone (Dusty Rose Prism)'}
+      - {weight:  1, cost:   5000, name: 'Mallet of Building'}
+      - {weight:  1, cost:   5000, name: 'Polymorphic Pouch'}
+      - {weight:  1, cost:   5000, name: 'Scabbard of Stanching'}
+      - {weight:  1, cost:   5000, name: 'School of Eyes'}
+      - {weight:  1, cost:   5000, name: 'Sheath of Bladestealth'}
+      - {weight:  1, cost:   5000, name: 'Stone of Alliance'}
+      - {weight:  1, cost:   5000, name: 'Summoning Shackle'}
+      - {weight:  1, cost:   5400, name: 'Eversmoking Bottle'}
+      - {weight:  1, cost:   5400, name: 'Sustaining Spoon'}
+      - {weight:  1, cost:   5500, name: 'Wind Fan'}
+      - {weight:  1, cost:   5800, name: 'Grim Lantern'}
+      - {weight:  1, cost:   6000, name: 'Coin of the Untrodden Road'}
+      - {weight:  1, cost:   6000, name: 'Horn of Battle Clarity'}
+      - {weight:  1, cost:   6000, name: 'Life Link Badge'}
+      - {weight:  1, cost:   6000, name: 'Martyr’s Tear'}
+      - {weight:  1, cost:   6000, name: 'Pipes of Haunting'}
+      - {weight:  1, cost:   6000, name: 'Rope of Knots'}
+      - {weight:  1, cost:   6000, name: 'Singing Bell of Striking'}
+      - {weight:  1, cost:   6000, name: 'Stone Familiar'}
+      - {weight:  1, cost:   6126, name: 'Greater Book of Extended Summoning ({{ keys.alignment() }})'}
+      - {weight:  1, cost:   6400, name: 'Dragonbone Diviniation Sticks'}
+      - {weight:  2, cost:   6500, name: 'Horn of Goodness/Evil'}
+      - {weight:  1, cost:   6600, name: 'Naga-Scale Bindi ({{ keys.naga() }})'}
+      - {weight:  1, cost:   7000, name: 'Bottle of Shadows'}
+      - {weight:  1, cost:   7000, name: 'Cape of Bravado'}
+      - {weight:  2, cost:   7000, name: 'Instant Bridge'}
+      - {weight:  1, cost:   7000, name: 'Mirror of Guarding Reflections'}
+      - {weight:  1, cost:   7200, name: 'Folding Boat'}
+      - {weight:  2, cost:   7250, name: 'Bottle of Air'}
+      - {weight:  7, cost:   7400, name: 'Bag of Holding (type III)'}
+      - {weight:  1, cost:   7500, name: 'Balm of Impish Grace'}
+      - {weight:  1, cost:   7500, name: 'Candle of Clean Air'}
+      - {weight:  1, cost:   7500, name: 'Harp of Charming'}
+      - {weight:  3, cost:   7500, name: 'Manual of War'}
+  medium:
+    lesser:
+      - {weight:  1, cost:   8000, name: 'Chalice of Poison Weeping'}
+      - {weight:  1, cost:   8000, name: 'Exorcist’s Aspergillum'}
+      - {weight:  1, cost:   8000, name: 'Golem Manual (Flesh)'}
+      - {weight:  1, cost:   8000, name: 'Harp of Shattering'}
+      - {weight:  1, cost:   8000, name: 'Insignia of Valor'}
+      - {weight:  1, cost:   8000, name: 'Ioun Stone (Deep Red Sphere)'}
+      - {weight:  1, cost:   8000, name: 'Ioun Stone (Iridescent Blue Sphere)'}
+      - {weight:  1, cost:   8000, name: 'Ioun Stone (Pale Blue Rhomboid)'}
+      - {weight:  1, cost:   8000, name: 'Ioun Stone (Pink and Green Sphere)'}
+      - {weight:  1, cost:   8000, name: 'Ioun Stone (Pink Rhomboid)'}
+      - {weight:  1, cost:   8000, name: 'Ioun Stone (Scarlet and Blue Sphere)'}
+      - {weight:  1, cost:   8000, name: 'Needles of Fleshgraving'}
+      - {weight:  1, cost:   8000, name: 'Restless Lockpicks'}
+      - {weight:  1, cost:   8000, name: 'Werewhistle'}
+      - {weight:  2, cost:   8100, name: 'Deck of Illusions'}
+      - {weight:  1, cost:   8400, name: 'Candle of Invocation'}
+      - {weight:  2, cost:   8500, name: 'Rust Bag of Tricks'}
+      - {weight:  1, cost:   9000, name: 'Boro Bead (3rd)'}
+      - {weight:  1, cost:   9000, name: 'Decanter of Endless Water'}
+      - {weight:  1, cost:   9000, name: 'Loathsome Mirror'}
+      - {weight:  3, cost:   9000, name: 'Page of Spell Knowledge ({{ keys.spell(3, level="high") }})'}
+      - {weight:  3, cost:   9000, name: 'Pearl of Power (3rd)'}
+      - {weight:  1, cost:   9000, name: 'Preserving Flask (3rd)'}
+      - {weight:  1, cost:   9100, name: 'Figurine of Wondrous Power (Serpentine Owl)'}
+      - {weight:  1, cost:   9600, name: 'Lesser Strand of Prayer Beads'}
+      - {weight:  4, cost:  10000, name: 'Bag of Holding (type IV)'}
+      - {weight:  1, cost:  10000, name: 'Boundary Chalk'}
+      - {weight:  1, cost:  10000, name: 'Chime of Resounding Silence'}
+      - {weight:  1, cost:  10000, name: 'Construct Channel Brick'}
+      - {weight:  1, cost:  10000, name: 'Doomharp'}
+      - {weight:  1, cost:  10000, name: 'Drum of Advance and Retreat'}
+      - {weight:  1, cost:  10000, name: 'Embalming Thread'}
+      - {weight:  1, cost:  10000, name: 'Eye of the Void'}
+      - {weight:  1, cost:  10000, name: 'Figurine of Wondrous Power (Bronze Griffin)'}
+      - {weight:  1, cost:  10000, name: 'Figurine of Wondrous Power (Ebony Fly'}
+        # Slate Spider figurine is in OGL table but does not appear to be available as OGL content itself.
+      - {weight:  1, cost:  10000, name: 'Figurine of Wondrous Power (Slate Spider)'}
+      - {weight:  1, cost:  10000, name: 'Hourglass of Last Chances'}
+      - {weight:  2, cost:  10000, name: 'Ioun Stone (Dark Blue Rhomboid)'}
+      - {weight:  1, cost:  10000, name: 'Ki Mat'}
+      - {weight:  1, cost:  10000, name: 'Lord’s Banner of Swiftness'}
+      - {weight:  1, cost:  10000, name: 'Malleable Symbol'}
+      - {weight:  1, cost:  10000, name: 'Migrus Locker'}
+      - {weight:  1, cost:  10000, name: 'Ornament of Healing Light'}
+      - {weight:  1, cost:  10000, name: 'Prayer Wheel of Ethical Strength'}
+      - {weight:  1, cost:  10000, name: 'Stone Horse (Courser)'}
+      - {weight:  1, cost:  10000, name: 'Summon Slave Crystal'}
+      - {weight:  1, cost:  10000, name: 'Treasurer’s Seal'}
+      - {weight:  1, cost:  12000, name: 'Black Soul Shard'}
+      - {weight:  1, cost:  12000, name: 'Golem Manual (Clay)'}
+      - {weight:  1, cost:  12000, name: 'Horsemaster’s Saddle'}
+      - {weight:  1, cost:  12000, name: 'Pipes of Dissolution'}
+      - {weight:  1, cost:  12000, name: 'Pipes of Pain'}
+      - {weight:  1, cost:  12000, name: 'Seeker’s Sight'}
+      - {weight:  1, cost:  12500, name: 'Blessed Book'}
+      - {weight:  1, cost:  12500, name: 'Waters of Transfiguration'}
+      - {weight:  1, cost:  13000, name: 'Gem of Brightness'}
+      - {weight:  1, cost:  13000, name: 'Harp of the Contagion'}
+      - {weight:  1, cost:  13000, name: 'Lyre of Building'}
+      - {weight:  1, cost:  14000, name: 'Void Pennant'}
+      - {weight:  1, cost:  14800, name: 'Stone Horse (Destrier)'}
+      - {weight:  1, cost:  15000, name: 'Book of the Loremaster'}
+      - {weight:  1, cost:  15000, name: 'Cauldron of Plenty'}
+      - {weight:  1, cost:  15000, name: 'Horn of Judgement'}
+      - {weight:  1, cost:  15000, name: 'Horn of the Tritons'}
+      - {weight:  1, cost:  15300, name: 'Pearl of the Sirines'}
+      - {weight:  1, cost:  15500, name: 'Figurine of Wondrous Power (Onyx Dog)'}
+      - {weight:  2, cost:  16000, name: 'Tan Bag of Tricks'}
+      - {weight:  1, cost:  16000, name: 'Boro Bead (4th)'}
+      - {weight:  1, cost:  16000, name: 'Page of Spell Knowledge ({{ keys.spell(4, level="high") }})'}
+      - {weight:  4, cost:  16000, name: 'Pearl of Power (4th)'}
+      - {weight:  1, cost:  16000, name: 'Preserving Flask (4th)'}
+      - {weight:  3, cost:  16000, name: 'Scabbard of Keen Edges'}
+      - {weight:  2, cost:  16500, name: 'Figurine of Wondrous Power (Golden Lions)'}
+      - {weight:  2, cost:  16800, name: 'Chime of Interruption'}
+      - {weight:  4, cost:  17000, name: 'Broom of Flying'}
+      - {weight:  1, cost:  17000, name: 'Figurine of Wondrous Power (Marble Elephant)'}
+    greater:
+      - {weight:  4, cost:  18000, name: 'Ioun Stone (Iridescent Spindle)'}
+      - {weight:  1, cost:  18000, name: 'Orb of Foul Abbadon'}
+      - {weight:  4, cost:  20000, name: 'Carpet of Flying (5ft by 5 ft)'}
+      - {weight:  1, cost:  20000, name: 'Horn of Antagonism'}
+      - {weight:  4, cost:  20000, name: 'Horn of Blasting'}
+      - {weight:  4, cost:  20000, name: 'Ioun Stone (Pale Lavender Elipsoid)'}
+      - {weight:  4, cost:  20000, name: 'Ioun Stone (Pearly White Spindle'}
+      - {weight:  3, cost:  20000, name: 'Master’s Perfect Golden Bell'}
+      - {weight:  3, cost:  20000, name: 'Necromancer’s Athame'}
+      - {weight:  4, cost:  20000, name: 'Portable Hole'}
+      - {weight:  4, cost:  20000, name: 'Stone of Luck'}
+      - {weight:  2, cost:  21000, name: 'Figurine of Wondrous Power (Ivory Goats)'}
+      - {weight:  3, cost:  21000, name: 'Rope of Entanglement'}
+      - {weight:  2, cost:  22000, name: 'Golem Manual (Stone)'}
+      - {weight:  1, cost:  22000, name: 'Orb of Golden Heaven'}
+      - {weight:  2, cost:  23348, name: 'Mattock of the Titans'}
+      - {weight:  3, cost:  24000, name: 'Drinking Horn of Bottomless Valor'}
+      - {weight:  3, cost:  25000, name: 'Boro Bead (5th)'}
+      - {weight:  2, cost:  25000, name: 'Chaos Emerald'}
+      - {weight:  4, cost:  25000, name: 'Page of Spell Knowledge ({{ keys.spell(5, level="high") }})'}
+      - {weight:  6, cost:  25000, name: 'Pearl of Power (5th)'}
+      - {weight:  3, cost:  25000, name: 'Preserving Flask (5th)'}
+      - {weight:  2, cost:  25305, name: 'Maul of the titans'}
+      - {weight:  4, cost:  26000, name: 'Iron Bands of Binding'}
+      - {weight:  3, cost:  27000, name: 'Cube of Frost Resistance'}
+      - {weight: 24, cost:  27500, name: '{{ keys.stat_book() }} +1'}
+  major:
+    lesser:
+      - {weight:  4, cost:  28500, name: 'Figurine of Wondrous Power (Obsidian Steed)'}
+      - {weight:  3, cost:  30000, name: 'Cauldron of the Dead'}
+      - {weight:  4, cost:  30000, name: 'Drums of Panic'}
+      - {weight:  4, cost:  30000, name: 'Ioun Stone (Orange Prism)'}
+      - {weight:  4, cost:  30000, name: 'Ioun Stone (Pale Green Prism)'}
+      - {weight:  4, cost:  30000, name: 'Lantern of Revealing'}
+      - {weight:  4, cost:  30000, name: 'Racing Broom of Flying'}
+      - {weight:  4, cost:  33000, name: 'Cauldron of Ressurection'}
+      - {weight:  5, cost:  35000, name: 'Carpet of Flying (5ft by 10ft)'}
+      - {weight:  2, cost:  35000, name: 'Golem Manual (Iron)'}
+      - {weight:  2, cost:  36000, name: 'Boro Bead (6th)'}
+      - {weight:  4, cost:  36000, name: 'Ioun Stone (Vibrant Purple Prism)'}
+      - {weight:  4, cost:  36000, name: 'Orb of utter Chaos'}
+      - {weight:  2, cost:  36000, name: 'Page of Spell Knowledge ({{ keys.spell(6, level="high") }})'}
+      - {weight:  8, cost:  36000, name: 'Pearl of Power (6th)'}
+      - {weight:  2, cost:  36000, name: 'Preserving Flask (6th)'}
+      - {weight:  4, cost:  40000, name: 'Cauldron of Flying'}
+      - {weight:  2, cost:  40000, name: 'Enmity Fetish'}
+      - {weight:  3, cost:  40000, name: 'Ioun Stone (Lavendar and Green Elipsoid)'}
+      - {weight:  4, cost:  40000, name: 'Ring Gates'}
+      - {weight:  4, cost:  42000, name: 'Cauldron of Seeing'}
+      - {weight:  4, cost:  42000, name: 'Crystal Ball'}
+      - {weight:  2, cost:  44000, name: 'Golem Manual (Stone Guardian)'}
+      - {weight:  4, cost:  45000, name: 'Drums of Haste'}
+      - {weight:  4, cost:  45800, name: 'Standard Strand of Prayer Beads'}
+      - {weight:  3, cost:  48000, name: 'Orb of Storms'}
+      - {weight:  2, cost:  49000, name: 'Page of Spell Knowledge ({{ keys.spell(7, level="high") }})'}
+      - {weight:  4, cost:  49000, name: 'Pearl of Power (7th)'}
+    greater:
+      - {weight:  3, cost:  50000, name: 'Crystal Ball with _See Invisibility_'}
+      - {weight:  2, cost:  50000, name: 'Horn of Valhalla'}
+      - {weight:  3, cost:  51000, name: 'Crystal Ball with _Detect Thoughts_'}
+      - {weight:  2, cost:  52000, name: 'Instant Fortress'}
+      - {weight: 24, cost:  55000, name: '{{ keys.stat_book() }} +2'}
+      - {weight:  1, cost:  56000, name: 'Lord’s Banner of Terror'}
+      - {weight:  1, cost:  60000, name: 'Carpet of Flying (10ft by 10ft)'}
+      - {weight:  2, cost:  60000, name: 'Darkskull'}
+      - {weight:  1, cost:  60000, name: 'Orb of Pure Law'}
+      - {weight:  1, cost:  62000, name: 'Cube of Force'}
+      - {weight:  2, cost:  64000, name: 'Pageof Spell Knowledge ({{ keys.spell(8, level="high") }})'}
+      - {weight:  3, cost:  64000, name: 'Pearl of Power (8th)'}
+      - {weight:  1, cost:  70000, name: 'Crystal Ball with _Telepathy_'}
+      - {weight:  1, cost:  70000, name: 'Greater Horn of Blasting'}
+      - {weight:  3, cost:  70000, name: 'Pearl of Power (two spells)'}
+      - {weight:  1, cost:  75000, name: 'Gem of Seeing'}
+      - {weight:  1, cost:  75000, name: 'Lord’s Banner of Victory'}
+      - {weight:  1, cost:  80000, name: 'Crystal Ball with _True Seeing_'}
+      - {weight:  2, cost:  81000, name: 'Page of Spell Knowledge ({{ keys.spell(9, level="high") }})'}
+      - {weight:  3, cost:  81000, name: 'Pearl of Power (9th)'}
+      - {weight:  1, cost:  82000, name: 'Well of Many Worlds'}
+      - {weight: 12, cost:  82500, name: '{{ keys.stat_book() }} +3'}
+      - {weight:  1, cost:  90000, name: 'Apparatus of the Crab'}
+      - {weight:  1, cost:  90000, name: 'Bowl of Conjuring Water Elementals'}
+      - {weight:  1, cost:  90000, name: 'Braier of Conjuring Fire Elementals'}
+      - {weight:  1, cost:  90000, name: 'Censer of Conjuring Air Elementals'}
+      - {weight:  1, cost:  90000, name: 'Stone of Conjuring Earth Elementals'}
+      - {weight:  1, cost:  92000, name: 'Mirror of Opposition'}
+      - {weight:  1, cost:  95800, name: 'Greater Strand of Prayer Beads'}
+      - {weight:  1, cost: 100000, name: 'Lord’s Banner of Crusades'}
+      - {weight:  6, cost: 110000, name: '{{ keys.stat_book() }} +4'}
+      - {weight:  6, cost: 137500, name: '{{ keys.stat_book() }} +5'}
+      - {weight:  1, cost: 145000, name: 'Efreeti Bottle'}
+      - {weight:  1, cost: 164000, name: 'Cubic Gate'}
+      - {weight:  1, cost: 170000, name: 'Iron Flask'}
+      - {weight:  1, cost: 175000, name: 'Mirror of Mental Prowess'}
+      - {weight:  1, cost: 200000, name: 'Mirror of Life Trapping'}
+spell:
+  # TODO: Enter spells
+  - {name: '<spell:0>', level: {'Wizard': [0, 1]}}
+  - {name: '<spell:1>', level: {'Wizard': [1, 1]}}
+  - {name: '<spell:2>', level: {'Wizard': [2, 3]}}
+  - {name: '<spell:3>', level: {'Wizard': [3, 5]}}
+  - {name: '<spell:4>', level: {'Wizard': [4, 7]}}
+  - {name: '<spell:5>', level: {'Wizard': [5, 9]}}
+  - {name: '<spell:6>', level: {'Wizard': [6, 11]}}
+  - {name: '<spell:7>', level: {'Wizard': [7, 13]}}
+  - {name: '<spell:8>', level: {'Wizard': [8, 15]}}
+  - {name: '<spell:9>', level: {'Wizard': [9, 17]}}
