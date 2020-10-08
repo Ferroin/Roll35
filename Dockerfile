@@ -4,8 +4,8 @@ WORKDIR /usr/src/app
 
 COPY requirements.txt ./
 COPY data.yaml ./
-COPY pfitemmaster.py ./
+COPY roll35.py ./
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD [ "python", "./pfitemmaster.py" ]
+CMD [ "python", "./roll35.py" ]
