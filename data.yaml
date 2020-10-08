@@ -908,18 +908,18 @@ wand:
   - {minor:  0, medium: 40, major: 60, name: 'Wand of {{ keys.spell(3) }}'}
   - {minor:  0, medium:  0, major: 40, name: 'Wand of {{ keys.spell(4) }}'}
 woundrous:
-  - {weight:  6, reroll: 'belt'}
-  - {weight:  6, reroll: 'body'}
-  - {weight:  5, reroll: 'chest'}
-  - {weight:  4, reroll: 'eyes'}
-  - {weight:  6, reroll: 'feet'}
-  - {weight:  6, reroll: 'hands'}
-  - {weight:  7, reroll: 'head'}
-  - {weight:  6, reroll: 'headband'}
-  - {weight:  7, reroll: 'neck'}
-  - {weight:  7, reroll: 'shoulders'}
-  - {weight:  6, reroll: 'wrists'}
-  - {weight: 33, reroll: 'slotless'}
+  - {weight:  6, category: 'belt'}
+  - {weight:  6, category: 'body'}
+  - {weight:  5, category: 'chest'}
+  - {weight:  4, category: 'eyes'}
+  - {weight:  6, category: 'feet'}
+  - {weight:  6, category: 'hands'}
+  - {weight:  7, category: 'head'}
+  - {weight:  6, category: 'headband'}
+  - {weight:  7, category: 'neck'}
+  - {weight:  7, category: 'shoulders'}
+  - {weight:  6, category: 'wrists'}
+  - {weight: 33, category: 'slotless'}
 belt:
   minor:
     lesser:

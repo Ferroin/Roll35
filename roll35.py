@@ -11,6 +11,7 @@ from typing import TypeVar, Any, Callable, \
                    Sequence, List, \
                    Mapping, Dict
 
+import jinja2
 import yaml
 
 from discord.ext import commands
@@ -42,6 +43,11 @@ ITEMS = {
     'spell': dict(),
 }
 GENERIC_ERROR_LOG = 'Error while processing command {0} from {1} of {2}:'
+JENV = jinja2.Environment(
+    loader=jinja2.BaseLoader(),
+    autoescape=False,
+    enable_async=True,
+)
 
 try:
     with open('./data.yaml', 'r') as source:
@@ -139,6 +145,91 @@ def create_grouped_selector(data: Mapping[Any, Item]) -> Callable[[Any], Item]:
     return sel
 
 
+def path_to_table(path: Sequence[str], _ref=ITEMS) -> Sequence[Item]:
+    '''Get a specific table based on a sequence of keys.'''
+    if len(path) > 1:
+        return path_to_table(path[1:], _ref=_ref[path[0]])
+    return _ref[path[0]]
+
+
+async def render(item: str) -> str:
+    '''Render the given string as a Jinja2 template.
+
+      This compiles the string as a template, then renders it twice with
+      the KEYS object passed in as the value `keys`, returning the result
+      of the rendering.'''
+    template1 = JENV.from_string(item)
+    template2 = JENV.from_string(await template1.render_async(keys=KEYS))
+    return await template2.render_async(keys=KEYS)
+
+
+async def assemble_magic_armor(item: Item) -> str:
+    '''Construct a piece of magic armor.'''
+    # TODO: Actually roll for enchantments
+    base = random.choice(ITEMS['armor']['base'])
+    total_mod = item.bonus + sum(item.enchants)
+    cost = base.cost + (total_mod ** 2)
+    ret = f'+{item.bonus} {base.name}'
+
+    if item.enchants:
+        ret += ' with'
+        index = 0
+
+        for i in item.enchants:
+            ret += f' one +{i} enchantment'
+
+            if index > 0:
+                ret += ' and'
+
+            index += 1
+
+    ret += f' (cost: {cost}gp)'
+
+    return ret
+
+
+async def assemble_magic_weapon(item: Item) -> str:
+    '''Construct a magic weapon.'''
+    # TODO: Actually roll for enchantments and base item.
+    total_mod = item.bonus + sum(item.enchants)
+    cost = 2 * (total_mod ** 2)
+    ret = f'+{item.bonus} Weapon'
+
+    if item.enchants:
+        ret += ' with'
+        index = 0
+
+        for i in item.enchants:
+            ret += f' one +{i} enchantment'
+
+            if index > 0:
+                ret += ' and'
+
+            index += 1
+
+    ret += f' (cost: +{cost}gp)'
+
+    return ret
+
+
+async def roll_magic_item(path: Sequence[str]) -> str:
+    '''Roll for a magic item.
+
+       This function operates recursively as it walks the tree of items.'''
+    item = random.choice(path_to_table(path))
+
+    if hasattr(item, 'reroll'):
+        return await roll_magic_item(item['reroll'].split(':'))
+
+    if hasattr(item, 'type') and item.type == 'armor':
+        return await assemble_magic_armor(item)
+
+    if hasattr(item, 'type') and item.type == 'weapon':
+        return await assemble_magic_weapon(item)
+
+    return f'{await render(item["name"])} (cost: {item["cost"]}gp)'
+
+
 for name, desc in DATA.keys:
     if desc['type'] == 'flat':
         logging.debug(f'Composing keys.{name}\nCreated flat list with {len(desc["data"])} items.')
@@ -198,15 +289,23 @@ for t in ('armor', 'weapon'):
     logging.debug(f'Composing base {t}\nCreated flat list with {len(DATA[t]["base"])} items')
     ITEMS[t]['base'] = DATA[t]['base']
 
+    for key, value in DATA[t]['specific']:
+        for u in ('minor', 'medium', 'major'):
+            ITEMS[k]['specific'][key][u] = dict()
+
+            for v in ('lesser', 'greater'):
+                logging.debug(f'Composing {t}.specific.{key}.{u}.{v}')
+                ITEMS[t]['specific'][key][u][v] = compose_simple_itemlist(value[u][v])
+
 for t in ('armor', 'shield'):
-    for i in (1, 2, 3, 4, 5):
-        logging.debug(f'Composing +{i} {t} enchantments')
-        ITEMS['armor']['enchantments'][t][i] = compose_simple_itemlist(DATA['armor']['enchantments'][t][i])
+    for u in (1, 2, 3, 4, 5):
+        logging.debug(f'Composing +{u} {t} enchantments')
+        ITEMS['armor']['enchantments'][t][u] = compose_simple_itemlist(DATA['armor']['enchantments'][t][u])
 
 for t in ('melee', 'ranged', 'ammo'):
-    for i in (1, 2, 3, 4, 5):
-        logging.debug(f'Composing +{i} {t} enchantments')
-        ITEMS['weapon']['enchantments'][t][i] = compose_simple_itemlist(DATA['weapon']['enchantments'][t][i])
+    for u in (1, 2, 3, 4, 5):
+        logging.debug(f'Composing +{u} {t} enchantments')
+        ITEMS['weapon']['enchantments'][t][u] = compose_simple_itemlist(DATA['weapon']['enchantments'][t][u])
 
 logging.debug(f'Composing spells\nCreated flat list with {len(DATA["spells"])} items')
 ITEMS['spells'] = DATA['spells']
@@ -299,7 +398,7 @@ async def roll35_error(ctx, error: Exception) -> None:
 
 @roll35.command(name='magic-item', help='Roll for a magic item')
 @commands.guild_only()
-async def magic_item(ctx, specifier: str) -> None:
+async def magic_item(ctx, *, specifier: str) -> None:
     '''Run when the `/roll35 magic-item` command is issued.
 
        This rolls a random magic item, possibly limited by the parameters
@@ -309,7 +408,66 @@ async def magic_item(ctx, specifier: str) -> None:
        to roll (least/lesser/greater minor/medium/major) and what type
        of item to roll, but works without any of these specified and
        picks one item completely at randomain that case.'''
-    return NotImplemented
+    params = specifier.split(':')
+
+    if not params:
+        raise commands.MissingArgumentError
+
+    rank1 = None
+    rank2 = None
+    category = None
+    subcategory = None
+
+    for arg in params:
+        if arg in ('least', 'lesser', 'greater') and rank1 is None:
+            rank1 = arg
+        elif arg in ('minor', 'medium', 'major') and rank2 is None:
+            rank2 = arg
+        elif arg in ('armor', 'weapon', 'potion', 'ring', 'rod',
+                     'scroll', 'staff', 'wand', 'wondrous') and category is None:
+            category = arg
+        elif subcategory is None:
+            subcategory = arg
+
+    if category == 'wondrous':
+        if subcategory not in {x.category for x in ITEMS['wondrous']} and subcategory is not None:
+            await ctx.send('Invalid sub-category of wondrous item.')
+            return
+    elif subcategory is not None:
+        await ctx.send('Subcategories can only be specified for wondrous items.')
+        return
+
+    if rank1 == 'least' and category != 'wondrous' and \
+       subcategory != 'slotless' and rank2 != 'minor':
+        await ctx.send('Only minor slotless wondrous items have a least type.')
+        return
+
+    if rank2 == 'minor' and category == 'rod':
+        await ctx.send('Rods do not have a minor type.')
+        return
+
+    if rank2 == 'minor' and category == 'staff':
+        await ctx.send('Staves do not have a minor type.')
+        return
+
+    if rank1 is None:
+        rank1 = random.choice(('lesser', 'greater'))
+
+    if rank2 is None:
+        rank2 = random.choice(('minor', 'medium', 'major'))
+
+    if category is None:
+        category = random.choice(ITEMS['types'][rank2])
+
+    if category == 'wondrous':
+        if subcategory is None:
+            subcategory = random.choice(ITEMS['wondrous']).category
+
+        category = subcategory
+
+    item = await roll_magic_item([category, rank2, rank1])
+
+    await ctx.send(item)
 
 
 @magic_item.error
