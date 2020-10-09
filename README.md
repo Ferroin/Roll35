@@ -23,6 +23,9 @@ related games.
   actually _really_ complicated because of the limitations on how different
   materials can be used for specific items. I would like to support it,
   but it's likely to take a long time.
+* No support for rolling associated skills on headband items that boost
+  INT. This is intentionally left to the GM to determine, as in many cases
+  which skills are picked are not truly random.
 
 ## Data Sets
 
