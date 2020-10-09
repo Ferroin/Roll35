@@ -128,24 +128,34 @@ def compose_compound_itemlist(items: Sequence[Dict[str, Any]]) -> Dict[str, List
     return ret
 
 
-def create_flat_selector(data: Sequence[Item]) -> Callable[[], Item]:
+def create_flat_selector(data: Sequence[Item]) -> Callable[[], str]:
     '''Return a function that (safely) selects a random item form the `data` list.'''
     items = copy(data)
 
-    def sel():
-        '''Select an item.'''
-        return random.choice(items)
+    if isinstance(items[0], str):
+        def sel() -> str:
+            '''Select an item.'''
+            return random.choice(items)
+    else:
+        def sel() -> str:
+            '''Select an item.'''
+            return random.choice(items)['name']
 
     return sel
 
 
-def create_grouped_selector(data: Mapping[Any, Item]) -> Callable[[Any], Item]:
+def create_grouped_selector(data: Mapping[Any, Item]) -> Callable[[Any], str]:
     '''Return a function that safely selects a random item from the indicated list in `data`.'''
     items = copy(data)
 
-    def sel(group):
-        '''Select an item.'''
-        return random.choice(items[group])
+    if isinstance(items[list(items)[0]][0], str):
+        def sel(group: Any) -> str:
+            '''Select an item.'''
+            return random.choice(items[group])
+    else:
+        def sel(group: Any) -> str:
+            '''Select an item.'''
+            return random.choice(items[group])['name']
 
     return sel
 
@@ -409,9 +419,6 @@ async def magic_item(ctx, *, specifier: str) -> None:
     if rank1 is None:
         rank1 = random.choice(('lesser', 'greater'))
 
-    if rank2 is None:
-        rank2 = random.choice(('minor', 'medium', 'major'))
-
     if category is None:
         category = random.choice(ITEMS['types'][rank2])['name']
 
@@ -420,6 +427,9 @@ async def magic_item(ctx, *, specifier: str) -> None:
             subcategory = random.choice(ITEMS['wondrous'])['category']
 
         category = subcategory
+
+    if rank2 is None:
+        rank2 = random.choice(list(ITEMS[category]))
 
     logging.info(f'Rolling {rank2} {rank1} {category} item.')
 
