@@ -35,19 +35,7 @@ if not TOKEN:
 ####################
 
 KEYS = SimpleNamespace()
-ITEMS = {
-    'types': dict(),
-    'armor': dict(),
-    'weapon': dict(),
-    'potion': dict(),
-    'ring': dict(),
-    'rod': dict(),
-    'scroll': dict(),
-    'staff': dict(),
-    'wand': dict(),
-    'wondrous': dict(),
-    'spell': dict(),
-}
+ITEMS = dict()
 GENERIC_ERROR_LOG = 'Error while processing command {0} from {1} of {2}:'
 JENV = jinja2.Environment(
     loader=jinja2.BaseLoader(),
@@ -259,14 +247,15 @@ async def roll_magic_item(path: Sequence[str]) -> str:
        This function operates recursively as it walks the tree of items.'''
     item = random.choice(path_to_table(path))
 
-    if hasattr(item, 'reroll'):
+    if 'reroll' in item:
         return await roll_magic_item(item['reroll'].split(':'))
 
-    if hasattr(item, 'type') and item['type'] == 'armor':
-        return await assemble_magic_armor(item)
+    if 'type' in item:
+        if item['type'] == 'armor':
+            return await assemble_magic_armor(item)
 
-    if hasattr(item, 'type') and item['type'] == 'weapon':
-        return await assemble_magic_weapon(item)
+        if item['type'] == 'weapon':
+            return await assemble_magic_weapon(item)
 
     ret = await render(item['name'])
 
@@ -375,7 +364,7 @@ async def magic_item(ctx, *, specifier: str) -> None:
        to roll (least/lesser/greater minor/medium/major) and what type
        of item to roll, but works without any of these specified and
        picks one item completely at randomain that case.'''
-    params = specifier.split(':')
+    params = specifier.split()
 
     if not params:
         raise commands.MissingArgumentError
@@ -397,7 +386,7 @@ async def magic_item(ctx, *, specifier: str) -> None:
             subcategory = arg
 
     if category == 'wondrous':
-        if subcategory not in {x.category for x in ITEMS['wondrous']} and subcategory is not None:
+        if subcategory not in {x['category'] for x in ITEMS['wondrous']} and subcategory is not None:
             await ctx.send('Invalid sub-category of wondrous item.')
             return
     elif subcategory is not None:
@@ -432,7 +421,7 @@ async def magic_item(ctx, *, specifier: str) -> None:
 
         category = subcategory
 
-    logging.debug(f'Recieved command to roll {rank2} {rank1} {category} item.')
+    logging.info(f'Rolling {rank2} {rank1} {category} item.')
 
     item = await roll_magic_item([category, rank2, rank1])
 
@@ -528,6 +517,8 @@ for name, desc in DATA['keys'].items():
 
     setattr(KEYS, name, selector)
 
+ITEMS['types'] = dict()
+
 for t in ('minor', 'medium', 'major'):
     logging.debug(f'Composing types.{t}')
     ITEMS['types'][t] = compose_simple_itemlist(DATA['types'][t])
@@ -535,6 +526,9 @@ for t in ('minor', 'medium', 'major'):
 for t in ('potion', 'scroll', 'wand'):
     logging.debug(f'Composing {t}')
     ITEMS[t] = compose_compound_itemlist(DATA[t])
+
+logging.debug('Composing wondrous')
+ITEMS['wondrous'] = compose_simple_itemlist(DATA['wondrous'])
 
 for t in ('armor', 'weapon', 'ring',
           'rod', 'staff', 'belt', 'body',
@@ -544,13 +538,13 @@ for t in ('armor', 'weapon', 'ring',
     ITEMS[t] = dict()
 
     for u in ('minor', 'medium', 'major'):
-        if not hasattr(DATA[t], u):
+        if u not in DATA[t]:
             continue
 
         ITEMS[t][u] = dict()
 
         for v in ('least', 'lesser', 'greater'):
-            if not hasattr(DATA[t][u], v):
+            if v not in DATA[t][u]:
                 continue
 
             logging.debug(f'Composing {t}.{u}.{v}')

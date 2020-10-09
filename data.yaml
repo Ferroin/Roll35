@@ -98,7 +98,7 @@ types:
     - {weight:  2, name: ring}
     - {weight: 35, name: scroll}
     - {weight: 10, name: wand}
-    - {weight:  9, name: woundrous}
+    - {weight:  9, name: wondrous}
   medium:
     - {weight: 10, name: armor}
     - {weight: 10, name: weapon}
@@ -108,7 +108,7 @@ types:
     - {weight: 15, name: scroll}
     - {weight:  3, name: staff}
     - {weight: 15, name: wand}
-    - {weight: 17, name: woundrous}
+    - {weight: 17, name: wondrous}
   major:
     - {weight: 10, name: armor}
     - {weight: 10, name: weapon}
