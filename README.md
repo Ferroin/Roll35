@@ -40,6 +40,13 @@ tables. In particular:
   cost and proportion relative to each other into a single item which rolls
   for the variant automatically. This is done to make the datast maller
   and slightly improve performance and resource usage of the bot itself.
+* In a handful of places, the official tables are, quite simply, broken
+  (they either have missing ranges of dice values, or have specific values
+  that correlate to multiple items). If ranges are missing, we behave as
+  if they simply did not exist (that is, all the other items keep their
+  proper relative proportions), and if there are duplicate values we
+  adjust accordingly. All such cases are documented in comments in the
+  [data.yaml](./data.yaml) file.
 * There are a number of weapons and armors that are only rarely used
   or are logically unlikely to be encountered 'in the wild'. These are
   included in the dataset, but are not enabled by default (so they will

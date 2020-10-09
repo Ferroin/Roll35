@@ -207,7 +207,7 @@ async def assemble_magic_armor(item: Item) -> str:
     # TODO: Actually roll for enchantments
     base = random.choice(ITEMS['armor']['base'])
     total_mod = item['bonus'] + sum(item['enchants'])
-    cost = base['cost'] + (total_mod ** 2)
+    cost = base['cost'] + ((total_mod ** 2) * 1000)
     ret = f'+{item["bonus"]} {base["name"]}'
 
     if item['enchants']:
@@ -231,7 +231,7 @@ async def assemble_magic_weapon(item: Item) -> str:
     '''Construct a magic weapon.'''
     # TODO: Actually roll for enchantments and base item.
     total_mod = item['bonus'] + sum(item['enchants'])
-    cost = 2 * (total_mod ** 2)
+    cost = 2000 * (total_mod ** 2)
     ret = f'+{item["bonus"]} Weapon'
 
     if item['enchants']:
@@ -429,7 +429,7 @@ async def magic_item(ctx, *, specifier: str) -> None:
         category = subcategory
 
     if rank2 is None:
-        rank2 = random.choice(list(ITEMS[category]))
+        rank2 = random.choice([x for x in list(ITEMS[category]) if x not in ('base', 'specific')])
 
     logging.info(f'Rolling {rank2} {rank1} {category} item.')
 
