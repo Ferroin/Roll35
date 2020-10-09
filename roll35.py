@@ -208,7 +208,7 @@ async def assemble_magic_armor(item: Item) -> str:
     base = random.choice(ITEMS['armor']['base'])
     total_mod = item['bonus'] + sum(item['enchants'])
     cost = base['cost'] + (total_mod ** 2)
-    ret = f'+{item.bonus} {base.name}'
+    ret = f'+{item["bonus"]} {base["name"]}'
 
     if item['enchants']:
         ret += ' with'
