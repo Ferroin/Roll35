@@ -1,10 +1,11 @@
-Code is licensed under the MIT License
+Code is licensed under the MIT License with an additional clause requiring
+updated attributions for modified versions.
 
 Data is licensed under the Open Gaming License version 1.0a
 
 ----
 
-MIT License
+Modified MIT License
 
 Copyright (c) 2020 Austin S. Hemmelgarn
 
@@ -17,6 +18,15 @@ furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
+
+Distributions of all or part of the Software intended to be used by
+the recipients as they would use the unmodified Software, containing
+modifications that substantially alter, remove, or disable functionality
+of the Software, outside of the documented configuration mechanisms
+provided by the Software, shall be modified such that the Original
+Author's bug reporting email addresses and urls are either replaced
+with the contact information of the parties responsible for the changes,
+or removed entirely.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,

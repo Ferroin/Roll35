@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MITNFA
 '''A discord bot for rolling magic items in Pathfinder 1e.'''
 
 import logging
