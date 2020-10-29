@@ -49,82 +49,20 @@ JENV = jinja2.Environment(
 # Function #
 ############
 
-def compose_simple_itemlist(items: Sequence[Dict[str, Any]]) -> List[Item]:
-    '''Compose a simple list of items for random.choice().
-
-       This takes a list of {name, weight} pairs or a list of {name,
-       cost, weight} triples and converts it to a list of either names
-       or {name, cost} pairs where each name appears a number of times
-       equal to it's weight.
-
-       These lists allow a simple weighted selection of a random item
-       by directly calling random.choice() on the list.'''
-    ret = list()
-
-    weights = [x['weight'] for x in items]
-    total_slots = sum(weights)
-    divisor = gcd(*weights)
-
-    for item in items:
-        i = copy(item)
-
-        del i['weight']
-
-        j = [i] * int(item['weight'] / divisor)
-        ret += j
-
-    logging.debug(f'Created simple list with {len(items)} items and {len(ret)} slots' +
-                  f'(adjusted from {total_slots}).')
-
-    return ret
-
-
-def compose_compound_itemlist(items: Sequence[Dict[str, Any]]) -> Dict[str, List[Item]]:
-    '''Compose a commpound list of items.
-
-      This works similarly to compose_simple_itemlist(), but instead
-      of a single weight value, each item is expected to have three
-      weight values named minor, medium, and major. The return is a
-      dictionary with keys with those names where the value of a key
-      is a simple item list weighted by the values found in that key in
-      the original items.
-
-      This always assumes there's a 'cost' key, as we only use this for
-      lists of items, not all random selection lists.
-
-      This structure is used similarly to the simple lists produced by
-      compose_simple_itemlist().'''
+def compose_items(items: Sequence[Mapping[str, Any]]) -> Dict[str, List[Item]]:
+    '''Convert a compound weighted list into a set of weighted lists.'''
     ret = {
         'minor': list(),
         'medium': list(),
-        'major': list(),
+        'major': list()
     }
 
-    total = dict()
-    divisor = dict()
-
-    for i in ('minor', 'medium', 'major'):
-        weights = [x[i] for x in items]
-        total[i] = sum(weights)
-        divisor[i] = gcd(*weights)
-
     for item in items:
-        i = copy(item)
-
-        del i['minor']
-        del i['medium']
-        del i['major']
-
-        for j in ('minor', 'medium', 'major'):
-            ret[j] += [i] * int(item[j] / divisor[j])
-
-    logging.debug(f'Created compound list with {len(items)} items, ' +
-                  f'{len(ret["minor"])} minor slots ' +
-                  f'(adjusted from {total["minor"]}), ' +
-                  f'{len(ret["medium"])} medium slots ' +
-                  f'(adjusted from {total["medium"]}), ' +
-                  f'and {len(ret["major"])} major slots ' +
-                  f'(adjusted from {total["major"]}).')
+        for group in ('minor', 'medium', 'major'):
+            ret[group].append({
+                'weight': item[group],
+                **item
+            })
 
     return ret
 
@@ -145,7 +83,19 @@ def create_flat_selector(data: Sequence[Item]) -> Callable[[], str]:
     return sel
 
 
-def create_grouped_selector(data: Mapping[Any, Item]) -> Callable[[Any], str]:
+def create_flat_proportional_selector(data: Sequence[Item]) -> Callable[[], str]:
+    '''Return a function that (safely) selects a weighted random item from the `data` list.'''
+    items = copy(data)
+    weights = [x['weight'] for x in items]
+
+    def sel() -> str:
+        '''Select an item.'''
+        return random.choices(items, weights=weights)[0]['name']
+
+    return sel
+
+
+def create_grouped_selector(data: Mapping[Any, Sequence[Item]]) -> Callable[[Any], str]:
     '''Return a function that safely selects a random item from the indicated list in `data`.'''
     items = copy(data)
 
@@ -157,6 +107,21 @@ def create_grouped_selector(data: Mapping[Any, Item]) -> Callable[[Any], str]:
         def sel(group: Any) -> str:
             '''Select an item.'''
             return random.choice(items[group])['name']
+
+    return sel
+
+
+def create_grouped_proportional_selector(data: Mapping[Any, Sequence[Item]]) -> Callable[[Any], str]:
+    '''Return a function that (safely) selects a weighted random item from the indicated list in `data`.'''
+    items = copy(data)
+    weights = dict()
+
+    for group, entries in items.items():
+        weights[group] = [x['weight'] for x in entries]
+
+    def sel(group: Any) -> str:
+        '''Select an item.'''
+        return random.choices(items[group], weights=weights[group])[0]['name']
 
     return sel
 
@@ -257,7 +222,8 @@ async def roll_magic_item(path: Sequence[str]) -> str:
     '''Roll for a magic item.
 
        This function operates recursively as it walks the tree of items.'''
-    item = random.choice(path_to_table(path))
+    table = path_to_table(path)
+    item = random.choices(table, weights=[x['weight'] for x in table])[0]
 
     if 'reroll' in item:
         return await roll_magic_item(item['reroll'].split(':'))
@@ -514,16 +480,17 @@ async def magic_item(ctx, *, specifier: str) -> None:
         rank1 = random.choice(('lesser', 'greater'))
 
     if category is None:
-        category = random.choice(ITEMS['types'][rank2])['name']
+        category = random.choices(ITEMS['types'][rank2], weights=[x['weight'] for x in ITEMS['types'][rank2]])[0]['name']
 
     if category == 'wondrous':
         if subcategory is None:
-            subcategory = random.choice(ITEMS['wondrous'])['category']
+            subcategory = random.choices(ITEMS['wondrous'],
+                                         weights=[x['weight'] for x in ITEMS['wondrous']])[0]['category']
 
         category = subcategory
 
     if rank2 is None:
-        rank2 = random.choice([x for x in list(ITEMS[category]) if x not in ('base', 'specific')])
+        rank2 = random.choice([x for x in list(ITEMS[category]) if x in ('minor', 'medium', 'major')])
 
     logging.info(f'Rolling {rank2} {rank1} {category} item.')
 
@@ -593,113 +560,35 @@ except (IOError, OSError, yaml.YAMLError):
     sys.exit(1)
 
 for name, desc in DATA['keys'].items():
-    if desc['type'] == 'flat':
-        logging.debug(f'Composing keys.{name}')
-        logging.debug(f'Created flat list with {len(desc["data"])} items.')
+    logging.debug(f'Generating selector for {name}.')
 
+    if desc['type'] == 'flat':
         selector = create_flat_selector(desc['data'])
     elif desc['type'] == 'flat proportional':
-        logging.debug(f'Composing keys.{name}')
-        a = compose_simple_itemlist(desc['data'])
-        selector = create_flat_selector(a)
+        selector = create_flat_proportional_selector(desc['data'])
     elif desc['type'] == 'grouped':
-        for g, d in desc['data']:
-            logging.debug(f'Composing keys.{name}.{g}')
-            logging.debug(f'Created flat list with {len(desc["data"][g])} items')
-
         selector = create_grouped_selector(desc['data'])
     elif desc['type'] == 'grouped proportional':
-        k = dict()
-
-        for g, d in desc['data'].items():
-            logging.debug(f'Composing keys.{name}.{g}')
-            k[g] = compose_simple_itemlist(d)
-
-        selector = create_grouped_selector(k)
+        selector = create_grouped_proportional_selector(desc['data'])
     else:
         logging.error(f'Invalid type for key with name {name}.')
 
     setattr(KEYS, name, selector)
 
-ITEMS['types'] = dict()
-
-for t in ('minor', 'medium', 'major'):
-    logging.debug(f'Composing types.{t}')
-    ITEMS['types'][t] = compose_simple_itemlist(DATA['types'][t])
+ITEMS['types'] = DATA['types']
 
 for t in ('potion', 'scroll', 'wand'):
     logging.debug(f'Composing {t}')
-    ITEMS[t] = compose_compound_itemlist(DATA[t])
-
-logging.debug('Composing wondrous')
-ITEMS['wondrous'] = compose_simple_itemlist(DATA['wondrous'])
+    ITEMS[t] = compose_items(DATA[t])
 
 for t in ('armor', 'weapon', 'ring',
           'rod', 'staff', 'belt', 'body',
           'chest', 'eyes', 'feet', 'hands',
           'head', 'headband', 'neck',
-          'shoulders', 'wrists', 'slotless'):
-    ITEMS[t] = dict()
+          'shoulders', 'wrists', 'slotless',
+          'wondrous'):
+    ITEMS[t] = DATA[t]
 
-    for u in ('minor', 'medium', 'major'):
-        if u not in DATA[t]:
-            continue
-
-        ITEMS[t][u] = dict()
-
-        for v in ('least', 'lesser', 'greater'):
-            if v not in DATA[t][u]:
-                continue
-
-            logging.debug(f'Composing {t}.{u}.{v}')
-            ITEMS[t][u][v] = compose_simple_itemlist(DATA[t][u][v])
-
-for t in ('armor', 'weapon'):
-    logging.debug(f'Composing base {t}')
-    logging.debug(f'Created flat list with {len(DATA[t]["base"])} items')
-    ITEMS[t]['base'] = DATA[t]['base']
-
-ITEMS['armor']['specific'] = dict()
-
-for key, value in DATA['armor']['specific'].items():
-    ITEMS['armor']['specific'][key] = dict()
-
-    for u in ('minor', 'medium', 'major'):
-        ITEMS['armor']['specific'][key][u] = dict()
-
-        for v in ('lesser', 'greater'):
-            logging.debug(f'Composing armor.specific.{key}.{u}.{v}')
-            ITEMS['armor']['specific'][key][u][v] = compose_simple_itemlist(value[u][v])
-
-ITEMS['weapon']['specific'] = dict()
-
-for u in ('minor', 'medium', 'major'):
-    ITEMS['weapon']['specific'][u] = dict()
-
-    for v in ('lesser', 'greater'):
-        logging.debug(f'Composing weapon.specific.{u}.{v}')
-        ITEMS['weapon']['specific'][u][v] = compose_simple_itemlist(DATA['weapon']['specific'][u][v])
-
-ITEMS['armor']['enchantments'] = dict()
-
-for t in ('armor', 'shield'):
-    ITEMS['armor']['enchantments'][t] = dict()
-
-    for u in (1, 2, 3, 4, 5):
-        logging.debug(f'Composing +{u} {t} enchantments')
-        ITEMS['armor']['enchantments'][t][u] = compose_simple_itemlist(DATA['armor']['enchantments'][t][u])
-
-ITEMS['weapon']['enchantments'] = dict()
-
-for t in ('melee', 'ranged', 'ammo'):
-    ITEMS['weapon']['enchantments'][t] = dict()
-
-    for u in (1, 2, 3, 4, 5):
-        logging.debug(f'Composing +{u} {t} enchantments')
-        ITEMS['weapon']['enchantments'][t][u] = compose_simple_itemlist(DATA['weapon']['enchantments'][t][u])
-
-logging.debug('Composing spells')
-logging.debug(f'Created flat list with {len(DATA["spell"])} items')
 ITEMS['spell'] = DATA['spell']
 
 KEYS.spell = get_spell
