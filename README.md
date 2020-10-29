@@ -5,17 +5,23 @@ related games.
 
 ## Features
 
-* Roll for random magic items in a single command (`/roll35 magic-item`
-  command). This automatically handles all the sequential rolls required
-  to produce an eact magic item.
+* Roll for random magic items in a single command. This automatically
+  handles all the sequential rolls required to produce an exact magic
+  item.
 * Roll random spells, optionally for a specific level or class.
+* Roll random mundane weapons and armor.
 
 ## Planned Features
 
-* Roll random mundane weapons and armor.
+* Proper handling for magic double weapons.
 * Roll against arbitrary data tables.
-* Add support for rolling for intelligence/special markings on magic items.
+* Support for rolling for intelligence/special markings on magic items.
 * Finish adding in variant forms for all the magic items that have them.
+* The ability to enable and disable specific items at runtime (with
+  per-server config).
+* Support for hyperlinks in rolled items.
+* Support for rolling specific base weapons or armor as magic items.
+* Support for simply rolling dice.
 
 ## Limitations
 
@@ -25,7 +31,8 @@ related games.
   but it's likely to take a long time.
 * No support for rolling associated skills on headband items that boost
   INT. This is intentionally left to the GM to determine, as in many cases
-  which skills are picked are not truly random.
+  which skills are picked are not truly random. May be added at some
+  point in the future once per-server configuration support is added.
 
 ## Data Sets
 

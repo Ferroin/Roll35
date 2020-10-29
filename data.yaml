@@ -440,11 +440,11 @@ weapon:
     - {cost:    8, tags: [simple, 1hand, melee, bludgeoning, piercing], name: 'Morningstar'}
     - {cost:    1, tags: [simple, 1hand, melee, piercing], name: 'Shortspear'}
     - {cost:    5, tags: [simple, 2hand, melee, piercing], name: 'Bayonet'}
-    - {cost:    8, tags: [simple, 2hand, melee, piercing], name: 'Boarding Pike'}
+    - {cost:    8, tags: [simple, 2hand, melee, reach, piercing], name: 'Boarding Pike'}
     - {cost:    5, tags: [simple, 2hand, melee, piercing], name: 'Kumade'}
     - {cost:   10, tags: [simple, 2hand, melee, piercing], name: 'Collapsible Kumade'}
     - {cost:   15, tags: [simple, 2hand, melee, bludgeoning], name: 'Lantern Staff'}
-    - {cost:    5, tags: [simple, 2hand, melee, piercing], name: 'Longspear'}
+    - {cost:    5, tags: [simple, 2hand, melee, reach, piercing], name: 'Longspear'}
     - {cost:    0, tags: [simple, 2hand, melee, bludgeoning], name: 'Quarterstaff'}
     - {cost:    2, tags: [simple, 2hand, melee, piercing], name: 'Spear'}
     - {cost:    5, tags: [simple, 2hand, melee, piercing], name: 'Boar Spear'}
@@ -459,7 +459,312 @@ weapon:
     - {cost:    0, tags: [simple, ranged, thrown, bludgeoning], name: 'Sling'}
     - {cost:    0, tags: [simple, ranged, thrown, bludgeoning], name: 'Stingchuck'}
     - {cost:   35, tags: [simple, ranged, crossbow, bludgeoning], name: 'Stonebow'}
-    # TODO: Finish adding weapons
+    - {cost:    1, tags: [simple, ammo, piercing], name: 'Crossbow Bolts (10)'}
+    # - {cost:   40, tags: [simple, ammo, piercing, acid], name: 'Acid Crossbow Bolt (1)'}
+    # - {cost:  100, tags: [simple, ammo, piercing, poison], name: 'Drow Poison Crossbow Bolt (1)'}
+    # - {cost:   50, tags: [simple, ammo, piercing, fire], name: 'Fire Crossbow Bolt (1)'}
+    - {cost:    2, tags: [simple, ammo, bludgeoning], name: 'Groaning Sling Bullets (10)'}
+    - {cost:    1, tags: [simple, ammo, bludgeoning], name: 'Sling Bullets (10)'}
+    # - {cost:  100, tags: [simple, ammo, bludgeoning], name: 'Smoke Sling Bullets (10)'}
+    - {cost:  0.5, tags: [simple, ammo, piercing], name: 'Blowgun Darts (10)'}
+    - {cost:    6, tags: [martial, light, melee, piercing, slashing], name: 'Boarding Axe'}
+    - {cost:    8, tags: [martial, light, melee, thrown, slashing], name: 'Throwing Axe'}
+    # - {cost:   25, tags: [martial, light, melee, piercing], name: 'Blade Boot'}
+    # - {cost:    1, tags: [martial, light, melee, slashing, nonlethal], name: 'Cat-o’-nine-tails'}
+    # - {cost:  305, tags: [martial, light, meleei, bludgeoning, slashing], name: 'Claw Blades'}
+    - {cost:   12, tags: [martial, light, melee, thrown, piercing, slashing], name: 'Dueling Dagger'}
+    # - {cost:    8, tags: [martial, light, melee, slashing], name: 'Dogslicer'}
+    - {cost:    1, tags: [martial, light, melee, thrown, bludgeoning], name: 'Light Hammer'}
+    - {cost:   15, tags: [martial, light, melee, piercing, slashing], name: 'Gladius'}
+    - {cost:    6, tags: [martial, light, melee, slashing], name: 'Handaxe'}
+    # - {cost:    6, tags: [martial, light, melee, piercing], name: 'Tri-Bladed katar'}
+    # - {cost:    5, tags: [martial, light, melee, thrown, piercing], name: 'Switchblade Knife'}
+    # - {cost:   15, tags: [martial, light, melee, reach, slashing], name: 'Long Lash Kobold Tail Attachment'}
+    # - {cost:    1, tags: [martial, light, melee, bludgeoning], name: 'Pounder Kobold Tail Attachment'}
+    # - {cost:    3, tags: [martial, light, melee, slashing], name: 'Razored Kobold Tail Attachment'}
+    # - {cost:    3, tags: [martial, light, melee, piercing], name: 'Spiked Kobold Tail Attachment'}
+    # - {cost:    7, tags: [martial, light, melee, bludgeoning], name: 'Sweeper Kobold Tail Attachment'}
+    - {cost:    8, tags: [martial, light, melee, slashing], name: 'Kukri'}
+    - {cost:   10, tags: [martial, light, melee, slashing], name: 'Machete'}
+    - {cost:    4, tags: [martial, light, melee, piercing], name: 'Light Pick'}
+    # - {cost:   11, tags: [martial, light, melee, slashing], name: 'Ratfolk Tail Blade'}
+    - {cost:    1, tags: [martial, light, melee, bludgeoning, nonlethal], name: 'Sap'}
+    # - {cost:    8, tags: [martial, light, melee, slashing], name: 'Sea Knife'}
+    - {cost:   24, tags: [martial, light, melee, thrown, piercing], name: 'Starknife'}
+    - {cost:   10, tags: [martial, light, melee, piercing], name: 'Short Sword'}
+    - {cost:    8, tags: [martial, light, melee, slashing], name: 'War Razor'}
+    - {cost:    8, tags: [martial, 1hand, melee, piercing], name: 'Ankus'}
+    - {cost:   10, tags: [martial, 1hand, melee, slashing], name: 'Battleaxe'}
+    # - {cost:    1, tags: [martial, 1hand, melee, bludgeoning], name: 'Combat Scabbard'}
+    - {cost:   15, tags: [martial, 1hand, melee, slashing], name: 'Cutlass'}
+    - {cost:    8, tags: [martial, 1hand, melee, bludgeoning], name: 'Light Flail'}
+    - {cost:   15, tags: [martial, 1hand, melee, slashing], name: 'Gandasa'}
+    # - {cost:   12, tags: [martial, 1hand, melee, slashing], name: 'Klar'}
+    - {cost:   15, tags: [martial, 1hand, melee, slashing], name: 'Longsword'}
+    - {cost:   17, tags: [martial, 1hand, melee, piercing, slashing], name: 'Manople'}
+    - {cost:    8, tags: [martial, 1hand, melee, piercing], name: 'Heavy Pick'}
+    - {cost:   20, tags: [martial, 1hand, melee, piercing], name: 'Rapier'}
+    # - {cost:   10, tags: [martial, 1hand, melee, slashing], name: 'Sharpened Combat Scabbard'}
+    - {cost:   15, tags: [martial, 1hand, melee, slashing], name: 'Scimitar'}
+    - {cost:   20, tags: [martial, 1hand, melee, slashing], name: 'Scizore'}
+    - {cost:   45, tags: [martial, 1hand, melee, piercing], name: 'Sword Cane'}
+    # - {cost:    5, tags: [martial, 1hand, melee, slashing], name: 'Terbutje'}
+    # - {cost:   20, tags: [martial, 1hand, melee, slashing], name: 'Steel Terbutje'}
+    - {cost:   15, tags: [martial, 1hand, melee, thrown, piercing], name: 'Trident'}
+    - {cost:   12, tags: [martial, 1hand, melee, bludgeoning], name: 'Warhammer'}
+    - {cost:   13, tags: [martial, 2hand, melee, reach, slashing], name: 'Bardiche'}
+    - {cost:   15, tags: [martial, 2hand, melee, reach, bludgeoning, piercing], name: 'Bec de Corbin'}
+    - {cost:   11, tags: [martial, 2hand, melee, reach, slashing], name: 'Bill'}
+    - {cost:   40, tags: [martial, 2hand, melee, bludgeoning], name: 'Earth Breaker'}
+    - {cost:   75, tags: [martial, 2hand, melee, slashing], name: 'Falchion'}
+    - {cost:   15, tags: [martial, 2hand, melee, bludgeoning], name: 'Heavy Flail'}
+    - {cost:    8, tags: [martial, 2hand, melee, reach, slashing], name: 'Glaive'}
+    - {cost:   12, tags: [martial, 2hand, melee, reach, slashing], name: 'Glaive-Guisarme'}
+    - {cost:   20, tags: [martial, 2hand, melee, slashing], name: 'Greataxe'}
+    - {cost:    5, tags: [martial, 2hand, melee, bludgeoning], name: 'Greatclub'}
+    - {cost:   50, tags: [martial, 2hand, melee, slashing], name: 'Greatsword'}
+    - {cost:    9, tags: [martial, 2hand, melee, reach, slashing], name: 'Guisarme'}
+    - {cost:   10, tags: [martial, 2hand, melee, piercing, slashing], name: 'Halberd'}
+    - {cost:   15, tags: [martial, 2hand, melee, reach, bludgeoning, piercing], name: 'Lucerne Hammer'}
+    # - {cost:   10, tags: [martial, 2hand, melee, reach, piercing, slashing], name: 'Horsechopper'}
+    - {cost:   10, tags: [martial, 2hand, melee, reach, piercing], name: 'Lance'}
+    # - {cost:   24, tags: [martial, 2hand, melee, piercing], name: 'Ogre Hook'}
+    - {cost:   14, tags: [martial, 2hand, melee, piercing], name: 'Pickaxe'}
+    - {cost:   10, tags: [martial, 2hand, melee, bludgeoning, piercing], name: 'Planson'}
+    - {cost:   10, tags: [martial, 2hand, melee, reach, piercing], name: 'Ranseur'}
+    - {cost:   18, tags: [martial, 2hand, melee, piercing, slashing], name: 'Scythe'}
+    - {cost:  100, tags: [martial, 2hand, melee, thrown, piercing], name: 'Syringe Spear'}
+    # - {cost:    0, tags: [martial, ranged, thrown, piercing], name: 'Ammentum'}
+    - {cost:    1, tags: [martial, ranged, thrown, slashing], name: 'Chakram'}
+    - {cost:  100, tags: [martial, ranged, thrown, piercing, electricity], name: 'Jolting Dart'}
+    - {cost:    4, tags: [martial, ranged, thrown, piercing], name: 'Hunga Munga'}
+    - {cost:    8, tags: [martial, ranged, thrown, piercing, slashing], name: 'Hurlbat'}
+    - {cost:   75, tags: [martial, ranged, bow, piercing], name: 'Longbow'}
+    - {cost:  100, tags: [martial, ranged, bow, composite, piercing], name: 'Composite Longbow (+0)'}
+    - {cost:  200, tags: [martial, ranged, bow, composite, piercing], name: 'Composite Longbow (+1)'}
+    - {cost:  300, tags: [martial, ranged, bow, composite, piercing], name: 'Composite Longbow (+2)'}
+    - {cost:  400, tags: [martial, ranged, bow, composite, piercing], name: 'Composite Longbow (+3)'}
+    - {cost:  500, tags: [martial, ranged, bow, composite, piercing], name: 'Composite Longbow (+4)'}
+    - {cost:  600, tags: [martial, ranged, bow, composite, piercing], name: 'Composite Longbow (+5)'}
+    # - {cost:    5, tags: [martial, ammo, thrown, piercing], name: 'Pilum'}
+    - {cost:   30, tags: [martial, ranged, bow, piercing], name: 'Shortbow'}
+    - {cost:   75, tags: [martial, ranged, bow, composite, piercing], name: 'Composite Shortbow (+0)'}
+    - {cost:  150, tags: [martial, ranged, bow, composite, piercing], name: 'Composite Shortbow (+1)'}
+    - {cost:  225, tags: [martial, ranged, bow, composite, piercing], name: 'Composite Shortbow (+2)'}
+    - {cost:  300, tags: [martial, ranged, bow, composite, piercing], name: 'Composite Shortbow (+3)'}
+    - {cost:  375, tags: [martial, ranged, bow, composite, piercing], name: 'Composite Shortbow (+4)'}
+    - {cost:  450, tags: [martial, ranged, bow, composite, piercing], name: 'Composite Shortbow (+5)'}
+    - {cost:   50, tags: [martial, ranged, piercing], name: 'Spear Sling'}
+    # - {cost:    0, tags: [martial, ranged, piercing], name: 'Throwing Arrow Cord'}
+    - {cost:    1, tags: [martial, ammo, piercing], name: 'Arrows (20)'}
+    - {cost:    2, tags: [martial, ammo, piercing], name: 'Barbed Arrows (20)'}
+    - {cost:    2, tags: [martial, ammo, piercing], name: 'Barbed Crossbow Bolts (20)'}
+    # - {cost:  360, tags: [martial, ammo, piercing], name: 'Bleeding Arrow (1)'}
+    - {cost:    2, tags: [martial, ammo, bludgeoning], name: 'Blunt Arrows (20)'}
+    - {cost:    1, tags: [martial, ammo, piercing], name: 'Distance Arrows (20)'}
+    - {cost:    1, tags: [martial, ammo, piercing], name: 'Durable Arrow (1)'}
+    # - {cost:    1, tags: [martial, ammo], name: 'Dye Arrow (1)'}
+    - {cost:    2, tags: [martial, ammo, piercing], name: 'Flight Arrows (20)'}
+    # - {cost:   10, tags: [martial, ammo, piercing, fire], name: 'Incendiary Arrows (20)'}
+    # - {cost:   10, tags: [martial, ammo, piercing, fire], name: 'Incendiary Crossbow Bolts (20)'}
+    # - {cost:   10, tags: [martial, ammo, piercing], name: 'Lodestone Arrow (1)'}
+    # - {cost:   15, tags: [martial, ammo, piercing], name: 'Pheremone Arrow (1)'}
+    # - {cost:    2, tags: [martial, ammo, piercing], name: 'Pronged Arrows (20)'}
+    # - {cost:    2, tags: [martial, ammo, piercing], name: 'Pronged Bolts (20)'}
+    # - {cost:   30, tags: [martial, ammo, piercing], name: 'Raining Arrow (1)'}
+    # - {cost:  150, tags: [martial, ammo, piercing, fire], name: 'Slow Burn Arrow (1)'}
+    # - {cost:   10, tags: [martial, ammo, piercing], name: 'Smoke Arrow (10)'}
+    # - {cost:   25, tags: [martial, ammo, piercing], name: 'Splintercloud Arrow (1)'}
+    # - {cost:   20, tags: [martial, ammo, piercing], name: 'Tanglefoot Arrow (1)'}
+    # - {cost:    1, tags: [martial, ammo, piercing], name: 'Thistle Arrow (1)'}
+    # - {cost:  0.5, tags: [martial, ammo, piercing], name: 'Throwing Arrow (1)'}
+    # - {cost:   25, tags: [martial, ammo, piercing], name: 'Trip Arrow (1)'}
+    - {cost:    2, tags: [martial, ammo, piercing], name: 'Whistling Arrows (20)'}
+    # - {cost:    5, tags: [exotic, light, melee, bludgeoning], name: 'Aklys'}
+    - {cost:   16, tags: [exotic, light, melee, slashing], name: 'Dwarven Light Axe Gauntlet'}
+    # - {cost:    9, tags: [exotic, light, melee, slashing], name: 'Knuckle Axe'}
+    # - {cost:   25, tags: [exotic, light, melee, slashing], name: 'Babazu Beard'}
+    # - {cost:    5, tags: [exotic, light, melee, fire], name: 'Battle Poi'}
+    # - {cost:   10, tags: [exotic, light, melee, slashing], name: 'Swordbreaker Dagger'}
+    # - {cost:   15, tags: [exotic, light, melee, piercing], name: 'Flying Talon'}
+    - {cost:   10, tags: [exotic, light, melee, bludgeoning], name: 'Gnome Pincher'}
+    - {cost:    1, tags: [exotic, light, melee, bludgeoning], name: 'Halfling Rope-Shot'}
+    # - {cost:   20, tags: [exotic, light, melee, bludgeoning], name: 'Dwarven Boulder Helmet'}
+    - {cost:    2, tags: [exotic, light, melee, slashing], name: 'Kama'}
+    # - {cost:    5, tags: [exotic, light, melee, piercing, slashing], name: 'Butterfly Knife'}
+    # - {cost:   10, tags: [exotic, light, melee, piercing], name: 'Deer-Horn Knife'}
+    - {cost:   25, tags: [exotic, light, melee, bludgeoning, slashing], name: 'Dwarven Maulaxe'}
+    - {cost:    2, tags: [exotic, light, melee, bludgeoning], name: 'Nunchaku'}
+    # - {cost:    8, tags: [exotic, light, melee, piercing], name: 'Quadrens'}
+    - {cost:   25, tags: [exotic, light, melee, slashing], name: 'Drow Razor'}
+    # - {cost:    2, tags: [exotic, light, melee, bludgeoning], name: 'Rope Gauntlet'}
+    - {cost:    1, tags: [exotic, light, melee, bludgeoning], name: 'Sai'}
+    - {cost:   60, tags: [exotic, light, melee, piercing, slashing], name: 'Sanpkhang'}
+    - {cost:    3, tags: [exotic, light, melee, piercing], name: 'Siangham'}
+    # - {cost:   10, tags: [exotic, light, melee, slashing], name: 'Sica'}
+    # - {cost:   30, tags: [exotic, light, melee, piercing], name: 'Thorn Bracer'}
+    # - {cost:   50, tags: [exotic, light, melee], name: 'Dwarven War Shield'}
+    # - {cost:    5, tags: [exotic, light, melee, reach, slashing], name: 'Scorpion Whip'}
+    - {cost:   21, tags: [exotic, 1hand, melee, slashing], name: 'Dwarven heavy Axe Gauntlet'}
+    # - {cost:   20, tags: [exotic, 1hand, melee, slashing], name: 'Hooked Axe'}
+    # - {cost:   40, tags: [exotic, 1hand, melee, piercing, slashing], name: 'Broken Back Seax'}
+    - {cost:   50, tags: [exotic, 1hand, melee, piercing], name: 'Estoc'}
+    # - {cost:   18, tags: [exotic, 1hand, melee, reach, bludgeoning], name: 'Flickmace'}
+    # - {cost:    9, tags: [exotic, 1hand, melee, bludgeoning, piercing], name: 'Findbar'}
+    # - {cost:   20, tags: [exotic, 1hand, melee, slashing], name: 'Khopesh'}
+    # - {cost:    5, tags: [exotic, 1hand, melee, bludgeoning], name: 'Knobkerrie'}
+    - {cost:   25, tags: [exotic, 1hand, melee, bludgeoning], name: 'Dwarven Ram Hammer'}
+    # - {cost:   80, tags: [exotic, 1hand, melee, piercing], name: 'Spiral Rapier'}
+    # - {cost:    5, tags: [exotic, 1hand, melee, slashing], name: 'Rhoka'}
+    # - {cost:   35, tags: [exotic, 1hand, melee, slashing], name: 'Sawtooth Sabre'}
+    # - {cost:   30, tags: [exotic, 1hand, melee, piercing], name: 'Shotel'}
+    # - {cost:   20, tags: [exotic, 1hand, melee, slashing], name: 'Sickle Sword'}
+    # - {cost:  200, tags: [exotic, 1hand, melee, slashing], name: 'Split-Blade Sword'}
+    # - {cost:   20, tags: [exotic, 1hand, melee, slashing], name: 'Dueling Sword'}
+    - {cost:   35, tags: [exotic, 1hand, melee, slashing], name: 'Bastard Sword'}
+    # - {cost:   18, tags: [exotic, 1hand, melee, piercing], name: 'Tongi'}
+    - {cost:   30, tags: [exotic, 1hand, melee, slashing], name: 'Dwarven Waraxe'}
+    # - {cost:   60, tags: [exotic, 1hand, melee, slashing], name: 'Dwarven Double Waraxe'}
+    - {cost:    1, tags: [exotic, 1hand, melee, slashing, reach, nonlethal], name: 'Whip'}
+    # - {cost:   60, tags: [exotic, 2hand, melee, slashing], name: 'Orc Double Axe'}
+    # - {cost:   65, tags: [exotic, 2hand, melee, slashing], name: 'Butchering Axe'}
+    - {cost:   20, tags: [exotic, 2hand, melee, bludgeoning], name: 'Gnome Battle Ladder'}
+    # - {cost:    8, tags: [exotic, 2hand, melee, reach, slashing], name: 'Boarding Gaff'}
+    # - {cost:   35, tags: [exotic, 2hand, melee, thrown, bludgeoning], name: 'Chain Hammer'}
+    # - {cost:   25, tags: [exotic, 2hand, melee, piercing], name: 'Spiked Chain'}
+    # - {cost:    1, tags: [exotic, 2hand, melee, reach, bludgeoning], name: 'Crook'}
+    - {cost:   80, tags: [exotic, 2hand, melee, slashing], name: 'Elven Curve Blade'}
+    # - {cost:   50, tags: [exotic, 2hand, melee, reach, bludgeoning], name: 'Dwarven Chain Flail'}
+    # - {cost:   25, tags: [exotic, 2hand, melee, piercing], name: 'Double Spear'}
+    - {cost:   20, tags: [exotic, 2hand, melee, reach, piercing], name: 'Elven Branched Spear'}
+    # - {cost:   14, tags: [exotic, 2hand, melee, reach, slashing], name: 'Fauchard'}
+    # - {cost:   90, tags: [exotic, 2hand, melee, bludgeoning], name: 'Dire Flail'}
+    # - {cost:   15, tags: [exotic, 2hand, melee, bludgeoning], name: 'Flailpole'}
+    # - {cost:   50, tags: [exotic, 2hand, melee, slashing], name: 'Flambard'}
+    # - {cost:   40, tags: [exotic, 2hand, melee, reach, slashing], name: 'Flying Blade'}
+    # - {cost:    3, tags: [exotic, 2hand, melee, slashing], name: 'Garrote'}
+    # - {cost:   25, tags: [exotic, 2hand, melee, reach, piercing, slashing], name: 'Dwarven Giant-Sticker'}
+    - {cost:   20, tags: [exotic, 2hand, melee, bludgeoning, piercing], name: 'Gnome Hooked Hammer'}
+    # - {cost:    5, tags: [exotic, 2hand, melee, thrown, piercing], name: 'Harpoon'}
+    # - {cost:   50, tags: [exotic, 2hand, melee, reach, slashing], name: 'Dwarven Longaxe'}
+    # - {cost:   70, tags: [exotic, 2hand, melee, reach, bludgeoning], name: 'Dwarven Longhammer'}
+    # - {cost:   15, tags: [exotic, 2hand, melee, reach, piercing], name: 'Mancatcher'}
+    # - {cost:   15, tags: [exotic, 2hand, melee, reach, bludgeoning], name: 'Orc Skull Ram'}
+    # - {cost:   70, tags: [exotic, 2hand, melee, bludgeoning], name: 'Gnome Piston Maul'}
+    # - {cost:   30, tags: [exotic, 2hand, melee, reach, slashing], name: 'Gnome Ripsaw Glaive'}
+    # - {cost:   12, tags: [exotic, 2hand, melee, slashing], name: 'Bladed Scarf'}
+    # - {cost:   25, tags: [exotic, 2hand, melee, thrown, piercing, slashing], name: 'Totem Spear'}
+    # - {cost:   45, tags: [exotic, 2hand, melee, thrown, bludgeoning], name: 'Dwarven Sphinx Hammer'}
+    # - {cost:   18, tags: [exotic, 2hand, melee, piercing, slashing], name: 'Switchscythe'}
+    # - {cost:  100, tags: [exotic, 2hand, melee, slashing], name: 'Two-Bladed Sword'}
+    - {cost:   50, tags: [exotic, 2hand, melee, piercing, slashing], name: 'Dwarven Urgrosh'}
+    # - {cost:    5, tags: [exotic, ranged, thrown, nonlethal, bludgeoning], name: 'Bola'}
+    # - {cost:   15, tags: [exotic, ranged, thrown, bludgeoning, slashing], name: 'Brutal Bola'}
+    # - {cost:    3, tags: [exotic, ranged, thrown, bludgeoning], name: 'Boomerang'}
+    # - {cost:   50, tags: [exotic, ranged, bow, piercing], name: 'Thorn Bow'}
+    # - {cost:  400, tags: [exotic, ranged, crossbow, piercing], name: 'Crank Heavy Crossbow'}
+    # - {cost:  250, tags: [exotic, ranged, crossbow, piercing], name: 'Crank Light Crossbow'}
+    # - {cost:  300, tags: [exotic, ranged, crossbow, piercing], name: 'Double Crossbow'}
+    # - {cost:  100, tags: [exotic, ranged, crossbow, piercing], name: 'Hand Crossbow'}
+    # - {cost:   75, tags: [exotic, ranged, crossbow], name: 'Launcher Crossbow'}
+    # - {cost:  400, tags: [exotic, ranged, crossbow, piercing], name: 'Heavy Repeating Crossbow'}
+    # - {cost:  250, tags: [exotic, ranged, crossbow, piercing], name: 'Light Repeating Crossbow'}
+    # - {cost:   25, tags: [exotic, ranged, thrown], name: 'Flask Thrower'}
+    # - {cost:    6, tags: [exotic, ranged, thrown, piercing], name: 'Orc Hornbow'}
+    # - {cost:   35, tags: [exotic, ranged, thrown, piercing], name: 'Stormshaft Javelin'}
+    # - {cost:  0.1, tags: [exotic, ranged, thrown], name: 'Lasso'}
+    # - {cost:   20, tags: [exotic, ranged, thrown], name: 'Net'}
+    # - {cost:   30, tags: [exotic, ranged, thrown, piercing], name: 'Snag Net'}
+    # - {cost:   75, tags: [exotic, ranged, crossbow, bludgeoning], name: 'Dwarven Heavy Pelletbow'}
+    # - {cost:   50, tags: [exotic, ranged, crossbow, bludgeoning], name: 'Dwarven Light Pelletbow'}
+    # - {cost:   35, tags: [exotic, ranged, thrown, piercing], name: 'Shrillshaft Javelin'}
+    - {cost:    1, tags: [exotic, ranged, thrown, piercing], name: 'Shuriken (5)'}
+    # - {cost:   10, tags: [exotic, ranged, thrown, bludgeoning], name: 'Double Sling'}
+    # - {cost:    5, tags: [exotic, ranged, thrown, bludgeoning], name: 'Sling GLove'}
+    - {cost:   20, tags: [exotic, ranged, thrown, bludgeoning], name: 'Halfling Sling Staff'}
+    # - {cost:  200, tags: [exotic, ranged, thrown, piercing], name: 'Wrist Launcher'}
+    # - {cost:  250, tags: [exotic, ranged, thrown, piercing], name: 'Heavy Wrist Launcher'}
+    # - {cost:    1, tags: [exotic, ammo, piercing], name: 'Featherweight Darts'}
+    # - {cost:    1, tags: [exotic, ammo, piercing], name: 'Repeating Crossbow Bolts (5)'}
+    # - {cost: 0.05, tags: [exotic, ammo, bludgeoning], name: 'Little Starstones (10)'}
+    # - {cost:    1, tags: [exotic, ammo, piercing, slashing], name: 'Sharpstones (10)'}
+    # - {cost:  0.1, tags: [exotic, ammo, bludgeoning], name: 'Softstones (10)'}
+    # - {cost:   10, tags: [exotic, ammo, piercing], name: 'Soakstones (10)'}
+    # - {cost:    1, tags: [exotic, ammo, piercing], name: 'Thorn Arrows (10)'}
+    # - {cost: 3000, tags: [firearm, early, ranged, 1hand, bludgeoning, piercing], name: 'Breach-Loader'}
+    # - {cost:  750, tags: [firearm, early, ranged, 1hand, bludgeoning, piercing], name: 'Buckler Gun'}
+    # - {cost: 3000, tags: [firearm, early, ranged, 1hand, bludgeoning, piercing], name: 'Pepperbox'}
+    # - {cost: 1000, tags: [firearm, early, ranged, 1hand, bludgeoning, piercing], name: 'Pistol'}
+    # - {cost:  750, tags: [firearm, early, ranged, 1hand, bludgeoning, piercing], name: 'Coat Pistol'}
+    # - {cost:  740, tags: [firearm, early, ranged, 1hand, bludgeoning, piercing], name: 'Dagger Pistol'}
+    # - {cost: 1750, tags: [firearm, early, ranged, 1hand, bludgeoning, piercing], name: 'Double-barreled Pistol'}
+    # - {cost: 1000, tags: [firearm, early, ranged, 1hand, bludgeoning, piercing, scatter], name: 'Dragon Pistol'}
+    # - {cost: 1500, tags: [firearm, early, ranged, 1hand, bludgeoning, piercing], name: 'Dragoon Pistol'}
+    # - {cost: 2500, tags: [firearm, early, ranged, 1hand, bludgeoning, piercing, scatter], name: 'Paddle-Foot Pistol'}
+    # - {cost:  775, tags: [firearm, early, ranged, 1hand, bludgeoning, piercing], name: 'Sword-Cane Pistol'}
+    # - {cost:  600, tags: [firearm, early, ranged, 2hand, bludgeoning, piercing], name: 'Air Repeater'}
+    # - {cost: 2000, tags: [firearm, early, ranged, 2hand, bludgeoning, piercing, scatter], name: 'Blunderbuss'}
+    # - {cost: 4000, tags: [firearm, early, ranged, 2hand, bludgeoning, piercing, scatter], name: 'Culverin'}
+    # - {cost: 6000, tags: [firearm, early, ranged, 2hand, bludgeoning, piercing], name: 'Cylinder Rifle'}
+    # - {cost: 4000, tags: [firearm, early, ranged, 2hand, bludgeoning, piercing], name: 'Double Hackbut'}
+    # - {cost:   25, tags: [firearm, early, ranged, 2hand, piercing], name: 'Fire Lance'}
+    # - {cost: 1500, tags: [firearm, early, ranged, 2hand, bludgeoning, piercing], name: 'Musket'}
+    # - {cost: 1600, tags: [firearm, early, ranged, 2hand, bludgeoning, piercing], name: 'Axe Musket'}
+    # - {cost: 2500, tags: [firearm, early, ranged, 2hand, bludgeoning, piercing], name: 'Double-Barreled Musket'}
+    # - {cost: 2000, tags: [firearm, early, ranged, 2hand, bludgeoning, piercing], name: 'Dragoon Musket'}
+    # - {cost: 1600, tags: [firearm, early, ranged, 2hand, bludgeoning, piercing], name: 'Warhammer Musket'}
+    # - {cost: 4000, tags: [firearm, advanced, ranged, 1hand, bludgeoning, piercing], name: 'Revolver'}
+    # - {cost: 5000, tags: [firearm, advanced, ranged, 2hand, bludgeoning, piercing], name: 'Rifle'}
+    # - {cost: 7000, tags: [firearm, advanced, ranged, 2hand, bludgeoning, piercing], name: 'Pepperbox Rifle'}
+    # - {cost: 5000, tags: [firearm, advanced, ranged, 2hand, bludgeoning, piercing, scatter], name: 'Shotgun'}
+    # - {cost: 7000, tags: [firearm, advanced, ranged, 2hand, bludgeoning, piercing, scatter], name: 'Double-Barreled Shotgun'}
+    # - {cost:   30, tags: [firearm, ammo], name: 'Firearm Bullets (30)'}
+    # - {cost:   30, tags: [firearm, ammo], name: 'Pellets (30)'}
+    - {cost:    1, tags: [eastern, simple, light, melee, bludgeoning], name: 'Hanbo'}
+    - {cost:   20, tags: [eastern, martial, light, melee, slashing], name: 'Butterfly Sword'}
+    # - {cost:    2, tags: [eastern, martial, light, melee, thrown, piercing], name: 'Iron Brush'}
+    - {cost:    8, tags: [eastern, martial, light, melee, bludgeoning], name: 'Jutte'}
+    - {cost:    2, tags: [eastern, martial, light, melee, slashing], name: 'Kerambit'}
+    - {cost:    8, tags: [eastern, martial, light, melee, slashing], name: 'Kukri'}
+    - {cost:    5, tags: [eastern, martial, light, melee, thrown, piercing, slashing], name: 'Longchuan Tamo'}
+    - {cost:    6, tags: [eastern, martial, light, melee, slashing], name: 'Shang Gou'}
+    - {cost:    1, tags: [eastern, martial, light, melee, bludgeoning], name: 'Tonfa'}
+    - {cost:    1, tags: [eastern, martial, light, melee, piercing], name: 'Wushu Darts (5)'}
+    - {cost:   15, tags: [eastern, martial, 1hand, melee, slashing], name: 'Nine-Ring Broadsword'}
+    - {cost:   12, tags: [eastern, martial, 1hand, melee, slashing], name: 'Double Chicken Saber'}
+    - {cost:    2, tags: [eastern, martial, 1hand, melee, piercing, slashing], name: 'Sibat'}
+    - {cost:    3, tags: [eastern, martial, 2hand, melee, piercing], name: 'Hooked Lance'}
+    - {cost:   20, tags: [eastern, martial, 2hand, melee, bludgeoning, piercing, slashing], name: 'Monk’s Spade'}
+    - {cost:   35, tags: [eastern, martial, 2hand, melee, slashing], name: 'Naginata'}
+    - {cost:   60, tags: [eastern, martial, 2hand, melee, piercing, slashing], name: 'Nodachi'}
+    - {cost:    8, tags: [eastern, martial, 2hand, melee, bludgeoning], name: 'Sansetsukon'}
+    - {cost:   12, tags: [eastern, martial, 2hand, melee, piercing], name: 'Tri-Point Double-Bladed Sword'}
+    - {cost:    5, tags: [eastern, martial, 2hand, melee, piercing], name: 'Tiger Fork'}
+    # - {cost:    3, tags: [eastern, martial, ranged, piercing], name: 'Tube Arrow Shooter'}
+    # - {cost:    1, tags: [eastern, martial, ranged], name: 'Poisoned Sand Tube'}
+    # - {cost:    1, tags: [eastern, martial, ammo, piercing], name: 'Bamboo Arrows (10)'}
+    # - {cost:    5, tags: [eastern, exotic, light, melee, piercing, slashing], name: 'Bich’hwa'}
+    - {cost:  0.1, tags: [eastern, exotic, light, melee, bludgeoning], name: 'Dan Bong'}
+    - {cost:    3, tags: [eastern, exotic, light, melee, piercing], name: 'Emei Piercer'}
+    - {cost:    5, tags: [eastern, exotic, light, melee, piercing, slashing], name: 'Fighting Fan'}
+    # - {cost:   40, tags: [eastern, exotic, light, melee, piercing], name: 'Madu'}
+    - {cost:   14, tags: [eastern, exotic, light, melee, piercing], name: 'Pata'}
+    - {cost:    2, tags: [eastern, exotic, light, melee, piercing], name: 'Tekko-Kagi'}
+    - {cost:   35, tags: [eastern, exotic, light, melee, piercing, slashing], name: 'Wakizashi'}
+    - {cost:   50, tags: [eastern, exotic, 1hand, melee, slashing], name: 'Katana'}
+    - {cost:    8, tags: [eastern, exotic, 1hand, melee, bludgeoning], name: 'Nine-Section Whip'}
+    - {cost:   30, tags: [eastern, exotic, 1hand, melee, slashing], name: 'Temple Sword'}
+    - {cost:   30, tags: [eastern, exotic, 1hand, melee, slashing], name: 'Urumi'}
+    - {cost:    1, tags: [eastern, exotic, 2hand, melee, bludgeoning], name: 'Bo Staff'}
+    # - {cost:   15, tags: [eastern, exotic, 2hand, melee, piercing, slashing], name: 'Chain Spear'}
+    # - {cost:    8, tags: [eastern, exotic, 2hand, melee, slashing], name: 'Double Chained Kama'}
+    # - {cost:   50, tags: [eastern, exotic, 2hand, melee, slashing], name: 'Double Katana Walking Stick'}
+    # - {cost:    6, tags: [eastern, exotic, 2hand, melee, thrown, piercing, slashing], name: 'Kyoketsu Shoge'}
+    - {cost:   10, tags: [eastern, exotic, 2hand, melee, bludgeoning], name: 'Meteor Hammer'}
+    # - {cost:   50, tags: [eastern, exotic, 2hand, melee, slashing], name: 'Seven Branched Sword'}
+    - {cost:   20, tags: [eastern, exotic, 2hand, melee, bludgeoning], name: 'Tetsubo'}
+    # - {cost:   20, tags: [eastern, exotic, ranged, thrown, slashing], name: 'Crystal Chakram'}
+    - {cost:    1, tags: [eastern, exotic, ranged, thrown, piercing], name: 'Rope Dart'}
   specific:
     minor:
       lesser:
@@ -1321,7 +1626,7 @@ neck:
     lesser:
       - {weight: 10, cost:    900, name: 'Hand of the Mage'}
       - {weight:  8, cost:   1500, name: 'Aegis of Recovery'}
-      - {weight:  7, cost:   1500, name: 'Amulet of Bullet Protection +1'}
+      # - {weight:  7, cost:   1500, name: 'Amulet of Bullet Protection +1'}
       - {weight: 12, cost:   1500, name: 'Brooch of Shielding'}
       - {weight: 12, cost:   1650, name: 'Necklace of Fireballs (type I)'}
       - {weight: 14, cost:   2000, name: 'Amulet of Natural Armor +1'}
@@ -1338,7 +1643,7 @@ neck:
       - {weight: 11, cost:   5400, name: 'Necklace of Fireballs (type IV)'}
       - {weight:  8, cost:   5400, name: 'Stormlure'}
       - {weight: 11, cost:   5850, name: 'Necklace of Fireballs (type V)'}
-      - {weight:  7, cost:   6000, name: 'Amulet of Bullet Protection +2'}
+      # - {weight:  7, cost:   6000, name: 'Amulet of Bullet Protection +2'}
       - {weight:  8, cost:   6000, name: 'Feychild Necklace'}
       - {weight:  8, cost:   7200, name: 'Carcanet of Detention'}
       - {weight: 11, cost:   7500, name: 'Periapt of Health'}
@@ -1362,7 +1667,7 @@ neck:
       - {weight:  7, cost:  12000, name: 'Medallion of Thoughts'}
       - {weight:  4, cost:  13000, name: 'Periapt of Protection from Curses'}
       - {weight:  4, cost:  13500, name: 'Forge Fist Amulet'}
-      - {weight:  4, cost:  15000, name: 'Amulet of Bullet Protection +3'}
+      # - {weight:  4, cost:  15000, name: 'Amulet of Bullet Protection +3'}
       - {weight:  7, cost:  15000, name: 'Periapt of Wound Closure'}
       - {weight:  3, cost:  16000, name: 'Amulet of Mighty Fists +2'}
       - {weight:  3, cost:  16000, name: 'Necklace of Ki Serenity'}
@@ -1374,7 +1679,7 @@ neck:
       - {weight: 15, cost:  20000, name: 'Amulet of Magecraft'}
       - {weight: 12, cost:  20000, name: 'Dragonfoe Amulet'}
       - {weight:  5, cost:  22000, name: 'Amulet of Spell Mastery'}
-      - {weight:  5, cost:  24000, name: 'Amulet of Bullet Protection +4'}
+      # - {weight:  5, cost:  24000, name: 'Amulet of Bullet Protection +4'}
       - {weight: 13, cost:  27000, name: 'Hand of Stone'}
       - {weight: 15, cost:  27000, name: 'Periapt of Proof Against Poison'}
   major:
@@ -1382,7 +1687,7 @@ neck:
       - {weight: 18, cost:  32000, name: 'Amulet of Natural Armor +4'}
       - {weight: 17, cost:  35000, name: 'Amulet of Proof Against Detection and Location'}
       - {weight: 14, cost:  36000, name: 'Amulet of Mighty Fists +3'}
-      - {weight: 18, cost:  37500, name: 'Amulet of Bullet Protection +5'}
+      # - {weight: 18, cost:  37500, name: 'Amulet of Bullet Protection +5'}
       - {weight: 15, cost:  38000, name: 'Scarab of Protection'}
       - {weight: 18, cost:  42000, name: 'Necklace of Netted Stars'}
     greater:
@@ -1529,7 +1834,7 @@ slotless:
       - {weight:  3, cost:    250, name: 'Elixir of Tumbling'}
       - {weight:  3, cost:    250, name: 'Elixir of Vision'}
       - {weight:  2, cost:    250, name: 'Nihgtdrops'}
-      - {weight:  1, cost:    250, name: 'Oil of Silence'}
+      # - {weight:  1, cost:    250, name: 'Oil of Silence'}
       - {weight:  3, cost:    250, name: 'Silversheen'}
       - {weight:  1, cost:    250, name: 'Traveler’s Anytool'}
       - {weight:  2, cost:    300, name: 'Bottle of Messages'}
@@ -1589,7 +1894,7 @@ slotless:
       - {weight:  1, cost:   1800, name: 'Scabbard of Vigor'}
       - {weight:  1, cost:   2000, name: 'Agile Alpenstock'}
       - {weight:  1, cost:   2000, name: 'Clamor Box'}
-      - {weight:  1, cost:   2000, name: 'Dry Load Powder Horn'}
+      # - {weight:  1, cost:   2000, name: 'Dry Load Powder Horn'}
       - {weight:  1, cost:   2000, name: 'Goblin Fire Drum'}
       - {weight:  2, cost:   2000, name: 'Handy Haversack'}
       - {weight:  2, cost:   2000, name: 'Horn of Fog'}
@@ -1622,7 +1927,7 @@ slotless:
       - {weight:  1, cost:   4000, name: 'Boro Bead (2nd)'}
       - {weight:  1, cost:   4000, name: 'Cautionary Creance'}
       - {weight:  1, cost:   4000, name: 'Escape Ladder'}
-      - {weight:  1, cost:   4000, name: 'Far-Reaching Sight'}
+      # - {weight:  1, cost:   4000, name: 'Far-Reaching Sight'}
       - {weight:  2, cost:   4000, name: 'Ioun Stone (Clear Spindle)'}
       - {weight:  1, cost:   4000, name: 'Marvellous Pigments'}
       - {weight:  8, cost:   4000, name: 'Page of Spell Knowledge ({{ keys.spell(2, cls="spellpage") }})'}
@@ -1716,8 +2021,7 @@ slotless:
       - {weight:  1, cost:  10000, name: 'Eye of the Void'}
       - {weight:  1, cost:  10000, name: 'Figurine of Wondrous Power (Bronze Griffin)'}
       - {weight:  1, cost:  10000, name: 'Figurine of Wondrous Power (Ebony Fly'}
-      # Slate Spider figurine is in OGL table but does not appear to be available as OGL content itself.
-      - {weight:  1, cost:  10000, name: 'Figurine of Wondrous Power (Slate Spider)'}
+      # - {weight:  1, cost:  10000, name: 'Figurine of Wondrous Power (Slate Spider)'}
       - {weight:  1, cost:  10000, name: 'Hourglass of Last Chances'}
       - {weight:  2, cost:  10000, name: 'Ioun Stone (Dark Blue Rhomboid)'}
       - {weight:  1, cost:  10000, name: 'Ki Mat'}
