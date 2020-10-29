@@ -231,9 +231,10 @@ async def assemble_magic_armor(item: Item) -> str:
 async def assemble_magic_weapon(item: Item) -> str:
     '''Construct a magic weapon.'''
     # TODO: Actually roll for enchantments and base item.
+    base = random.choice(ITEMS['weapon']['base'])
     total_mod = item['bonus'] + sum(item['enchants'])
-    cost = 2000 * (total_mod ** 2)
-    ret = f'+{item["bonus"]} Weapon'
+    cost = base['cost'] + ((total_mod ** 2) * 2000)
+    ret = f'+{item["bonus"]} {base["name"]}'
 
     if item['enchants']:
         ret += ' with'
