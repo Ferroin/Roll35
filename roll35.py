@@ -170,23 +170,35 @@ async def render(item: str) -> str:
 
 async def assemble_magic_armor(item: Item) -> str:
     '''Construct a piece of magic armor.'''
-    # TODO: Actually roll for enchantments
     base = random.choice(ITEMS['armor']['base'])
-    total_mod = item['bonus'] + sum(item['enchants'])
-    cost = base['cost'] + ((total_mod ** 2) * 1000)
+    cost = base['cost'] + ((item['bonus'] ** 2) * 1000) + 150
     ret = f'+{item["bonus"]} {base["name"]}'
 
-    if item['enchants']:
-        ret += ' with'
-        index = 0
+    tags = set(base['tags'])
+    enchants = list()
 
-        for i in item['enchants']:
-            ret += f' one +{i} enchantment'
+    for enchant in item['enchants']:
+        possible = ITEMS['armor']['enchantments'][base['type']][enchant]
+        possible = [x for x in possible if x not in enchants]
+        possible = [x for x in possible if ('limit' not in x) or (len(set(x['limit']) & tags) >= 0)]
+        possible = [x for x in possible if ('exclude' not in x) or (len(set(x['exclude']) &
+                    {y['name'] for y in enchants}) == 0)]
 
-            if index > 0:
-                ret += ' and'
+        if not possible:
+            return assemble_magic_armor(item)
 
-            index += 1
+        weights = [x['weight'] for x in possible]
+
+        result = random.choices(possible, weights=weights)[0]
+
+        enchants.append(result)
+
+        ret = f'{result["name"]} {ret}'
+
+        if 'cost' in result:
+            cost += result['cost']
+        else:
+            cost += ((enchant ** 2) * 1000)
 
     ret += f' (cost: {cost}gp)'
 
@@ -230,10 +242,12 @@ async def roll_magic_item(path: Sequence[str]) -> str:
 
     if 'type' in item:
         if item['type'] == 'armor':
-            return await assemble_magic_armor(item)
+            item = await assemble_magic_armor(item)
+            return await render(item)
 
         if item['type'] == 'weapon':
-            return await assemble_magic_weapon(item)
+            item = await assemble_magic_weapon(item)
+            return await render(item)
 
     ret = await render(item['name'])
 
@@ -480,7 +494,8 @@ async def magic_item(ctx, *, specifier: str) -> None:
         rank1 = random.choice(('lesser', 'greater'))
 
     if category is None:
-        category = random.choices(ITEMS['types'][rank2], weights=[x['weight'] for x in ITEMS['types'][rank2]])[0]['name']
+        category = random.choices(ITEMS['types'][rank2],
+                                  weights=[x['weight'] for x in ITEMS['types'][rank2]])[0]['name']
 
     if category == 'wondrous':
         if subcategory is None:

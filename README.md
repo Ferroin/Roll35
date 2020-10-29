@@ -16,7 +16,9 @@ related games.
 * Proper handling for magic double weapons.
 * Roll against arbitrary data tables.
 * Support for rolling for intelligence/special markings on magic items.
-* Finish adding in variant forms for all the magic items that have them.
+* Finish adding in variant forms for all the magic items that have them:
+  - Defiant Armor
+  - Bane Weapons
 * The ability to enable and disable specific items at runtime (with
   per-server config).
 * Support for hyperlinks in rolled items.
