@@ -179,10 +179,16 @@ async def assemble_magic_armor(item: Item) -> str:
 
     for enchant in item['enchants']:
         possible = ITEMS['armor']['enchantments'][base['type']][enchant]
-        possible = [x for x in possible if x not in enchants]
-        possible = [x for x in possible if ('limit' not in x) or (len(set(x['limit']) & tags) >= 0)]
-        possible = [x for x in possible if ('exclude' not in x) or (len(set(x['exclude']) &
-                    {y['name'] for y in enchants}) == 0)]
+
+        for possibility in possible:
+            if possibility in enchants:
+                possible.remove(possibility)
+            elif 'limit' in possiblity:
+                if len(set(possibility['limit']) & tags) == 0:
+                    possible.remove(possibility)
+            elif 'exclude' in possibility:
+                if len(set(possibility['exclude']) & {x['name'] for x in enchants}) != 0:
+                    possible.remove(possibility)
 
         if not possible:
             return assemble_magic_armor(item)
@@ -207,25 +213,61 @@ async def assemble_magic_armor(item: Item) -> str:
 
 async def assemble_magic_weapon(item: Item) -> str:
     '''Construct a magic weapon.'''
-    # TODO: Actually roll for enchantments and base item.
     base = random.choice(ITEMS['weapon']['base'])
-    total_mod = item['bonus'] + sum(item['enchants'])
-    cost = base['cost'] + ((total_mod ** 2) * 2000)
+
+    if 'double' in base['tags']:
+        masterwork = 600
+    elif base['type'] == 'ammo':
+        masterwork = 6 * base.get('count', 1)
+    else:
+        masterwork = 300
+
+    cost = base['cost'] + masterwork + ((item['bonus'] ** 2) * (4000 if 'double' in base['tags'] else 2000))
     ret = f'+{item["bonus"]} {base["name"]}'
 
-    if item['enchants']:
-        ret += ' with'
-        index = 0
+    tags = set(base['tags'])
+    enchants = list()
 
-        for i in item['enchants']:
-            ret += f' one +{i} enchantment'
+    for enchant in item['enchants']:
+        possible = ITEMS['weapon']['enchantments'][base['type']][enchant]
 
-            if index > 0:
-                ret += ' and'
+        for possibility in possible:
+            if possibility in enchants:
+                possible.remove(possibility)
+            elif 'limit' in possibility:
+                if 'only' in possibility['limit']:
+                    if len(set(possibility['limit']['only']) & tags) == 0:
+                        possible.remove(possibility)
+                elif 'not' in possibility['limit']:
+                    if len(set(possibility['limit']['not']) & tags) != 0:
+                        possible.remove(possibility)
+            elif 'exclude' in possibility:
+                if len(set(possibility['exclude']) & {x['name'] for x in enchants}) != 0:
+                    possible.remove(possibility)
 
-            index += 1
+        if not possible:
+            return assemble_magic_weapon(item)
 
-    ret += f' (cost: +{cost}gp)'
+        weights = [x['weight'] for x in possible]
+
+        result = random.choices(possible, weights=weights)[0]
+
+        enchants.append(result)
+
+        if 'add' in result:
+            tags |= set(result['add'])
+
+        if 'remove' in result:
+            tags -= set(result['remove'])
+
+        ret = f'{result["name"]} {ret}'
+
+        if 'cost' in result:
+            cost += result['cost'] * 2 if 'double' in tags else result['cost']
+        else:
+            cost += ((enchant ** 2) * 4000 if 'double' in tags else 2000)
+
+    ret += f' (cost: {cost}gp)'
 
     return ret
 

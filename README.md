@@ -8,12 +8,13 @@ related games.
 * Roll for random magic items in a single command. This automatically
   handles all the sequential rolls required to produce an exact magic
   item.
-* Roll random spells, optionally for a specific level or class.
 * Roll random mundane weapons and armor.
 
 ## Planned Features
 
-* Proper handling for magic double weapons.
+* Roll random spells, optionally for a specific level or class.
+* Support for automatically rolling spells for scrolls, potions, and wands.
+* Support for rolling for spells present in items that store spells.
 * Roll against arbitrary data tables.
 * Support for rolling for intelligence/special markings on magic items.
 * Finish adding in variant forms for all the magic items that have them:
@@ -53,9 +54,10 @@ tables. In particular:
   for the variant automatically. This is done to make the datast maller
   and slightly improve performance and resource usage of the bot itself.
 * In a handful of places, the official tables are, quite simply, broken
-  (they either have missing ranges of dice values, or have specific values
-  that correlate to multiple items). If ranges are missing, we behave as
-  if they simply did not exist (that is, all the other items keep their
+  (they either have missing ranges of dice values, or have specific
+  values that correlate to multiple items, or have ranges that are
+  logically swapped). If ranges are missing, we behave as if they
+  simply did not exist (that is, all the other items keep their
   proper relative proportions), and if there are duplicate values we
   adjust accordingly. All such cases are documented in comments in the
   [data.yaml](./data.yaml) file.
