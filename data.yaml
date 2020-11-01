@@ -1379,16 +1379,16 @@ rod:
       - {weight: 20, cost: 121500, name: 'Greater Metamagic {{ keys.metamagic(3) }} Rod'}
       - {weight:  5, cost: 170000, name: 'Greater Metamagic Quicken Rod'}
 scroll:
-  - {minor:  5, medium:  0, major:  0, name: 'Scroll of {{ keys.spell(0) }}'}
-  - {minor: 45, medium:  0, major:  0, name: 'Scroll of {{ keys.spell(1) }}'}
-  - {minor: 45, medium:  5, major:  0, name: 'Scroll of {{ keys.spell(2) }}'}
-  - {minor:  5, medium: 60, major:  0, name: 'Scroll of {{ keys.spell(3) }}'}
-  - {minor:  0, medium: 30, major:  5, name: 'Scroll of {{ keys.spell(4) }}'}
-  - {minor:  0, medium:  5, major: 45, name: 'Scroll of {{ keys.spell(5) }}'}
-  - {minor:  0, medium:  0, major: 20, name: 'Scroll of {{ keys.spell(6) }}'}
-  - {minor:  0, medium:  0, major: 15, name: 'Scroll of {{ keys.spell(7) }}'}
-  - {minor:  0, medium:  0, major: 10, name: 'Scroll of {{ keys.spell(8) }}'}
-  - {minor:  0, medium:  0, major:  5, name: 'Scroll of {{ keys.spell(9) }}'}
+  - {minor:  5, medium:  0, major:  0, name: 'Scroll of {{ spell }}', spell: {level: 0}}
+  - {minor: 45, medium:  0, major:  0, name: 'Scroll of {{ spell }}', spell: {level: 1}}
+  - {minor: 45, medium:  5, major:  0, name: 'Scroll of {{ spell }}', spell: {level: 2}}
+  - {minor:  5, medium: 60, major:  0, name: 'Scroll of {{ spell }}', spell: {level: 3}}
+  - {minor:  0, medium: 30, major:  5, name: 'Scroll of {{ spell }}', spell: {level: 4}}
+  - {minor:  0, medium:  5, major: 45, name: 'Scroll of {{ spell }}', spell: {level: 5}}
+  - {minor:  0, medium:  0, major: 20, name: 'Scroll of {{ spell }}', spell: {level: 6}}
+  - {minor:  0, medium:  0, major: 15, name: 'Scroll of {{ spell }}', spell: {level: 7}}
+  - {minor:  0, medium:  0, major: 10, name: 'Scroll of {{ spell }}', spell: {level: 8}}
+  - {minor:  0, medium:  0, major:  5, name: 'Scroll of {{ spell }}', spell: {level: 9}}
 staff:
   medium:
     lesser:
@@ -1466,11 +1466,11 @@ staff:
       - {weight:  1, cost: 220000, name: 'Staff of the Hierophant'}
       - {weight:  1, cost: 235000, name: 'Staff of Power'}
 wand:
-  - {minor:  5, medium:  0, major:  0, name: 'Wand of {{ keys.spell(0) }}'}
-  - {minor: 55, medium:  0, major:  0, name: 'Wand of {{ keys.spell(1) }}'}
-  - {minor: 40, medium: 60, major:  0, name: 'Wand of {{ keys.spell(2) }}'}
-  - {minor:  0, medium: 40, major: 60, name: 'Wand of {{ keys.spell(3) }}'}
-  - {minor:  0, medium:  0, major: 40, name: 'Wand of {{ keys.spell(4) }}'}
+  - {minor:  5, medium:  0, major:  0, name: 'Wand of {{ spell }}', spell: {level: 0}}
+  - {minor: 55, medium:  0, major:  0, name: 'Wand of {{ spell }}', spell: {level: 1}}
+  - {minor: 40, medium: 60, major:  0, name: 'Wand of {{ spell }}', spell: {level: 2}}
+  - {minor:  0, medium: 40, major: 60, name: 'Wand of {{ spell }}', spell: {level: 3}}
+  - {minor:  0, medium:  0, major: 40, name: 'Wand of {{ spell }}', spell: {level: 4}}
 wondrous:
   - {weight:  6, category: 'belt'}
   - {weight:  6, category: 'body'}
@@ -2118,7 +2118,7 @@ slotless:
       - {weight:  1, cost:   1000, name: 'Concealing Pocket'}
       - {weight:  1, cost:   1000, name: 'Dowsing Syrup'}
       - {weight:  1, cost:   1000, name: 'Incense of Transcendence'}
-      - {weight:  2, cost:   1000, name: 'Page of Spell Knowledge ({{ keys.spell(1, cls="spellpage") }})'}
+      - {weight:  2, cost:   1000, name: 'Page of Spell Knowledge ({{ spell }})', spell: {level: 1, class: spellpage}}
       - {weight:  3, cost:   1000, name: 'Pearl of Power (1st)'}
       - {weight:  1, cost:   1000, name: 'Preserving Flask (1st)'}
       - {weight:  2, cost:   1000, name: 'Pyxes of Redirected Focus'}
@@ -2175,7 +2175,7 @@ slotless:
       # - {weight:  1, cost:   4000, name: 'Far-Reaching Sight'}
       - {weight:  2, cost:   4000, name: 'Ioun Stone (Clear Spindle)'}
       - {weight:  1, cost:   4000, name: 'Marvellous Pigments'}
-      - {weight:  8, cost:   4000, name: 'Page of Spell Knowledge ({{ keys.spell(2, cls="spellpage") }})'}
+      - {weight:  8, cost:   4000, name: 'Page of Spell Knowledge ({{ spell }})', spell: {level: 2, class: spellpage}}
       - {weight: 10, cost:   4000, name: 'Pearl of Power (2nd)'}
       - {weight:  1, cost:   4000, name: 'Preserving Flask (2nd)'}
       - {weight:  1, cost:   4000, name: 'Restorative Ointment'}
@@ -2251,7 +2251,7 @@ slotless:
       - {weight:  1, cost:   9000, name: 'Boro Bead (3rd)'}
       - {weight:  1, cost:   9000, name: 'Decanter of Endless Water'}
       - {weight:  1, cost:   9000, name: 'Loathsome Mirror'}
-      - {weight:  3, cost:   9000, name: 'Page of Spell Knowledge ({{ keys.spell(3, cls="spellpage") }})'}
+      - {weight:  3, cost:   9000, name: 'Page of Spell Knowledge ({{ spell }})', spell: {level: 3, class: spellpage}}
       - {weight:  6, cost:   9000, name: 'Pearl of Power (3rd)'}
       - {weight:  1, cost:   9000, name: 'Preserving Flask (3rd)'}
       - {weight:  1, cost:   9100, name: 'Figurine of Wondrous Power (Serpentine Owl)'}
@@ -2299,7 +2299,7 @@ slotless:
       - {weight:  1, cost:  15500, name: 'Figurine of Wondrous Power (Onyx Dog)'}
       - {weight:  2, cost:  16000, name: 'Tan Bag of Tricks'}
       - {weight:  1, cost:  16000, name: 'Boro Bead (4th)'}
-      - {weight:  1, cost:  16000, name: 'Page of Spell Knowledge ({{ keys.spell(4, cls="spellpage") }})'}
+      - {weight:  1, cost:  16000, name: 'Page of Spell Knowledge ({{ spell }})', spell: {level: 4, class: spellpage}}
       - {weight:  4, cost:  16000, name: 'Pearl of Power (4th)'}
       - {weight:  1, cost:  16000, name: 'Preserving Flask (4th)'}
       - {weight:  3, cost:  16000, name: 'Scabbard of Keen Edges'}
@@ -2327,7 +2327,7 @@ slotless:
       - {weight:  3, cost:  24000, name: 'Drinking Horn of Bottomless Valor'}
       - {weight:  3, cost:  25000, name: 'Boro Bead (5th)'}
       - {weight:  2, cost:  25000, name: 'Chaos Emerald'}
-      - {weight:  4, cost:  25000, name: 'Page of Spell Knowledge ({{ keys.spell(5, cls="spellpage") }})'}
+      - {weight:  4, cost:  25000, name: 'Page of Spell Knowledge ({{ spell }})', spell: {level: 5, class: spellpage}}
       - {weight:  6, cost:  25000, name: 'Pearl of Power (5th)'}
       - {weight:  3, cost:  25000, name: 'Preserving Flask (5th)'}
       - {weight:  2, cost:  25305, name: 'Maul of the titans'}
@@ -2349,7 +2349,7 @@ slotless:
       - {weight:  2, cost:  36000, name: 'Boro Bead (6th)'}
       - {weight:  4, cost:  36000, name: 'Ioun Stone (Vibrant Purple Prism)'}
       - {weight:  4, cost:  36000, name: 'Orb of utter Chaos'}
-      - {weight:  2, cost:  36000, name: 'Page of Spell Knowledge ({{ keys.spell(6, cls="spellpage") }})'}
+      - {weight:  2, cost:  36000, name: 'Page of Spell Knowledge ({{ spell }})', spell: {level: 6, class: spellpage}}
       - {weight:  8, cost:  36000, name: 'Pearl of Power (6th)'}
       - {weight:  2, cost:  36000, name: 'Preserving Flask (6th)'}
       - {weight:  4, cost:  40000, name: 'Cauldron of Flying'}
@@ -2362,7 +2362,7 @@ slotless:
       - {weight:  4, cost:  45000, name: 'Drums of Haste'}
       - {weight:  4, cost:  45800, name: 'Standard Strand of Prayer Beads'}
       - {weight:  3, cost:  48000, name: 'Orb of Storms'}
-      - {weight:  2, cost:  49000, name: 'Page of Spell Knowledge ({{ keys.spell(7, cls="spellpage") }})'}
+      - {weight:  2, cost:  49000, name: 'Page of Spell Knowledge ({{ spell }})', spell: {level: 7, class: spellpage}}
       - {weight:  4, cost:  49000, name: 'Pearl of Power (7th)'}
     greater:
       - {weight:  3, cost:  50000, name: 'Crystal Ball with _See Invisibility_'}
@@ -2376,7 +2376,7 @@ slotless:
       - {weight:  2, cost:  60000, name: 'Darkskull'}
       - {weight:  1, cost:  60000, name: 'Orb of Pure Law'}
       - {weight:  1, cost:  62000, name: 'Cube of Force'}
-      - {weight:  2, cost:  64000, name: 'Pageof Spell Knowledge ({{ keys.spell(8, cls="spellpage") }})'}
+      - {weight:  2, cost:  64000, name: 'Pageof Spell Knowledge ({{ spell }})', spell: {level: 8, class: spellpage}}
       - {weight:  6, cost:  64000, name: 'Pearl of Power (8th)'}
       - {weight:  1, cost:  70000, name: 'Crystal Ball with _Telepathy_'}
       - {weight:  1, cost:  70000, name: 'Greater Horn of Blasting'}
@@ -2384,7 +2384,7 @@ slotless:
       - {weight:  1, cost:  75000, name: 'Gem of Seeing'}
       - {weight:  1, cost:  75000, name: 'Lord’s Banner of Victory'}
       - {weight:  1, cost:  80000, name: 'Crystal Ball with _True Seeing_'}
-      - {weight:  2, cost:  81000, name: 'Page of Spell Knowledge ({{ keys.spell(9, cls="spellpage") }})'}
+      - {weight:  2, cost:  81000, name: 'Page of Spell Knowledge ({{ spell }})', spell: {level: 9, class: spellpage}}
       - {weight:  3, cost:  81000, name: 'Pearl of Power (9th)'}
       - {weight:  1, cost:  82000, name: 'Well of Many Worlds'}
       - {weight: 12, cost:  82500, name: '{{ keys.stat_book() }} +3'}
@@ -2404,14 +2404,173 @@ slotless:
       - {weight:  1, cost: 175000, name: 'Mirror of Mental Prowess'}
       - {weight:  1, cost: 200000, name: 'Mirror of Life Trapping'}
 spell:
-  # TODO: Enter spells
-  - {name: '<spell:0>', level: {'Wizard': [0, 1]}}
-  - {name: '<spell:1>', level: {'Wizard': [1, 1]}}
-  - {name: '<spell:2>', level: {'Wizard': [2, 3]}}
-  - {name: '<spell:3>', level: {'Wizard': [3, 5]}}
-  - {name: '<spell:4>', level: {'Wizard': [4, 7]}}
-  - {name: '<spell:5>', level: {'Wizard': [5, 9]}}
-  - {name: '<spell:6>', level: {'Wizard': [6, 11]}}
-  - {name: '<spell:7>', level: {'Wizard': [7, 13]}}
-  - {name: '<spell:8>', level: {'Wizard': [8, 15]}}
-  - {name: '<spell:9>', level: {'Wizard': [9, 17]}}
+  map:
+    alchemist:
+      type: arcane
+      levels: &half_caster_levels
+        0: 1
+        1: 1
+        2: 4
+        3: 7
+        4: 10
+        5: 13
+        6: 16
+    antipaladin:
+      type: divine
+      levels: &third_offset_caster_levels
+        0: .inf
+        1: 5
+        2: 8
+        3: 11
+        4: 14
+    arcanist:
+      type: arcane
+      copy: wizard
+      levels: &full_spontaneous_caster_levels
+        0: 1
+        1: 1
+        2: 4
+        3: 6
+        4: 8
+        5: 10
+        6: 12
+        7: 14
+        8: 16
+        9: 18
+    bard:
+      type: arcane
+      levels: *half_caster_levels
+    bloodrager:
+      type: arcane
+      levels: &third_caster_levels
+        0: .inf
+        1: 4
+        2: 7
+        3: 10
+        4: 13
+    cleric:
+      type: divine
+      levels: &full_caster_levels
+        0: 1
+        1: 1
+        2: 3
+        3: 5
+        4: 7
+        5: 9
+        6: 11
+        7: 13
+        8: 15
+        9: 17
+    druid:
+      type: divine
+      levels: *full_caster_levels
+    hunter:
+      type: divine
+      merge: [druid, ranger]
+      levels: *half_caster_levels
+    inquisitor:
+      type: divine
+      levels: *half_caster_levels
+    investigator:
+      type: arcane
+      copy: alchemist
+      levels: *half_caster_levels
+    magus:
+      type: arcane
+      levels: *half_caster_levels
+    medium:
+      type: occult
+      levels: *third_caster_levels
+    mesmerist:
+      type: occult
+      levels: *half_caster_levels
+    occultist:
+      type: occult
+      levels: *half_caster_levels
+    omdura:
+      type: divine
+      ccopy: cleric
+      max_level: 6
+      levels: *half_caster_levels
+    oracle:
+      type: divine
+      copy: cleric
+      levels: *full_spontaneous_caster_levels
+    paladin:
+      type: divine
+      levels: *third_offset_caster_levels
+    psychic:
+      type: occult
+      levels: *full_caster_levels
+    ranger:
+      type: divine
+      levels: *third_offset_caster_levels
+    shaman:
+      type: divine
+      levels: *full_caster_levels
+    skald:
+      type: arcane
+      copy: bard
+      max_level: 6
+      levels: *half_caster_levels
+    sorceror:
+      type: arcane
+      copy: wizard
+      levels: *full_spontaneous_caster_levels
+    spiritualist:
+      type: occult
+      levels: *half_caster_levels
+    summoner:
+      type: arcane
+      levels: *half_caster_levels
+    vampire_hunter:
+      type: divine
+      copy: inquisitor
+      max_level: 4
+      levels: *third_offset_caster_levels
+    warpriest:
+      type: divine
+      levels: *half_caster_levels
+    witch:
+      type: arcane
+      levels: *full_caster_levels
+    wizard:
+      type: arcane
+      levels: *full_caster_levels
+  data:
+  - {name: 'Abeyance', link: 'https://www.d20pfsrd.com/magic/all-spells/a/abeyance/', level: {cleric: 2, inquisitor: 2, paladin: 2}, tags: [abjuration]}
+  - {name: 'Abjuring Step', link: 'https://www.d20pfsrd.com/magic/all-spells/a/abjuring-step/', level: {alchemist: 1, bard: 1, magus: 1, psychic: 1, wizard: 1}, tags: [abjuration, force]}
+  - {name: 'Ablative Barrier', link: 'https://www.d20pfsrd.com/magic/all-spells/a/ablative-barrier/', level: {alchemist: 2, bloodrager: 2, magus: 2, occultist: 2, psychic: 2, wizard: 2, summoner: 3}, tags: [conjuration, creation, force]}
+  - {name: 'Ablative Sphere', link: 'https://www.d20pfsrd.com/magic/all-spells/a/ablative-sphere/', level: {wizard: 3}, tags: [abjuration]}
+  - {name: 'Aboleth’s Lung', link: 'https://www.d20pfsrd.com/magic/all-spells/a/aboleth-s-lung/', level: {cleric: 2, druid: 2, wizard: 2, witch: 2}, tags: [transmutation]}
+  - {name: 'Absolution', link: 'https://www.d20pfsrd.com/magic/all-spells/a/absolution/', level: {cleric: 4, paladin: 4}, tags: [abjuration]}
+  - {name: 'Absorb Rune I', link: 'https://www.d20pfsrd.com/magic/all-spells/a/absorb-rune-i/', level: {bard: 4, cleric: 4, magus: 4, occultist: 4, wizard: 4}, tags: [abjuration]}
+  - {name: 'Absorb Rune II', link: 'https://www.d20pfsrd.com/magic/all-spells/a/absorb-rune-i/', level: {bard: 6, cleric: 6, magus: 6, occultist: 6, wizard: 6}, tags: [abjuration]}
+  - {name: 'Absorb Rune III', link: 'https://www.d20pfsrd.com/magic/all-spells/a/absorb-rune-i/', level: {cleric: 9, wizard: 9}, tags: [abjuration]}
+  - {name: 'Absorb Toxicity', link: 'https://www.d20pfsrd.com/magic/all-spells/a/absorb-toxicity/', level: {alchemist: 3, druid: 4, wizard: 5, witch: 4}, tags: [necromancy]}
+  - {name: 'Absorbing Barrier', link: 'https://www.d20pfsrd.com/magic/all-spells/a/absorbing-inhalation/', level: {alchemist: 4, wizard: 4, summoner: 4}, tags: [abjuration]}
+  - {name: 'Absorbing Inhalation', link: 'https://www.d20pfsrd.com/magic/all-spells/a/absorbing-inhalation/', level: {alchemist: 4, bloodrager: 4, druid: 4, wizard: 4}, tags: [transmutation, air]}
+  - {name: 'Absorbing Touch', link: 'https://www.d20pfsrd.com/magic/all-spells/a/absorbing-touch/', level: {alchemist: 3}, tags: [transmutation]}
+  - {name: 'Abstemiousness', link: 'https://www.d20pfsrd.com/magic/all-spells/a/abstemiousness/', level: {bard: 1, cleric: 1, druid: 1, witch: 1}, tags: [transmutation]}
+  - {name: 'Absurdity', link: 'https://www.d20pfsrd.com/magic/all-spells/a/absurdity/', level: {bard: 2, medium: 2, mesmerist: 2, psychic: 2, spiritualist: 2}, tags: [illusion, phantasm, emotion, mind-affecting]}
+  - {name: 'Abundant Ammunition', link: 'https://www.d20pfsrd.com/magic/all-spells/a/abundant-ammunition/', level: {bard: 1, cleric: 1, psychic: 1, ranger: 1, wizard: 1}, tags: [conjuration, summoning]}
+  - {name: 'Abyssal Vermin', link: 'https://www.d20pfsrd.com/magic/all-spells/a/abyssal-vermin/', level: {antipaladin: 2, cleric: 4, wizard: 4, warpriest: 4, witch: 4}, tags: [transmutation]}
+  - {name: 'Accelerate Poison', link: 'https://www.d20pfsrd.com/magic/all-spells/a/accelerate-poison/', level: {druid: 2, ranger: 2, wizard: 2, water school: 2}, tags: [transmutation, poison]}
+  - {name: 'Accept Affliction', link: 'https://www.d20pfsrd.com/magic/all-spells/a/accept-affliction/', level: {bard: 3, cleric: 3, druid: 3, paladin: 3, witch: 3}, tags: [conjuration, healing, good]}
+  - {name: 'Accursed Glare', link: 'https://www.d20pfsrd.com/magic/all-spells/a/accursed-glare/', level: {antipaladin: 3, wizard: 3, witch: 3}, tags: [necromancy, curse]}
+  - {name: 'Acid Arrow', link: 'https://www.d20pfsrd.com/magic/all-spells/a/acid-arrow/', level: {bloodrager: 2, magus: 2, wizard: 2}, tags: [conjuration, creation, acid]}
+  - {name: 'Acid Fog', link: 'https://www.d20pfsrd.com/magic/all-spells/a/acid-fog/', level: {magus: 6, wizard: 6, summoner: 6}, tags: [conjuration, creation, acid]}
+  - {name: 'Acid Maw', link: 'https://www.d20pfsrd.com/magic/all-spells/a/acid-maw/', level: {druid: 1, ranger: 1}, tags: [transmutation, acid]}
+  - {name: 'Acid Pit', link: 'https://www.d20pfsrd.com/magic/all-spells/a/acid-pit/', level: {wizard: 4, summoner: 4}, tags: [conjuration, creation, acid]}
+  - {name: 'Acid Splash', link: 'https://www.d20pfsrd.com/magic/all-spells/a/acid-splash/', level: {inquisitor: 0, magus: 0, wizard: 0, summoner: 0}, tags: [conjuration, creation, acid]}
+  - {name: 'Acidic Spray', link: 'https://www.d20pfsrd.com/magic/all-spells/a/acidic-spray/', level: {magus: 5, wizard: 5}, tags: [conjuration, creation, acid]}
+  - {name: 'Acute Senses', link: 'https://www.d20pfsrd.com/magic/all-spells/a/acute-senses/', level: {alchemist: 2, bard: 2, inquisitor: 2, psychic: 2, ranger: 2}, tags: [transmutation]}
+  - {name: 'Adhesive Blood', link: 'https://www.d20pfsrd.com/magic/all-spells/a/adhesive-blood/', level: {alchemist: 2, bloodrager: 2, psychic: 2, wizard: 2, witch: 2}, tags: [transmutation]}
+  - {name: 'Adhesive Spittle', link: 'https://www.d20pfsrd.com/magic/all-spells/a/adhesive-spittle/', level: {alchemist: 1, psychic: 1, wizard: 1, witch: 1}, tags: [conjuration, creation]}
+  - {name: 'Adjustable Disguise', link: 'https://www.d20pfsrd.com/magic/all-spells/a/adjustable-disguise/', level: {alchemist: 3, antipaladin: 3, bard: 3, inquisitor: 3, mesmerist: 3, occultist: 3, psychic: 3, wizard: 3, witch: 3}, tags: [illusion, glamer]}
+  - {name: 'Adjustable Polymorph', link: 'https://www.d20pfsrd.com/magic/all-spells/a/adjustable-polymorph/', level: {alchemist: 4, bard: 4, magus: 4, shaman: 4, wizard: 4, summoner: 4, witch: 4}, tags: [transmutation, polymorph]}
+  - {name: 'Admonishing Ray', link: 'https://www.d20pfsrd.com/magic/all-spells/a/admonishing-ray/', level: {cleric: 2, wizard: 2}, tags: [evocation, force]}
+  - {name: 'Adoration', link: 'https://www.d20pfsrd.com/magic/all-spells/a/adoration/', level: {bard: 1, psychic: 2, wizard: 2, witch: 2}, tags: [transmutation]}
+  - {name: 'Adroid Retrieval', link: 'https://www.d20pfsrd.com/magic/all-spells/a/adroit-retrieval/', level: {occultist: 3, wizard: 3}, tags: [transmutation]}
+  - {name: 'Advanced Scurvy', link: 'https://www.d20pfsrd.com/magic/all-spells/a/advanced-scurvy/', level: {cleric: 1, druid: 1}, tags: [necromancy, disease, evil]}
+  - {name: 'Aerial Tracks', link: 'https://www.d20pfsrd.com/magic/all-spells/a/aerial-tracks/', level: {druid: 4, inquisitor: 4, ranger: 3, shaman: 4}, tags: [divination, air]}

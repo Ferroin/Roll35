@@ -8,11 +8,11 @@ related games.
 * Roll for random magic items in a single command. This automatically
   handles all the sequential rolls required to produce an exact magic
   item.
+* Roll random spells, optionally for a specific level, class, or category.
 * Roll random mundane weapons and armor.
 
 ## Planned Features
 
-* Roll random spells, optionally for a specific level or class.
 * Support for automatically rolling spells for scrolls, potions, and wands.
 * Support for rolling for spells present in items that store spells.
 * Roll against arbitrary data tables.
@@ -22,7 +22,9 @@ related games.
   - Bane Weapons
 * The ability to enable and disable specific items at runtime (with
   per-server config).
-* Support for hyperlinks in rolled items.
+* Support for hyperlinks in rolled items. This will require sending
+  rolled items as embeds instead of plain messages, because Discord is
+  stupid and refuses to support Markdown link syntax anywhere but in embeds.
 * Support for rolling specific base weapons or armor as magic items.
 * Support for simply rolling dice.
 
@@ -42,7 +44,10 @@ related games.
 Roll35 comes bundled with a usable dataset for Pathfinder
 1e. This includes the data for the official tables from
 [D20PFSRD](https://www.d20pfsrd.com/) that are needed for all of the
-features the bot provides.
+features the bot provides. In all cases where it matters, this uses data
+from unchained class variants (this primarily affects spell availability,
+as the unchained variant of the summoner has a different spell list from
+the regular variant).
 
 Note that this data set includes some slight differences from the official
 tables. In particular:

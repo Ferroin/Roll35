@@ -2,18 +2,19 @@
 # SPDX-License-Identifier: MITNFA
 '''A discord bot for rolling magic items in Pathfinder 1e.'''
 
+import asyncio
 import logging
 import os
 import random
 import sys
 
 from copy import copy
-from math import gcd
 from types import SimpleNamespace
 from typing import TypeVar, Any, Optional, Callable, \
                    Sequence, List, \
                    Mapping, Dict
 
+import aiosqlite
 import jinja2
 import yaml
 
@@ -23,8 +24,10 @@ Item = TypeVar('Item')
 
 TOKEN = os.getenv('DISCORD_TOKEN')
 LOGLEVEL = os.getenv('LOG_LEVEL', default='INFO')
+DATAPATH = os.getenv('DATA_PATH', default='/data')
 
-logging.basicConfig(level=LOGLEVEL)
+logging.basicConfig(level=LOGLEVEL,
+                    format='%(asctime)s %(name)s %(levelname)s: %(message)s')
 logging.captureWarnings(True)
 
 if not TOKEN:
@@ -38,11 +41,21 @@ if not TOKEN:
 KEYS = SimpleNamespace()
 ITEMS = dict()
 GENERIC_ERROR_LOG = 'Error while processing command {0} from {1} of {2}:'
+SPELL_LOCK = asyncio.Lock()
+SPELL_PATH = os.path.join(DATAPATH, 'spells.sqlite3')
 JENV = jinja2.Environment(
     loader=jinja2.BaseLoader(),
     autoescape=False,
     enable_async=True,
 )
+
+
+##############
+# Exceptions #
+##############
+
+class NoValidSpell(Exception):
+    '''Raised by the get_spell() coroutine if no valid spell can be found.'''
 
 
 ############
@@ -139,33 +152,206 @@ def path_to_table(path: Sequence[str], _ref=ITEMS) -> Sequence[Item]:
 # pylint: enable=dangerous-default-value
 
 
-def get_spell(level, cls="low"):
+##############
+# Coroutines #
+##############
+
+async def get_spell(level: Optional[int] = None, cls: str = "minimum", tag: Optional[str] = None) -> str:
     '''Pick a random spell.
 
        Level indicates the spell level.
 
        cls indicates how to determine the spell level, and is either a
-       class or the exact value 'low' (which uses the lowest level among
-       all classes), 'high' (which uses the highest), or 'spellpage'
+       class or the exact value 'minimum' (which uses the lowest level among
+       all classes), 'maximum' (which uses the highest), or 'spellpage'
        (which uses the wizard or cleric level if it's one one of those
        lists, or the highest if not).'''
-    # TODO: Add proper handling for rolling spells
-    return f'<spell:{level}>'
+    if cls == 'spellpage':
+        cls = random.choice(('spellpage_divine', 'spellpage_arcane'))
+
+    limit_options = None
+
+    async with SPELL_LOCK:
+        async with aiosqlite.connect(f'file:{SPELL_PATH}?mode=ro', uri=True) as spells:
+            spells.row_factory = aiosqlite.Row
+
+            async with spells.execute('''SELECT data FROM extra WHERE id = 'classes';''') as cur:
+                classes = await cur.fetchall()
+
+                if cls not in classes[0]['data'].split():
+                    raise NoValidSpell
+
+            if level is not None:
+                async with spells.execute(f'''SELECT * FROM spells WHERE {cls} = {level};''') as cur:
+                    options = await cur.fetchall()
+            else:
+                async with spells.execute(f'''SELECT * FROM spells WHERE {cls} IS NOT NULL;''') as cur:
+                    options = await cur.fetchall()
+
+            if tag is not None:
+                async with spells.execute(f'''SELECT * FROM tagmap WHERE tagmap MATCH '{tag}';''') as cur:
+                    limit_options = {x['name'] for x in await cur.fetchall()}
+
+    if limit_options is not None:
+        options = [x for x in options if x['name'] in limit_options]
+
+    if not options:
+        raise NoValidSpell
+
+    result = random.choice(options)
+
+    if cls == 'minimum':
+        result_cls = result['minimum_cls']
+    elif cls == 'spellpage_divine':
+        result_cls = result['spellpage_divine_cls']
+    elif cls == 'spellpage_arcane':
+        result_cls = result['spellpage_arcane_cls']
+    else:
+        result_cls = cls
+
+    caster_level = ITEMS['spell']['map'][result_cls]['levels'][result[result_cls]]
+
+    return f'{result["name"]} ({result_cls} CL {caster_level})'
 
 
-##############
-# Coroutines #
-##############
+async def prep_spell_db(data: Mapping[str, Any]) -> None:
+    '''Populate the spell database based on the given data.
 
-async def render(item: str) -> str:
+       This gets run at startup if the data file differs from the spell database.'''
+    columns = list(data['map'].keys())
+    classes = columns + ['minimum', 'spellpage_arcane', 'spellpage_divine']
+
+    async with SPELL_LOCK:
+        async with aiosqlite.connect(f'file:{SPELL_PATH}?mode=rwc', uri=True) as spells:
+            await spells.executescript(f'''DROP TABLE IF EXISTS spells;
+                                           DROP TABLE IF EXISTS tagmap;
+                                           DROP TABLE IF EXISTS extra;
+                                           CREATE TABLE spells(name TEXT,
+                                                               link TEXT,
+                                                               {' INTEGER, '.join(columns)} INTEGER,
+                                                               minimum INTEGER,
+                                                               spellpage_arcane INTEGER,
+                                                               spellpage_divine INTEGER,
+                                                               minimum_cls TEXT,
+                                                               spellpage_arcane_cls TEXT,
+                                                               spellpage_divine_cls TEXT);
+                                           CREATE VIRTUAL TABLE tagmap USING fts5(name UNINDEXED,
+                                                                                  tags,
+                                                                                  columnsize='0',
+                                                                                  detail='none');
+                                           CREATE TABLE extra(id TEXT, data TEXT);
+                                           INSERT INTO extra (id, data) VALUES ('classes', '{' '.join(classes)}');
+                                           VACUUM;''')
+            await spells.commit()
+
+            for item in data['data']:
+                logging.debug(f'Entering spell: {item["name"]}')
+
+                cmd = f'''INSERT INTO spells (name, link, {', '.join(columns)}, minimum, spellpage_arcane, spellpage_divine,
+                          minimum_cls, spellpage_arcane_cls, spellpage_divine_cls)
+                          VALUES ("{item['name']}", "{item['link']}", '''
+
+                values = []
+                minimum = 9
+                min_cls = ''
+                spellpage_arcane = 'NULL'
+                spellpage_arcane_fixed = False
+                spellpage_arcane_cls = 'NULL'
+                spellpage_divine = 'NULL'
+                spellpage_divine_fixed = False
+                spellpage_divine_cls = 'NULL'
+
+                for cls in columns:
+                    lvl = 'NULL'
+
+                    if cls in item['level']:
+                        lvl = item['level'][cls]
+                    elif 'copy' in data['map'][cls]:
+                        if data['map'][cls]['copy'] in item['level']:
+                            if 'max_level' in data['map'][cls] and \
+                               item['level'][data['map'][cls]['copy']] <= data['map'][cls]['max_level']:
+                                lvl = item['level'][data['map'][cls]['copy']]
+                            else:
+                                lvl = item['level'][data['map'][cls]['copy']]
+                    elif 'merge' in data['map'][cls]:
+                        merge = set(data['map'][cls]['merge']) & set(item['level'].keys())
+                        if len(merge) == 1:
+                            lvl = item['level'][list(merge)[0]]
+                        elif len(merge) > 1:
+                            lvl = min([item['level'][x] for x in merge])
+
+                    if lvl != 'NULL':
+                        if not isinstance(lvl, int):
+                            raise TypeError
+
+                        if lvl <= minimum:
+                            minimum = lvl
+
+                            if min_cls and \
+                               ITEMS['spell']['map'][cls]['levels'][lvl] < \
+                               ITEMS['spell']['map'][min_cls]['levels'][lvl]:
+                                min_cls = cls
+                            else:
+                                min_cls = cls
+
+                        if data['map'][cls]['type'] == 'divine' and not spellpage_divine_fixed:
+                            if cls == 'cleric':
+                                spellpage_divine = lvl
+                                spellpage_divine_fixed = True
+                                spellpage_divine_cls = 'cleric'
+                            elif spellpage_divine == 'NULL' or lvl <= spellpage_divine:
+                                spellpage_divine = lvl
+
+                                if spellpage_divine_cls != 'NULL' and \
+                                   ITEMS['spell']['map'][cls]['levels'][lvl] < \
+                                   ITEMS['spell']['map'][spellpage_divine_cls]['levels'][lvl]:
+                                    spellpage_divine_cls = cls
+                                else:
+                                    spellpage_divine_cls = cls
+
+                        if data['map'][cls]['type'] == 'arcane' and not spellpage_arcane_fixed:
+                            if cls == 'wizard':
+                                spellpage_arcane = lvl
+                                spellpage_arcane_fixed = True
+                                spellpage_arcane_cls = 'wizard'
+                            elif spellpage_arcane == 'NULL' or lvl <= spellpage_arcane:
+                                spellpage_arcane = lvl
+
+                                if spellpage_arcane_cls != 'NULL' and \
+                                   ITEMS['spell']['map'][cls]['levels'][lvl] < \
+                                   ITEMS['spell']['map'][spellpage_arcane_cls]['levels'][lvl]:
+                                    spellpage_arcane_cls = cls
+                                else:
+                                    spellpage_arcane_cls = cls
+
+                    values.append(str(lvl))
+
+                min_cls = f"'{min_cls}'"
+
+                if spellpage_arcane_cls != 'NULL':
+                    spellpage_arcane_cls = f"'{spellpage_arcane_cls}'"
+
+                if spellpage_divine_cls != 'NULL':
+                    spellpage_divine_cls = f"'{spellpage_divine_cls}'"
+
+                cmd += ', '.join(values)
+                cmd += f''', {minimum}, {spellpage_arcane}, {spellpage_divine}, {min_cls},
+                           {spellpage_arcane_cls}, {spellpage_divine_cls});
+                           INSERT INTO tagmap (name, tags) VALUES ("{item['name']}", "{' '.join(item['tags'])}");'''
+                await spells.executescript(cmd)
+
+            await spells.commit()
+
+
+async def render(item: str, **extra) -> str:
     '''Render the given string as a Jinja2 template.
 
       This compiles the string as a template, then renders it twice with
       the KEYS object passed in as the value `keys`, returning the result
       of the rendering.'''
     template1 = JENV.from_string(item)
-    template2 = JENV.from_string(await template1.render_async(keys=KEYS))
-    return await template2.render_async(keys=KEYS)
+    template2 = JENV.from_string(await template1.render_async(keys=KEYS, **extra))
+    return await template2.render_async(keys=KEYS, **extra)
 
 
 async def assemble_magic_armor(item: Item) -> str:
@@ -183,7 +369,7 @@ async def assemble_magic_armor(item: Item) -> str:
         for possibility in possible:
             if possibility in enchants:
                 possible.remove(possibility)
-            elif 'limit' in possiblity:
+            elif 'limit' in possibility:
                 if len(set(possibility['limit']) & tags) == 0:
                     possible.remove(possibility)
             elif 'exclude' in possibility:
@@ -291,7 +477,11 @@ async def roll_magic_item(path: Sequence[str]) -> str:
             item = await assemble_magic_weapon(item)
             return await render(item)
 
-    ret = await render(item['name'])
+    if 'spell' in item:
+        selected_spell = await get_spell(**item['spell'])
+        ret = await render(item['name'], spell=selected_spell)
+    else:
+        ret = await render(item['name'])
 
     if 'cost' in item:
         ret += f' (cost: {item["cost"]}gp)'
@@ -310,8 +500,24 @@ BOT = commands.Bot(command_prefix='/')
 async def on_connect() -> None:
     '''Runs when we connect to Discord.
 
-       This just logs the successful connection and does nothing else.'''
+       This logs the successful connection and then checks if the spell
+       database needs updated.'''
     logging.info(f'Successfully connected to Discord as {BOT.user.name}.')
+
+    if not os.access(SPELL_PATH, os.F_OK):
+        logging.info('Generating initial spell database.')
+        await prep_spell_db(ITEMS['spell'])
+        logging.info('Finished generating spell database.')
+    elif os.path.getmtime('./data.yaml') > os.path.getmtime(SPELL_PATH):
+        logging.info('Data file newer than spell database, updating spell database.')
+        await prep_spell_db(ITEMS['spell'])
+        logging.info('Finished updating spell database.')
+    elif os.path.getmtime(os.path.abspath(__file__)) > os.path.getmtime(SPELL_PATH):
+        logging.info('Script newer than spell database, updating spell database.')
+        await prep_spell_db(ITEMS['spell'])
+        logging.info('Finished updating spell database.')
+    else:
+        logging.info('Spell database already up to date.')
 
 
 @BOT.event
@@ -576,16 +782,48 @@ async def magic_item_error(ctx, error: Exception) -> None:
 
 @roll35.command(name='spell', help='Roll a random spell')
 @commands.guild_only()
-async def spell(ctx, specifier: str) -> None:
+async def spell(ctx, *, specifier: Optional[str]) -> None:
     '''Run when the `/roll35 spell` command is issued.
 
        This rolls for a random spell from our spell table using parameters
        specified by the command.
 
-       The modifier string has two optional parameters:
+       The modifier string has three optional parameters:
        * `level:<level>` Used to specify a specific spell leve.
-       * `class:<class>` Used to specify a particular class’s spell list should be used.'''
-    return NotImplemented
+       * `class:<class>` Used to specify a particular class’s spell list should be used.
+       * `tag:<tag>` Used to specify a tag that must match (for example, listing only conjuration spells.'''
+    level = None
+    cls = 'minimum'
+    tag = None
+
+    if specifier:
+        for param in specifier.split():
+            if param.startswith('level:'):
+                try:
+                    level = int(param.split(':')[1])
+                except (ValueError, KeyError):
+                    await ctx.send('invalid format for level parameter.')
+                    return
+            elif param.startswith('class:'):
+                try:
+                    cls = param.split(':')[1]
+                except (ValueError, KeyError):
+                    await ctx.send('invalid format for class parameter.')
+                    return
+            elif param.startswith('tag:'):
+                try:
+                    tag = param.split(':')[1]
+                except (ValueError, KeyError):
+                    await ctx.send('invalid format for tag parameter.')
+                    return
+            else:
+                await ctx.send(f'Unrecognized parameter {param}.')
+                return
+
+    try:
+        await ctx.send(await get_spell(level=level, cls=cls, tag=tag))
+    except NoValidSpell:
+        await ctx.send('Unable to find any spells matching requested parameters.')
 
 
 @spell.error
@@ -593,7 +831,7 @@ async def spell_error(ctx, error: Exception) -> None:
     '''Run when the `spell` function throws an error.'''
     if isinstance(error, commands.UserInputError):
         await ctx.send('Invalid parameters for roll35 spell command, usage: ' +
-                       '`/roll35 spell [level:<level>] [class:<class>]`.')
+                       '`/roll35 spell [level:<level>] [class:<class>] [tag:<tag>]`.')
     elif isinstance(error, commands.NoPrivateMessage):
         pass
     elif isinstance(error, commands.CheckFailure):
@@ -606,19 +844,19 @@ async def spell_error(ctx, error: Exception) -> None:
 
 
 #############
-# Data prep #
+# Data Prep #
 #############
 
 try:
+    logging.info('Loading item data.')
     with open('./data.yaml', 'r') as source:
         DATA = yaml.safe_load(source.read())
 except (IOError, OSError, yaml.YAMLError):
     logging.exception('Unable to load item data.')
     sys.exit(1)
 
+logging.info('Initializing template values.')
 for name, desc in DATA['keys'].items():
-    logging.debug(f'Generating selector for {name}.')
-
     if desc['type'] == 'flat':
         selector = create_flat_selector(desc['data'])
     elif desc['type'] == 'flat proportional':
@@ -632,26 +870,24 @@ for name, desc in DATA['keys'].items():
 
     setattr(KEYS, name, selector)
 
+logging.info('Initializing item data.')
 ITEMS['types'] = DATA['types']
 
-for t in ('potion', 'scroll', 'wand'):
-    logging.debug(f'Composing {t}')
-    ITEMS[t] = compose_items(DATA[t])
+for i in ('potion', 'scroll', 'wand'):
+    logging.debug(f'Composing {i}')
+    ITEMS[i] = compose_items(DATA[i])
 
-for t in ('armor', 'weapon', 'ring',
+for i in ('armor', 'weapon', 'ring',
           'rod', 'staff', 'belt', 'body',
           'chest', 'eyes', 'feet', 'hands',
           'head', 'headband', 'neck',
           'shoulders', 'wrists', 'slotless',
           'wondrous'):
-    ITEMS[t] = DATA[t]
+    ITEMS[i] = DATA[i]
 
 ITEMS['spell'] = DATA['spell']
 
-KEYS.spell = get_spell
-
-del DATA
-
+logging.info('Successfully initialized primary data structures.')
 
 ##############
 # Main Logic #

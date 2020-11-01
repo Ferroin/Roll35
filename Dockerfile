@@ -8,6 +8,8 @@ RUN apk add --no-cache alpine-sdk && \
     pip install --no-cache-dir -r requirements.txt && \
     apk del alpine-sdk
 
+VOLUME /data
+
 COPY data.yaml ./
 COPY roll35.py ./
 
