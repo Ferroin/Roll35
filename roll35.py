@@ -245,7 +245,10 @@ async def prep_spell_db(data: Mapping[str, Any]) -> None:
             await spells.commit()
 
             for item in data['data']:
-                logging.debug(f'Entering spell: {item["name"]}')
+                unknown_classes = set(item['level'].keys()) - set(columns)
+
+                if unknown_classes:
+                    logging.warning(f'Unrecognized classes in entry for {item["name"]}: {repr(unknown_classes)}')
 
                 cmd = f'''INSERT INTO spells (name, link, {', '.join(columns)}, minimum, spellpage_arcane, spellpage_divine,
                           minimum_cls, spellpage_arcane_cls, spellpage_divine_cls)
