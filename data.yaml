@@ -2467,6 +2467,7 @@ spell:
     hunter:
       type: divine
       merge: [druid, ranger]
+      max_level: 6
       levels: *half_caster_levels
     inquisitor:
       type: divine
@@ -2474,6 +2475,7 @@ spell:
     investigator:
       type: arcane
       copy: alchemist
+      max_level: 6
       levels: *half_caster_levels
     magus:
       type: arcane
@@ -2530,6 +2532,7 @@ spell:
       levels: *third_offset_caster_levels
     warpriest:
       type: divine
+      max_level: 6
       levels: *half_caster_levels
     witch:
       type: arcane
@@ -2537,40 +2540,3 @@ spell:
     wizard:
       type: arcane
       levels: *full_caster_levels
-  data:
-  - {name: 'Abeyance', link: 'https://www.d20pfsrd.com/magic/all-spells/a/abeyance/', level: {cleric: 2, inquisitor: 2, paladin: 2}, tags: [abjuration]}
-  - {name: 'Abjuring Step', link: 'https://www.d20pfsrd.com/magic/all-spells/a/abjuring-step/', level: {alchemist: 1, bard: 1, magus: 1, psychic: 1, wizard: 1}, tags: [abjuration, force]}
-  - {name: 'Ablative Barrier', link: 'https://www.d20pfsrd.com/magic/all-spells/a/ablative-barrier/', level: {alchemist: 2, bloodrager: 2, magus: 2, occultist: 2, psychic: 2, wizard: 2, summoner: 3}, tags: [conjuration, creation, force]}
-  - {name: 'Ablative Sphere', link: 'https://www.d20pfsrd.com/magic/all-spells/a/ablative-sphere/', level: {wizard: 3}, tags: [abjuration]}
-  - {name: 'Aboleth’s Lung', link: 'https://www.d20pfsrd.com/magic/all-spells/a/aboleth-s-lung/', level: {cleric: 2, druid: 2, wizard: 2, witch: 2}, tags: [transmutation]}
-  - {name: 'Absolution', link: 'https://www.d20pfsrd.com/magic/all-spells/a/absolution/', level: {cleric: 4, paladin: 4}, tags: [abjuration]}
-  - {name: 'Absorb Rune I', link: 'https://www.d20pfsrd.com/magic/all-spells/a/absorb-rune-i/', level: {bard: 4, cleric: 4, magus: 4, occultist: 4, wizard: 4}, tags: [abjuration]}
-  - {name: 'Absorb Rune II', link: 'https://www.d20pfsrd.com/magic/all-spells/a/absorb-rune-i/', level: {bard: 6, cleric: 6, magus: 6, occultist: 6, wizard: 6}, tags: [abjuration]}
-  - {name: 'Absorb Rune III', link: 'https://www.d20pfsrd.com/magic/all-spells/a/absorb-rune-i/', level: {cleric: 9, wizard: 9}, tags: [abjuration]}
-  - {name: 'Absorb Toxicity', link: 'https://www.d20pfsrd.com/magic/all-spells/a/absorb-toxicity/', level: {alchemist: 3, druid: 4, wizard: 5, witch: 4}, tags: [necromancy]}
-  - {name: 'Absorbing Barrier', link: 'https://www.d20pfsrd.com/magic/all-spells/a/absorbing-inhalation/', level: {alchemist: 4, wizard: 4, summoner: 4}, tags: [abjuration]}
-  - {name: 'Absorbing Inhalation', link: 'https://www.d20pfsrd.com/magic/all-spells/a/absorbing-inhalation/', level: {alchemist: 4, bloodrager: 4, druid: 4, wizard: 4}, tags: [transmutation, air]}
-  - {name: 'Absorbing Touch', link: 'https://www.d20pfsrd.com/magic/all-spells/a/absorbing-touch/', level: {alchemist: 3}, tags: [transmutation]}
-  - {name: 'Abstemiousness', link: 'https://www.d20pfsrd.com/magic/all-spells/a/abstemiousness/', level: {bard: 1, cleric: 1, druid: 1, witch: 1}, tags: [transmutation]}
-  - {name: 'Absurdity', link: 'https://www.d20pfsrd.com/magic/all-spells/a/absurdity/', level: {bard: 2, medium: 2, mesmerist: 2, psychic: 2, spiritualist: 2}, tags: [illusion, phantasm, emotion, mind-affecting]}
-  - {name: 'Abundant Ammunition', link: 'https://www.d20pfsrd.com/magic/all-spells/a/abundant-ammunition/', level: {bard: 1, cleric: 1, psychic: 1, ranger: 1, wizard: 1}, tags: [conjuration, summoning]}
-  - {name: 'Abyssal Vermin', link: 'https://www.d20pfsrd.com/magic/all-spells/a/abyssal-vermin/', level: {antipaladin: 2, cleric: 4, wizard: 4, warpriest: 4, witch: 4}, tags: [transmutation]}
-  - {name: 'Accelerate Poison', link: 'https://www.d20pfsrd.com/magic/all-spells/a/accelerate-poison/', level: {druid: 2, ranger: 2, wizard: 2, water school: 2}, tags: [transmutation, poison]}
-  - {name: 'Accept Affliction', link: 'https://www.d20pfsrd.com/magic/all-spells/a/accept-affliction/', level: {bard: 3, cleric: 3, druid: 3, paladin: 3, witch: 3}, tags: [conjuration, healing, good]}
-  - {name: 'Accursed Glare', link: 'https://www.d20pfsrd.com/magic/all-spells/a/accursed-glare/', level: {antipaladin: 3, wizard: 3, witch: 3}, tags: [necromancy, curse]}
-  - {name: 'Acid Arrow', link: 'https://www.d20pfsrd.com/magic/all-spells/a/acid-arrow/', level: {bloodrager: 2, magus: 2, wizard: 2}, tags: [conjuration, creation, acid]}
-  - {name: 'Acid Fog', link: 'https://www.d20pfsrd.com/magic/all-spells/a/acid-fog/', level: {magus: 6, wizard: 6, summoner: 6}, tags: [conjuration, creation, acid]}
-  - {name: 'Acid Maw', link: 'https://www.d20pfsrd.com/magic/all-spells/a/acid-maw/', level: {druid: 1, ranger: 1}, tags: [transmutation, acid]}
-  - {name: 'Acid Pit', link: 'https://www.d20pfsrd.com/magic/all-spells/a/acid-pit/', level: {wizard: 4, summoner: 4}, tags: [conjuration, creation, acid]}
-  - {name: 'Acid Splash', link: 'https://www.d20pfsrd.com/magic/all-spells/a/acid-splash/', level: {inquisitor: 0, magus: 0, wizard: 0, summoner: 0}, tags: [conjuration, creation, acid]}
-  - {name: 'Acidic Spray', link: 'https://www.d20pfsrd.com/magic/all-spells/a/acidic-spray/', level: {magus: 5, wizard: 5}, tags: [conjuration, creation, acid]}
-  - {name: 'Acute Senses', link: 'https://www.d20pfsrd.com/magic/all-spells/a/acute-senses/', level: {alchemist: 2, bard: 2, inquisitor: 2, psychic: 2, ranger: 2}, tags: [transmutation]}
-  - {name: 'Adhesive Blood', link: 'https://www.d20pfsrd.com/magic/all-spells/a/adhesive-blood/', level: {alchemist: 2, bloodrager: 2, psychic: 2, wizard: 2, witch: 2}, tags: [transmutation]}
-  - {name: 'Adhesive Spittle', link: 'https://www.d20pfsrd.com/magic/all-spells/a/adhesive-spittle/', level: {alchemist: 1, psychic: 1, wizard: 1, witch: 1}, tags: [conjuration, creation]}
-  - {name: 'Adjustable Disguise', link: 'https://www.d20pfsrd.com/magic/all-spells/a/adjustable-disguise/', level: {alchemist: 3, antipaladin: 3, bard: 3, inquisitor: 3, mesmerist: 3, occultist: 3, psychic: 3, wizard: 3, witch: 3}, tags: [illusion, glamer]}
-  - {name: 'Adjustable Polymorph', link: 'https://www.d20pfsrd.com/magic/all-spells/a/adjustable-polymorph/', level: {alchemist: 4, bard: 4, magus: 4, shaman: 4, wizard: 4, summoner: 4, witch: 4}, tags: [transmutation, polymorph]}
-  - {name: 'Admonishing Ray', link: 'https://www.d20pfsrd.com/magic/all-spells/a/admonishing-ray/', level: {cleric: 2, wizard: 2}, tags: [evocation, force]}
-  - {name: 'Adoration', link: 'https://www.d20pfsrd.com/magic/all-spells/a/adoration/', level: {bard: 1, psychic: 2, wizard: 2, witch: 2}, tags: [transmutation]}
-  - {name: 'Adroid Retrieval', link: 'https://www.d20pfsrd.com/magic/all-spells/a/adroit-retrieval/', level: {occultist: 3, wizard: 3}, tags: [transmutation]}
-  - {name: 'Advanced Scurvy', link: 'https://www.d20pfsrd.com/magic/all-spells/a/advanced-scurvy/', level: {cleric: 1, druid: 1}, tags: [necromancy, disease, evil]}
-  - {name: 'Aerial Tracks', link: 'https://www.d20pfsrd.com/magic/all-spells/a/aerial-tracks/', level: {druid: 4, inquisitor: 4, ranger: 3, shaman: 4}, tags: [divination, air]}

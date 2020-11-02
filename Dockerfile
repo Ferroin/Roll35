@@ -10,6 +10,7 @@ RUN apk add --no-cache alpine-sdk && \
 
 VOLUME /data
 
+COPY spells.yaml ./
 COPY data.yaml ./
 COPY roll35.py ./
 

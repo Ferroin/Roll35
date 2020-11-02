@@ -43,6 +43,7 @@ ITEMS = dict()
 GENERIC_ERROR_LOG = 'Error while processing command {0} from {1} of {2}:'
 SPELL_LOCK = asyncio.Lock()
 SPELL_PATH = os.path.join(DATAPATH, 'spells.sqlite3')
+MAX_SPELL_LEVEL = 11
 JENV = jinja2.Environment(
     loader=jinja2.BaseLoader(),
     autoescape=False,
@@ -218,7 +219,7 @@ async def prep_spell_db(data: Mapping[str, Any]) -> None:
     '''Populate the spell database based on the given data.
 
        This gets run at startup if the data file differs from the spell database.'''
-    columns = list(data['map'].keys())
+    columns = list(ITEMS['spell']['map'].keys())
     classes = columns + ['minimum', 'spellpage_arcane', 'spellpage_divine']
 
     async with SPELL_LOCK:
@@ -227,7 +228,6 @@ async def prep_spell_db(data: Mapping[str, Any]) -> None:
                                            DROP TABLE IF EXISTS tagmap;
                                            DROP TABLE IF EXISTS extra;
                                            CREATE TABLE spells(name TEXT,
-                                                               link TEXT,
                                                                {' INTEGER, '.join(columns)} INTEGER,
                                                                minimum INTEGER,
                                                                spellpage_arcane INTEGER,
@@ -244,15 +244,16 @@ async def prep_spell_db(data: Mapping[str, Any]) -> None:
                                            VACUUM;''')
             await spells.commit()
 
-            for item in data['data']:
-                unknown_classes = set(item['level'].keys()) - set(columns)
+            for item in data:
+                logging.debug(f'Processing entry for "{item["name"]}".')
+                unknown_classes = set(item['classes'].keys()) - set(columns)
 
                 if unknown_classes:
                     logging.warning(f'Unrecognized classes in entry for {item["name"]}: {repr(unknown_classes)}')
 
-                cmd = f'''INSERT INTO spells (name, link, {', '.join(columns)}, minimum, spellpage_arcane, spellpage_divine,
+                cmd = f'''INSERT INTO spells (name, {', '.join(columns)}, minimum, spellpage_arcane, spellpage_divine,
                           minimum_cls, spellpage_arcane_cls, spellpage_divine_cls)
-                          VALUES ("{item['name']}", "{item['link']}", '''
+                          VALUES ("{item['name']}", '''
 
                 values = []
                 minimum = 9
@@ -267,24 +268,29 @@ async def prep_spell_db(data: Mapping[str, Any]) -> None:
                 for cls in columns:
                     lvl = 'NULL'
 
-                    if cls in item['level']:
-                        lvl = item['level'][cls]
-                    elif 'copy' in data['map'][cls]:
-                        if data['map'][cls]['copy'] in item['level']:
-                            if 'max_level' in data['map'][cls] and \
-                               item['level'][data['map'][cls]['copy']] <= data['map'][cls]['max_level']:
-                                lvl = item['level'][data['map'][cls]['copy']]
-                            else:
-                                lvl = item['level'][data['map'][cls]['copy']]
-                    elif 'merge' in data['map'][cls]:
-                        merge = set(data['map'][cls]['merge']) & set(item['level'].keys())
+                    if cls in item['classes']:
+                        lvl = item['classes'][cls]
+                    elif 'copy' in ITEMS['spell']['map'][cls]:
+                        if ITEMS['spell']['map'][cls]['copy'] in item['classes']:
+                            lvl = item['classes'][ITEMS['spell']['map'][cls]['copy']]
+                    elif 'merge' in ITEMS['spell']['map'][cls]:
+                        merge = set(ITEMS['spell']['map'][cls]['merge']) & set(item['classes'].keys())
                         if len(merge) == 1:
-                            lvl = item['level'][list(merge)[0]]
+                            lvl = item['classes'][list(merge)[0]]
+
                         elif len(merge) > 1:
-                            lvl = min([item['level'][x] for x in merge])
+                            lvl = min([item['classes'][x] for x in merge])
+
+                    if lvl != 'NULL' and ITEMS['spell']['map'][cls].get('max_level', MAX_SPELL_LEVEL) < lvl:
+                        lvl = 'NULL'
+
+                    if lvl != 'NULL' and lvl not in ITEMS['spell']['map'][cls]['levels']:
+                        logging.warning(f'{item["name"]} has invalid level for class {cls}, ignoring.')
+                        lvl = 'NULL'
 
                     if lvl != 'NULL':
                         if not isinstance(lvl, int):
+                            logging.error(f'Invalid spell level {repr(lvl)} for spell {item["name"]}.')
                             raise TypeError
 
                         if lvl <= minimum:
@@ -297,7 +303,7 @@ async def prep_spell_db(data: Mapping[str, Any]) -> None:
                             else:
                                 min_cls = cls
 
-                        if data['map'][cls]['type'] == 'divine' and not spellpage_divine_fixed:
+                        if ITEMS['spell']['map'][cls]['type'] == 'divine' and not spellpage_divine_fixed:
                             if cls == 'cleric':
                                 spellpage_divine = lvl
                                 spellpage_divine_fixed = True
@@ -312,7 +318,7 @@ async def prep_spell_db(data: Mapping[str, Any]) -> None:
                                 else:
                                     spellpage_divine_cls = cls
 
-                        if data['map'][cls]['type'] == 'arcane' and not spellpage_arcane_fixed:
+                        if ITEMS['spell']['map'][cls]['type'] == 'arcane' and not spellpage_arcane_fixed:
                             if cls == 'wizard':
                                 spellpage_arcane = lvl
                                 spellpage_arcane_fixed = True
@@ -329,6 +335,8 @@ async def prep_spell_db(data: Mapping[str, Any]) -> None:
 
                     values.append(str(lvl))
 
+                tags = f'{item["school"]} {item["subschool"]} {" ".join(item["descriptor"].split(", "))}'
+
                 min_cls = f"'{min_cls}'"
 
                 if spellpage_arcane_cls != 'NULL':
@@ -340,7 +348,7 @@ async def prep_spell_db(data: Mapping[str, Any]) -> None:
                 cmd += ', '.join(values)
                 cmd += f''', {minimum}, {spellpage_arcane}, {spellpage_divine}, {min_cls},
                            {spellpage_arcane_cls}, {spellpage_divine_cls});
-                           INSERT INTO tagmap (name, tags) VALUES ("{item['name']}", "{' '.join(item['tags'])}");'''
+                           INSERT INTO tagmap (name, tags) VALUES ("{item['name']}", "{tags}");'''
                 await spells.executescript(cmd)
 
             await spells.commit()
@@ -509,15 +517,24 @@ async def on_connect() -> None:
 
     if not os.access(SPELL_PATH, os.F_OK):
         logging.info('Generating initial spell database.')
-        await prep_spell_db(ITEMS['spell'])
+        with open('./spells.yaml', 'r') as spelldb:
+            spells = yaml.safe_load(spelldb.read())
+
+        await prep_spell_db(spells)
         logging.info('Finished generating spell database.')
     elif os.path.getmtime('./data.yaml') > os.path.getmtime(SPELL_PATH):
         logging.info('Data file newer than spell database, updating spell database.')
-        await prep_spell_db(ITEMS['spell'])
+        with open('./spells.yaml', 'r') as spelldb:
+            spells = yaml.safe_load(spelldb.read())
+
+        await prep_spell_db(spells)
         logging.info('Finished updating spell database.')
     elif os.path.getmtime(os.path.abspath(__file__)) > os.path.getmtime(SPELL_PATH):
         logging.info('Script newer than spell database, updating spell database.')
-        await prep_spell_db(ITEMS['spell'])
+        with open('./spells.yaml', 'r') as spelldb:
+            spells = yaml.safe_load(spelldb.read())
+
+        await prep_spell_db(spells)
         logging.info('Finished updating spell database.')
     else:
         logging.info('Spell database already up to date.')

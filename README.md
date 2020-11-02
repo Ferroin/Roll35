@@ -14,7 +14,7 @@ related games.
 
 ## Planned Features
 
-* Complete data for spells.
+* Proper handling for arcane/divine/occult scrolls.
 * Add basic usage info to the README.
 * Automatically roll random spells present in items that store spells.
 * Roll against arbitrary data tables.
