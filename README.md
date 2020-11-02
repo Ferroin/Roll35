@@ -6,27 +6,30 @@ related games.
 ## Features
 
 * Roll for random magic items in a single command. This automatically
-  handles all the sequential rolls required to produce an exact magic
-  item.
+  handles most of the sequential rolls required to produce an exact
+  magic item.
+* Automatically roll random spells for scrolls, potions, and wands.
 * Roll random spells, optionally for a specific level, class, or category.
 * Roll random mundane weapons and armor.
 
 ## Planned Features
 
-* Support for automatically rolling spells for scrolls, potions, and wands.
-* Support for rolling for spells present in items that store spells.
+* Complete data for spells.
+* Add basic usage info to the README.
+* Automatically roll random spells present in items that store spells.
 * Roll against arbitrary data tables.
-* Support for rolling for intelligence/special markings on magic items.
+* Automatically roll for intelligence/special markings on magic items.
 * Finish adding in variant forms for all the magic items that have them:
   - Defiant Armor
   - Bane Weapons
+* Respond with embeds containing relevent information about the rolled
+  item, including hyperlinks to relevant reference material.
+* Roll specific base weapons or armor as magic items.
+* Roll dice by themselves
+* Rewrite in Elixir to improve performance and scalability.
 * The ability to enable and disable specific items at runtime (with
   per-server config).
-* Support for hyperlinks in rolled items. This will require sending
-  rolled items as embeds instead of plain messages, because Discord is
-  stupid and refuses to support Markdown link syntax anywhere but in embeds.
-* Support for rolling specific base weapons or armor as magic items.
-* Support for simply rolling dice.
+* Fetch data on specific items directly without rolling for them randomly.
 
 ## Limitations
 
