@@ -53,6 +53,8 @@ for item in data:
 
             item['domains'][domain] = lvl
 
+    item['descriptor'] = item['descriptor'].replace('-', '_')
+
     for key in list(item.keys()):
         if key not in SAVE_KEYS:
             del item[key]

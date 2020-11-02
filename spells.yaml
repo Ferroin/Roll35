@@ -2,7 +2,7 @@
     cleric: 1
     inquisitor: 1
     paladin: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Abadar's Truthtelling
   school: enchantment
@@ -128,7 +128,7 @@
     mesmerist: 2
     psychic: 2
     spiritualist: 2
-  descriptor: emotionUM, mind-affecting
+  descriptor: emotionUM, mind_affecting
   domains: {}
   name: Absurdity
   school: illusion
@@ -317,7 +317,7 @@
     psychic: 2
     witch: 2
     wizard: 2
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Adoration
   school: enchantment
@@ -399,7 +399,7 @@
     mesmerist: 2
     psychic: 3
     witch: 3
-  descriptor: emotion, mind-affecting, pain
+  descriptor: emotion, mind_affecting, pain
   domains: {}
   name: Agonizing Rebuke
   school: illusion
@@ -411,7 +411,7 @@
     medium: 2
     shaman: 2
     spiritualist: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     luck: 2
     tactics: 2
@@ -636,7 +636,7 @@
 - classes:
     bard: 1
     witch: 1
-  descriptor: light, mind-affecting
+  descriptor: light, mind_affecting
   domains: {}
   name: Alluring Light
   school: enchantment
@@ -670,7 +670,7 @@
     mesmerist: 3
     ranger: 2
     shaman: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Alpha Instinct
   school: enchantment
@@ -740,7 +740,7 @@
     mesmerist: 4
     psychic: 4
     wizard: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Amnesia
   school: enchantment
@@ -851,7 +851,7 @@
     druid: 4
     ranger: 3
     shaman: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Animal Ambassador
   school: enchantment
@@ -887,7 +887,7 @@
     psychic: 2
     ranger: 1
     shaman: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Animal Messenger
   school: enchantment
@@ -902,7 +902,7 @@
     ranger: 1
     shaman: 2
     witch: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Animal Purpose Training
   school: enchantment
@@ -922,7 +922,7 @@
     druid: 2
     mesmerist: 2
     psychic: 2
-  descriptor: mind-affecting, sonic
+  descriptor: mind_affecting, sonic
   domains:
     scalykind: 2
   name: Animal Trance
@@ -978,7 +978,7 @@
 - classes:
     mesmerist: 2
     psychic: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Animus Mine
   school: abjuration
@@ -988,7 +988,7 @@
     mesmerist: 2
     psychic: 2
     witch: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     espionage: 2
   name: Anonymous Interaction
@@ -1062,7 +1062,7 @@
     psychic: 2
     witch: 2
     wizard: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Anticipate Thoughts
   school: divination
@@ -1098,7 +1098,7 @@
     summoner: 6
     witch: 8
     wizard: 8
-  descriptor: mind-affecting, emotion
+  descriptor: mind_affecting, emotion
   domains: {}
   name: Antipathy
   school: enchantment
@@ -1122,7 +1122,7 @@
     bard: 4
     witch: 4
     wizard: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Antithetical Constraint
   school: enchantment
@@ -1144,7 +1144,7 @@
     psychic: 5
     witch: 5
     wizard: 5
-  descriptor: emotionUM, mind-affecting
+  descriptor: emotionUM, mind_affecting
   domains: {}
   name: Apathy
   school: enchantment
@@ -1164,7 +1164,7 @@
     psychic: 1
     witch: 1
     wizard: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Aphasia
   school: enchantment
@@ -1173,7 +1173,7 @@
     bard: 3
     inquisitor: 3
     wizard: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Apparent Treachery
   school: enchantment
@@ -1320,7 +1320,7 @@
     magus: 2
     witch: 2
     wizard: 2
-  descriptor: curse, mind-affecting
+  descriptor: curse, mind_affecting
   domains: {}
   name: Arcane Disruption
   school: enchantment
@@ -1568,7 +1568,7 @@
     occultist: 2
     psychic: 2
     wizard: 2
-  descriptor: emotionUM, mind-affecting
+  descriptor: emotionUM, mind_affecting
   domains: {}
   name: Assumed Likeness
   school: illusion
@@ -1610,7 +1610,7 @@
     occultist: 3
     psychic: 3
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Audiovisual Hallucination
   school: illusion
@@ -1623,7 +1623,7 @@
     occultist: 1
     psychic: 1
     wizard: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Auditory Hallucination
   school: illusion
@@ -1674,7 +1674,7 @@
     psychic: 2
     witch: 2
     wizard: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Aura Of Distraction
   school: enchantment
@@ -1694,7 +1694,7 @@
     mesmerist: 3
     psychic: 3
     wizard: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Aura Of The Unremarkable
   school: enchantment
@@ -1718,7 +1718,7 @@
     cleric: 4
     psychic: 4
     spiritualist: 4
-  descriptor: emotion, fear, mind-affecting
+  descriptor: emotion, fear, mind_affecting
   domains: {}
   name: Aura of Doom
   school: necromancy
@@ -1749,7 +1749,7 @@
     psychic: 2
     witch: 3
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Aversion
   school: enchantment
@@ -1792,7 +1792,7 @@
     psychic: 3
     witch: 3
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Babble
   school: enchantment
@@ -1877,7 +1877,7 @@
     inquisitor: 1
     mesmerist: 1
     shaman: 1
-  descriptor: fear, mind-affecting
+  descriptor: fear, mind_affecting
   domains:
     curse: 1
   name: Bane
@@ -1926,7 +1926,7 @@
     spiritualist: 6
     witch: 6
     wizard: 6
-  descriptor: death, fear, mind-affecting, sonic
+  descriptor: death, fear, mind_affecting, sonic
   domains: {}
   name: Banshee Blast
   school: necromancy
@@ -1950,7 +1950,7 @@
     occultist: 1
     shaman: 1
     summoner: 1
-  descriptor: emotionUM, fear, mind-affecting
+  descriptor: emotionUM, fear, mind_affecting
   domains: {}
   name: Barbed Chains
   school: conjuration
@@ -2015,7 +2015,7 @@
     inquisitor: 3
     ranger: 3
     witch: 4
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Battle Trance
   school: enchantment
@@ -2027,7 +2027,7 @@
     occultist: 5
     psychic: 6
     wizard: 6
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     education: 6
   name: Battlemind Link
@@ -2146,7 +2146,7 @@
     shaman: 5
     witch: 5
     wizard: 5
-  descriptor: curse, mind-affecting
+  descriptor: curse, mind_affecting
   domains: {}
   name: Befuddled Combatant
   school: enchantment
@@ -2156,7 +2156,7 @@
     mesmerist: 1
     psychic: 1
     witch: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Beguiling Gift
   school: enchantment
@@ -2177,7 +2177,7 @@
     mesmerist: 3
     psychic: 4
     witch: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Bereave
   school: enchantment
@@ -2188,7 +2188,7 @@
     shaman: 6
     spiritualist: 5
     witch: 6
-  descriptor: emotionUM, fear, mind-affecting
+  descriptor: emotionUM, fear, mind_affecting
   domains: {}
   name: Besmara's Grasping Depths
   school: necromancy
@@ -2300,7 +2300,7 @@
     psychic: 2
     witch: 2
     wizard: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Bestow Weapon Proficiency
   school: enchantment
@@ -2352,7 +2352,7 @@
     psychic: 8
     summoner: 6
     wizard: 8
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     slavery: 8
   name: Binding
@@ -2393,7 +2393,7 @@
 - classes:
     bard: 1
     bloodrager: 1
-  descriptor: language-dependent, sonic
+  descriptor: language_dependent, sonic
   domains: {}
   name: Biting Words
   school: evocation
@@ -2531,7 +2531,7 @@
   subschool: ''
 - classes:
     paladin: 4
-  descriptor: good, mind-affecting
+  descriptor: good, mind_affecting
   domains: {}
   name: Blaze of Glory
   school: conjuration
@@ -2549,7 +2549,7 @@
     spiritualist: 4
     witch: 6
     wizard: 6
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Bleaching Resistance
   school: enchantment
@@ -2576,7 +2576,7 @@
     ranger: 3
     witch: 3
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Bleed For Your Master
   school: enchantment
@@ -2636,7 +2636,7 @@
     inquisitor: 1
     paladin: 1
     shaman: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     community: 1
     leadership: 1
@@ -2646,7 +2646,7 @@
   subschool: compulsion
 - classes:
     cleric: 6
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Bless Army
   school: enchantment
@@ -2696,7 +2696,7 @@
     cleric: 2
     inquisitor: 2
     paladin: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Blessing Of Luck And Resolve
   school: enchantment
@@ -2705,7 +2705,7 @@
     cleric: 1
     inquisitor: 1
     paladin: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Blessing Of The Watch
   school: enchantment
@@ -2800,7 +2800,7 @@
     bard: 2
     inquisitor: 2
     mesmerist: 2
-  descriptor: fire, language-dependent
+  descriptor: fire, language_dependent
   domains: {}
   name: Blistering Invective
   school: evocation
@@ -2910,7 +2910,7 @@
     bard: 2
     cleric: 3
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Blood Rage
   school: enchantment
@@ -3366,7 +3366,7 @@
 - classes:
     bard: 6
     psychic: 8
-  descriptor: language-dependent
+  descriptor: language_dependent
   domains:
     leadership: 6
   name: Brilliant Inspiration
@@ -3486,7 +3486,7 @@
     shaman: 2
     witch: 2
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Burdened Thoughts
   school: enchantment
@@ -3603,7 +3603,7 @@
     cleric: 5
     inquisitor: 4
     paladin: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Burst Of Glory
   school: enchantment
@@ -3674,7 +3674,7 @@
   subschool: glamer
 - classes:
     bard: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Cacophonous Call
   school: enchantment
@@ -3717,7 +3717,7 @@
     druid: 1
     mesmerist: 1
     ranger: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Call Animal
   school: enchantment
@@ -3803,7 +3803,7 @@
     psychic: 1
     ranger: 1
     shaman: 1
-  descriptor: mind-affecting, emotion
+  descriptor: mind_affecting, emotion
   domains:
     animal: 1
   name: Calm Animals
@@ -3817,7 +3817,7 @@
     occultist: 2
     psychic: 2
     shaman: 2
-  descriptor: mind-affecting, emotion
+  descriptor: mind_affecting, emotion
   domains:
     charm: 2
     family: 2
@@ -3894,7 +3894,7 @@
 - classes:
     inquisitor: 2
     mesmerist: 2
-  descriptor: fear, language-dependent, mind-affecting, emotion
+  descriptor: fear, language_dependent, mind_affecting, emotion
   domains:
     judgment: 2
   name: Castigate
@@ -3947,7 +3947,7 @@
     spiritualist: 1
     witch: 1
     wizard: 1
-  descriptor: emotion, fear, mind-affecting
+  descriptor: emotion, fear, mind_affecting
   domains:
     daemon: 1
     death: 1
@@ -4088,7 +4088,7 @@
   subschool: creation
 - classes:
     paladin: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Challenge Evil
   school: enchantment
@@ -4114,7 +4114,7 @@
     bard: 3
     cleric: 3
     mesmerist: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Champion's Bout
   school: enchantment
@@ -4181,7 +4181,7 @@
     cleric: 3
     witch: 3
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Charitable Impulse
   school: enchantment
@@ -4191,7 +4191,7 @@
     psychic: 1
     ranger: 1
     shaman: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Charm Animal
   school: enchantment
@@ -4199,7 +4199,7 @@
 - classes:
     bard: 1
     wizard: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Charm Fey
   school: enchantment
@@ -4212,7 +4212,7 @@
     summoner: 4
     witch: 4
     wizard: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     charm: 5
   name: Charm Monster
@@ -4226,7 +4226,7 @@
     shaman: 1
     witch: 1
     wizard: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     charm: 1
     slavery: 1
@@ -4240,7 +4240,7 @@
     psychic: 5
     witch: 5
     wizard: 5
-  descriptor: evil, shadowUM
+  descriptor: evil, shadow
   domains: {}
   name: Charnel House
   school: illusion
@@ -4469,7 +4469,7 @@
     shaman: 7
     witch: 6
     wizard: 6
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     nightmare: 6
     whimsy: 6
@@ -4551,7 +4551,7 @@
     medium: 2
     mesmerist: 2
     psychic: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Cognitive Block
   school: enchantment
@@ -4610,7 +4610,7 @@
     mesmerist: 1
     psychic: 1
     wizard: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Color Spray
   school: illusion
@@ -4624,7 +4624,7 @@
     occultist: 1
     psychic: 1
     witch: 1
-  descriptor: language-dependent, mind-affecting
+  descriptor: language_dependent, mind_affecting
   domains:
     devil: 1
     toil: 1
@@ -5024,7 +5024,7 @@
 - classes:
     druid: 3
     ranger: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Companion Mind Link
   school: enchantment
@@ -5049,7 +5049,7 @@
     mesmerist: 2
     psychic: 2
     wizard: 2
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Compassionate Ally
   school: enchantment
@@ -5065,7 +5065,7 @@
     ranger: 1
     summoner: 1
     witch: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Compel Hostility
   school: enchantment
@@ -5078,7 +5078,7 @@
     mesmerist: 2
     witch: 2
     wizard: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Compel Tongue
   school: enchantment
@@ -5104,7 +5104,7 @@
     psychic: 4
     witch: 4
     wizard: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Complex Hallucination
   school: illusion
@@ -5135,7 +5135,7 @@
     psychic: 2
     witch: 2
     wizard: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Compulsive Liar
   school: enchantment
@@ -5217,7 +5217,7 @@
     inquisitor: 2
     mesmerist: 2
     psychic: 2
-  descriptor: language-dependent, mind-affecting
+  descriptor: language_dependent, mind_affecting
   domains: {}
   name: Confess
   school: enchantment
@@ -5231,7 +5231,7 @@
     spiritualist: 4
     witch: 4
     wizard: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     entropy: 5
     lust: 4
@@ -5296,7 +5296,7 @@
 - classes:
     cleric: 5
     wizard: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Constricting Coils
   school: enchantment
@@ -5421,7 +5421,7 @@
     psychic: 5
     witch: 5
     wizard: 5
-  descriptor: language-dependent, mind-affecting
+  descriptor: language_dependent, mind_affecting
   domains: {}
   name: Contagious Suggestion
   school: enchantment
@@ -5433,7 +5433,7 @@
     psychic: 3
     spiritualist: 3
     wizard: 3
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Contagious Zeal
   school: enchantment
@@ -5520,7 +5520,7 @@
     psychic: 4
     summoner: 3
     wizard: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Control Summoned Creature
   school: enchantment
@@ -5691,7 +5691,7 @@
     summoner: 2
     witch: 2
     wizard: 2
-  descriptor: curse, language-dependent, mind-affecting
+  descriptor: curse, language_dependent, mind_affecting
   domains: {}
   name: Covetous Urge
   school: enchantment
@@ -5705,14 +5705,14 @@
     shaman: 1
     witch: 1
     wizard: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Coward's Cowl
   school: enchantment
   subschool: ''
 - classes:
     inquisitor: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Coward's Lament
   school: enchantment
@@ -5745,7 +5745,7 @@
     spiritualist: 2
     witch: 2
     wizard: 2
-  descriptor: emotionUM, fear, mind-affecting
+  descriptor: emotionUM, fear, mind_affecting
   domains: {}
   name: Crafter's Nightmare
   school: necromancy
@@ -5819,7 +5819,7 @@
     mesmerist: 4
     psychic: 4
     wizard: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Create Mindscape
   school: illusion
@@ -5913,7 +5913,7 @@
 - classes:
     antipaladin: 1
     mesmerist: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Crime Of Opportunity
   school: enchantment
@@ -5924,7 +5924,7 @@
     mesmerist: 5
     psychic: 7
     wizard: 7
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Crime Wave
   school: enchantment
@@ -5959,7 +5959,7 @@
     shaman: 6
     witch: 6
     wizard: 6
-  descriptor: evil, fear, mind-affecting
+  descriptor: evil, fear, mind_affecting
   domains: {}
   name: Cruel Jaunt
   school: conjuration
@@ -5981,7 +5981,7 @@
     spiritualist: 4
     witch: 4
     wizard: 4
-  descriptor: mind-affecting, emotion
+  descriptor: mind_affecting, emotion
   domains:
     isolation: 4
   name: Crushing Despair
@@ -6134,7 +6134,7 @@
     psychic: 6
     witch: 5
     wizard: 5
-  descriptor: curse, emotion, mind-affecting
+  descriptor: curse, emotion, mind_affecting
   domains: {}
   name: Curse Of Disgust
   school: enchantment
@@ -6176,7 +6176,7 @@
     mesmerist: 4
     shaman: 6
     witch: 6
-  descriptor: curseUM, emotionUM, mind-affecting
+  descriptor: curseUM, emotionUM, mind_affecting
   domains: {}
   name: Curse Of The Outcast
   school: enchantment
@@ -6290,7 +6290,7 @@
     shaman: 5
     witch: 5
     wizard: 5
-  descriptor: draconic, evil, mind-affecting
+  descriptor: draconic, evil, mind_affecting
   domains: {}
   name: Dahak's Release
   school: enchantment
@@ -6308,7 +6308,7 @@
     bard: 6
     mesmerist: 6
     psychic: 9
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Damnation Of Memory
   school: enchantment
@@ -6356,7 +6356,7 @@
     spiritualist: 1
     witch: 1
     wizard: 1
-  descriptor: darkness, shadowUM
+  descriptor: darkness, shadow
   domains: {}
   name: Dancing Darkness
   school: evocation
@@ -6395,7 +6395,7 @@
     summoner: 2
     witch: 2
     wizard: 2
-  descriptor: language-dependent, shadowUM
+  descriptor: language_dependent, shadow
   domains: {}
   name: Dark Whispers
   school: illusion
@@ -6512,7 +6512,7 @@
     summoner: 0
     witch: 0
     wizard: 0
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Daze
   school: enchantment
@@ -6527,7 +6527,7 @@
     summoner: 1
     witch: 2
     wizard: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Daze Monster
   school: enchantment
@@ -6655,7 +6655,7 @@
     mesmerist: 5
     psychic: 6
     witch: 6
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Death Pact
   school: enchantment
@@ -6713,7 +6713,7 @@
 - classes:
     psychic: 3
     witch: 3
-  descriptor: mind-affecting, painUM
+  descriptor: mind_affecting, pain
   domains: {}
   name: Debilitating Pain
   school: enchantment
@@ -6723,7 +6723,7 @@
     psychic: 4
     spiritualist: 4
     witch: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Debilitating Portent
   school: enchantment
@@ -6808,7 +6808,7 @@
     shaman: 3
     witch: 3
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Deep Slumber
   school: enchantment
@@ -6858,7 +6858,7 @@
     mesmerist: 2
     psychic: 2
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Deflect Blame
   school: enchantment
@@ -6908,7 +6908,7 @@
     mesmerist: 1
     psychic: 1
     wizard: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Deja Vu
   school: enchantment
@@ -6981,7 +6981,7 @@
     psychic: 1
     witch: 1
     wizard: 1
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Delusional Pride
   school: enchantment
@@ -6991,7 +6991,7 @@
     psychic: 8
     witch: 8
     wizard: 8
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     charm: 8
     nobility: 8
@@ -7008,7 +7008,7 @@
     psychic: 2
     witch: 2
     wizard: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Demand Offering
   school: enchantment
@@ -7021,7 +7021,7 @@
     psychic: 3
     witch: 4
     wizard: 4
-  descriptor: language-dependent, mind-affecting
+  descriptor: language_dependent, mind_affecting
   domains: {}
   name: Demanding Message
   school: enchantment
@@ -7031,7 +7031,7 @@
     inquisitor: 4
     mesmerist: 4
     psychic: 5
-  descriptor: language-dependent, mind-affecting
+  descriptor: language_dependent, mind_affecting
   domains: {}
   name: Denounce
   school: enchantment
@@ -7129,7 +7129,7 @@
     spiritualist: 3
     witch: 3
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Detect Anxieties
   school: divination
@@ -7183,7 +7183,7 @@
     spiritualist: 3
     witch: 3
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Detect Desires
   school: divination
@@ -7381,7 +7381,7 @@
     summoner: 2
     witch: 2
     wizard: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     knowledge: 2
   name: Detect Thoughts
@@ -7635,7 +7635,7 @@
     spiritualist: 1
     witch: 1
     wizard: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Discern Next Of Kin
   school: divination
@@ -7930,7 +7930,7 @@
   subschool: ''
 - classes:
     psychic: 9
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Divide Mind
   school: enchantment
@@ -8003,7 +8003,7 @@
     mesmerist: 3
     psychic: 4
     shaman: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     animal: 3
   name: Dominate Animal
@@ -8014,7 +8014,7 @@
     summoner: 6
     witch: 9
     wizard: 9
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     charm: 9
   name: Dominate Monster
@@ -8029,7 +8029,7 @@
     spiritualist: 5
     witch: 5
     wizard: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     slavery: 5
   name: Dominate Person
@@ -8040,7 +8040,7 @@
     inquisitor: 3
     witch: 3
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Domination Link
   school: divination
@@ -8061,7 +8061,7 @@
     mesmerist: 1
     shaman: 1
     spiritualist: 1
-  descriptor: emotion, fear, mind-affecting
+  descriptor: emotion, fear, mind_affecting
   domains:
     demon: 1
   name: Doom
@@ -8180,7 +8180,7 @@
     mesmerist: 3
     psychic: 4
     wizard: 4
-  descriptor: emotionUM, fear, mind-affecting
+  descriptor: emotionUM, fear, mind_affecting
   domains: {}
   name: Dreadscape
   school: illusion
@@ -8193,7 +8193,7 @@
     psychic: 4
     spiritualist: 5
     wizard: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     imagination: 5
     moon: 6
@@ -8206,7 +8206,7 @@
     mesmerist: 5
     psychic: 6
     wizard: 7
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Dream Council
   school: illusion
@@ -8215,7 +8215,7 @@
     mesmerist: 3
     psychic: 4
     wizard: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Dream Dalliance
   school: illusion
@@ -8237,7 +8237,7 @@
     occultist: 5
     psychic: 6
     wizard: 6
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Dream Reality
   school: illusion
@@ -8248,7 +8248,7 @@
     mesmerist: 5
     psychic: 5
     wizard: 6
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Dream Scan
   school: divination
@@ -8270,14 +8270,14 @@
 - classes:
     mesmerist: 6
     psychic: 6
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Dream Travel
   school: conjuration
   subschool: teleportation
 - classes:
     psychic: 9
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Dream Voyage
   school: conjuration
@@ -8554,35 +8554,35 @@
   subschool: ''
 - classes:
     psychic: 3
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Ego Whip I
   school: enchantment
   subschool: compulsion
 - classes:
     psychic: 4
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Ego Whip II
   school: enchantment
   subschool: compulsion
 - classes:
     psychic: 5
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Ego Whip III
   school: enchantment
   subschool: compulsion
 - classes:
     psychic: 6
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Ego Whip IV
   school: enchantment
   subschool: compulsion
 - classes:
     psychic: 7
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Ego Whip V
   school: enchantment
@@ -8594,7 +8594,7 @@
     magus: 1
     mesmerist: 1
     psychic: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Egorian Diplomacy
   school: enchantment
@@ -8777,7 +8777,7 @@
     mesmerist: 2
     psychic: 3
     spiritualist: 2
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Emotive Block
   school: enchantment
@@ -8986,7 +8986,7 @@
     ranger: 3
     shaman: 2
     witch: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Enshroud Thoughts
   school: abjuration
@@ -9023,7 +9023,7 @@
     psychic: 2
     shaman: 2
     witch: 2
-  descriptor: language-dependent, mind-affecting, sonic
+  descriptor: language_dependent, mind_affecting, sonic
   domains:
     love: 2
     nobility: 2
@@ -9044,7 +9044,7 @@
     bard: 3
     witch: 4
     wizard: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Enticing Adulation
   school: enchantment
@@ -9082,7 +9082,7 @@
     mesmerist: 4
     psychic: 6
     wizard: 6
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Envious Urge
   school: enchantment
@@ -9254,7 +9254,7 @@
     mesmerist: 6
     psychic: 8
     wizard: 8
-  descriptor: mind-affecting, emotion
+  descriptor: mind_affecting, emotion
   domains:
     love: 8
   name: Euphoric Tranquility
@@ -9477,7 +9477,7 @@
     cleric: 1
     inquisitor: 2
     paladin: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Fairness
   school: enchantment
@@ -9505,7 +9505,7 @@
     bard: 3
     cleric: 3
     inquisitor: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: False Alibi
   school: enchantment
@@ -9514,7 +9514,7 @@
     bard: 2
     mesmerist: 2
     psychic: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: False Belief
   school: enchantment
@@ -9622,7 +9622,7 @@
     spiritualist: 4
     witch: 4
     wizard: 4
-  descriptor: fear, mind-affecting, emotion
+  descriptor: fear, mind_affecting, emotion
   domains:
     fear: 4
   name: Fear
@@ -9674,7 +9674,7 @@
     spiritualist: 5
     witch: 5
     wizard: 5
-  descriptor: emotion, fear, mind-affecting
+  descriptor: emotion, fear, mind_affecting
   domains: {}
   name: Feast On Fear
   school: necromancy
@@ -9712,7 +9712,7 @@
     spiritualist: 5
     witch: 5
     wizard: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Feeblemind
   school: enchantment
@@ -9815,7 +9815,7 @@
     summoner: 3
     witch: 4
     wizard: 4
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Fiendish Wrath
   school: enchantment
@@ -10260,7 +10260,7 @@
     occultist: 3
     psychic: 3
     wizard: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Fleeting Memory
   school: enchantment
@@ -10454,7 +10454,7 @@
     bard: 5
     mesmerist: 5
     psychic: 7
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Foe to Friend
   school: enchantment
@@ -10491,7 +10491,7 @@
 - classes:
     bard: 6
     psychic: 8
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Fool's Forbiddance
   school: abjuration
@@ -10522,7 +10522,7 @@
     mesmerist: 1
     occultist: 1
     psychic: 1
-  descriptor: language-dependent, mind-affecting
+  descriptor: language_dependent, mind_affecting
   domains:
     legislation: 1
   name: Forbid Action
@@ -10604,7 +10604,7 @@
 - classes:
     inquisitor: 4
     paladin: 4
-  descriptor: mind-affecting, emotion
+  descriptor: mind_affecting, emotion
   domains:
     redemption: 4
   name: Forced Repentance
@@ -10677,7 +10677,7 @@
     psychic: 4
     witch: 4
     wizard: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Forgetful Slumber
   school: enchantment
@@ -10887,7 +10887,7 @@
     shaman: 4
     witch: 4
     wizard: 4
-  descriptor: cold, emotionUM, fear, mind-affecting
+  descriptor: cold, emotionUM, fear, mind_affecting
   domains: {}
   name: Frigid Souls
   school: necromancy
@@ -10959,7 +10959,7 @@
   subschool: ''
 - classes:
     bard: 5
-  descriptor: mind-affecting, sonic
+  descriptor: mind_affecting, sonic
   domains: {}
   name: Frozen Note
   school: enchantment
@@ -10992,7 +10992,7 @@
     mesmerist: 1
     psychic: 1
     witch: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Fumbletongue
   school: enchantment
@@ -11068,7 +11068,7 @@
     shaman: 2
     spiritualist: 2
     witch: 3
-  descriptor: fear, mind-affecting
+  descriptor: fear, mind_affecting
   domains: {}
   name: Garrulous Grin
   school: necromancy
@@ -11107,7 +11107,7 @@
     psychic: 6
     witch: 6
     wizard: 6
-  descriptor: language-dependent, mind-affecting, curse
+  descriptor: language_dependent, mind_affecting, curse
   domains:
     ancestors: 6
     charm: 6
@@ -11277,7 +11277,7 @@
     cleric: 2
     witch: 2
     wizard: 2
-  descriptor: evil, mind-affecting
+  descriptor: evil, mind_affecting
   domains: {}
   name: Ghoul Hunger
   school: necromancy
@@ -11477,7 +11477,7 @@
   subschool: ''
 - classes:
     bard: 3
-  descriptor: mind-affecting, emotion
+  descriptor: mind_affecting, emotion
   domains:
     revelry: 3
   name: Good Hope
@@ -11533,7 +11533,7 @@
     mesmerist: 5
     summoner: 5
     wizard: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Grand Destiny
   school: enchantment
@@ -11601,7 +11601,7 @@
     occultist: 0
     psychic: 0
     spiritualist: 0
-  descriptor: language-dependent
+  descriptor: language_dependent
   domains: {}
   name: Grave Words
   school: necromancy
@@ -11698,7 +11698,7 @@
 - classes:
     mesmerist: 4
     psychic: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Greater Animus Mine
   school: abjuration
@@ -11826,7 +11826,7 @@
     mesmerist: 4
     occultist: 5
     psychic: 5
-  descriptor: language-dependent, mind-affecting
+  descriptor: language_dependent, mind_affecting
   domains:
     inevitable: 5
     loyalty: 5
@@ -11868,7 +11868,7 @@
     mesmerist: 6
     psychic: 6
     wizard: 7
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Greater Create Mindscape
   school: illusion
@@ -12039,7 +12039,7 @@
     mesmerist: 4
     occultist: 5
     psychic: 5
-  descriptor: language-dependent, mind-affecting
+  descriptor: language_dependent, mind_affecting
   domains:
     legislation: 5
   name: Greater Forbid Action
@@ -12091,7 +12091,7 @@
     summoner: 6
     witch: 6
     wizard: 6
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     competition: 6
     heroism: 6
@@ -12111,7 +12111,7 @@
     psychic: 7
     witch: 7
     wizard: 7
-  descriptor: mind-affecting, ruse
+  descriptor: mind_affecting, ruse
   domains: {}
   name: Greater Hollow Heroism
   school: enchantment
@@ -12134,7 +12134,7 @@
     psychic: 4
     witch: 4
     wizard: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Greater Hypnotism
   school: enchantment
@@ -12335,7 +12335,7 @@
     mesmerist: 3
     psychic: 4
     wizard: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Greater Oneiric Horror
   school: illusion
@@ -12495,7 +12495,7 @@
     psychic: 7
     witch: 7
     wizard: 7
-  descriptor: emotionUM, mind-affecting
+  descriptor: emotionUM, mind_affecting
   domains: {}
   name: Greater Seeds Of Influence
   school: enchantment
@@ -12658,7 +12658,7 @@
 - classes:
     mesmerist: 4
     psychic: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Greater Synaptic Pulse
   school: enchantment
@@ -12712,7 +12712,7 @@
     summoner: 6
     witch: 7
     wizard: 7
-  descriptor: death, emotionUM, fear, mind-affecting
+  descriptor: death, emotionUM, fear, mind_affecting
   domains: {}
   name: Grim Stalker
   school: necromancy
@@ -12813,7 +12813,7 @@
     psychic: 3
     witch: 3
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Gullibility
   school: enchantment
@@ -12976,7 +12976,7 @@
     psychic: 4
     witch: 4
     wizard: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Harvest Knowledge
   school: divination
@@ -13032,7 +13032,7 @@
 - classes:
     bard: 3
     mesmerist: 3
-  descriptor: mind-affecting, pain
+  descriptor: mind_affecting, pain
   domains: {}
   name: Haunting Choir
   school: necromancy
@@ -13055,7 +13055,7 @@
     mesmerist: 2
     psychic: 2
     wizard: 2
-  descriptor: fear, mind-affecting
+  descriptor: fear, mind_affecting
   domains: {}
   name: Haunting Reminder
   school: enchantment
@@ -13066,7 +13066,7 @@
     inquisitor: 1
     paladin: 1
     witch: 1
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Haze Of Dreams
   school: enchantment
@@ -13201,7 +13201,7 @@
     mesmerist: 2
     psychic: 2
     wizard: 2
-  descriptor: emotionUM, mind-affecting
+  descriptor: emotionUM, mind_affecting
   domains: {}
   name: Heckle
   school: enchantment
@@ -13273,7 +13273,7 @@
     cleric: 5
     inquisitor: 5
     mesmerist: 6
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Heretic's Tongue
   school: enchantment
@@ -13283,7 +13283,7 @@
     mesmerist: 1
     psychic: 1
     witch: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Hermean Potential
   school: enchantment
@@ -13309,7 +13309,7 @@
   subschool: creation
 - classes:
     bard: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Heroic Finale
   school: enchantment
@@ -13328,7 +13328,7 @@
     psychic: 9
     witch: 9
     wizard: 9
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Heroic Invocation
   school: enchantment
@@ -13344,7 +13344,7 @@
     summoner: 3
     witch: 3
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     charm: 4
     heroism: 3
@@ -13416,7 +13416,7 @@
     psychic: 2
     witch: 2
     wizard: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Hidden Presence
   school: enchantment
@@ -13428,7 +13428,7 @@
     mesmerist: 2
     psychic: 2
     witch: 2
-  descriptor: language-dependent
+  descriptor: language_dependent
   domains: {}
   name: Hidden Speech
   school: transmutation
@@ -13501,7 +13501,7 @@
     mesmerist: 1
     psychic: 2
     wizard: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     revelry: 2
     whimsy: 1
@@ -13533,7 +13533,7 @@
     mesmerist: 2
     psychic: 2
     ranger: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     animal: 2
   name: Hold Animal
@@ -13545,7 +13545,7 @@
     inquisitor: 2
     witch: 2
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Hold Fey
   school: enchantment
@@ -13560,7 +13560,7 @@
     summoner: 5
     witch: 5
     wizard: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     law: 6
   name: Hold Monster
@@ -13579,7 +13579,7 @@
     shaman: 2
     witch: 2
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Hold Person
   school: enchantment
@@ -13615,7 +13615,7 @@
     summoner: 4
     witch: 4
     wizard: 4
-  descriptor: mind-affecting, ruse
+  descriptor: mind_affecting, ruse
   domains: {}
   name: Hollow Heroism
   school: enchantment
@@ -13719,7 +13719,7 @@
     occultist: 2
     psychic: 2
     wizard: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Hoodwink
   school: enchantment
@@ -13768,7 +13768,7 @@
     spiritualist: 3
     witch: 3
     wizard: 3
-  descriptor: emotionUM, fear, mind-affecting
+  descriptor: emotionUM, fear, mind_affecting
   domains: {}
   name: Horrifying Visage
   school: necromancy
@@ -13829,7 +13829,7 @@
     spiritualist: 4
     witch: 4
     wizard: 4
-  descriptor: evil, mind-affecting
+  descriptor: evil, mind_affecting
   domains: {}
   name: Hunger For Flesh
   school: necromancy
@@ -13886,7 +13886,7 @@
   subschool: ''
 - classes:
     ranger: 1
-  descriptor: fear, mind-affecting, emotion
+  descriptor: fear, mind_affecting, emotion
   domains: {}
   name: Hunter's Howl
   school: necromancy
@@ -13942,7 +13942,7 @@
     druid: 3
     witch: 3
     wizard: 3
-  descriptor: emotion, fear, mind-affecting
+  descriptor: emotion, fear, mind_affecting
   domains: {}
   name: Hydrophobia
   school: necromancy
@@ -13950,7 +13950,7 @@
 - classes:
     bard: 5
     cleric: 5
-  descriptor: good, mind-affecting
+  descriptor: good, mind_affecting
   domains: {}
   name: Hymn Of Mercy
   school: enchantment
@@ -13979,7 +13979,7 @@
     mesmerist: 2
     psychic: 2
     wizard: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     stars: 2
   name: Hypnotic Pattern
@@ -13992,7 +13992,7 @@
     psychic: 1
     witch: 1
     wizard: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Hypnotism
   school: enchantment
@@ -14078,28 +14078,28 @@
   subschool: ''
 - classes:
     psychic: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Id Insinuation I
   school: enchantment
   subschool: compulsion
 - classes:
     psychic: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Id Insinuation II
   school: enchantment
   subschool: compulsion
 - classes:
     psychic: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Id Insinuation III
   school: enchantment
   subschool: compulsion
 - classes:
     psychic: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Id Insinuation IV
   school: enchantment
@@ -14139,7 +14139,7 @@
     mesmerist: 1
     psychic: 1
     witch: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Ill Omen
   school: enchantment
@@ -14180,7 +14180,7 @@
 - classes:
     bard: 4
     wizard: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Illusory Hoard
   school: illusion
@@ -14196,7 +14196,7 @@
   subschool: figment
 - classes:
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Illusory Poison
   school: illusion
@@ -14207,7 +14207,7 @@
     occultist: 3
     psychic: 3
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Illusory Script
   school: illusion
@@ -14321,7 +14321,7 @@
     spiritualist: 1
     witch: 1
     wizard: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Implant Urge
   school: enchantment
@@ -14329,7 +14329,7 @@
 - classes:
     mesmerist: 3
     psychic: 3
-  descriptor: emotionUM, mind-affecting
+  descriptor: emotionUM, mind_affecting
   domains: {}
   name: Implanted Projection
   school: enchantment
@@ -14488,7 +14488,7 @@
     spiritualist: 2
     witch: 3
     wizard: 3
-  descriptor: mind-affecting, painUM
+  descriptor: mind_affecting, pain
   domains: {}
   name: Inflict Pain
   school: enchantment
@@ -14548,7 +14548,7 @@
     bard: 3
     psychic: 4
     wizard: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Inhibiting Patterns
   school: illusion
@@ -14590,7 +14590,7 @@
     psychic: 7
     witch: 7
     wizard: 7
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     charm: 7
     dark_tapestry: 7
@@ -14641,7 +14641,7 @@
     inquisitor: 6
     paladin: 4
     ranger: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Inspiring Recovery
   school: conjuration
@@ -14729,7 +14729,7 @@
     occultist: 2
     psychic: 2
     spiritualist: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Instigate Psychic Duel
   school: illusion
@@ -14773,7 +14773,7 @@
     spiritualist: 2
     witch: 2
     wizard: 2
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Intensify Psyche
   school: enchantment
@@ -14815,7 +14815,7 @@
     psychic: 6
     witch: 7
     wizard: 7
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Inveigle Monster
   school: enchantment
@@ -14826,7 +14826,7 @@
     psychic: 3
     witch: 4
     wizard: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Inveigle Person
   school: enchantment
@@ -14840,7 +14840,7 @@
     psychic: 2
     witch: 2
     wizard: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Investigative Mind
   school: enchantment
@@ -15065,7 +15065,7 @@
     shaman: 8
     witch: 8
     wizard: 8
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     revelry: 8
   name: Irresistible Dance
@@ -15148,7 +15148,7 @@
     shaman: 3
     spiritualist: 2
     witch: 3
-  descriptor: emotionUM, mind-affecting
+  descriptor: emotionUM, mind_affecting
   domains: {}
   name: Jealous Rage
   school: enchantment
@@ -15166,7 +15166,7 @@
     mesmerist: 1
     psychic: 2
     wizard: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Jitterbugs
   school: illusion
@@ -15379,7 +15379,7 @@
   subschool: ''
 - classes:
     paladin: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Knight's Calling
   school: enchantment
@@ -15417,7 +15417,7 @@
     paladin: 1
     psychic: 2
     wizard: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Know Peerage
   school: divination
@@ -15453,7 +15453,7 @@
   subschool: ''
 - classes:
     alchemist: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Languid Bomb Admixture
   school: enchantment
@@ -15637,7 +15637,7 @@
     medium: 1
     mesmerist: 1
     psychic: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     madness: 1
     protean: 1
@@ -15692,7 +15692,7 @@
     psychic: 4
     witch: 4
     wizard: 4
-  descriptor: language-dependent, mind-affecting, curse
+  descriptor: language_dependent, mind_affecting, curse
   domains: {}
   name: Lesser Geas
   school: enchantment
@@ -15917,7 +15917,7 @@
     mesmerist: 6
     psychic: 8
     wizard: 8
-  descriptor: curseUM, mind-affecting
+  descriptor: curseUM, mind_affecting
   domains: {}
   name: Life Of Crime
   school: enchantment
@@ -16134,7 +16134,7 @@
     antipaladin: 2
     inquisitor: 3
     paladin: 2
-  descriptor: language-dependent, mind-affecting
+  descriptor: language_dependent, mind_affecting
   domains: {}
   name: Litany Of Eloquence
   school: enchantment
@@ -16143,7 +16143,7 @@
     antipaladin: 3
     inquisitor: 4
     paladin: 3
-  descriptor: language-dependent
+  descriptor: language_dependent
   domains: {}
   name: Litany Of Escape
   school: conjuration
@@ -16151,7 +16151,7 @@
 - classes:
     antipaladin: 4
     inquisitor: 6
-  descriptor: language-dependent, mind-affecting
+  descriptor: language_dependent, mind_affecting
   domains: {}
   name: Litany Of Madness
   school: enchantment
@@ -16159,7 +16159,7 @@
 - classes:
     inquisitor: 3
     paladin: 2
-  descriptor: good, language-dependent
+  descriptor: good, language_dependent
   domains: {}
   name: Litany Of Righteousness
   school: evocation
@@ -16176,7 +16176,7 @@
 - classes:
     inquisitor: 6
     paladin: 4
-  descriptor: language-dependent
+  descriptor: language_dependent
   domains: {}
   name: Litany Of Truth
   school: divination
@@ -16185,7 +16185,7 @@
     antipaladin: 4
     inquisitor: 5
     paladin: 4
-  descriptor: language-dependent
+  descriptor: language_dependent
   domains: {}
   name: Litany Of Vengeance
   school: transmutation
@@ -16203,7 +16203,7 @@
     antipaladin: 2
     inquisitor: 3
     paladin: 2
-  descriptor: language-dependent
+  descriptor: language_dependent
   domains: {}
   name: Litany of Entanglement
   school: conjuration
@@ -16221,7 +16221,7 @@
     antipaladin: 1
     inquisitor: 1
     paladin: 1
-  descriptor: language-dependent, mind-affecting
+  descriptor: language_dependent, mind_affecting
   domains: {}
   name: Litany of Sloth
   school: enchantment
@@ -16230,7 +16230,7 @@
     antipaladin: 4
     inquisitor: 5
     paladin: 4
-  descriptor: language-dependent, sonic
+  descriptor: language_dependent, sonic
   domains: {}
   name: Litany of Thunder
   school: evocation
@@ -16247,7 +16247,7 @@
 - classes:
     antipaladin: 1
     inquisitor: 1
-  descriptor: language-dependent
+  descriptor: language_dependent
   domains: {}
   name: Litany of Weakness
   school: necromancy
@@ -16265,7 +16265,7 @@
     psychic: 3
     witch: 3
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Loathsome Veil
   school: illusion
@@ -16353,7 +16353,7 @@
     psychic: 1
     witch: 1
     wizard: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Lock Gaze
   school: enchantment
@@ -16432,7 +16432,7 @@
     psychic: 7
     witch: 6
     wizard: 7
-  descriptor: curseUM, mind-affecting
+  descriptor: curseUM, mind_affecting
   domains: {}
   name: Lost Legacy
   school: enchantment
@@ -16440,7 +16440,7 @@
 - classes:
     psychic: 9
     wizard: 9
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Lost Locale
   school: enchantment
@@ -16450,7 +16450,7 @@
     mesmerist: 3
     psychic: 4
     wizard: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Lost Passage
   school: enchantment
@@ -16460,7 +16460,7 @@
     cleric: 3
     witch: 3
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Lover's Vengeance
   school: enchantment
@@ -16483,7 +16483,7 @@
     bard: 0
     mesmerist: 0
     psychic: 0
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Lullaby
   school: enchantment
@@ -16526,7 +16526,7 @@
     psychic: 4
     witch: 4
     wizard: 4
-  descriptor: mind-affecting, sonic
+  descriptor: mind_affecting, sonic
   domains: {}
   name: Mad Sultan's Melody
   school: enchantment
@@ -16925,7 +16925,7 @@
   subschool: figment
 - classes:
     psychic: 9
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Major Mind Swap
   school: enchantment
@@ -16943,7 +16943,7 @@
     bard: 2
     druid: 2
     ranger: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Make Lost
   school: enchantment
@@ -16983,7 +16983,7 @@
     mesmerist: 3
     psychic: 4
     wizard: 4
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Malicious Spite
   school: enchantment
@@ -16995,7 +16995,7 @@
     paladin: 3
     psychic: 3
     shaman: 3
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Mantle Of Calm
   school: enchantment
@@ -17003,7 +17003,7 @@
 - classes:
     mesmerist: 6
     psychic: 8
-  descriptor: emotionUM, fear, mind-affecting
+  descriptor: emotionUM, fear, mind_affecting
   domains: {}
   name: Mantle Of Doubt
   school: illusion
@@ -17087,14 +17087,14 @@
   subschool: ''
 - classes:
     paladin: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Marks Of Forbiddance
   school: abjuration
   subschool: ''
 - classes:
     bard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Martial Marionette
   school: enchantment
@@ -17155,7 +17155,7 @@
     shaman: 4
     witch: 4
     wizard: 4
-  descriptor: evil, shadowUM
+  descriptor: evil, shadow
   domains: {}
   name: Masochistic Shadow
   school: necromancy
@@ -17203,7 +17203,7 @@
     cleric: 6
     inquisitor: 6
     paladin: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Mass Blessing Of Luck And Resolve
   school: enchantment
@@ -17224,7 +17224,7 @@
   subschool: ''
 - classes:
     bard: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Mass Cacophonous Call
   school: enchantment
@@ -17232,7 +17232,7 @@
 - classes:
     inquisitor: 5
     mesmerist: 5
-  descriptor: fear, language-dependent, mind-affecting, emotion
+  descriptor: fear, language_dependent, mind_affecting, emotion
   domains: {}
   name: Mass Castigate
   school: enchantment
@@ -17257,7 +17257,7 @@
     summoner: 6
     witch: 8
     wizard: 8
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Mass Charm Monster
   school: enchantment
@@ -17270,7 +17270,7 @@
     shaman: 5
     witch: 5
     wizard: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Mass Charm Person
   school: enchantment
@@ -17283,7 +17283,7 @@
     mesmerist: 4
     witch: 5
     wizard: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Mass Compel Tongue
   school: enchantment
@@ -17346,7 +17346,7 @@
     summoner: 4
     witch: 4
     wizard: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Mass Daze
   school: enchantment
@@ -17361,7 +17361,7 @@
 - classes:
     psychic: 5
     witch: 5
-  descriptor: mind-affecting, painUM
+  descriptor: mind_affecting, pain
   domains: {}
   name: Mass Debilitating Pain
   school: enchantment
@@ -17373,7 +17373,7 @@
     psychic: 6
     witch: 7
     wizard: 7
-  descriptor: language-dependent, mind-affecting
+  descriptor: language_dependent, mind_affecting
   domains: {}
   name: Mass Demanding Message
   school: enchantment
@@ -17424,7 +17424,7 @@
     occultist: 6
     psychic: 7
     wizard: 8
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Mass Fleeting Memory
   school: enchantment
@@ -17491,7 +17491,7 @@
     psychic: 9
     witch: 9
     wizard: 9
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     legislation: 9
   name: Mass Hold Monster
@@ -17502,7 +17502,7 @@
     psychic: 7
     witch: 7
     wizard: 7
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Mass Hold Person
   school: enchantment
@@ -17524,7 +17524,7 @@
     spiritualist: 6
     witch: 7
     wizard: 7
-  descriptor: evil, mind-affecting
+  descriptor: evil, mind_affecting
   domains: {}
   name: Mass Hunger For Flesh
   school: necromancy
@@ -17577,7 +17577,7 @@
     spiritualist: 5
     witch: 7
     wizard: 7
-  descriptor: mind-affecting, painUM
+  descriptor: mind_affecting, pain
   domains: {}
   name: Mass Inflict Pain
   school: enchantment
@@ -17699,7 +17699,7 @@
     psychic: 5
     witch: 5
     wizard: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Mass Passing Fancy
   school: enchantment
@@ -17759,7 +17759,7 @@
     psychic: 5
     witch: 6
     wizard: 6
-  descriptor: language-dependent, mind-affecting
+  descriptor: language_dependent, mind_affecting
   domains:
     innuendo: 6
   name: Mass Suggestion
@@ -17780,7 +17780,7 @@
 - classes:
     mesmerist: 5
     psychic: 7
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Mass Synesthesia
   school: illusion
@@ -17844,7 +17844,7 @@
     mesmerist: 2
     witch: 3
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Matchmaker
   school: enchantment
@@ -17882,7 +17882,7 @@
     psychic: 9
     witch: 9
     wizard: 9
-  descriptor: evil, mind-affecting
+  descriptor: evil, mind_affecting
   domains: {}
   name: Maze Of Madness And Suffering
   school: conjuration
@@ -17912,7 +17912,7 @@
     psychic: 1
     witch: 1
     wizard: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Memorize Page
   school: enchantment
@@ -17922,7 +17922,7 @@
     mesmerist: 1
     occultist: 1
     wizard: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     memory: 2
   name: Memory Lapse
@@ -17991,7 +17991,7 @@
     bard: 2
     mesmerist: 1
     psychic: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Mental Block
   school: divination
@@ -18015,7 +18015,7 @@
     summoner: 0
     witch: 0
     wizard: 0
-  descriptor: language-dependent
+  descriptor: language_dependent
   domains: {}
   name: Message
   school: transmutation
@@ -18056,7 +18056,7 @@
     bloodrager: 2
     inquisitor: 3
     mesmerist: 3
-  descriptor: fear, mind-affecting
+  descriptor: fear, mind_affecting
   domains: {}
   name: Miasmal Dread
   school: enchantment
@@ -18071,7 +18071,7 @@
   subschool: ''
 - classes:
     psychic: 9
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Microcosm
   school: illusion
@@ -18107,7 +18107,7 @@
     spiritualist: 5
     witch: 5
     wizard: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Mind Fog
   school: enchantment
@@ -18117,7 +18117,7 @@
     cleric: 3
     shaman: 3
     witch: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Mind Maze
   school: enchantment
@@ -18137,7 +18137,7 @@
     occultist: 4
     psychic: 4
     wizard: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Mind Probe
   school: divination
@@ -18151,14 +18151,14 @@
     summoner: 5
     witch: 6
     wizard: 6
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Mind Swap
   school: enchantment
   subschool: compulsion
 - classes:
     psychic: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Mind Thrust I
   school: divination
@@ -18206,7 +18206,7 @@
     shaman: 1
     spiritualist: 1
     wizard: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Mindlink
   school: divination
@@ -18219,7 +18219,7 @@
     spiritualist: 3
     witch: 3
     wizard: 3
-  descriptor: language-dependent, mind-affecting
+  descriptor: language_dependent, mind_affecting
   domains: {}
   name: Mindlocked Messenger
   school: enchantment
@@ -18229,7 +18229,7 @@
     mesmerist: 3
     psychic: 3
     wizard: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Mindscape Door
   school: illusion
@@ -18244,7 +18244,7 @@
     shaman: 2
     spiritualist: 2
     witch: 2
-  descriptor: mind-affecting, painUM
+  descriptor: mind_affecting, pain
   domains: {}
   name: Mindshock
   school: divination
@@ -18256,7 +18256,7 @@
     psychic: 4
     spiritualist: 4
     wizard: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Mindwipe
   school: enchantment
@@ -18282,7 +18282,7 @@
     psychic: 3
     witch: 2
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Minor Dream
   school: illusion
@@ -18305,7 +18305,7 @@
     mesmerist: 4
     psychic: 4
     wizard: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Minor Phantom Object
   school: illusion
@@ -18384,7 +18384,7 @@
     occultist: 1
     psychic: 1
     wizard: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Mirror Mantis
   school: illusion
@@ -18428,7 +18428,7 @@
     summoner: 4
     witch: 4
     wizard: 4
-  descriptor: emotionUM, fear, mind-affecting
+  descriptor: emotionUM, fear, mind_affecting
   domains: {}
   name: Mischievous Shadow
   school: necromancy
@@ -18453,7 +18453,7 @@
     psychic: 2
     witch: 2
     wizard: 2
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Miserable Pity
   school: abjuration
@@ -18486,7 +18486,7 @@
     medium: 4
     mesmerist: 4
     psychic: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     loss: 6
     memory: 6
@@ -18508,7 +18508,7 @@
     cleric: 1
     psychic: 1
     wizard: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Moment of Greatness
   school: enchantment
@@ -18600,7 +18600,7 @@
     psychic: 4
     witch: 4
     wizard: 4
-  descriptor: mind-affecting, emotion
+  descriptor: mind_affecting, emotion
   domains:
     insanity: 4
     moon: 4
@@ -18628,7 +18628,7 @@
     shaman: 2
     witch: 2
     wizard: 2
-  descriptor: fear, mind-affecting
+  descriptor: fear, mind_affecting
   domains: {}
   name: Mortal Terror
   school: enchantment
@@ -18705,7 +18705,7 @@
     mesmerist: 1
     occultist: 1
     psychic: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     hatred: 1
   name: Murderous Command
@@ -18993,7 +18993,7 @@
     psychic: 6
     witch: 6
     wizard: 6
-  descriptor: emotionUM, evil, mind-affecting
+  descriptor: emotionUM, evil, mind_affecting
   domains: {}
   name: Night Terrors
   school: illusion
@@ -19006,7 +19006,7 @@
     psychic: 5
     spiritualist: 5
     wizard: 5
-  descriptor: mind-affecting, evil
+  descriptor: mind_affecting, evil
   domains:
     madness: 5
     night: 6
@@ -19029,7 +19029,7 @@
     summoner: 4
     witch: 4
     wizard: 4
-  descriptor: mind-affecting, sonic
+  descriptor: mind_affecting, sonic
   domains: {}
   name: Nixie's Lure
   school: enchantment
@@ -19039,7 +19039,7 @@
     mesmerist: 3
     occultist: 2
     psychic: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Node Of Blasting
   school: abjuration
@@ -19221,7 +19221,7 @@
     mesmerist: 2
     psychic: 2
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Oneiric Horror
   school: illusion
@@ -19321,7 +19321,7 @@
     mesmerist: 2
     psychic: 2
     wizard: 2
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Oppressive Boredom
   school: enchantment
@@ -19369,7 +19369,7 @@
     medium: 3
     mesmerist: 3
     psychic: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Out Of Sight
   school: enchantment
@@ -19406,7 +19406,7 @@
     bard: 3
     mesmerist: 3
     psychic: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Overlook
   school: enchantment
@@ -19432,7 +19432,7 @@
     mesmerist: 3
     psychic: 4
     wizard: 4
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Overwhelming Grief
   school: enchantment
@@ -19456,7 +19456,7 @@
     mesmerist: 6
     psychic: 4
     wizard: 9
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains:
     aristocracy: 9
   name: Overwhelming Presence
@@ -19521,7 +19521,7 @@
     mesmerist: 2
     psychic: 2
     wizard: 2
-  descriptor: mind-affecting, painUM
+  descriptor: mind_affecting, pain
   domains: {}
   name: Painful Revelation
   school: abjuration
@@ -19561,7 +19561,7 @@
     psychic: 2
     witch: 2
     wizard: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Paranoia
   school: illusion
@@ -19613,7 +19613,7 @@
     psychic: 2
     witch: 2
     wizard: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Passing Fancy
   school: enchantment
@@ -19766,7 +19766,7 @@
 - classes:
     psychic: 7
     wizard: 7
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Permanent Hallucination
   school: illusion
@@ -19849,7 +19849,7 @@
     psychic: 5
     witch: 5
     wizard: 5
-  descriptor: emotionUM, mind-affecting
+  descriptor: emotionUM, mind_affecting
   domains: {}
   name: Pessimism
   school: enchantment
@@ -19868,7 +19868,7 @@
     psychic: 3
     witch: 3
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Phantasmal Affliction
   school: illusion
@@ -19880,7 +19880,7 @@
     spiritualist: 4
     witch: 4
     wizard: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Phantasmal Asphyxiation
   school: illusion
@@ -19894,7 +19894,7 @@
     spiritualist: 4
     witch: 4
     wizard: 4
-  descriptor: fear, mind-affecting
+  descriptor: fear, mind_affecting
   domains:
     madness: 6
     nightmare: 4
@@ -19906,7 +19906,7 @@
     mesmerist: 5
     witch: 6
     wizard: 6
-  descriptor: fear, mind-affecting
+  descriptor: fear, mind_affecting
   domains: {}
   name: Phantasmal Putrefaction
   school: illusion
@@ -19919,7 +19919,7 @@
     shaman: 4
     witch: 3
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Phantasmal Reminder
   school: illusion
@@ -19928,7 +19928,7 @@
     mesmerist: 6
     psychic: 7
     wizard: 7
-  descriptor: fear, mind-affecting, emotion
+  descriptor: fear, mind_affecting, emotion
   domains: {}
   name: Phantasmal Revenge
   school: illusion
@@ -19939,7 +19939,7 @@
     psychic: 5
     spiritualist: 5
     wizard: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     insanity: 6
   name: Phantasmal Web
@@ -20044,7 +20044,7 @@
     psychic: 6
     witch: 6
     wizard: 6
-  descriptor: emotionUM, fear, mind-affecting
+  descriptor: emotionUM, fear, mind_affecting
   domains: {}
   name: Phobia
   school: enchantment
@@ -20054,14 +20054,14 @@
     cleric: 1
     inquisitor: 1
     witch: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Pick Your Poison
   school: conjuration
   subschool: healing
 - classes:
     bard: 6
-  descriptor: mind-affecting, sonic
+  descriptor: mind_affecting, sonic
   domains: {}
   name: Pied Piping
   school: enchantment
@@ -20129,7 +20129,7 @@
     psychic: 3
     witch: 3
     wizard: 3
-  descriptor: language-dependent, mind-affecting
+  descriptor: language_dependent, mind_affecting
   domains: {}
   name: Pillow Talk
   school: enchantment
@@ -20138,7 +20138,7 @@
     medium: 2
     mesmerist: 2
     psychic: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Placebo Effect
   school: illusion
@@ -20292,7 +20292,7 @@
     cleric: 5
     inquisitor: 4
     paladin: 4
-  descriptor: mind-affecting, see text
+  descriptor: mind_affecting, see text
   domains: {}
   name: Planeslayer's Call
   school: enchantment
@@ -20554,7 +20554,7 @@
     psychic: 7
     witch: 7
     wizard: 7
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     darkness: 7
     war: 7
@@ -20565,7 +20565,7 @@
     psychic: 9
     witch: 9
     wizard: 9
-  descriptor: death, mind-affecting
+  descriptor: death, mind_affecting
   domains:
     war: 9
   name: Power Word Kill
@@ -20575,7 +20575,7 @@
     psychic: 8
     witch: 8
     wizard: 8
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     war: 8
   name: Power Word Stun
@@ -20589,7 +20589,7 @@
     spiritualist: 5
     witch: 7
     wizard: 7
-  descriptor: curseUM, mind-affecting
+  descriptor: curseUM, mind_affecting
   domains: {}
   name: Pox Of Rumors
   school: enchantment
@@ -20606,7 +20606,7 @@
     cleric: 3
     inquisitor: 3
     paladin: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     archon: 3
     community: 3
@@ -20619,7 +20619,7 @@
     psychic: 8
     witch: 8
     wizard: 8
-  descriptor: curse, fear, mind-affecting
+  descriptor: curse, fear, mind_affecting
   domains: {}
   name: Prediction of Failure
   school: divination
@@ -20691,7 +20691,7 @@
     psychic: 6
     shaman: 6
     witch: 7
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Primal Regression
   school: enchantment
@@ -20699,7 +20699,7 @@
 - classes:
     bard: 4
     mesmerist: 4
-  descriptor: mind-affecting, sonic
+  descriptor: mind_affecting, sonic
   domains: {}
   name: Primal Scream
   school: abjuration
@@ -21001,42 +21001,42 @@
     mesmerist: 5
     psychic: 5
     wizard: 6
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Psychic Asylum
   school: illusion
   subschool: phantasm
 - classes:
     psychic: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Psychic Crush I
   school: necromancy
   subschool: ''
 - classes:
     psychic: 6
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Psychic Crush II
   school: necromancy
   subschool: ''
 - classes:
     psychic: 7
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Psychic Crush III
   school: necromancy
   subschool: ''
 - classes:
     psychic: 8
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Psychic Crush IV
   school: necromancy
   subschool: ''
 - classes:
     psychic: 9
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Psychic Crush V
   school: necromancy
@@ -21057,7 +21057,7 @@
     spiritualist: 2
     witch: 2
     wizard: 3
-  descriptor: emotionUM, mind-affecting
+  descriptor: emotionUM, mind_affecting
   domains: {}
   name: Psychic Leech
   school: enchantment
@@ -21079,14 +21079,14 @@
 - classes:
     mesmerist: 5
     psychic: 6
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Psychic Surgery
   school: enchantment
   subschool: ''
 - classes:
     psychic: 2
-  descriptor: emotionUM, mind-affecting
+  descriptor: emotionUM, mind_affecting
   domains: {}
   name: Psychonaut Manifestation
   school: enchantment
@@ -21095,7 +21095,7 @@
     bard: 2
     witch: 3
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Pugwampi's Grace
   school: enchantment
@@ -21180,7 +21180,7 @@
     bard: 2
     witch: 3
     wizard: 3
-  descriptor: curseUM, mind-affecting
+  descriptor: curseUM, mind_affecting
   domains: {}
   name: Puzzle Box
   school: enchantment
@@ -21214,7 +21214,7 @@
     cleric: 3
     shaman: 3
     witch: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Qlippoth Appearance
   school: transmutation
@@ -21227,7 +21227,7 @@
     psychic: 2
     witch: 2
     wizard: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     redemption: 2
   name: Qualm
@@ -21350,7 +21350,7 @@
     summoner: 3
     witch: 3
     wizard: 3
-  descriptor: mind-affecting, emotion
+  descriptor: mind_affecting, emotion
   domains:
     demon: 3
     destruction: 3
@@ -21408,7 +21408,7 @@
     bard: 4
     psychic: 4
     wizard: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Rainbow Pattern
   school: illusion
@@ -21435,7 +21435,7 @@
   subschool: healing
 - classes:
     paladin: 1
-  descriptor: good, mind-affecting, emotion
+  descriptor: good, mind_affecting, emotion
   domains: {}
   name: Rally Point
   school: enchantment
@@ -21626,7 +21626,7 @@
     psychic: 3
     witch: 3
     wizard: 3
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Reckless Infatuation
   school: enchantment
@@ -21763,7 +21763,7 @@
     druid: 3
     shaman: 2
     witch: 3
-  descriptor: air, mind-affecting
+  descriptor: air, mind_affecting
   domains: {}
   name: Reinvigorating Wind
   school: enchantment
@@ -22004,7 +22004,7 @@
     bard: 5
     mesmerist: 5
     psychic: 6
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Repress Memory
   school: enchantment
@@ -22348,7 +22348,7 @@
     psychic: 1
     witch: 1
     wizard: 1
-  descriptor: language-dependent, mind-affecting
+  descriptor: language_dependent, mind_affecting
   domains: {}
   name: Reveal Secrets
   school: enchantment
@@ -22476,7 +22476,7 @@
 - classes:
     inquisitor: 3
     paladin: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Righteous Vigor
   school: enchantment
@@ -22613,7 +22613,7 @@
     inquisitor: 6
     occultist: 6
     witch: 8
-  descriptor: curseUM, diseaseUM
+  descriptor: curseUM, disease
   domains: {}
   name: Rotting Alliance
   school: necromancy
@@ -22769,7 +22769,7 @@
 - classes:
     cleric: 4
     wizard: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Sacrifice
   school: enchantment
@@ -22898,7 +22898,7 @@
   subschool: ''
 - classes:
     bard: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Saving Finale
   school: evocation
@@ -22959,7 +22959,7 @@
     spiritualist: 2
     witch: 2
     wizard: 2
-  descriptor: fear, mind-affecting, emotion
+  descriptor: fear, mind_affecting, emotion
   domains:
     fear: 3
   name: Scare
@@ -22990,7 +22990,7 @@
 - classes:
     psychic: 8
     wizard: 8
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     madness: 8
   name: Scintillating Pattern
@@ -23000,7 +23000,7 @@
     bard: 4
     psychic: 5
     wizard: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Scintillating Wall
   school: illusion
@@ -23049,7 +23049,7 @@
 - classes:
     antipaladin: 3
     cleric: 3
-  descriptor: evil, fire, mind-affecting
+  descriptor: evil, fire, mind_affecting
   domains: {}
   name: Screaming Flames
   school: evocation
@@ -23087,7 +23087,7 @@
     occultist: 5
     psychic: 5
     wizard: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Scripted Hallucination
   school: illusion
@@ -23188,7 +23188,7 @@
   subschool: ''
 - classes:
     wizard: 5
-  descriptor: language-dependent
+  descriptor: language_dependent
   domains: {}
   name: Sealed Sending
   school: conjuration
@@ -23310,7 +23310,7 @@
     bard: 2
     witch: 2
     wizard: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Seducer's Eyes
   school: enchantment
@@ -23368,7 +23368,7 @@
     psychic: 4
     witch: 4
     wizard: 4
-  descriptor: emotionUM, mind-affecting
+  descriptor: emotionUM, mind_affecting
   domains: {}
   name: Seeds Of Influence
   school: enchantment
@@ -23382,7 +23382,7 @@
     summoner: 4
     witch: 5
     wizard: 5
-  descriptor: fear, mind-affecting
+  descriptor: fear, mind_affecting
   domains: {}
   name: Seek Shelter
   school: enchantment
@@ -23399,7 +23399,7 @@
     summoner: 3
     witch: 3
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     thought: 3
   name: Seek Thoughts
@@ -23532,7 +23532,7 @@
     mesmerist: 3
     psychic: 3
     witch: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Sensory Amplifier
   school: divination
@@ -23541,7 +23541,7 @@
     psychic: 2
     witch: 2
     wizard: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Sensory Overload
   school: enchantment
@@ -23578,7 +23578,7 @@
 - classes:
     bard: 3
     wizard: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Sequester Thoughts
   school: enchantment
@@ -23589,7 +23589,7 @@
     mesmerist: 4
     psychic: 5
     wizard: 6
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Serenity
   school: enchantment
@@ -23776,7 +23776,7 @@
     mesmerist: 4
     psychic: 6
     spiritualist: 4
-  descriptor: darkness, emotion, evil, mind-affecting
+  descriptor: darkness, emotion, evil, mind_affecting
   domains: {}
   name: Shadow Of Doubt
   school: enchantment
@@ -23921,7 +23921,7 @@
     inquisitor: 2
     mesmerist: 2
     psychic: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Shamefully Overdressed
   school: enchantment
@@ -24045,7 +24045,7 @@
   subschool: ''
 - classes:
     inquisitor: 4
-  descriptor: mind-affecting, emotion
+  descriptor: mind_affecting, emotion
   domains: {}
   name: Shared Wrath
   school: enchantment
@@ -24112,7 +24112,7 @@
     inquisitor: 3
     shaman: 3
     spiritualist: 3
-  descriptor: darkness, shadowUM
+  descriptor: darkness, shadow
   domains: {}
   name: Shield Of Darkness
   school: evocation
@@ -24518,7 +24518,7 @@
     shaman: 1
     witch: 1
     wizard: 1
-  descriptor: emotionUM, fear, mind-affecting
+  descriptor: emotionUM, fear, mind_affecting
   domains: {}
   name: Skin Tag
   school: necromancy
@@ -24568,7 +24568,7 @@
     paladin: 2
     witch: 3
     wizard: 3
-  descriptor: emotionUM, mind-affecting
+  descriptor: emotionUM, mind_affecting
   domains: {}
   name: Slave To Sin
   school: enchantment
@@ -24594,7 +24594,7 @@
     shaman: 1
     witch: 1
     wizard: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     night: 1
   name: Sleep
@@ -24605,7 +24605,7 @@
     mesmerist: 4
     psychic: 4
     witch: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Sleepwalk
   school: enchantment
@@ -24617,7 +24617,7 @@
     psychic: 5
     witch: 5
     wizard: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Sleepwalking Suggestion
   school: enchantment
@@ -24696,7 +24696,7 @@
     psychic: 5
     witch: 5
     wizard: 5
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Smug Narcissism
   school: enchantment
@@ -24780,7 +24780,7 @@
 - classes:
     bard: 5
     psychic: 5
-  descriptor: mind-affecting, sonic
+  descriptor: mind_affecting, sonic
   domains:
     riot: 7
   name: Song of Discord
@@ -24868,7 +24868,7 @@
     bard: 1
     cleric: 0
     wizard: 0
-  descriptor: fear, mind-affecting, sonic
+  descriptor: fear, mind_affecting, sonic
   domains: {}
   name: Sotto Voce
   school: necromancy
@@ -24969,7 +24969,7 @@
     psychic: 1
     witch: 1
     wizard: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     innuendo: 1
   name: Sow Thought
@@ -25024,7 +25024,7 @@
     shaman: 3
     spiritualist: 4
     witch: 4
-  descriptor: language-dependent
+  descriptor: language_dependent
   domains: {}
   name: Speak With Haunt
   school: necromancy
@@ -25071,7 +25071,7 @@
     shaman: 3
     spiritualist: 3
     witch: 3
-  descriptor: language-dependent
+  descriptor: language_dependent
   domains:
     knowledge: 3
     repose: 3
@@ -25155,7 +25155,7 @@
     inquisitor: 2
     witch: 2
     wizard: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Spell Gauge
   school: divination
@@ -25531,7 +25531,7 @@
     psychic: 3
     witch: 3
     wizard: 3
-  descriptor: emotionUM, fear, mind-affecting
+  descriptor: emotionUM, fear, mind_affecting
   domains: {}
   name: Stage Fright
   school: enchantment
@@ -25551,7 +25551,7 @@
     inquisitor: 1
     paladin: 1
     witch: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Stalwart Resolve
   school: enchantment
@@ -25602,7 +25602,7 @@
   subschool: ''
 - classes:
     paladin: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Stay the Hand
   school: enchantment
@@ -25839,7 +25839,7 @@
   subschool: ''
 - classes:
     cleric: 3
-    magusUM: 2
+    magus: 2
     wizard: 2
   descriptor: ''
   domains: {}
@@ -25980,7 +25980,7 @@
   subschool: ''
 - classes:
     bard: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Stunning Finale
   school: enchantment
@@ -25999,7 +25999,7 @@
     mesmerist: 5
     psychic: 6
     wizard: 7
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Subjective Reality
   school: illusion
@@ -26040,7 +26040,7 @@
     psychic: 2
     witch: 3
     wizard: 3
-  descriptor: language-dependent, mind-affecting
+  descriptor: language_dependent, mind_affecting
   domains:
     charm: 3
     corruption: 2
@@ -26789,7 +26789,7 @@
     cleric: 8
     witch: 8
     wizard: 8
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Symbol Of Debauchery
   school: enchantment
@@ -26811,7 +26811,7 @@
     psychic: 6
     witch: 6
     wizard: 6
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Symbol Of Distraction
   school: enchantment
@@ -26832,7 +26832,7 @@
     occultist: 3
     witch: 4
     wizard: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Symbol Of Laughter
   school: enchantment
@@ -26873,7 +26873,7 @@
     occultist: 4
     witch: 6
     wizard: 6
-  descriptor: fear, mind-affecting, emotion
+  descriptor: fear, mind_affecting, emotion
   domains: {}
   name: Symbol of Fear
   school: necromancy
@@ -26893,7 +26893,7 @@
     occultist: 6
     witch: 8
     wizard: 8
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Symbol of Insanity
   school: enchantment
@@ -26927,7 +26927,7 @@
     occultist: 4
     witch: 6
     wizard: 6
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     revolution: 6
     tyranny: 7
@@ -26970,7 +26970,7 @@
     occultist: 4
     witch: 5
     wizard: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Symbol of Sleep
   school: enchantment
@@ -26990,7 +26990,7 @@
     occultist: 6
     witch: 9
     wizard: 9
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     riot: 9
   name: Symbol of Strife
@@ -27001,7 +27001,7 @@
     occultist: 5
     witch: 7
     wizard: 7
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Symbol of Stunning
   school: enchantment
@@ -27041,7 +27041,7 @@
     summoner: 6
     witch: 8
     wizard: 8
-  descriptor: mind-affecting, emotion
+  descriptor: mind_affecting, emotion
   domains: {}
   name: Sympathy
   school: enchantment
@@ -27049,7 +27049,7 @@
 - classes:
     mesmerist: 4
     psychic: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Synapse Overload
   school: divination
@@ -27057,7 +27057,7 @@
 - classes:
     mesmerist: 3
     psychic: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Synaptic Pulse
   school: enchantment
@@ -27065,7 +27065,7 @@
 - classes:
     mesmerist: 3
     psychic: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Synaptic Scramble
   school: enchantment
@@ -27073,7 +27073,7 @@
 - classes:
     mesmerist: 3
     psychic: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Synesthesia
   school: illusion
@@ -27087,7 +27087,7 @@
     paladin: 1
     psychic: 2
     wizard: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Tactical Acumen
   school: enchantment
@@ -27120,7 +27120,7 @@
     bard: 2
     inquisitor: 2
     ranger: 2
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Tactical Miscalculation
   school: enchantment
@@ -27351,7 +27351,7 @@
     mesmerist: 1
     psychic: 1
     spiritualist: 1
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Telempathic Projection
   school: enchantment
@@ -27388,7 +27388,7 @@
     psychic: 5
     spiritualist: 6
     wizard: 6
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Telepathy
   school: divination
@@ -27504,7 +27504,7 @@
   subschool: ''
 - classes:
     ranger: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Terrain Bond
   school: enchantment
@@ -27517,7 +27517,7 @@
     psychic: 4
     spiritualist: 4
     wizard: 4
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Terrible Remorse
   school: enchantment
@@ -27648,28 +27648,28 @@
   subschool: ''
 - classes:
     psychic: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Thought Worm I
   school: enchantment
   subschool: compulsion
 - classes:
     psychic: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Thought Worm II
   school: enchantment
   subschool: compulsion
 - classes:
     psychic: 4
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Thought Worm III
   school: enchantment
   subschool: compulsion
 - classes:
     psychic: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Thought Worm IV
   school: enchantment
@@ -27680,7 +27680,7 @@
     psychic: 4
     spiritualist: 4
     wizard: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Thoughtsense
   school: divination
@@ -27768,7 +27768,7 @@
   subschool: creation
 - classes:
     bard: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Tieldlara's Feint
   school: enchantment
@@ -27838,7 +27838,7 @@
   subschool: ''
 - classes:
     bard: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Toilsome Chant
   school: enchantment
@@ -27899,7 +27899,7 @@
     shaman: 1
     witch: 1
     wizard: 1
-  descriptor: darkness, shadowUM
+  descriptor: darkness, shadow
   domains: {}
   name: Touch Of Blindness
   school: necromancy
@@ -27932,7 +27932,7 @@
     bard: 2
     cleric: 2
     wizard: 2
-  descriptor: good, mind-affecting
+  descriptor: good, mind_affecting
   domains: {}
   name: Touch Of Mercy
   school: enchantment
@@ -27945,7 +27945,7 @@
     shaman: 5
     witch: 6
     wizard: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Touch Of Slumber
   school: enchantment
@@ -27980,7 +27980,7 @@
     spiritualist: 2
     witch: 2
     wizard: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     lust: 2
     madness: 2
@@ -28335,7 +28335,7 @@
     occultist: 6
     psychic: 6
     wizard: 6
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Triggered Hallucination
   school: illusion
@@ -28346,7 +28346,7 @@
     psychic: 4
     witch: 4
     wizard: 4
-  descriptor: language-dependent, mind-affecting
+  descriptor: language_dependent, mind_affecting
   domains: {}
   name: Triggered Suggestion
   school: enchantment
@@ -28588,7 +28588,7 @@
     psychic: 3
     witch: 3
     wizard: 3
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Unadulterated Loathing
   school: enchantment
@@ -28618,7 +28618,7 @@
     paladin: 1
     ranger: 1
     witch: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Unbreakable Heart
   school: enchantment
@@ -28628,7 +28628,7 @@
     inquisitor: 6
     witch: 6
     wizard: 6
-  descriptor: language-dependent, mind-affecting
+  descriptor: language_dependent, mind_affecting
   domains: {}
   name: Unconscious Agenda
   school: enchantment
@@ -28883,7 +28883,7 @@
     psychic: 2
     witch: 2
     wizard: 2
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Unnatural Lust
   school: enchantment
@@ -28895,7 +28895,7 @@
     psychic: 1
     witch: 1
     wizard: 1
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Unprepared Combatant
   school: enchantment
@@ -28953,7 +28953,7 @@
     shaman: 2
     witch: 2
     wizard: 2
-  descriptor: emotionUM, fear, mind-affecting
+  descriptor: emotionUM, fear, mind_affecting
   domains: {}
   name: Unsettling Presence
   school: necromancy
@@ -28973,7 +28973,7 @@
     inquisitor: 6
     psychic: 7
     spiritualist: 6
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Unshakable Zeal
   school: enchantment
@@ -29015,7 +29015,7 @@
     bard: 0
     mesmerist: 0
     psychic: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Unwitting Ally
   school: enchantment
@@ -29046,7 +29046,7 @@
     antipaladin: 2
     cleric: 2
     inquisitor: 2
-  descriptor: emotionUM, evil, fear, mind-affecting
+  descriptor: emotionUM, evil, fear, mind_affecting
   domains: {}
   name: Urgathoa's Beacon
   school: necromancy
@@ -29158,7 +29158,7 @@
     psychic: 6
     witch: 6
     wizard: 6
-  descriptor: emotion, language-dependent, mind-affecting
+  descriptor: emotion, language_dependent, mind_affecting
   domains: {}
   name: Vengeful Outrage
   school: enchantment
@@ -29198,7 +29198,7 @@
     mesmerist: 3
     shaman: 3
     witch: 3
-  descriptor: language-dependent, poisonUM
+  descriptor: language_dependent, poison
   domains: {}
   name: Venomous Promise
   school: transmutation
@@ -29288,7 +29288,7 @@
     cleric: 2
     inquisitor: 2
     witch: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Vexing Miscalculation
   school: enchantment
@@ -29352,7 +29352,7 @@
     psychic: 5
     witch: 5
     wizard: 5
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Village Veil
   school: illusion
@@ -29462,7 +29462,7 @@
     cleric: 7
     inquisitor: 6
     witch: 7
-  descriptor: mind-affecting, evil
+  descriptor: mind_affecting, evil
   domains: {}
   name: Vision of Lamashtu
   school: illusion
@@ -29709,7 +29709,7 @@
     bard: 3
     psychic: 3
     wizard: 3
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Wall Of Nausea
   school: illusion
@@ -29809,7 +29809,7 @@
     shaman: 4
     witch: 4
     wizard: 4
-  descriptor: light, mind-affecting
+  descriptor: light, mind_affecting
   domains: {}
   name: Wandering Star Motes
   school: illusion
@@ -29903,7 +29903,7 @@
     mesmerist: 2
     paladin: 1
     ranger: 1
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Wartrain Mount
   school: enchantment
@@ -30001,7 +30001,7 @@
     psychic: 7
     witch: 7
     wizard: 7
-  descriptor: emotion, mind-affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Waves of Ecstasy
   school: enchantment
@@ -30111,7 +30111,7 @@
 - classes:
     psychic: 9
     wizard: 9
-  descriptor: fear, mind-affecting, emotion
+  descriptor: fear, mind_affecting, emotion
   domains:
     madness: 9
     nightmare: 9
@@ -30478,7 +30478,7 @@
   subschool: ''
 - classes:
     inquisitor: 1
-  descriptor: mind-affecting, emotion
+  descriptor: mind_affecting, emotion
   domains: {}
   name: Wrath
   school: enchantment
@@ -30517,7 +30517,7 @@
     cleric: 9
     witch: 9
     wizard: 9
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains: {}
   name: Yellow Sign
   school: enchantment
@@ -30565,7 +30565,7 @@
     paladin: 2
     psychic: 2
     witch: 2
-  descriptor: mind-affecting
+  descriptor: mind_affecting
   domains:
     honor: 2
   name: Zone of Truth

@@ -1379,16 +1379,16 @@ rod:
       - {weight: 20, cost: 121500, name: 'Greater Metamagic {{ keys.metamagic(3) }} Rod'}
       - {weight:  5, cost: 170000, name: 'Greater Metamagic Quicken Rod'}
 scroll:
-  - {minor:  5, medium:  0, major:  0, name: 'Scroll of {{ spell }}', spell: {level: 0}}
-  - {minor: 45, medium:  0, major:  0, name: 'Scroll of {{ spell }}', spell: {level: 1}}
-  - {minor: 45, medium:  5, major:  0, name: 'Scroll of {{ spell }}', spell: {level: 2}}
-  - {minor:  5, medium: 60, major:  0, name: 'Scroll of {{ spell }}', spell: {level: 3}}
-  - {minor:  0, medium: 30, major:  5, name: 'Scroll of {{ spell }}', spell: {level: 4}}
-  - {minor:  0, medium:  5, major: 45, name: 'Scroll of {{ spell }}', spell: {level: 5}}
-  - {minor:  0, medium:  0, major: 20, name: 'Scroll of {{ spell }}', spell: {level: 6}}
-  - {minor:  0, medium:  0, major: 15, name: 'Scroll of {{ spell }}', spell: {level: 7}}
-  - {minor:  0, medium:  0, major: 10, name: 'Scroll of {{ spell }}', spell: {level: 8}}
-  - {minor:  0, medium:  0, major:  5, name: 'Scroll of {{ spell }}', spell: {level: 9}}
+  - {minor:  5, medium:  0, major:  0, name: 'Scroll of {{ spell }}', spell: {level: 0, cls: random}}
+  - {minor: 45, medium:  0, major:  0, name: 'Scroll of {{ spell }}', spell: {level: 1, cls: random}}
+  - {minor: 45, medium:  5, major:  0, name: 'Scroll of {{ spell }}', spell: {level: 2, cls: random}}
+  - {minor:  5, medium: 60, major:  0, name: 'Scroll of {{ spell }}', spell: {level: 3, cls: random}}
+  - {minor:  0, medium: 30, major:  5, name: 'Scroll of {{ spell }}', spell: {level: 4, cls: random}}
+  - {minor:  0, medium:  5, major: 45, name: 'Scroll of {{ spell }}', spell: {level: 5, cls: random}}
+  - {minor:  0, medium:  0, major: 20, name: 'Scroll of {{ spell }}', spell: {level: 6, cls: random}}
+  - {minor:  0, medium:  0, major: 15, name: 'Scroll of {{ spell }}', spell: {level: 7, cls: random}}
+  - {minor:  0, medium:  0, major: 10, name: 'Scroll of {{ spell }}', spell: {level: 8, cls: random}}
+  - {minor:  0, medium:  0, major:  5, name: 'Scroll of {{ spell }}', spell: {level: 9, cls: random}}
 staff:
   medium:
     lesser:
@@ -2118,7 +2118,7 @@ slotless:
       - {weight:  1, cost:   1000, name: 'Concealing Pocket'}
       - {weight:  1, cost:   1000, name: 'Dowsing Syrup'}
       - {weight:  1, cost:   1000, name: 'Incense of Transcendence'}
-      - {weight:  2, cost:   1000, name: 'Page of Spell Knowledge ({{ spell }})', spell: {level: 1, class: spellpage}}
+      - {weight:  2, cost:   1000, name: 'Page of Spell Knowledge ({{ spell }})', spell: {level: 1, cls: spellpage}}
       - {weight:  3, cost:   1000, name: 'Pearl of Power (1st)'}
       - {weight:  1, cost:   1000, name: 'Preserving Flask (1st)'}
       - {weight:  2, cost:   1000, name: 'Pyxes of Redirected Focus'}
@@ -2175,7 +2175,7 @@ slotless:
       # - {weight:  1, cost:   4000, name: 'Far-Reaching Sight'}
       - {weight:  2, cost:   4000, name: 'Ioun Stone (Clear Spindle)'}
       - {weight:  1, cost:   4000, name: 'Marvellous Pigments'}
-      - {weight:  8, cost:   4000, name: 'Page of Spell Knowledge ({{ spell }})', spell: {level: 2, class: spellpage}}
+      - {weight:  8, cost:   4000, name: 'Page of Spell Knowledge ({{ spell }})', spell: {level: 2, cls: spellpage}}
       - {weight: 10, cost:   4000, name: 'Pearl of Power (2nd)'}
       - {weight:  1, cost:   4000, name: 'Preserving Flask (2nd)'}
       - {weight:  1, cost:   4000, name: 'Restorative Ointment'}
@@ -2251,7 +2251,7 @@ slotless:
       - {weight:  1, cost:   9000, name: 'Boro Bead (3rd)'}
       - {weight:  1, cost:   9000, name: 'Decanter of Endless Water'}
       - {weight:  1, cost:   9000, name: 'Loathsome Mirror'}
-      - {weight:  3, cost:   9000, name: 'Page of Spell Knowledge ({{ spell }})', spell: {level: 3, class: spellpage}}
+      - {weight:  3, cost:   9000, name: 'Page of Spell Knowledge ({{ spell }})', spell: {level: 3, cls: spellpage}}
       - {weight:  6, cost:   9000, name: 'Pearl of Power (3rd)'}
       - {weight:  1, cost:   9000, name: 'Preserving Flask (3rd)'}
       - {weight:  1, cost:   9100, name: 'Figurine of Wondrous Power (Serpentine Owl)'}
@@ -2299,7 +2299,7 @@ slotless:
       - {weight:  1, cost:  15500, name: 'Figurine of Wondrous Power (Onyx Dog)'}
       - {weight:  2, cost:  16000, name: 'Tan Bag of Tricks'}
       - {weight:  1, cost:  16000, name: 'Boro Bead (4th)'}
-      - {weight:  1, cost:  16000, name: 'Page of Spell Knowledge ({{ spell }})', spell: {level: 4, class: spellpage}}
+      - {weight:  1, cost:  16000, name: 'Page of Spell Knowledge ({{ spell }})', spell: {level: 4, cls: spellpage}}
       - {weight:  4, cost:  16000, name: 'Pearl of Power (4th)'}
       - {weight:  1, cost:  16000, name: 'Preserving Flask (4th)'}
       - {weight:  3, cost:  16000, name: 'Scabbard of Keen Edges'}
@@ -2327,7 +2327,7 @@ slotless:
       - {weight:  3, cost:  24000, name: 'Drinking Horn of Bottomless Valor'}
       - {weight:  3, cost:  25000, name: 'Boro Bead (5th)'}
       - {weight:  2, cost:  25000, name: 'Chaos Emerald'}
-      - {weight:  4, cost:  25000, name: 'Page of Spell Knowledge ({{ spell }})', spell: {level: 5, class: spellpage}}
+      - {weight:  4, cost:  25000, name: 'Page of Spell Knowledge ({{ spell }})', spell: {level: 5, cls: spellpage}}
       - {weight:  6, cost:  25000, name: 'Pearl of Power (5th)'}
       - {weight:  3, cost:  25000, name: 'Preserving Flask (5th)'}
       - {weight:  2, cost:  25305, name: 'Maul of the titans'}
@@ -2349,7 +2349,7 @@ slotless:
       - {weight:  2, cost:  36000, name: 'Boro Bead (6th)'}
       - {weight:  4, cost:  36000, name: 'Ioun Stone (Vibrant Purple Prism)'}
       - {weight:  4, cost:  36000, name: 'Orb of utter Chaos'}
-      - {weight:  2, cost:  36000, name: 'Page of Spell Knowledge ({{ spell }})', spell: {level: 6, class: spellpage}}
+      - {weight:  2, cost:  36000, name: 'Page of Spell Knowledge ({{ spell }})', spell: {level: 6, cls: spellpage}}
       - {weight:  8, cost:  36000, name: 'Pearl of Power (6th)'}
       - {weight:  2, cost:  36000, name: 'Preserving Flask (6th)'}
       - {weight:  4, cost:  40000, name: 'Cauldron of Flying'}
@@ -2362,7 +2362,7 @@ slotless:
       - {weight:  4, cost:  45000, name: 'Drums of Haste'}
       - {weight:  4, cost:  45800, name: 'Standard Strand of Prayer Beads'}
       - {weight:  3, cost:  48000, name: 'Orb of Storms'}
-      - {weight:  2, cost:  49000, name: 'Page of Spell Knowledge ({{ spell }})', spell: {level: 7, class: spellpage}}
+      - {weight:  2, cost:  49000, name: 'Page of Spell Knowledge ({{ spell }})', spell: {level: 7, cls: spellpage}}
       - {weight:  4, cost:  49000, name: 'Pearl of Power (7th)'}
     greater:
       - {weight:  3, cost:  50000, name: 'Crystal Ball with _See Invisibility_'}
@@ -2376,7 +2376,7 @@ slotless:
       - {weight:  2, cost:  60000, name: 'Darkskull'}
       - {weight:  1, cost:  60000, name: 'Orb of Pure Law'}
       - {weight:  1, cost:  62000, name: 'Cube of Force'}
-      - {weight:  2, cost:  64000, name: 'Pageof Spell Knowledge ({{ spell }})', spell: {level: 8, class: spellpage}}
+      - {weight:  2, cost:  64000, name: 'Pageof Spell Knowledge ({{ spell }})', spell: {level: 8, cls: spellpage}}
       - {weight:  6, cost:  64000, name: 'Pearl of Power (8th)'}
       - {weight:  1, cost:  70000, name: 'Crystal Ball with _Telepathy_'}
       - {weight:  1, cost:  70000, name: 'Greater Horn of Blasting'}
@@ -2384,7 +2384,7 @@ slotless:
       - {weight:  1, cost:  75000, name: 'Gem of Seeing'}
       - {weight:  1, cost:  75000, name: 'Lord’s Banner of Victory'}
       - {weight:  1, cost:  80000, name: 'Crystal Ball with _True Seeing_'}
-      - {weight:  2, cost:  81000, name: 'Page of Spell Knowledge ({{ spell }})', spell: {level: 9, class: spellpage}}
+      - {weight:  2, cost:  81000, name: 'Page of Spell Knowledge ({{ spell }})', spell: {level: 9, cls: spellpage}}
       - {weight:  3, cost:  81000, name: 'Pearl of Power (9th)'}
       - {weight:  1, cost:  82000, name: 'Well of Many Worlds'}
       - {weight: 12, cost:  82500, name: '{{ keys.stat_book() }} +3'}
@@ -2405,6 +2405,15 @@ slotless:
       - {weight:  1, cost: 200000, name: 'Mirror of Life Trapping'}
 spell:
   map:
+    adept:
+      type: divine
+      levels: &adept_levels
+        0: 1
+        1: 1
+        2: 5
+        3: 9
+        4: 13
+        5: 17
     alchemist:
       type: arcane
       levels: &half_caster_levels

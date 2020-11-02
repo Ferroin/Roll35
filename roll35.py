@@ -164,11 +164,20 @@ async def get_spell(level: Optional[int] = None, cls: str = "minimum", tag: Opti
 
        cls indicates how to determine the spell level, and is either a
        class or the exact value 'minimum' (which uses the lowest level among
-       all classes), 'maximum' (which uses the highest), or 'spellpage'
+       all classes), 'random' (pick a random class), or 'spellpage'
        (which uses the wizard or cleric level if it's one one of those
        lists, or the highest if not).'''
+    if level is not None and level not in range(0, MAX_SPELL_LEVEL - 1):
+        raise NoValidSpell
+
     if cls == 'spellpage':
         cls = random.choice(('spellpage_divine', 'spellpage_arcane'))
+    elif cls == 'random':
+        if level is not None:
+            cls = random.choice([x for x in ITEMS['spell']['map']
+                                 if ITEMS['spell']['map'][x]['levels'].get(level, float('inf')) != float('inf')])
+        else:
+            cls = random.choice(ITEMS['spell']['map'].keys())
 
     limit_options = None
 
@@ -190,7 +199,7 @@ async def get_spell(level: Optional[int] = None, cls: str = "minimum", tag: Opti
                     options = await cur.fetchall()
 
             if tag is not None:
-                async with spells.execute(f'''SELECT * FROM tagmap WHERE tagmap MATCH '{tag}';''') as cur:
+                async with spells.execute(f'''SELECT * FROM tagmap WHERE tagmap MATCH "{tag}";''') as cur:
                     limit_options = {x['name'] for x in await cur.fetchall()}
 
     if limit_options is not None:
@@ -238,7 +247,7 @@ async def prep_spell_db(data: Mapping[str, Any]) -> None:
                                            CREATE VIRTUAL TABLE tagmap USING fts5(name UNINDEXED,
                                                                                   tags,
                                                                                   columnsize='0',
-                                                                                  detail='none');
+                                                                                  detail='full');
                                            CREATE TABLE extra(id TEXT, data TEXT);
                                            INSERT INTO extra (id, data) VALUES ('classes', '{' '.join(classes)}');
                                            VACUUM;''')

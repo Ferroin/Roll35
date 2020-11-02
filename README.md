@@ -14,7 +14,7 @@ related games.
 
 ## Planned Features
 
-* Proper handling for arcane/divine/occult scrolls.
+* Allow rolling per-class for scrolls/wands.
 * Add basic usage info to the README.
 * Automatically roll random spells present in items that store spells.
 * Roll against arbitrary data tables.
@@ -79,3 +79,8 @@ However, it's usable for any system that follows the same general pattern
 that Pathfinder 1e does, it just needs a different data set. See
 [template.yaml](./template.yaml) for a template to use for creating such
 a dataset.
+
+Spell data is pulled from the spell database on
+[D20PFSRD](https://www.d20pfsrd), converted to the required format
+using the `convert_spells_csv.py` script bundled with the app, with a
+few manual fixes to the dataset (mostly correcting tags).
