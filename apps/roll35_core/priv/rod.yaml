@@ -1,0 +1,62 @@
+---
+medium:
+  lesser:
+    - {weight:  1, cost:   1500, name: 'Minor Metamagic Merciful Rod'}
+    - {weight: 33, cost:   3000, name: 'Minor Metamagic {{ keys.metamagic(1) }} Rod'}
+    - {weight: 15, cost:   5000, name: 'Immovable Rod'}
+    - {weight: 10, cost:   5400, name: 'Rod of Thunderous Force'}
+    - {weight:  1, cost:   5500, name: 'Metamagic Merciful Rod'}
+    - {weight:  1, cost:   8500, name: 'Rod of Ice'}
+    - {weight: 10, cost:   9000, name: 'Minor Metamagic {{ keys.metamagic(2) }} Rod'}
+    - {weight: 10, cost:  10500, name: 'Rod of Metal and Mineral Detection'}
+    - {weight:  5, cost:  11000, name: 'Metamagic {{ keys.metamagic(1) }} Rod'}
+    - {weight: 14, cost:  11000, name: 'Rod of Cancellation'}
+  greater:
+    - {weight:  3, cost:  12000, name: 'Conduit Rod'}
+    - {weight:  3, cost:  12000, name: 'Grounding Rod'}
+    - {weight:  4, cost:  12000, name: 'Rod of the Wayang'}
+    - {weight:  8, cost:  12000, name: 'Rod of Wonder'}
+    - {weight:  1, cost:  12500, name: 'Greater Metamagic Merciful Rod'}
+    - {weight: 10, cost:  13000, name: 'Rod of the Python'}
+    - {weight:  4, cost:  13500, name: 'Trap-Stealer’s Rod'}
+    - {weight: 22, cost:  14000, name: 'Minor Metamagic {{ keys.metamagic(3) }} Rod'}
+    - {weight:  4, cost:  15000, name: 'Rod of Balance'}
+    - {weight:  4, cost:  15000, name: 'Rod of Escape'}
+    - {weight:  9, cost:  15000, name: 'Rod of Flame Extinguishing'}
+    - {weight:  4, cost:  16000, name: 'Rod of Ruin'}
+    - {weight:  4, cost:  16650, name: 'Sapping Rod'}
+    - {weight:  6, cost:  18000, name: 'Rod of Beguiling'}
+    - {weight:  4, cost:  18000, name: 'Rod of Nettles'}
+    - {weight: 10, cost:  19000, name: 'Rod of the Viper'}
+major:
+  lesser:
+    - {weight:  4, cost:  20000, name: 'Suzerain Scepter'}
+    - {weight:  2, cost:  22305, name: 'Rod of Fiery Nimbus'}
+    - {weight:  7, cost:  23500, name: 'Rod of Enemy Detection'}
+    - {weight: 14, cost:  24500, name: 'Greater Metamagic {{ keys.metamagic(1) }} Rod'}
+    - {weight:  9, cost:  25000, name: 'Rod of Splendor'}
+    - {weight:  8, cost:  25000, name: 'Rod of Withering'}
+    - {weight:  6, cost:  26500, name: 'Earthbind Rod'}
+    - {weight:  6, cost:  29000, name: 'Rod of the Aboleth'}
+    - {weight:  7, cost:  30000, name: 'Liberator’s Rod'}
+    - {weight:  7, cost:  32500, name: 'Metamagic {{ keys.metamagic(2) }} Rod'}
+    - {weight:  9, cost:  33000, name: 'Rod of Thunder and Lightning'}
+    - {weight:  4, cost:  35000, name: 'Minor Metamagic Quicken Rod'}
+    - {weight: 11, cost:  37000, name: 'Rod of Negation'}
+    - {weight:  6, cost:  38305, name: 'Rod of Steadfast Resolve'}
+  greater:
+    - {weight:  8, cost:  50000, name: 'Rod of Absorption'}
+    - {weight:  3, cost:  50000, name: 'Rod of Flailing'}
+    - {weight: 15, cost:  54000, name: 'Metamagic {{ keys.metamagic(3) }} Rod'}
+    - {weight:  2, cost:  60000, name: 'Rod of Rulership'}
+    - {weight:  2, cost:  61000, name: 'Rod of Security'}
+    - {weight:  2, cost:  64305, name: 'Rod of Shadows'}
+    - {weight:  2, cost:  67000, name: 'Rod of Mind Mastery'}
+    - {weight:  3, cost:  70000, name: 'Rod of Lordly Might'}
+    - {weight: 20, cost:  73000, name: 'Greater Metamagic {{ keys.metamagic(2) }} Rod'}
+    - {weight:  1, cost:  74000, name: 'Scepter of Heaven'}
+    - {weight: 10, cost:  75500, name: 'Metamagic Quicken Rod'}
+    - {weight:  2, cost:  80000, name: 'Rod of Dwarven Might'}
+    - {weight:  5, cost:  85000, name: 'Rod of Alertness'}
+    - {weight: 20, cost: 121500, name: 'Greater Metamagic {{ keys.metamagic(3) }} Rod'}
+    - {weight:  5, cost: 170000, name: 'Greater Metamagic Quicken Rod'}

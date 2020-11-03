@@ -1,0 +1,145 @@
+---
+adept:
+  type: divine
+  levels: &adept_levels
+    0: 1
+    1: 1
+    2: 5
+    3: 9
+    4: 13
+    5: 17
+alchemist:
+  type: arcane
+  levels: &half_caster_levels
+    0: 1
+    1: 1
+    2: 4
+    3: 7
+    4: 10
+    5: 13
+    6: 16
+antipaladin:
+  type: divine
+  levels: &third_offset_caster_levels
+    0: .inf
+    1: 5
+    2: 8
+    3: 11
+    4: 14
+arcanist:
+  type: arcane
+  copy: wizard
+  levels: &full_spontaneous_caster_levels
+    0: 1
+    1: 1
+    2: 4
+    3: 6
+    4: 8
+    5: 10
+    6: 12
+    7: 14
+    8: 16
+    9: 18
+bard:
+  type: arcane
+  levels: *half_caster_levels
+bloodrager:
+  type: arcane
+  levels: &third_caster_levels
+    0: .inf
+    1: 4
+    2: 7
+    3: 10
+    4: 13
+cleric:
+  type: divine
+  levels: &full_caster_levels
+    0: 1
+    1: 1
+    2: 3
+    3: 5
+    4: 7
+    5: 9
+    6: 11
+    7: 13
+    8: 15
+    9: 17
+druid:
+  type: divine
+  levels: *full_caster_levels
+hunter:
+  type: divine
+  merge: [druid, ranger]
+  max_level: 6
+  levels: *half_caster_levels
+inquisitor:
+  type: divine
+  levels: *half_caster_levels
+investigator:
+  type: arcane
+  copy: alchemist
+  max_level: 6
+  levels: *half_caster_levels
+magus:
+  type: arcane
+  levels: *half_caster_levels
+medium:
+  type: occult
+  levels: *third_caster_levels
+mesmerist:
+  type: occult
+  levels: *half_caster_levels
+occultist:
+  type: occult
+  levels: *half_caster_levels
+omdura:
+  type: divine
+  ccopy: cleric
+  max_level: 6
+  levels: *half_caster_levels
+oracle:
+  type: divine
+  copy: cleric
+  levels: *full_spontaneous_caster_levels
+paladin:
+  type: divine
+  levels: *third_offset_caster_levels
+psychic:
+  type: occult
+  levels: *full_caster_levels
+ranger:
+  type: divine
+  levels: *third_offset_caster_levels
+shaman:
+  type: divine
+  levels: *full_caster_levels
+skald:
+  type: arcane
+  copy: bard
+  max_level: 6
+  levels: *half_caster_levels
+sorceror:
+  type: arcane
+  copy: wizard
+  levels: *full_spontaneous_caster_levels
+spiritualist:
+  type: occult
+  levels: *half_caster_levels
+summoner:
+  type: arcane
+  levels: *half_caster_levels
+vampire_hunter:
+  type: divine
+  copy: inquisitor
+  max_level: 4
+  levels: *third_offset_caster_levels
+warpriest:
+  type: divine
+  max_level: 6
+  levels: *half_caster_levels
+witch:
+  type: arcane
+  levels: *full_caster_levels
+wizard:
+  type: arcane
+  levels: *full_caster_levels

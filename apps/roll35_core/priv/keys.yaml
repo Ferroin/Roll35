@@ -1,0 +1,106 @@
+---
+alignment:
+  type: flat
+  data: ['Good', 'Evil', 'Law', 'Chaos']
+energy:
+  type: flat
+  data: ['Fire', 'Cold', 'Acid', 'Electricity', 'Sonic']
+elemental:
+  type: flat
+  data: ['Fire', 'Cold', 'Acid', 'Electricity']
+elemental_plane:
+  type: flat
+  data: ['Fire', 'Water', 'Earth', 'Air']
+dragon:
+  type: flat
+  data: ['Red', 'Blue', 'Green', 'White', 'Black', 'Gold', 'Silver', 'Bronze', 'Copper', 'Brass']
+metallic_dragon:
+  type: flat
+  data: ['Gold', 'Silver', 'Bronze', 'Copper', 'Brass']
+chromatic_dragon:
+  type: flat
+  data: ['Red', 'Blue', 'Green', 'White', 'Black']
+school:
+  type: flat
+  data:
+    - 'Abjuration'
+    - 'Conjuration'
+    - 'Divination'
+    - 'Enchantment'
+    - 'Evocation'
+    - 'Illusion'
+    - 'Necromancy'
+    - 'Transmutation'
+physical_might:
+  type: flat
+  data: ['STR, DEX', 'STR, CON', 'DEX, CON']
+mental_score:
+  type: flat
+  data: ['INT', 'WIS', 'CHA']
+mental_prowess:
+  type: flat
+  data: ['INT, WIS', 'INT, CHA', 'WIS, CHA']
+naga:
+  type: flat
+  data: ['Dark', 'Guardian', 'Spirit', 'Lunar', 'Royal', 'Water']
+giant_armor3:
+  type: flat
+  data: ['Stone', 'Fire', 'Frost']
+stat_belt:
+  type: flat
+  data:
+    - 'Giant Strength'
+    - 'Incredible Dexterity'
+    - 'Mighty Constitution'
+stat_headband:
+  type: flat
+  data:
+    - 'Alluring Charisma'
+    - 'Inspired Wisdom'
+    - 'Vast Intelligence'
+stat_book:
+  type: flat
+  data:
+    - 'Manual of Bodily health'
+    - 'Manual of Gainful Exercise'
+    - 'Manual of Quickness of Action'
+    - 'Tome of Clear Thought'
+    - 'Tome of Leadership and Influence'
+    - 'Tome of Understanding'
+firearm_ammo:
+  type: flat
+  data: ['Bullet', 'Pellet']
+metamagic:
+  type: grouped proportional
+  data:
+    1:
+      - {weight:  4, value: 'Bouncing'}
+      - {weight:  5, value: 'Disruptive'}
+      - {weight:  5, value: 'Ectoplasmic'}
+      - {weight:  5, value: 'Elemental ({{ keys.elemental() }})'}
+      - {weight: 12, value: 'Enlarge'}
+      - {weight: 12, value: 'Extend'}
+      - {weight:  5, value: 'Flaring'}
+      - {weight:  5, value: 'Focused'}
+      - {weight:  5, value: 'Intensified'}
+      - {weight:  5, value: 'Lingering'}
+      - {weight:  5, value: 'Piercing'}
+      - {weight:  5, value: 'Reach'}
+      - {weight:  5, value: 'Rime'}
+      - {weight:  5, value: 'Selective'}
+      - {weight: 12, value: 'Silent'}
+      - {weight:  5, value: 'Toppling'}
+    2:
+      - {weight: 11, value: 'Burning'}
+      - {weight: 11, value: 'Concussive'}
+      - {weight: 18, value: 'Empower'}
+      - {weight: 11, value: 'Persistent'}
+      - {weight: 11, value: 'Sickening'}
+      - {weight: 13, value: 'Thanatropic'}
+      - {weight: 13, value: 'Threnodic'}
+      - {weight: 12, value: 'Thundering'}
+    3:
+      - {weight: 20, value: 'Dazing'}
+      - {weight: 20, value: 'Echoing'}
+      - {weight: 30, value: 'Maximize'}
+      - {weight: 30, value: 'Widen'}

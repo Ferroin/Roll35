@@ -1,0 +1,29 @@
+---
+minor:
+  - {weight:  4, value: armor}
+  - {weight:  5, value: weapon}
+  - {weight: 35, value: potion}
+  - {weight:  2, value: ring}
+  - {weight: 35, value: scroll}
+  - {weight: 10, value: wand}
+  - {weight:  9, value: wondrous}
+medium:
+  - {weight: 10, value: armor}
+  - {weight: 10, value: weapon}
+  - {weight: 10, value: potion}
+  - {weight: 10, value: ring}
+  - {weight: 10, value: rod}
+  - {weight: 15, value: scroll}
+  - {weight:  3, value: staff}
+  - {weight: 15, value: wand}
+  - {weight: 17, value: wondrous}
+major:
+  - {weight: 10, value: armor}
+  - {weight: 10, value: weapon}
+  - {weight:  5, value: potion}
+  - {weight: 10, value: ring}
+  - {weight: 10, value: rod}
+  - {weight: 10, value: scroll}
+  - {weight: 20, value: staff}
+  - {weight:  5, value: wand}
+  - {weight: 20, value: wondrous}

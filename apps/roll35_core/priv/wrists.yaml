@@ -1,0 +1,54 @@
+---
+minor:
+  lesser:
+    - {weight: 10, cost:    200, name: 'Sleeves of Many Garments'}
+    - {weight: 10, cost:    500, name: 'Armbands of the Brawler'}
+    - {weight: 28, cost:   1000, name: 'Bracers of Armor +1'}
+    - {weight: 15, cost:   1000, name: 'Burglar’s Bracers'}
+    - {weight: 28, cost:   2000, name: 'Bracers of Steadiness'}
+    - {weight:  5, cost:   2000, name: 'Manacles of Cooperation'}
+    - {weight:  4, cost:   3280, name: 'Shackles of Compliance'}
+  greater:
+    - {weight: 27, cost:   4000, name: 'Bracers of Armor +2'}
+    - {weight:  1, cost:   4000, name: 'Bracers of Falcon’s Aim'}
+    - {weight: 10, cost:   4000, name: 'Inquisitor’s Bastoion Vambraces'}
+    - {weight: 27, cost:   5000, name: 'Lesser Bracers of Archery'}
+    - {weight:  3, cost:   5000, name: 'Spellguard Bracers'}
+    - {weight:  3, cost:   6000, name: 'Bonebreaker Gauntlets'}
+    - {weight: 10, cost:   6000, name: 'Vambraces of Defense'}
+    - {weight: 17, cost:   6000, name: 'Verdant Vine'}
+    - {weight:  1, cost:   7200, name: 'Longarm Bracers'}
+    - {weight:  1, cost:   7900, name: 'Bracers of the Glib Entertainer'}
+medium:
+  lesser:
+    - {weight:  4, cost:   8000, name: 'Charm Bracelet'}
+    - {weight:  4, cost:   8000, name: 'Duelist’s Vambraces'}
+    - {weight:  5, cost:   8000, name: 'Merciful Vambraces'}
+    - {weight:  5, cost:   8000, name: 'Vambraces of the Tactician'}
+    - {weight: 25, cost:   9000, name: 'Bracers of Armor +3'}
+    - {weight: 10, cost:   9900, name: 'Seducer’s Bane Bracelet'}
+    - {weight:  5, cost:  11500, name: 'Bracers of the Avenging Knight'}
+    - {weight:  5, cost:  13900, name: 'Arrowmaster’s Bracers'}
+    - {weight: 10, cost:  14400, name: 'Vambraces of the Genie (Efreeti)'}
+    - {weight:  5, cost:  14500, name: 'Bracelet of Bargining'}
+    - {weight:  4, cost:  15000, name: 'Bracelet of Mercy'}
+    - {weight:  4, cost:  15600, name: 'Bracelet of the Merciful Knight'}
+    - {weight:  4, cost:  15750, name: 'Bracelet of Second Chances'}
+    - {weight:  9, cost:  16000, name: 'Bracers of Armor +4'}
+    - {weight:  1, cost:  16200, name: 'Shackles of Durance Vile'}
+  greater:
+    - {weight: 10, cost:  18900, name: 'Vambraces of the Genie (Djinni)'}
+    - {weight: 10, cost:  18900, name: 'Vambraces of the Genie (Marid)'}
+    - {weight: 10, cost:  18900, name: 'Vambraces of the Genie (Shaitan)'}
+    - {weight: 20, cost:  19000, name: 'Bracelet of Friends'}
+    - {weight: 20, cost:  25000, name: 'Greater Bracers of Archery'}
+    - {weight: 20, cost:  25000, name: 'Bracers of Armor +5'}
+    - {weight: 10, cost:  25000, name: 'Bracers of Sworn Vengeance'}
+major:
+  lesser:
+    - {weight: 30, cost:  28000, name: 'Dimensional Shackles'}
+    - {weight: 15, cost:  30000, name: 'Gauntlets of Skill at Arms'}
+    - {weight: 55, cost:  36000, name: 'Bracers of Armor +6'}
+  greater:
+    - {weight: 60, cost:  49000, name: 'Bracers of Armor +6'}
+    - {weight: 40, cost:  64000, name: 'Bracers of Armor +7'}

@@ -1,0 +1,54 @@
+---
+minor:
+  lesser:
+    - {weight: 11, cost:   1000, name: 'Boots of the Cat'}
+    - {weight: 11, cost:   1400, name: 'Daredevil Boots'}
+    - {weight:  9, cost:   1500, name: 'Boots of the Enduring March'}
+    - {weight: 10, cost:   2000, name: 'Feather Step Slippers'}
+    - {weight:  9, cost:   2400, name: 'Boots of Friendly Terrain'}
+    - {weight: 10, cost:   2500, name: 'Boots of the Winterlands'}
+    - {weight: 16, cost:   2500, name: 'Boots of Elvenkind'}
+    - {weight:  9, cost:   3000, name: 'Acrobat Slippers'}
+    - {weight:  7, cost:   3000, name: 'Horseshoes of Speed'}
+    - {weight:  8, cost:   3500, name: 'Boots of the Mire'}
+  greater:
+    - {weight:  7, cost:   4000, name: 'Minor Burglar Boots'}
+    - {weight:  6, cost:   4000, name: 'Horseshoes of Crushing Blows +1'}
+    - {weight:  6, cost:   4000, name: 'Sandals of Quick Reaction'}
+    - {weight:  7, cost:   4400, name: 'Slippers of Cloudwalking'}
+    - {weight: 14, cost:   4800, name: 'Slippers of Spider Climbing'}
+    - {weight:  6, cost:   5000, name: 'Sandals of the Lightest Step'}
+    - {weight: 14, cost:   5500, name: 'Boots of Striding and Springing'}
+    - {weight:  8, cost:   6600, name: 'Horseshoes of a Zephyr'}
+    - {weight:  7, cost:   6480, name: 'Haunted Shoes'}
+    - {weight:  7, cost:   7200, name: 'Jaunt Boots'}
+    - {weight: 18, cost:   7500, name: 'Boots of Levitation'}
+medium:
+  lesser:
+    - {weight:  8, cost:   8000, name: 'Boots of Excape'}
+    - {weight:  6, cost:   8000, name: 'Earth Root Boots'}
+    - {weight:  7, cost:   8500, name: 'Nightmare Boots'}
+    - {weight:  5, cost:   9000, name: 'Nightmare Horseshoes'}
+    - {weight:  6, cost:  10000, name: 'Caltrop Boots'}
+    - {weight:  7, cost:  10000, name: 'Tremor Boots'}
+    - {weight:  8, cost:  10500, name: 'Boots of the Mastodon'}
+    - {weight:  7, cost:  10500, name: 'Shoes of the Lightning Leaper'}
+    - {weight: 16, cost:  12000, name: 'Boots of Speed'}
+    - {weight:  7, cost:  12000, name: 'Verdant Boots'}
+    - {weight:  7, cost:  16000, name: 'Horseshoes of Crushing Blows +2'}
+    - {weight: 16, cost:  16000, name: 'Winged Boots'}
+  greater:
+    - {weight: 38, cost:  21000, name: 'Shoes of the Firewalker'}
+    - {weight: 34, cost:  24000, name: 'Dryad Sandals'}
+    - {weight: 28, cost:  27000, name: 'Horseshoes of the Mist'}
+major:
+  lesser:
+    - {weight: 20, cost:  30000, name: 'Getaway Bots'}
+    - {weight: 15, cost:  36000, name: 'Horseshoes of Crushing Blows +3'}
+    - {weight: 20, cost:  39600, name: 'Horseshoes of Glory'}
+    - {weight: 20, cost:  46000, name: 'Major Burglar Boots'}
+    - {weight: 25, cost:  49000, name: 'Boots of Teleportation'}
+  greater:
+    - {weight: 40, cost:  56000, name: 'Slippers of the Triton'}
+    - {weight: 30, cost:  64000, name: 'Horseshoes of Crushing Blows +4'}
+    - {weight: 30, cost: 100000, name: 'Horseshoes of Crushing Blows +5'}

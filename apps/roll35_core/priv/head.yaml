@@ -1,0 +1,57 @@
+---
+minor:
+  lesser:
+    - {weight: 10, cost:   8000, name: 'Mask of Stony Demeanor'}
+    - {weight: 12, cost:    800, name: 'Cap of Human Guise'}
+    - {weight: 14, cost:    900, name: 'Cap of Light'}
+    - {weight: 20, cost:   1800, name: 'hat of Disguise'}
+    - {weight: 15, cost:   2000, name: 'Buffering Cap'}
+    - {weight: 14, cost:   3000, name: 'Miser’s Mask'}
+    - {weight: 15, cost:   3500, name: 'Stalker’s Mask'}
+  greater:
+    - {weight: 12, cost:   4500, name: 'Circlet of Persuasion'}
+    - {weight:  9, cost:   5000, name: 'Grappler’s Mask'}
+    - {weight: 10, cost:   5000, name: 'Helm of Fearsome Mein'}
+    - {weight:  9, cost:   5000, name: 'Jigasa of the FortunateSoldier'}
+    - {weight: 14, cost:   5200, name: 'Helm of Comprehend Languages and Read magic'}
+    - {weight: 12, cost:   6000, name: 'Crown of Swords'}
+    - {weight: 18, cost:   6480, name: 'Minor Crown of Blasting'}
+    - {weight: 11, cost:   7200, name: 'Mask of the Krenshar'}
+    - {weight:  5, cost:   7500, name: 'Plague Mask'}
+medium:
+  lesser:
+    - {weight: 16, cost:   8500, name: 'Helm of the Mammoth Lord'}
+    - {weight: 14, cost:   9000, name: 'Veil of Fleeting Glances'}
+    - {weight: 16, cost:  10000, name: 'Mask of a Thousand Tomes'}
+    - {weight: 17, cost:  10000, name: 'Medusa mask'}
+    - {weight: 17, cost:  12000, name: 'Cap of the Free Thinker'}
+    - {weight: 20, cost:  16000, name: 'Halo of Inner Calm'}
+  greater:
+    - {weight:  6, cost:  18000, name: 'Cat’s Eye Crown'}
+    - {weight:  6, cost:  18000, name: 'Maw of the Wyrm'}
+    - {weight:  8, cost:  18000, name: 'Mitre of the Hierophant'}
+    - {weight:  9, cost:  20000, name: 'Magician’s Hat'}
+    - {weight:  7, cost:  22000, name: 'Circlet of Mindsight'}
+    - {weight:  9, cost:  22000, name: 'Mask of the Skull'}
+    - {weight:  8, cost:  22600, name: 'Howling Helm'}
+    - {weight: 13, cost:  23760, name: 'Major Crown of Blasting'}
+    - {weight: 10, cost:  24000, name: 'Helm of Underwater Action'}
+    - {weight:  7, cost:  24600, name: 'Crown of Conquest'}
+    - {weight:  6, cost:  26000, name: 'Batrachian Helm'}
+    - {weight: 11, cost:  27000, name: 'Helm of Telepathy'}
+major:
+  lesser:
+    - {weight: 14, cost:  30000, name: 'Iron Circlet of Guarded Souls'}
+    - {weight: 15, cost:  30000, name: 'Laurel of Command'}
+    - {weight: 16, cost:  30000, name: 'Lesser Mask of Giants'}
+    - {weight: 16, cost:  33600, name: 'Steel-Mind Cap'}
+    - {weight: 17, cost:  35000, name: 'Stormlord’s Helm'}
+    - {weight: 22, cost:  36000, name: 'Lesser Helm of Brilliance'}
+  greater:
+    - {weight: 14, cost:  59200, name: 'Judge’s Wig'}
+    - {weight: 25, cost:  73500, name: 'Helm of Teleportation'}
+    - {weight: 16, cost:  84000, name: 'Halo of Menace'}
+    - {weight: 13, cost:  90000, name: 'Greater mask of Giants'}
+    - {weight: 15, cost: 125000, name: 'Helm of Brilliance'}
+    - {weight:  9, cost: 125000, name: 'Helm of Electric Radiance'}
+    - {weight:  8, cost: 150000, name: 'Crown of Heaven'}

@@ -1,0 +1,13 @@
+---
+- {weight:  6, value: belt}
+- {weight:  6, value: body}
+- {weight:  5, value: chest}
+- {weight:  5, value: eyes}
+- {weight:  6, value: feet}
+- {weight:  6, value: hands}
+- {weight:  7, value: head}
+- {weight:  6, value: headband}
+- {weight:  7, value: neck}
+- {weight:  7, value: shoulders}
+- {weight:  6, value: wrists}
+- {weight: 33, value: slotless}

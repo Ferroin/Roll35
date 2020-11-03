@@ -1,0 +1,38 @@
+---
+minor:
+  lesser:
+    - {weight: 15, cost:    200, name: 'Bandages of Rapid Recovery'}
+    - {weight: 15, cost:   1000, name: 'Quick Runner’s Shirt'}
+    - {weight: 20, cost:   1500, name: 'Endless Bandolier'}
+    - {weight: 25, cost:   1800, name: 'All Tools Vest'}
+    - {weight: 25, cost:   3000, name: 'Best of Surgery'}
+  greater:
+    - {weight: 10, cost:   4000, name: 'Sash of the War Champion'}
+    - {weight: 10, cost:   5000, name: 'Sipping Jacket'}
+    - {weight: 11, cost:   5000, name: 'Tunic of Careful Casting'}
+    - {weight: 11, cost:   5200, name: 'Vest of Escape'}
+    - {weight: 10, cost:   6000, name: 'Caclking Hag’s Blouse'}
+    - {weight: 10, cost:   6000, name: 'Deadshot Vest'}
+    - {weight:  8, cost:   6000, name: 'Prophet’s Pectoral'}
+    - {weight:  9, cost:   6000, name: 'Tunic of Deadly Might'}
+    - {weight: 11, cost:   6000, name: 'Vest of the Vengeful Tracker'}
+    - {weight: 10, cost:   7000, name: 'Resplendent Uniform'}
+medium:
+  lesser:
+    - {weight: 13, cost:   8000, name: 'Shirt of Immolation'}
+    - {weight: 15, cost:   8000, name: 'Snakeskin Tunic'}
+    - {weight: 12, cost:  10000, name: 'Bane Baldric'}
+    - {weight: 20, cost:  10000, name: 'Unfettered Shirt'}
+    - {weight: 20, cost:  12000, name: 'Lesser Poisoner’s Jacket'}
+    - {weight: 20, cost:  16000, name: 'Vest of the Cockroach'}
+  greater:
+    - {weight: 50, cost:  20000, name: 'Vest of Stable Mutation'}
+    - {weight: 50, cost:  26000, name: 'Spectal Shroud'}
+major:
+  lesser:
+    - {weight: 60, cost:  50000, name: 'Mantle of Immortality'}
+    - {weight: 40, cost:  58000, name: 'Greater Poisoner’s Jacket'}
+  greater:
+    - {weight: 35, cost:  60000, name: 'Merciful Baldric'}
+    - {weight: 35, cost:  76000, name: 'Mantle of Faith'}
+    - {weight: 30, cost:  90000, name: 'Mantle of Spell Resistance'}

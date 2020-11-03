@@ -1,0 +1,45 @@
+---
+minor:
+  lesser:
+    - {weight: 20, cost:   1000, name: 'Robe of infinite Twine'}
+    - {weight: 15, cost:   1000, name: 'Robe of Needles'}
+    - {weight: 25, cost:   2400, name: 'Robe of Bones'}
+    - {weight: 10, cost:   3000, name: 'Bodywrap of Mighty Strikes +1'}
+    - {weight: 10, cost:   3000, name: 'Corset of the Vishkanya'}
+    - {weight: 20, cost:   3750, name: 'Druid’s Vestament'}
+  greater:
+    - {weight: 15, cost:   4600, name: 'Corset of the Clergy'}
+    - {weight: 15, cost:   5000, name: 'Mnemonic Vestaments'}
+    - {weight: 15, cost:   5000, name: 'Robe of Components'}
+    - {weight: 15, cost:   5000, name: 'Sorceror’s Robe'}
+    - {weight: 15, cost:   6000, name: 'Eidolon Anchoring Harness'}
+    - {weight: 25, cost:   7000, name: 'Robe of Useful Items'}
+medium:
+  lesser:
+    - {weight: 15, cost:   8400, name: 'Robe of Blending'}
+    - {weight: 11, cost:  11000, name: 'Blazing Robe'}
+    - {weight: 11, cost:  11000, name: 'Shocking Robe'}
+    - {weight: 11, cost:  11000, name: 'Voidfrost Robe'}
+    - {weight: 11, cost:  12000, name: 'Bodywrap of Mighty Strikes +2'}
+    - {weight: 16, cost:  13000, name: 'Monk’s Robe'}
+    - {weight: 25, cost:  16000, name: 'Robe of Arcane Heritage'}
+  greater:
+    - {weight: 25, cost:  20000, name: 'Xorn Robe'}
+    - {weight: 27, cost:  22000, name: 'Corset of Dire Witchcraft'}
+    - {weight: 24, cost:  27000, name: 'Bodywrap of Mighy Strikes +3'}
+    - {weight: 24, cost:  27000, name: 'Robe of Scintillating Colors'}
+major:
+  lesser:
+    - {weight: 40, cost:  36000, name: 'Gunman’s Duster'}
+    - {weight: 40, cost:  48000, name: 'Bodywrap of Mighy Strikes +4'}
+    - {weight: 20, cost:  48000, name: 'Smuggler’s Collapsible Robe'}
+  greater:
+    - {weight: 10, cost:  58000, name: 'Robe of Stars'}
+    - {weight:  5, cost:  64000, name: 'Robe of Gates'}
+    - {weight:  5, cost:  67000, name: 'Otherworldly Kimono'}
+    - {weight: 20, cost:  75000, name: 'Bodywrap of Mighty Strikes +5'}
+    - {weight: 11, cost:  75000, name: 'Resplendent Robe of the Thespian'}
+    - {weight: 16, cost:  75000, name: 'Robe of the Archmagi'}
+    - {weight: 10, cost: 108000, name: 'Bodywrap of Mighty Strikes +6'}
+    - {weight: 20, cost: 120000, name: 'Robe of Eyes'}
+    - {weight:  3, cost: 147000, name: 'Bodywrap of Mighty Strikes +7'}

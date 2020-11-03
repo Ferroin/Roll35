@@ -1,0 +1,52 @@
+---
+minor:
+  lesser:
+    - {weight: 16, cost:    800, name: 'Belt of Tumbling'}
+    - {weight: 12, cost:   1000, name: 'Beneficial Bandolier'}
+    - {weight: 12, cost:   1000, name: 'Meridian Belt'}
+    - {weight: 14, cost:   2000, name: 'Bladed Belt'}
+    - {weight: 16, cost:   2000, name: 'Heavyload Belt'}
+    - {weight: 14, cost:   2600, name: 'Aquatic Cummerbund'}
+    - {weight: 16, cost:   3200, name: 'Equestrian Belt'}
+  greater:
+    - {weight: 36, cost:   4000, name: 'Belt of {{ keys.stat_belt() }} +2'}
+    - {weight:  8, cost:   4000, name: 'Belt of Teeth'}
+    - {weight: 12, cost:   5000, name: 'Blinkback Belt'}
+    - {weight: 10, cost:   5200, name: 'Plague Rat Belt'}
+    - {weight: 16, cost:   6000, name: 'Belt of Foraging'}
+medium:
+  lesser:
+    - {weight:  4, cost:   9000, name: 'Serpent Belt'}
+    - {weight:  4, cost:   9400, name: 'Monkey Belt'}
+    - {weight:  8, cost:  10000, name: 'Belt of Physical Might +2 ({{ keys.physical_might() }})'}
+    - {weight:  6, cost:  10000, name: 'Belt of the Weasel'}
+    - {weight:  5, cost:  10000, name: 'Belt of Thunderous Charging'}
+    - {weight:  5, cost:  11000, name: 'Minotaur Belt'}
+    - {weight:  4, cost:  11200, name: 'Greater Plague Rat Belt'}
+    - {weight:  5, cost:  12000, name: 'Belt of Equilibrium'}
+    - {weight:  5, cost:  12500, name: 'Security Belt'}
+    - {weight:  5, cost:  14000, name: 'Lesser Belt of Might Hurling'}
+    - {weight:  6, cost:  14900, name: 'Belt of Dwarvenkind'}
+    - {weight:  4, cost:  15000, name: 'Cord of Stubborn Resolve'}
+    - {weight: 30, cost:  18000, name: 'Belt of {{ keys.stat_belt() }} +4'}
+    - {weight:  9, cost:  18000, name: 'Belt of Physical Perfection +2'}
+  greater:
+    - {weight: 12, cost:  18000, name: 'Greater Monkey Belt'}
+    - {weight: 14, cost:  18500, name: 'Anaconda’s Coils'}
+    - {weight: 12, cost:  20000, name: 'Greater Serpent Belt'}
+    - {weight: 15, cost:  21000, name: 'Belt of Fallen Heroes'}
+    - {weight: 14, cost:  23000, name: 'Gorgon Belt'}
+    - {weight: 17, cost:  24000, name: 'Elemental Earth Belt'}
+    - {weight: 16, cost:  25000, name: 'Sash of Flowing Water'}
+major:
+  lesser:
+    - {weight: 12, cost:  32000, name: 'Merform Belt'}
+    - {weight: 36, cost:  36000, name: 'Belt of {{ keys.stat_belt() }} +6'}
+    - {weight: 22, cost:  40000, name: 'Belt of Physical Might +4 ({{ keys.physical_might() }})'}
+    - {weight: 12, cost:  42000, name: 'Greater Belt of Mighty Hurling'}
+  greater:
+    - {weight: 25, cost:  60000, name: 'Belt of Stoneskin'}
+    - {weight: 30, cost:  64000, name: 'Belt of Physical Perfection +4'}
+    - {weight: 20, cost:  90000, name: 'Belt of Physical Might +6 ({{ keys.physical_might() }})'}
+    - {weight: 15, cost: 110000, name: 'Shadowform Belt'}
+    - {weight: 10, cost: 144000, name: 'Belt of Physical Perfection +6'}

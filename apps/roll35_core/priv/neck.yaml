@@ -1,0 +1,74 @@
+---
+minor:
+  lesser:
+    - {weight: 10, cost:    900, name: 'Hand of the Mage'}
+    - {weight:  8, cost:   1500, name: 'Aegis of Recovery'}
+    # - {weight:  7, cost:   1500, name: 'Amulet of Bullet Protection +1'}
+    - {weight: 12, cost:   1500, name: 'Brooch of Shielding'}
+    - {weight: 12, cost:   1650, name: 'Necklace of Fireballs (type I)'}
+    - {weight: 14, cost:   2000, name: 'Amulet of Natural Armor +1'}
+    - {weight:  9, cost:   2500, name: 'Golembane Scarab'}
+    - {weight: 10, cost:   2700, name: 'Necklace of Fireballs (type II)'}
+    - {weight:  7, cost:   3000, name: 'Swarmbane Clasp'}
+    - {weight:  6, cost:   3500, name: 'Mind Sentinel Medallion'}
+    - {weight:  5, cost:   3500, name: 'Mummer’s Ruff'}
+  greater:
+    - {weight:  8, cost:   4000, name: 'Amulet of Elemental Strife'}
+    - {weight:  7, cost:   4000, name: 'Righteous Fist Amulet'}
+    - {weight: 11, cost:   4000, name: 'Amulet of Mighty Fists +1'}
+    - {weight: 10, cost:   4350, name: 'Necklace of Fireballs (type III)'}
+    - {weight: 11, cost:   5400, name: 'Necklace of Fireballs (type IV)'}
+    - {weight:  8, cost:   5400, name: 'Stormlure'}
+    - {weight: 11, cost:   5850, name: 'Necklace of Fireballs (type V)'}
+    # - {weight:  7, cost:   6000, name: 'Amulet of Bullet Protection +2'}
+    - {weight:  8, cost:   6000, name: 'Feychild Necklace'}
+    - {weight:  8, cost:   7200, name: 'Carcanet of Detention'}
+    - {weight: 11, cost:   7500, name: 'Periapt of Health'}
+medium:
+  lesser:
+    - {weight:  8, cost:   8000, name: 'Amulet of Natural Armor +2'}
+    - {weight:  4, cost:   8000, name: 'Amulet of Proof Against Petrification'}
+    - {weight:  3, cost:   8000, name: 'Everwake Amulet'}
+    - {weight:  3, cost:   8000, name: 'Gravewatch Pendant'}
+    - {weight:  5, cost:   8000, name: 'Hand of Glory'}
+    - {weight:  3, cost:   8000, name: 'Torc of Lionheart Fury'}
+    - {weight:  7, cost:   8100, name: 'Necklace of Fireballs (type VI)'}
+    - {weight:  7, cost:   8700, name: 'Necklace of Fireballs (type VII)'}
+    - {weight:  3, cost:   9000, name: 'Amulet of Hidden Strength'}
+    - {weight:  4, cost:   9000, name: 'Necklace of Adaptation'}
+    - {weight:  4, cost:  10000, name: 'Amulet of Spell Cunning'}
+    - {weight:  3, cost:  10000, name: 'Collar of the True Companion'}
+    - {weight:  4, cost:  10000, name: 'Frost Fist Amulet'}
+    - {weight:  5, cost:  12000, name: 'Crystal of Healing Hands'}
+    - {weight:  3, cost:  12000, name: 'Guardian Gorget'}
+    - {weight:  7, cost:  12000, name: 'Medallion of Thoughts'}
+    - {weight:  4, cost:  13000, name: 'Periapt of Protection from Curses'}
+    - {weight:  4, cost:  13500, name: 'Forge Fist Amulet'}
+    # - {weight:  4, cost:  15000, name: 'Amulet of Bullet Protection +3'}
+    - {weight:  7, cost:  15000, name: 'Periapt of Wound Closure'}
+    - {weight:  3, cost:  16000, name: 'Amulet of Mighty Fists +2'}
+    - {weight:  3, cost:  16000, name: 'Necklace of Ki Serenity'}
+    - {weight:  2, cost:  16800, name: 'Brooch of Amber Sparks'}
+  greater:
+    - {weight: 15, cost:  17500, name: 'Symbol of Sanguine Protection'}
+    - {weight:  9, cost:  18000, name: 'Amulet of Natural Armor +3'}
+    - {weight: 11, cost:  20000, name: 'Ampoule of False Blood'}
+    - {weight: 15, cost:  20000, name: 'Amulet of Magecraft'}
+    - {weight: 12, cost:  20000, name: 'Dragonfoe Amulet'}
+    - {weight:  5, cost:  22000, name: 'Amulet of Spell Mastery'}
+    # - {weight:  5, cost:  24000, name: 'Amulet of Bullet Protection +4'}
+    - {weight: 13, cost:  27000, name: 'Hand of Stone'}
+    - {weight: 15, cost:  27000, name: 'Periapt of Proof Against Poison'}
+major:
+  lesser:
+    - {weight: 18, cost:  32000, name: 'Amulet of Natural Armor +4'}
+    - {weight: 17, cost:  35000, name: 'Amulet of Proof Against Detection and Location'}
+    - {weight: 14, cost:  36000, name: 'Amulet of Mighty Fists +3'}
+    # - {weight: 18, cost:  37500, name: 'Amulet of Bullet Protection +5'}
+    - {weight: 15, cost:  38000, name: 'Scarab of Protection'}
+    - {weight: 18, cost:  42000, name: 'Necklace of Netted Stars'}
+  greater:
+    - {weight: 35, cost:  50000, name: 'Amulet of Natural Armor +5'}
+    - {weight: 25, cost:  64000, name: 'Amulet of Mighty Fists +4'}
+    - {weight: 25, cost: 100000, name: 'Amulet of Mighty Fists +5'}
+    - {weight: 15, cost: 120000, name: 'Amulet of the Planes'}
