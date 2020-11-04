@@ -6,7 +6,8 @@ defmodule Roll35Core.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      {Roll35Core.Data.Category, :category}
+      {Roll35Core.Data.Category, :category},
+      {Roll35Core.Data.Wondrous, :wondrous}
     ]
 
     opts = [strategy: :one_for_one, name: Roll35Core.Supervisor]
