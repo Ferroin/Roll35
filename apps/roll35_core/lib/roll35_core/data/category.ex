@@ -6,6 +6,7 @@ defmodule Roll35Core.Data.Category do
   use Agent
 
   alias Roll35Core.Types
+  alias Roll35Core.Util
 
   require Logger
   require Types
@@ -29,18 +30,17 @@ defmodule Roll35Core.Data.Category do
     Logger.info("Processing data for item categories.")
 
     result =
-      Enum.reduce(Types.ranks(), %{}, fn rank, acc ->
-        Map.put(
-          acc,
-          rank,
-          Enum.map(data[Atom.to_string(rank)], fn entry ->
-            %{
-              value: entry["value"],
-              weight: entry["weight"]
-            }
-          end)
-        )
+      data
+      |> Util.atomize_map()
+      |> Enum.map(fn {key, value} ->
+        {key,
+         Enum.map(value, fn entry ->
+           entry
+           |> Util.atomize_map()
+           |> Map.update!(:value, &Types.category_from_string/1)
+         end)}
       end)
+      |> Map.new()
 
     Logger.info("Finished processing data for item categories.")
     result

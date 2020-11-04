@@ -142,4 +142,58 @@ defmodule Roll35Core.Types do
   def slots do
     @slots
   end
+
+  @doc """
+  Create a category atom from a string.
+  """
+  @spec category_from_string(String.t()) :: category
+  def category_from_string(str) when is_binary(str) do
+    _ = @categories
+    String.to_existing_atom(str)
+  end
+
+  @doc """
+  Create a rank atom from a string.
+  """
+  @spec rank_from_string(String.t()) :: rank
+  def rank_from_string(str) when is_binary(str) do
+    _ = @ranks
+    String.to_existing_atom(str)
+  end
+
+  @doc """
+  Create a limited_rank atom from a string.
+  """
+  @spec limited_rank_from_string(String.t()) :: limited_rank
+  def limited_rank_from_string(str) when is_binary(str) do
+    _ = @limited_ranks
+    String.to_existing_atom(str)
+  end
+
+  @doc """
+  Create a subrank atom from a string.
+  """
+  @spec subrank_from_string(String.t()) :: subrank
+  def subrank_from_string(str) when is_binary(str) do
+    _ = @subranks
+    String.to_existing_atom(str)
+  end
+
+  @doc """
+  Create a full_subrank atom from a string.
+  """
+  @spec full_subrank_from_string(String.t()) :: full_subrank
+  def full_subrank_from_string(str) when is_binary(str) do
+    _ = @full_subranks
+    String.to_existing_atom(str)
+  end
+
+  @doc """
+  Create a slot atom from a string.
+  """
+  @spec slot_from_string(String.t()) :: slot
+  def slot_from_string(str) when is_binary(str) do
+    _ = @slots
+    String.to_existing_atom(str)
+  end
 end

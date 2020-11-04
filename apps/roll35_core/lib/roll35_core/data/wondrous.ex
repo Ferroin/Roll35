@@ -6,6 +6,7 @@ defmodule Roll35Core.Data.Wondrous do
   use Agent
 
   alias Roll35Core.Types
+  alias Roll35Core.Util
 
   require Logger
   require Types
@@ -30,11 +31,10 @@ defmodule Roll35Core.Data.Wondrous do
     Logger.info("Processing data for wondrous item slots.")
 
     result =
-      Enum.map(data, fn entry ->
-        %{
-          value: entry["value"],
-          weight: entry["weight"]
-        }
+      Enum.map(data, fn item ->
+        item
+        |> Util.atomize_map()
+        |> Map.update!(:value, &Types.slot_from_string/1)
       end)
 
     Logger.info("Finished processing data for wondrous item slots.")

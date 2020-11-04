@@ -30,8 +30,8 @@ defmodule Roll35Core.Data.CategoryTest do
     test "Entries of the returned map have the correct format.", context do
       assert Enum.all?(Map.values(context[:data]), fn entry ->
                Enum.all?(entry, fn item ->
-                 is_integer(item[:weight]) and item[:weight] > 0 and
-                   String.to_existing_atom(item[:value]) in Types.categories()
+                 is_integer(item[:weight]) and item[:weight] > 0 and is_atom(item[:value]) and
+                   item[:value] in Types.categories()
                end)
              end)
     end

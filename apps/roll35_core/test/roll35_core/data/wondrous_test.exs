@@ -19,7 +19,7 @@ defmodule Roll35Core.Data.WondrousTest do
     test "Entries of the returned list have the correct format.", context do
       assert Enum.all?(context[:data], fn entry ->
                is_integer(entry[:weight]) and entry[:weight] > 0 and
-                 String.to_existing_atom(entry[:value]) in Types.slots()
+                 entry[:value] in Types.slots()
              end)
     end
   end
