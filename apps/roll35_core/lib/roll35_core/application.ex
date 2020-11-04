@@ -8,6 +8,8 @@ defmodule Roll35Core.Application do
     children = [
       {Roll35Core.Data.Category, :category},
       {Roll35Core.Data.Potion, :potion},
+      {Roll35Core.Data.Scroll, :scroll},
+      {Roll35Core.Data.Wand, :wand},
       {Roll35Core.Data.Wondrous, :wondrous}
     ]
 

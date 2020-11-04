@@ -1,14 +1,14 @@
-defmodule Roll35Core.Data.PotionTest do
+defmodule Roll35Core.Data.WandTest do
   @moduledoc false
   use ExUnit.Case, async: true
 
-  alias Roll35Core.Data.Potion
+  alias Roll35Core.Data.Wand
 
   require Roll35Core.TestHarness
 
-  describe "Roll35Core.Data.Potion.load_data/0" do
+  describe "Roll35Core.Data.Wand.load_data/0" do
     setup do
-      data = Potion.load_data()
+      data = Wand.load_data()
 
       {:ok, [data: data]}
     end
