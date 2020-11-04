@@ -29,10 +29,7 @@ defmodule Roll35Core.Data.Wand do
 
     Logger.info("Processing data for wands.")
 
-    result =
-      data
-      |> Enum.map(&Util.atomize_map/1)
-      |> Util.process_compound_itemlist()
+    result = Util.process_compound_itemlist(data)
 
     Logger.info("Finished processing data for wands.")
     result
