@@ -7,6 +7,7 @@ defmodule Roll35Core.Application do
   def start(_type, _args) do
     children = [
       {Roll35Core.Data.Category, :category},
+      {Roll35Core.Data.Potion, :potion},
       {Roll35Core.Data.Wondrous, :wondrous}
     ]
 

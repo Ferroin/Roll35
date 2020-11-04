@@ -68,4 +68,30 @@ defmodule Roll35Core.UtilTest do
       assert data1 == data2
     end
   end
+
+  describe "Roll35Core.Util.process_compound_itemlist/1" do
+    test "Correctly transforms it’s input." do
+      data1 = [
+        %{minor: 1, medium: 2, major: 3, a: 1, b: 2},
+        %{minor: 3, medium: 2, major: 0, a: 2, b: 1}
+      ]
+
+      data2 = %{
+        minor: [
+          %{weight: 1, value: %{a: 1, b: 2}},
+          %{weight: 3, value: %{a: 2, b: 1}}
+        ],
+        medium: [
+          %{weight: 2, value: %{a: 1, b: 2}},
+          %{weight: 2, value: %{a: 2, b: 1}}
+        ],
+        major: [
+          %{weight: 3, value: %{a: 1, b: 2}},
+          %{weight: 0, value: %{a: 2, b: 1}}
+        ]
+      }
+
+      assert Roll35Core.Util.process_compound_itemlist(data1) == data2
+    end
+  end
 end
