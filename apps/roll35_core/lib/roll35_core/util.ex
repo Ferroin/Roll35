@@ -39,9 +39,7 @@ defmodule Roll35Core.Util do
   corresponding rank. All the remaining keys are placed as-is into a map
   which serves as the value to be returned the weighted random selection.
   """
-  @spec process_compound_itemlist(nonempty_list(%{atom => any})) :: %{
-          Types.rank() => nonempty_list(%{atom => any})
-        }
+  @spec process_compound_itemlist(nonempty_list(%{any => any})) :: Types.itemlist()
   def process_compound_itemlist(data) when is_list(data) do
     newdata = Enum.map(data, &atomize_map/1)
 
@@ -54,6 +52,57 @@ defmodule Roll35Core.Util do
           %{weight: entry[rank], value: value}
         end)
       }
+    end)
+    |> Map.new()
+  end
+
+  @doc """
+  Process ranked list of weighted values.
+
+  This takes a map of ranks to maps of subranks to lists of maps of
+  weighted items, and processes them into the format used by our weighted
+  random selection in various data agent modules.
+  """
+  @spec process_ranked_itemlist(map) :: Types.ranked_itemlist()
+  def process_ranked_itemlist(data) when is_map(data) do
+    newdata = atomize_map(data)
+
+    ranks =
+      if :minor in Map.keys(newdata) do
+        Types.ranks()
+      else
+        Types.limited_ranks()
+      end
+
+    ranks
+    |> Enum.map(fn rank ->
+      submap = atomize_map(newdata[rank])
+
+      subranks =
+        if :least in Map.keys(submap) do
+          Types.full_subranks()
+        else
+          Types.subranks()
+        end
+
+      value =
+        subranks
+        |> Enum.map(fn subrank ->
+          value =
+            Enum.map(submap[subrank], fn entry ->
+              entry
+              |> atomize_map()
+              |> (fn entry ->
+                    {_, value} = Map.split(entry, [:weight])
+                    %{weight: entry.weight, value: value}
+                  end).()
+            end)
+
+          {subrank, value}
+        end)
+        |> Map.new()
+
+      {rank, value}
     end)
     |> Map.new()
   end

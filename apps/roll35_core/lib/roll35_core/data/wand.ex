@@ -21,7 +21,7 @@ defmodule Roll35Core.Data.Wand do
   @doc """
   Load the wand data from disk. Used to prepare the initial state for the agent.
   """
-  @spec load_data :: %{Types.rank() => [%{weight: pos_integer, value: map}]}
+  @spec load_data :: Types.itemlist()
   def load_data do
     path = Path.join(Application.app_dir(:roll35_core), @datapath)
     Logger.info("Loading data for wands from #{path}.")

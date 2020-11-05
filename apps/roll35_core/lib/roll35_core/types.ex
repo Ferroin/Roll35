@@ -65,6 +65,25 @@ defmodule Roll35Core.Types do
     :slotless
   ]
 
+  @typedoc """
+  A single item entry.
+  """
+  @type item_entry :: %{weight: non_neg_integer(), value: %{atom() => any}}
+
+  @typedoc """
+  A map of ranks to lists of items.
+
+  This is an internal structure used by many of the data agents.
+  """
+  @type itemlist :: %{rank => [item_entry, ...]}
+
+  @typedoc """
+  A map of ranks and subranks to lists of items.
+
+  This is an internal structure used by many of the data agents.
+  """
+  @type ranked_itemlist :: %{rank => %{full_subrank => [item_entry, ...]}}
+
   @doc """
   Check that a value is a valid category.
   """

@@ -94,4 +94,56 @@ defmodule Roll35Core.UtilTest do
       assert Roll35Core.Util.process_compound_itemlist(data1) == data2
     end
   end
+
+  describe "Roll35Core.Util.process_ranked_itemlist/1" do
+    test "Correctly Transforms it’s input" do
+      data1 = %{
+        medium: %{
+          least: [
+            %{weight: 1, name: "a", cost: 10},
+            %{weight: 2, name: "b", cost: 20}
+          ],
+          lesser: [
+            %{weight: 1, name: "c"}
+          ],
+          greater: [
+            %{weight: 1, name: "d"}
+          ]
+        },
+        major: %{
+          lesser: [
+            %{weight: 1, name: "e"}
+          ],
+          greater: [
+            %{weight: 1, name: "f"}
+          ]
+        }
+      }
+
+      data2 = %{
+        medium: %{
+          least: [
+            %{weight: 1, value: %{name: "a", cost: 10}},
+            %{weight: 2, value: %{name: "b", cost: 20}}
+          ],
+          lesser: [
+            %{weight: 1, value: %{name: "c"}}
+          ],
+          greater: [
+            %{weight: 1, value: %{name: "d"}}
+          ]
+        },
+        major: %{
+          lesser: [
+            %{weight: 1, value: %{name: "e"}}
+          ],
+          greater: [
+            %{weight: 1, value: %{name: "f"}}
+          ]
+        }
+      }
+
+      assert Roll35Core.Util.process_ranked_itemlist(data1) == data2
+    end
+  end
 end
