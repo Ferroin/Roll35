@@ -71,6 +71,13 @@ defmodule Roll35Core.Types do
   @type item_entry :: %{weight: non_neg_integer(), value: %{atom() => any}}
 
   @typedoc """
+  A flat list of items.
+
+  This is an internal structure used by many of the data agents.
+  """
+  @type flat_itemlist :: [item_entry, ...]
+
+  @typedoc """
   A map of ranks to lists of items.
 
   This is an internal structure used by many of the data agents.
