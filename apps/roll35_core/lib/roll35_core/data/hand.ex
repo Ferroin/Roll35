@@ -1,9 +1,9 @@
-defmodule Roll35Core.Data.Body do
+defmodule Roll35Core.Data.Hand do
   @moduledoc """
-  Data handling for body items.
+  Data handling for hand items.
   """
 
-  use Roll35Core.Data.Agent, "priv/body.yaml"
+  use Roll35Core.Data.Agent, "priv/hand.yaml"
 
   alias Roll35Core.Util
 

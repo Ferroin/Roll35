@@ -1,9 +1,9 @@
-defmodule Roll35Core.Data.Body do
+defmodule Roll35Core.Data.Slotless do
   @moduledoc """
-  Data handling for body items.
+  Data handling for slotless items.
   """
 
-  use Roll35Core.Data.Agent, "priv/body.yaml"
+  use Roll35Core.Data.Agent, "priv/slotless.yaml"
 
   alias Roll35Core.Util
 

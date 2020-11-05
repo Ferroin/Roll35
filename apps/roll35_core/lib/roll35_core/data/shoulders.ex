@@ -1,9 +1,9 @@
-defmodule Roll35Core.Data.Body do
+defmodule Roll35Core.Data.Shoulders do
   @moduledoc """
-  Data handling for body items.
+  Data handling for shoulders items.
   """
 
-  use Roll35Core.Data.Agent, "priv/body.yaml"
+  use Roll35Core.Data.Agent, "priv/shoulders.yaml"
 
   alias Roll35Core.Util
 

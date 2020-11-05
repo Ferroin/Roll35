@@ -67,8 +67,7 @@ defmodule Roll35Core.TestHarness do
         assert Enum.all?(Map.values(context.data), fn map ->
                  Enum.all?(Map.values(map), fn entry ->
                    Enum.all?(entry, fn item ->
-                     is_integer(item.weight) and item.weight >= 0 and is_map(item.value) and
-                       is_binary(item.value.name)
+                     is_integer(item.weight) and item.weight >= 0 and is_map(item.value)
                    end)
                  end)
                end)
