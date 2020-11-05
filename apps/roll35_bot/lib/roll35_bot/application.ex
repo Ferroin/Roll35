@@ -5,7 +5,7 @@ defmodule Roll35Bot.Application do
   alias Alchemy.Client
   alias Alchemy.Cogs
 
-  @impl true
+  @impl Application
   def start(_type, _args) do
     run = Client.start(System.fetch_env!("DISCORD_TOKEN"))
     Cogs.set_prefix("/roll35 ")
