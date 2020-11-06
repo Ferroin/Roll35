@@ -19,12 +19,21 @@ defmodule Roll35Core.TestHarness do
       end
 
       test "Entries of the returned map have the correct format.", context do
-        assert Enum.all?(Map.values(context.data), fn entry ->
-                 Enum.all?(entry, fn item ->
-                   is_integer(item.weight) and item.weight >= 0 and is_map(item.value) and
-                     is_binary(item.value.name)
-                 end)
-               end)
+        Enum.each(context.data, fn {_, entry} ->
+          Enum.each(entry, fn item ->
+            assert is_map(item)
+
+            assert Map.has_key?(item, :weight)
+            assert is_integer(item.weight)
+            assert item.weight >= 0
+
+            assert Map.has_key?(item, :value)
+            assert is_map(item.value)
+
+            assert Map.has_key?(item.value, :name)
+            assert is_binary(item.value.name)
+          end)
+        end)
       end
     end
   end
@@ -51,8 +60,8 @@ defmodule Roll35Core.TestHarness do
       end
 
       test "Returned map’s entries have entries for each sub-rank.", context do
-        assert Enum.all?(context.data, fn {_, value} ->
-                 MapSet.equal?(
+        Enum.each(context.data, fn {_, value} ->
+          assert MapSet.equal?(
                    MapSet.new(Map.keys(value)),
                    MapSet.new(Roll35Core.Types.subranks())
                  ) or
@@ -60,17 +69,34 @@ defmodule Roll35Core.TestHarness do
                      MapSet.new(Map.keys(value)),
                      MapSet.new(Roll35Core.Types.full_subranks())
                    )
-               end)
+        end)
       end
 
       test "Entries of the returned map have the correct format.", context do
-        assert Enum.all?(Map.values(context.data), fn map ->
-                 Enum.all?(Map.values(map), fn entry ->
-                   Enum.all?(entry, fn item ->
-                     is_integer(item.weight) and item.weight >= 0 and is_map(item.value)
-                   end)
-                 end)
-               end)
+        Enum.each(context.data, fn {_, rank} ->
+          Enum.each(rank, fn {_, subrank} ->
+            Enum.each(subrank, fn item ->
+              assert is_map(item)
+
+              assert Map.has_key?(item, :weight)
+              assert is_integer(item.weight)
+              assert item.weight >= 0
+
+              assert Map.has_key?(item, :value)
+              assert is_map(item.value)
+
+              assert Map.has_key?(item.value, :name) or Map.has_key?(item.value, :reroll)
+
+              if Map.has_key?(item.value, :name) do
+                assert is_binary(item.value.name)
+              end
+
+              if Map.has_key?(item.value, :reroll) do
+                assert is_binary(item.value.reroll)
+              end
+            end)
+          end)
+        end)
       end
     end
   end

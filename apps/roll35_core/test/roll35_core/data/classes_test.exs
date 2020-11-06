@@ -30,23 +30,31 @@ defmodule Roll35Core.Data.ClassesTest do
                  ]
                end)
 
-        assert :type in Map.keys(value) and value.type in [:arcane, :divine, :occult]
+        assert Map.has_key?(value, :type)
+        assert value.type in [:arcane, :divine, :occult]
 
-        assert :levels in Map.keys(value) and is_list(value.levels) and
-                 ({true, _} =
-                    Enum.reduce(value.levels, {true, -1}, fn
-                      item, {true, -1} -> {item in 1..20 or item == nil, item}
-                      item, {true, nil} -> {item in 1..20, item}
-                      item, {true, prev} -> {item in 1..20 and item >= prev, item}
-                      _, {false, _} -> {false, nil}
-                    end))
+        assert Map.has_key?(value, :levels)
+        assert is_list(value.levels)
 
-        assert (:copy in Map.keys(value) and value.copy in Map.keys(context.data)) or true
+        assert {true, _} =
+                 Enum.reduce(value.levels, {true, -1}, fn
+                   item, {true, -1} -> {item in 1..20 or item == nil, item}
+                   item, {true, nil} -> {item in 1..20, item}
+                   item, {true, prev} -> {item in 1..20 and item >= prev, item}
+                   _, {false, _} -> {false, nil}
+                 end)
 
-        assert (:merge in Map.keys(value) and is_list(value.merge) and
-                  Enum.all?(value.merge, fn cls ->
-                    cls in Map.keys(context.data)
-                  end)) or true
+        if Map.has_key?(value, :copy) do
+          assert value.copy in Map.keys(context.data)
+        end
+
+        if Map.has_key?(value, :merge) do
+          assert is_list(value.merge)
+
+          assert Enum.all?(value.merge, fn cls ->
+                   cls in Map.keys(context.data)
+                 end) or true
+        end
       end)
     end
   end

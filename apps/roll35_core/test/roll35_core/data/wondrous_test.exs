@@ -13,13 +13,21 @@ defmodule Roll35Core.Data.WondrousTest do
     end
 
     test "Returned data structure is a non-empty list.", context do
-      assert is_list(context.data) and length(context.data) > 0
+      assert is_list(context.data)
+      assert length(context.data) > 0
     end
 
     test "Entries of the returned list have the correct format.", context do
-      assert Enum.all?(context.data, fn entry ->
-               is_integer(entry.weight) and entry.weight > 0 and entry.value in Types.slots()
-             end)
+      Enum.each(context.data, fn entry ->
+        assert is_map(entry)
+
+        assert Map.has_key?(entry, :weight)
+        assert is_integer(entry.weight)
+        assert entry.weight > 0
+
+        assert Map.has_key?(entry, :value)
+        assert entry.value in Types.slots()
+      end)
     end
   end
 end
