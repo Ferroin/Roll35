@@ -2500,7 +2500,7 @@ spell:
       levels: *half_caster_levels
     omdura:
       type: divine
-      ccopy: cleric
+      copy: cleric
       max_level: 6
       levels: *half_caster_levels
     oracle:
