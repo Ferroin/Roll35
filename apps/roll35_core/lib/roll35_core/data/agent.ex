@@ -39,10 +39,7 @@ defmodule Roll35Core.Data.Agent do
       require Roll35Core.Types
       require Logger
 
-      @spec load_data ::
-              Roll35Core.Types.flat_itemlist()
-              | Roll35Core.Types.itemlist()
-              | Roll35Core.Types.ranked_itemlist()
+      @spec load_data :: term()
       def load_data do
         path = Path.join(Application.app_dir(:roll35_core), unquote(datapath))
         Logger.info("Loading data from #{path}.")
@@ -186,5 +183,5 @@ defmodule Roll35Core.Data.Agent do
   @doc """
   Called during agent startup to process the data loaded from disk into the correct state.
   """
-  @callback process_data(list | map) :: Types.itemlist() | Types.ranked_itemlist()
+  @callback process_data(list | map) :: term()
 end
