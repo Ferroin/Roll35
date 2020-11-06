@@ -37,4 +37,40 @@ defmodule Roll35Core.Data.Keys do
     end)
     |> Map.new()
   end
+
+  @doc """
+  Select a random entry from the given set of items.
+
+  This is used for flat and proportional itemlists.
+  """
+  @spec random(GenServer.server(), atom()) :: String.t()
+  def random(agent, key) do
+    data = Map.fetch!(get(agent, & &1), key)
+
+    if is_map(data[0]) do
+      WeightedRandom.complex(data)
+    else
+      Enum.random(data)
+    end
+  end
+
+  @doc """
+  Select a random entry from the given set and subset of items.
+
+  This is used for grouped and grouped prooportional itemlists.
+  """
+  @spec random(GenServer.server(), atom(), term()) :: String.t()
+  def random(agent, key, subkey) do
+    data =
+      agent
+      |> get(& &1)
+      |> Map.fetch!(key)
+      |> Map.fetch!(subkey)
+
+    if is_map(data[0]) do
+      WeightedRandom.complex(data)
+    else
+      Enum.random(data)
+    end
+  end
 end
