@@ -71,7 +71,7 @@ firearm_ammo:
   type: flat
   data: ['Bullet', 'Pellet']
 metamagic:
-  type: grouped proportional
+  type: grouped_proportional
   data:
     1:
       - {weight:  4, value: 'Bouncing'}

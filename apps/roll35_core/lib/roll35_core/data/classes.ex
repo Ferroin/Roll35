@@ -9,17 +9,14 @@ defmodule Roll35Core.Data.Classes do
 
   @impl Roll35Core.Data.Agent
   def process_data(data) do
-    _ = [:arcane, :divine, :occult]
-
     data
     |> Util.atomize_map()
     |> Enum.map(fn {key, value} ->
       {
         key,
         value
-        |> (fn item ->
-              Map.update!(item, :type, &String.to_existing_atom/1)
-            end).()
+        # credo:disable-for-next-line Credo.Check.Warning.UnsafeToAtom
+        |> Map.update!(:type, &String.to_atom/1)
         |> (fn item ->
               if Map.has_key?(item, :copy) do
                 Map.update!(item, :copy, &String.to_existing_atom/1)
