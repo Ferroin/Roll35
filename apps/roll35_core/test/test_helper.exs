@@ -8,10 +8,7 @@ defmodule Roll35Core.TestHarness do
       end
 
       test "Returned map has an entry for each rank.", context do
-        assert MapSet.equal?(
-                 MapSet.new(Map.keys(context.data)),
-                 MapSet.new(Roll35Core.Types.ranks())
-               )
+        assert Roll35Core.TestHarness.map_has_rank_keys(context.data)
       end
 
       test "Returned map’s entries are lists.", context do
@@ -45,14 +42,7 @@ defmodule Roll35Core.TestHarness do
       end
 
       test "Returned map has an entry for each rank.", context do
-        assert MapSet.equal?(
-                 MapSet.new(Map.keys(context.data)),
-                 MapSet.new(Roll35Core.Types.ranks())
-               ) or
-                 MapSet.equal?(
-                   MapSet.new(Map.keys(context.data)),
-                   MapSet.new(Roll35Core.Types.limited_ranks())
-                 )
+        assert Roll35Core.TestHarness.map_has_rank_keys(context.data)
       end
 
       test "Returned map’s entries are maps.", context do
@@ -61,14 +51,7 @@ defmodule Roll35Core.TestHarness do
 
       test "Returned map’s entries have entries for each sub-rank.", context do
         Enum.each(context.data, fn {_, value} ->
-          assert MapSet.equal?(
-                   MapSet.new(Map.keys(value)),
-                   MapSet.new(Roll35Core.Types.subranks())
-                 ) or
-                   MapSet.equal?(
-                     MapSet.new(Map.keys(value)),
-                     MapSet.new(Roll35Core.Types.full_subranks())
-                   )
+          assert Roll35Core.TestHarness.map_has_subrank_keys(value)
         end)
       end
 
@@ -99,5 +82,22 @@ defmodule Roll35Core.TestHarness do
         end)
       end
     end
+  end
+
+  @spec map_has_weighted_random_keys(map()) :: bool()
+  def map_has_weighted_random_keys(map) do
+    MapSet.equal?(MapSet.new(Map.keys(map)), MapSet.new([:weight, :value]))
+  end
+
+  @spec map_has_rank_keys(map()) :: bool()
+  def map_has_rank_keys(map) do
+    MapSet.equal?(MapSet.new(Map.keys(map)), MapSet.new(Roll35Core.Types.ranks())) or
+      MapSet.equal?(MapSet.new(Map.keys(map)), MapSet.new(Roll35Core.Types.limited_ranks()))
+  end
+
+  @spec map_has_subrank_keys(map()) :: bool()
+  def map_has_subrank_keys(map) do
+    MapSet.equal?(MapSet.new(Map.keys(map)), MapSet.new(Roll35Core.Types.subranks())) or
+      MapSet.equal?(MapSet.new(Map.keys(map)), MapSet.new(Roll35Core.Types.full_subranks()))
   end
 end
