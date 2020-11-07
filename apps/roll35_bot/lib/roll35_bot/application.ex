@@ -9,6 +9,7 @@ defmodule Roll35Bot.Application do
   def start(_type, _args) do
     run = Client.start(System.fetch_env!("DISCORD_TOKEN"))
     Cogs.set_prefix("/roll35 ")
+    use Roll35Bot.Help
     use Roll35Bot.Ping
     run
   end
