@@ -85,11 +85,18 @@ defmodule Roll35Core.Types do
   @type itemlist :: %{rank => [item_entry, ...]}
 
   @typedoc """
+  A map of subranks to lists of items.
+
+  This is an internal structure used by many of the data agents.
+  """
+  @type subranked_itemlist :: %{full_subrank => [item_entry, ...]}
+
+  @typedoc """
   A map of ranks and subranks to lists of items.
 
   This is an internal structure used by many of the data agents.
   """
-  @type ranked_itemlist :: %{rank => %{full_subrank => [item_entry, ...]}}
+  @type ranked_itemlist :: %{rank => subranked_itemlist}
 
   @doc """
   Check that a value is a valid category.

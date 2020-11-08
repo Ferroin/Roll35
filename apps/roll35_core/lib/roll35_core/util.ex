@@ -76,34 +76,140 @@ defmodule Roll35Core.Util do
 
     ranks
     |> Enum.map(fn rank ->
-      submap = atomize_map(newdata[rank])
-
-      subranks =
-        if :least in Map.keys(submap) do
-          Types.full_subranks()
-        else
-          Types.subranks()
-        end
-
-      value =
-        subranks
-        |> Enum.map(fn subrank ->
-          value =
-            Enum.map(submap[subrank], fn entry ->
-              entry
-              |> atomize_map()
-              |> (fn entry ->
-                    {_, value} = Map.split(entry, [:weight])
-                    %{weight: entry.weight, value: value}
-                  end).()
-            end)
-
-          {subrank, value}
-        end)
-        |> Map.new()
+      value = process_subranked_itemlist(newdata[rank])
 
       {rank, value}
     end)
     |> Map.new()
+  end
+
+  @doc """
+  Process a subranked list of weighted values.
+
+  This takes a map of subranks to lists of maps of weighted items and
+  processes them into the format used by our weighted random selection
+  in various data agent modules.
+  """
+  @spec process_subranked_itemlist(map) :: Types.subranked_itemlist()
+  def process_subranked_itemlist(data) when is_map(data) do
+    map = atomize_map(data)
+
+    subranks =
+      if :least in Map.keys(map) do
+        Types.full_subranks()
+      else
+        Types.subranks()
+      end
+
+    subranks
+    |> Enum.map(fn subrank ->
+      value =
+        Enum.map(map[subrank], fn entry ->
+          entry
+          |> atomize_map()
+          |> (fn entry ->
+                {_, value} = Map.split(entry, [:weight])
+                %{weight: entry.weight, value: value}
+              end).()
+        end)
+
+      {subrank, value}
+    end)
+    |> Map.new()
+  end
+
+  @doc """
+  Process a base weapon or base armor list.
+
+  This takes a list of base item maps and converts all the keys to atoms,
+  as well as modifying the type and tags entries to have atom values.
+  """
+  @spec process_base_armor_weapon_list(list()) :: list()
+  def process_base_armor_weapon_list(data) do
+    Enum.map(data, fn entry ->
+      entry
+      |> atomize_map()
+      # credo:disable-for-next-line Credo.Check.Warning.UnsafeToAtom
+      |> Map.update!(:type, &String.to_atom/1)
+      |> Map.update!(:tags, fn data ->
+        # credo:disable-for-next-line Credo.Check.Warning.UnsafeToAtom
+        Enum.map(data, &String.to_atom/1)
+      end)
+    end)
+  end
+
+  @doc """
+  Process an armor or weapon enchantment table.
+  """
+  @spec process_enchantment_table(map()) :: map()
+  def process_enchantment_table(data) do
+    data
+    |> Enum.map(fn {key, value} ->
+      {key,
+       value
+       |> Enum.map(fn {key, value} ->
+         {key,
+          Enum.map(value, fn entry ->
+            entry = atomize_map(entry)
+            {_, value} = Map.split(entry, [:weight])
+
+            value =
+              if Map.has_key?(value, :limit) do
+                Map.update!(value, :limit, fn item ->
+                  item
+                  |> Enum.map(fn {key, value} ->
+                    {
+                      key,
+                      # credo:disable-for-next-line Credo.Check.Warning.UnsafeToAtom
+                      Enum.map(value, &String.to_atom/1)
+                    }
+                  end)
+                  |> Map.new()
+                end)
+              else
+                value
+              end
+
+            value =
+              if Map.has_key?(value, :remove) do
+                Map.update!(value, :remove, fn item ->
+                  # credo:disable-for-next-line Credo.Check.Warning.UnsafeToAtom
+                  Enum.map(item, &String.to_atom/1)
+                end)
+              else
+                value
+              end
+
+            value =
+              if Map.has_key?(value, :add) do
+                Map.update!(value, :add, fn item ->
+                  # credo:disable-for-next-line Credo.Check.Warning.UnsafeToAtom
+                  Enum.map(item, &String.to_atom/1)
+                end)
+              else
+                value
+              end
+
+            %{weight: entry.weight, value: value}
+          end)}
+       end)
+       |> Map.new()}
+    end)
+    |> Map.new()
+  end
+
+  @doc """
+  Process an armor or weapon agent state to add a list of all tags.
+  """
+  @spec generate_tags_entry(map(), [atom()]) :: [atom(), ...]
+  def generate_tags_entry(data, base_tags \\ []) do
+    tags =
+      Enum.reduce(data.base, MapSet.new(base_tags), fn item, acc ->
+        Enum.reduce(item.tags, acc, fn tag, acc ->
+          MapSet.put(acc, tag)
+        end)
+      end)
+
+    Map.put(data, :tags, MapSet.to_list(tags))
   end
 end

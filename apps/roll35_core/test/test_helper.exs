@@ -231,6 +231,137 @@ defmodule Roll35Core.TestHarness do
     end
   end
 
+  defmacro armor_weapon_enchantment_tests(prefix, types, range) do
+    quote do
+      test "Enchantment map has the correct format.", context do
+        assert MapSet.new(Map.keys(context.data.enchantments)) ==
+                 MapSet.new(unquote(types)),
+               "#{unquote(prefix)} enchantment map does not have correct keys (#{
+                 inspect(Map.keys(context.data.enchantments))
+               })."
+
+        context.data.enchantments
+        |> Task.async_stream(fn {key, map1} ->
+          prefix = "#{unquote(prefix)} enchantment #{key}"
+
+          assert MapSet.equal?(MapSet.new(Map.keys(map1)), MapSet.new(unquote(range))),
+                 "#{prefix} does not have the correct keys (#{inspect(Map.keys(map1))})."
+
+          Enum.each(map1, fn {level, level_items} ->
+            prefix = "#{prefix} #{level}"
+
+            assert is_list(level_items), "#{prefix} is not a list."
+
+            level_items
+            |> Enum.with_index()
+            |> Enum.each(fn {item, index} ->
+              prefix = "#{prefix} item #{index}"
+
+              assert is_map(item), "#{prefix} is not a map."
+
+              assert Roll35Core.TestHarness.map_has_weighted_random_keys(item),
+                     "#{prefix} does not have the correct keys (#{inspect(Map.keys(item))})."
+
+              assert MapSet.subset?(
+                       MapSet.new(Map.keys(item.value)),
+                       MapSet.new([:name, :cost, :limit, :exclude, :remove, :add])
+                     ),
+                     "#{prefix} value map does not have the correct keys (#{
+                       inspect(Map.keys(item.value))
+                     })."
+
+              assert Map.has_key?(item.value, :name), "#{prefix} value map is missing name key."
+              assert is_binary(item.value.name), "#{prefix} value map name key is not a string."
+
+              if Map.has_key?(item.value, :cost) do
+                assert is_integer(item.value.cost) or is_float(item.value.cost),
+                       "#{prefix} value map cost key is not a number."
+
+                assert item.value.cost >= 0, "#{prefix} value map cost key is below zero."
+              end
+
+              if Map.has_key?(item.value, :add) do
+                assert is_list(item.value.add), "#{prefix} value map add key is not a list."
+
+                assert Enum.all?(item.value.add, &is_atom/1),
+                       "##{prefix} value map add list entries are not all atoms."
+              end
+
+              if Map.has_key?(item.value, :remove) do
+                assert is_list(item.value.remove), "#{prefix} value map remove key is not a list."
+
+                assert Enum.all?(item.value.remove, &is_atom/1),
+                       "##{prefix} value map remove list entries are not all atoms."
+              end
+
+              if Map.has_key?(item.value, :limit) do
+                assert is_map(item.value.limit), "#{prefix} value map limit key is not a map."
+
+                assert MapSet.new(Map.keys(item.value.limit)) in [
+                         MapSet.new([:only]),
+                         MapSet.new([:not])
+                       ],
+                       "#{prefix} value map limit map has an invalid set of keys (#{
+                         inspect(Map.keys(item.value.limit))
+                       })."
+
+                if Map.has_key?(item.value.limit, :only) do
+                  assert Enum.all?(item.value.limit.only, &is_atom/1),
+                         "#{prefix} value map limit map only key entries are not all atoms."
+                end
+
+                if Map.has_key?(item.value.limit, :not) do
+                  assert Enum.all?(item.value.limit.not, &is_atom/1),
+                         "#{prefix} value map limit map not key entries are not all atoms."
+                end
+              end
+
+              if Map.has_key?(item.value, :exclude) do
+                assert is_list(item.value.exclude),
+                       "#{prefix} value map exclude key is not a list."
+
+                assert Enum.all?(item.value.exclude, &is_binary/1),
+                       "#{prefix} value map limit list contains values that are not strings."
+              end
+            end)
+          end)
+        end)
+        |> Enum.to_list()
+      end
+    end
+  end
+
+  defmacro armor_weapon_specific_subtests(prefix, data) do
+    quote do
+      assert Roll35Core.TestHarness.map_has_subrank_keys(unquote(data)),
+             "#{unquote(prefix)} does not have subrank keys (#{inspect(Map.keys(unquote(data)))})."
+
+      Enum.each(unquote(data), fn {subrank, entry} ->
+        prefix = "#{unquote(prefix)} #{subrank}"
+        assert is_list(entry), "#{prefix} is not a list."
+
+        entry
+        |> Enum.with_index()
+        |> Enum.each(fn {item, index} ->
+          prefix = "#{prefix} item #{index}"
+
+          assert is_map(item), "#{prefix} is not a map."
+
+          assert Roll35Core.TestHarness.map_has_weighted_random_keys(item),
+                 "#{prefix} does not have correct keys (#{inspect(Map.keys(item))})."
+
+          assert is_integer(item.weight), "#{prefix} weight key is not an integer."
+          assert item.weight >= 0, "#{prefix} weight key is less than zero."
+
+          assert is_map(item.value), "#{prefix} value key is not a map."
+
+          assert MapSet.equal?(MapSet.new(Map.keys(item.value)), MapSet.new([:name, :cost])),
+                 "#{prefix} value map does not have correct keys (#{inspect(Map.keys(item.value))})."
+        end)
+      end)
+    end
+  end
+
   @spec map_has_weighted_random_keys(map()) :: bool()
   def map_has_weighted_random_keys(map) do
     MapSet.equal?(MapSet.new(Map.keys(map)), MapSet.new([:weight, :value]))

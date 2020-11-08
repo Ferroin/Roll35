@@ -220,7 +220,7 @@ enchantments:
       - {weight:  6, name: 'Poison Resistant', cost: 2250}
       - {weight:  6, name: 'Balanced'}
       - {weight:  6, name: 'Bitter'}
-      - {weight:  6, name: 'Bolstering', limit: [medium, heavy]}
+      - {weight:  6, name: 'Bolstering', limit: {only: [medium, heavy]}}
       - {weight:  7, name: 'Champion'}
       - {weight:  6, name: 'Dastard'}
       - {weight:  7, name: 'Deathless'}
@@ -228,7 +228,7 @@ enchantments:
       - {weight:  7, name: 'Light Fortification', exclude: ['Moderate Fortification', 'Heavy Fortification']}
       - {weight:  6, name: 'Grinding'}
       - {weight:  6, name: 'Impervious'}
-      - {weight:  6, name: 'Mirrored', limit: [metal]}
+      - {weight:  6, name: 'Mirrored', limit: {only: [metal]}}
       - {weight:  7, name: 'Spell-Storing'}
       - {weight:  6, name: 'Staunching'}
       - {weight:  6, name: 'Warding'}
@@ -243,7 +243,7 @@ enchantments:
       - {weight: 12, name: 'Spell Resistance (13)', exclude: ['Spell Resistance (15)', 'Spell Resistance (17)', 'Spell Resistance (19)']}
     3:
       - {weight:  8, name: 'Adhesive', cost: 7000, exclude: ['Slick', 'Improved Slick', 'Greater Slick']}
-      - {weight:  7, name: 'Brawling', limit: [light]}
+      - {weight:  7, name: 'Brawling', limit: {only: [light]}}
       - {weight:  7, name: 'Hosteling', cost: 7500}
       - {weight:  9, name: 'Radiant', cost: 7500}
       - {weight:  9, name: 'Delving', cost: 10000}
@@ -286,14 +286,14 @@ enchantments:
       - {weight:  9, name: 'Light Fortification', exclude: ['Moderate Fortification', 'Heavy Fortification']}
       - {weight:  9, name: 'Grinding'}
       - {weight:  9, name: 'Impervious'}
-      - {weight:  9, name: 'Mirrored', limit: [metal]}
-      - {weight:  9, name: 'Ramming', limit: [light, heavy]}
+      - {weight:  9, name: 'Mirrored', limit: {only: [metal]}}
+      - {weight:  9, name: 'Ramming', limit: {only: [light, heavy]}}
     2:
       - {weight: 15, name: 'Rallying', cost: 5000}
       - {weight: 15, name: 'Wyrmbreath ({{ keys.element() }})', cost: 5000}
-      - {weight: 20, name: 'Animated', limit: [buckler, light, heavy]}
+      - {weight: 20, name: 'Animated', limit: {not: [tower]}}
       - {weight: 17, name: 'Arrow Deflection'}
-      - {weight: 15, name: 'Merging', limit: [light, heavy]}
+      - {weight: 15, name: 'Merging', limit: {only: [light, heavy]}}
       - {weight: 18, name: 'Spell Resistance (13)', exclude: ['Spell Resistance (15)', 'Spell Resistance (17)', 'Spell Resistance (19)']}
     3:
       - {weight: 15, name: 'Hosteling', cost: 7500}

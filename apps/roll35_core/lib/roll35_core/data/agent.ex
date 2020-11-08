@@ -179,6 +179,83 @@ defmodule Roll35Core.Data.Agent do
   end
 
   @doc """
+  Define a set of selectors for an armor or weapon item agent.
+
+  This adds a function for fetching a full list of tags, plus functions
+  for fetching random base items, random enchantments, and random magic
+  item templates.
+  """
+  defmacro armor_weapon_selectors(types) do
+    quote do
+      @spec random_base(GenServer.server(), list(atom())) :: %{atom() => term()}
+      def random_base(agent, tags \\ []) do
+        data = get(agent, fn data -> data.base end)
+
+        data
+        |> Stream.filter(fn item ->
+          if Enum.empty?(tags) do
+            true
+          else
+            Enum.all?(tags, fn tag ->
+              tag == item.type or tag in item.tags
+            end)
+          end
+        end)
+        |> Enum.random()
+      end
+
+      @spec random_enchantment(
+              GenServer.server(),
+              atom(),
+              non_neg_integer(),
+              list(String.t()),
+              list(atom())
+            ) :: %{atom() => term()} | nil
+      def random_enchantment(agent, type, bonus, enchants \\ [], limit \\ [])
+          when type in unquote(types) do
+        data = get(agent, fn data -> data.enchantments[type][bonus] end)
+
+        possible =
+          Enum.filter(data, fn item ->
+            cond do
+              Map.has_key?(item, :exclude) and Enum.any?(enchants, &(&1 in item.exclude)) ->
+                false
+
+              Map.has_key?(item, :limit) and Map.has_key?(item.limit, :only) and
+                  not Enum.any?(limit, &(&1 in item.limit.only)) ->
+                false
+
+              Map.has_key?(item, :limit) and Map.has_key?(item.limit, :not) and
+                  Enum.any?(limit, &(&1 in item.limit.not)) ->
+                false
+
+              true ->
+                true
+            end
+          end)
+
+        if Enum.empty?(possible) do
+          nil
+        else
+          WeightedRandom.complex(possible)
+        end
+      end
+
+      @spec random(GenServer.server(), Types.rank(), Types.subrank()) :: %{atom() => term()}
+      def random(agent, rank, subrank) when Types.is_rank(rank) and Types.is_subrank(subrank) do
+        data = get(agent, fn data -> data[rank][subrank] end)
+
+        WeightedRandom.complex(data)
+      end
+
+      @spec tags(GenServer.server()) :: list(atom())
+      def tags(agent) do
+        get(agent, fn data -> data.tags end)
+      end
+    end
+  end
+
+  @doc """
   Called during agent startup to process the data loaded from disk into the correct state.
   """
   @callback process_data(list | map) :: term()
