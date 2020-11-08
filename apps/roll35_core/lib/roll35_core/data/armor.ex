@@ -3,7 +3,7 @@ defmodule Roll35Core.Data.Armor do
   Data handling for armor and shield items.
   """
 
-  use Roll35Core.Data.Agent, "priv/armor.yaml"
+  use Roll35Core.Data.Agent, {:armor, "priv/armor.yaml"}
 
   alias Roll35Core.Types
   alias Roll35Core.Util
@@ -81,6 +81,16 @@ defmodule Roll35Core.Data.Armor do
          |> Map.new()}
     end)
     |> Map.new()
+    |> (fn data ->
+          tags =
+            Enum.reduce(data.base, MapSet.new([:armor, :shield]), fn item, acc ->
+              Enum.reduce(item.tags, acc, fn tag, acc ->
+                MapSet.put(acc, tag)
+              end)
+            end)
+
+          Map.put(data, :tags, MapSet.to_list(tags))
+        end).()
   end
 
   @doc """
@@ -158,5 +168,13 @@ defmodule Roll35Core.Data.Armor do
     data = get(agent, fn data -> data[rank][subrank] end)
 
     WeightedRandom.complex(data)
+  end
+
+  @doc """
+  Return a list of known tags.
+  """
+  @spec tags(GenServer.server()) :: list(atom())
+  def tags(agent) do
+    get(agent, fn data -> data.tags end)
   end
 end

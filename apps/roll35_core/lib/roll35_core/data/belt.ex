@@ -3,7 +3,7 @@ defmodule Roll35Core.Data.Belt do
   Data handling for belts.
   """
 
-  use Roll35Core.Data.Agent, "priv/belt.yaml"
+  use Roll35Core.Data.Agent, {:belt, "priv/belt.yaml"}
 
   alias Roll35Core.Util
 

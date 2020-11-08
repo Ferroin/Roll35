@@ -3,7 +3,7 @@ defmodule Roll35Core.Data.Classes do
   Data handling for classes.
   """
 
-  use Roll35Core.Data.Agent, "priv/classes.yaml"
+  use Roll35Core.Data.Agent, {:classes, "priv/classes.yaml"}
 
   alias Roll35Core.Util
 

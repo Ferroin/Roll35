@@ -19,7 +19,8 @@ defmodule Roll35Core.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {Roll35Core.Application, []}
+      mod: {Roll35Core.Application, []},
+      registered: [Roll35Core.Supervisor, Roll35Core.Registry]
     ]
   end
 

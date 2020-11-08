@@ -3,7 +3,7 @@ defmodule Roll35Core.Data.Head do
   Data handling for head items.
   """
 
-  use Roll35Core.Data.Agent, "priv/head.yaml"
+  use Roll35Core.Data.Agent, {:head, "priv/head.yaml"}
 
   alias Roll35Core.Util
 

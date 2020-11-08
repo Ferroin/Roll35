@@ -3,7 +3,7 @@ defmodule Roll35Core.Data.Body do
   Data handling for body items.
   """
 
-  use Roll35Core.Data.Agent, "priv/body.yaml"
+  use Roll35Core.Data.Agent, {:body, "priv/body.yaml"}
 
   alias Roll35Core.Util
 

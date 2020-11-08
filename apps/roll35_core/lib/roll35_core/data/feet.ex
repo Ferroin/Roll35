@@ -3,7 +3,7 @@ defmodule Roll35Core.Data.Feet do
   Data handling for feet items.
   """
 
-  use Roll35Core.Data.Agent, "priv/feet.yaml"
+  use Roll35Core.Data.Agent, {:feet, "priv/feet.yaml"}
 
   alias Roll35Core.Util
 

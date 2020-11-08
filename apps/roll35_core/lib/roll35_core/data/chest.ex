@@ -3,7 +3,7 @@ defmodule Roll35Core.Data.Chest do
   Data handling for chest items.
   """
 
-  use Roll35Core.Data.Agent, "priv/chest.yaml"
+  use Roll35Core.Data.Agent, {:chest, "priv/chest.yaml"}
 
   alias Roll35Core.Util
 

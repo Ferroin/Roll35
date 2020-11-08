@@ -3,7 +3,7 @@ defmodule Roll35Core.Data.Neck do
   Data handling for neck items.
   """
 
-  use Roll35Core.Data.Agent, "priv/neck.yaml"
+  use Roll35Core.Data.Agent, {:neck, "priv/neck.yaml"}
 
   alias Roll35Core.Util
 

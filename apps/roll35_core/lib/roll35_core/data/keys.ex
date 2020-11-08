@@ -3,7 +3,7 @@ defmodule Roll35Core.Data.Keys do
   Data handling for template keys.
   """
 
-  use Roll35Core.Data.Agent, "priv/keys.yaml"
+  use Roll35Core.Data.Agent, {:keys, "priv/keys.yaml"}
 
   alias Roll35Core.Util
 

@@ -22,7 +22,7 @@ defmodule Roll35Core.Data.ArmorTest do
       assert Enum.all?(Map.keys(context.data), &is_atom/1), "Armor data keys are not all atoms."
 
       assert MapSet.new(Map.keys(context.data)) ==
-               MapSet.new([:base, :specific, :enchantments | Types.ranks()]),
+               MapSet.new([:base, :specific, :enchantments, :tags | Types.ranks()]),
              "Armor data does not contain the correct set of keys (#{
                inspect(Map.keys(context.data))
              })."
@@ -35,6 +35,8 @@ defmodule Roll35Core.Data.ArmorTest do
 
       assert Enum.all?(Types.ranks(), fn rank -> is_map(context.data[rank]) end),
              "Armor rank entries are not all maps."
+
+      assert is_list(context.data.tags), "Armor tag data is not a list."
     end
 
     test "Rank maps have the correct format.", context do
@@ -237,6 +239,12 @@ defmodule Roll35Core.Data.ArmorTest do
         end)
       end)
       |> Enum.to_list()
+    end
+
+    test "Tags list has the correct format.", context do
+      Enum.each(context.data.tags, fn item ->
+        assert is_atom(item)
+      end)
     end
   end
 end

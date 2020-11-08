@@ -3,7 +3,7 @@ defmodule Roll35Core.Data.Shoulders do
   Data handling for shoulders items.
   """
 
-  use Roll35Core.Data.Agent, "priv/shoulders.yaml"
+  use Roll35Core.Data.Agent, {:shoulders, "priv/shoulders.yaml"}
 
   alias Roll35Core.Util
 

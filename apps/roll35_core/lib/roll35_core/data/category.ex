@@ -3,7 +3,7 @@ defmodule Roll35Core.Data.Category do
   Data handling for item categories.
   """
 
-  use Roll35Core.Data.Agent, "priv/category.yaml"
+  use Roll35Core.Data.Agent, {:category, "priv/category.yaml"}
 
   alias Roll35Core.Types
   alias Roll35Core.Util

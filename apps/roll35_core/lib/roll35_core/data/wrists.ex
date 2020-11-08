@@ -3,7 +3,7 @@ defmodule Roll35Core.Data.Wrists do
   Data handling for wrists items.
   """
 
-  use Roll35Core.Data.Agent, "priv/wrists.yaml"
+  use Roll35Core.Data.Agent, {:wrists, "priv/wrists.yaml"}
 
   alias Roll35Core.Util
 

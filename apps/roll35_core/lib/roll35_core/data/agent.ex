@@ -26,9 +26,8 @@ defmodule Roll35Core.Data.Agent do
 
   require Roll35Core.Types
 
-  defmacro __using__(datapath) do
+  defmacro __using__({name, datapath}) do
     quote do
-      @hibernate_timeout 300_000
       @call_timeout 15_000
 
       @behaviour Roll35Core.Data.Agent
@@ -42,20 +41,27 @@ defmodule Roll35Core.Data.Agent do
       @spec load_data :: term()
       def load_data do
         path = Path.join(Application.app_dir(:roll35_core), unquote(datapath))
-        Logger.info("Loading data from #{path}.")
+        Logger.notice("Loading data from #{path}.")
         data = YamlElixir.read_from_file!(path)
 
-        Logger.info("Processing data from #{path}.")
+        Logger.notice("Processing data from #{path}.")
 
         result = process_data(data)
 
-        Logger.info("Finished processing data from #{path}.")
+        Logger.notice("Finished processing data from #{path}.")
         result
       end
 
-      @spec start_link(GenServer.name()) :: GenServer.on_start()
-      def start_link(name) do
-        GenServer.start_link(__MODULE__, [], name: name)
+      @spec start_link(term()) :: GenServer.on_start()
+      def start_link(_) do
+        Logger.notice("Starting #{__MODULE__}.")
+
+        {:ok, info} =
+          GenServer.start_link(__MODULE__, [],
+            name: {:via, Registry, {Roll35Core.Registry, unquote(name)}}
+          )
+
+        {:ok, info}
       end
 
       @impl GenServer
@@ -65,17 +71,12 @@ defmodule Roll35Core.Data.Agent do
 
       @impl GenServer
       def handle_continue(:init, _) do
-        {:noreply, load_data(), @hibernate_timeout}
+        {:noreply, load_data()}
       end
 
       @impl GenServer
       def handle_call({:get, function}, _, state) do
-        {:reply, function.(state), @hibernate_timeout}
-      end
-
-      @impl GenServer
-      def handle_info(:timeout, state) do
-        {:noreply, state, :hibernate}
+        {:reply, function.(state), state}
       end
 
       @doc """
