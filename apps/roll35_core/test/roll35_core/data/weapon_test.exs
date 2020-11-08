@@ -3,9 +3,10 @@ defmodule Roll35Core.Data.WeaponTest do
   use ExUnit.Case, async: true
 
   alias Roll35Core.Data.Weapon
-  alias Roll35Core.Types
 
   alias Roll35Core.TestHarness
+
+  require TestHarness
 
   describe "Roll35Core.Data.Weapon.load_data/1" do
     setup do
@@ -14,129 +15,8 @@ defmodule Roll35Core.Data.WeaponTest do
       {:ok, [data: data]}
     end
 
-    test "Returned data structure is a map.", context do
-      assert is_map(context.data), "Weapon data is not a map."
-    end
-
-    test "Returned map has expected keys with expected value types.", context do
-      assert Enum.all?(Map.keys(context.data), &is_atom/1), "Weapon data keys are not all atoms."
-
-      assert MapSet.new(Map.keys(context.data)) ==
-               MapSet.new([:base, :specific, :enchantments, :tags | Types.ranks()]),
-             "Weapon data does not contain the correct set of keys (#{
-               inspect(Map.keys(context.data))
-             })."
-
-      assert is_list(context.data.base), "Weapon base item data is not a list."
-
-      assert is_map(context.data.specific), "Weapon specific item data is not a map."
-
-      assert is_map(context.data.enchantments), "Weapon enchantment data is not a map."
-
-      assert Enum.all?(Types.ranks(), fn rank -> is_map(context.data[rank]) end),
-             "Weapon rank entries are not all maps."
-
-      assert is_list(context.data.tags), "Weapon tag data is not a list."
-    end
-
-    test "Rank maps have the correct format.", context do
-      Types.ranks()
-      |> Task.async_stream(fn rank ->
-        data = context.data[rank]
-
-        assert MapSet.new(Map.keys(data)) == MapSet.new(Types.subranks()) or
-                 MapSet.new(Map.keys(data)) == MapSet.new(Types.full_subranks()),
-               "Weapon #{rank} data does not have subrank keys (#{inspect(Map.keys(data))})."
-
-        Enum.each(data, fn {key, value} ->
-          assert is_list(value), "Weapon #{rank} #{key} data is not a list."
-
-          value
-          |> Enum.with_index()
-          |> Enum.each(fn {item, index} ->
-            prefix = "Weapon #{rank} #{key} item #{index}"
-            assert is_map(item), "#{prefix} is not a map."
-
-            assert TestHarness.map_has_weighted_random_keys(item),
-                   "#{prefix} does not have the correct keys (#{inspect(Map.keys(item))})."
-
-            assert is_integer(item.weight), "#{prefix} weight key is not an integer."
-            assert item.weight >= 0, "#{prefix} weight key is less than zero."
-
-            assert is_map(item.value), "#{prefix} value key is not a map."
-
-            assert Map.has_key?(item.value, :bonus) or Map.has_key?(item.value, :reroll),
-                   "#{prefix} value map is missing a bonus or reroll key."
-
-            if Map.has_key?(item.value, :bonus) do
-              assert is_integer(item.value.bonus),
-                     "#{prefix} value map bonus key is not an integer."
-
-              assert item.value.bonus > 0, "#{prefix} value map bonus key is out of range."
-
-              assert Map.has_key?(item.value, :enchants),
-                     "#{prefix} value map is missing an enchants key."
-
-              assert is_list(item.value.enchants),
-                     "#{prefix} value map enchants key is not a list."
-
-              if length(item.value.enchants) > 0 do
-                item.value.enchants
-                |> Enum.with_index()
-                |> Enum.each(fn {enchant, index} ->
-                  assert is_integer(enchant),
-                         "#{prefix} value map enchants list item #{index} is not an integer."
-
-                  assert enchant > 0,
-                         "#{prefix} value map enchants list item #{index} is out of range."
-                end)
-              end
-            end
-
-            if Map.has_key?(item.value, :reroll) do
-              assert is_binary(item.value.reroll),
-                     "#{prefix} value map reroll key is not a string."
-            end
-          end)
-        end)
-      end)
-      |> Enum.to_list()
-    end
-
-    test "Base list has the correct format.", context do
-      context.data.base
-      |> Enum.with_index()
-      |> Task.async_stream(fn {entry, index} ->
-        prefix = "Weapon base items entry #{index}"
-
-        assert is_map(entry), "#{prefix} is not a map."
-
-        assert MapSet.subset?(
-                 MapSet.new([:name, :cost, :type, :tags]),
-                 MapSet.new(Map.keys(entry))
-               )
-
-        "#{prefix} does not have the correct keys (#{inspect(Map.keys(entry))})."
-
-        assert is_binary(entry.name), "#{prefix} name key is not a string."
-
-        assert is_integer(entry.cost) or is_float(entry.cost),
-               "#{prefix} cost key is not a number."
-
-        assert entry.cost >= 0, "#{prefix} cost key is less than zero."
-
-        assert entry.type in [:melee, :ranged, :ammo], "#{prefix} type is not armor or shield."
-
-        assert is_list(entry.tags), "#{prefix} tags key is not a list."
-        assert Enum.all?(entry.tags, &is_atom/1), "#{prefix} tags entries are not all atoms."
-
-        if Map.has_key?(entry, :count) do
-          assert is_integer(entry.count), "#{prefix} count is not an integer."
-          assert entry.count > 0, "#{prefix} count is not greater than zero."
-        end
-      end)
-      |> Enum.to_list()
-    end
+    TestHarness.armor_weapon_core_tests("Weapon")
+    TestHarness.armor_weapon_base_tests("Weapon", [:melee, :ranged, :ammo])
 
     test "Specific map has the correct format.", context do
       assert TestHarness.map_has_rank_keys(context.data.specific)
@@ -274,12 +154,6 @@ defmodule Roll35Core.Data.WeaponTest do
         end)
       end)
       |> Enum.to_list()
-    end
-
-    test "Tags list has the correct format.", context do
-      Enum.each(context.data.tags, fn item ->
-        assert is_atom(item)
-      end)
     end
   end
 end

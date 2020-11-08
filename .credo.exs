@@ -124,7 +124,7 @@
         {Credo.Check.Refactor.MatchInCondition, []},
         {Credo.Check.Refactor.NegatedConditionsInUnless, []},
         {Credo.Check.Refactor.NegatedConditionsWithElse, []},
-        {Credo.Check.Refactor.Nesting, [max_nesting: 5, exit_status: 0]},
+        {Credo.Check.Refactor.Nesting, [max_nesting: 8, exit_status: 0]},
         {Credo.Check.Refactor.UnlessWithElse, [exit_status: 0]},
         {Credo.Check.Refactor.WithClauses, []},
 
