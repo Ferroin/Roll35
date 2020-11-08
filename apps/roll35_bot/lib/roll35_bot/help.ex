@@ -13,6 +13,7 @@ defmodule Roll35Bot.Help do
 
     Available commands:
 
+    * `armor`: Roll a random mundane armor item.
     * `ping`: Respond with ‘pong’ if the bot is alive.
     * `help`: Get help about a specific command.
 
@@ -35,6 +36,9 @@ defmodule Roll35Bot.Help do
 
       "ping" ->
         Cogs.say(Roll35Bot.Ping.help())
+
+      "armor" ->
+        Cogs.say(Roll35Bot.Armor.help())
 
       _ ->
         Cogs.say("""
