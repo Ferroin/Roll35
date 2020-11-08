@@ -27,6 +27,7 @@ defmodule Roll35Core.Application do
       Roll35Core.Data.Shoulders,
       Roll35Core.Data.Slotless,
       Roll35Core.Data.Wand,
+      Roll35Core.Data.Weapon,
       Roll35Core.Data.Wondrous,
       Roll35Core.Data.Wrists
     ]
