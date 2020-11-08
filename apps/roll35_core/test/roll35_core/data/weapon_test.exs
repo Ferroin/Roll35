@@ -214,7 +214,9 @@ defmodule Roll35Core.Data.WeaponTest do
                      MapSet.new(Map.keys(item.value)),
                      MapSet.new([:name, :cost, :limit, :exclude, :remove, :add])
                    ),
-                   "#{prefix} value map does not have the correct keys (#{inspect(Map.keys(item.value))})."
+                   "#{prefix} value map does not have the correct keys (#{
+                     inspect(Map.keys(item.value))
+                   })."
 
             assert Map.has_key?(item.value, :name), "#{prefix} value map is missing name key."
             assert is_binary(item.value.name), "#{prefix} value map name key is not a string."

@@ -14,6 +14,7 @@ defmodule Roll35Bot.Help do
     Available commands:
 
     * `armor`: Roll a random mundane armor item.
+    * `weapon`: Roll a random mundane weapon.
     * `ping`: Respond with ‘pong’ if the bot is alive.
     * `help`: Get help about a specific command.
 
@@ -22,30 +23,42 @@ defmodule Roll35Bot.Help do
   end
 
   Cogs.def help(command) do
-    case command do
-      "help" ->
-        Cogs.say("""
-        Usage:
+    cmdinfo = Cogs.all_commands()
 
-        `/roll35 help [<command>]`
+    if command in Map.keys(cmdinfo) do
+      Cogs.say(cmdhelp(cmdinfo[command]))
+    else
+      Cogs.say("""
+      Error: ‘#{command}’ is not a recognized command.
 
-        When run with no parameters, print general help regarding the bot and a list of commands.
-
-        When run with the name of a command, print out more specific help for that command.
-        """)
-
-      "ping" ->
-        Cogs.say(Roll35Bot.Ping.help())
-
-      "armor" ->
-        Cogs.say(Roll35Bot.Armor.help())
-
-      _ ->
-        Cogs.say("""
-        Error: ‘#{command}’ is not a recognized command.
-
-        Run `/roll35 help` to see a list of known commands.
-        """)
+      Run `/roll35 help` to see a list of known commands.
+      """)
     end
+  end
+
+  @doc """
+  Return help text for this command.
+  """
+  @spec help :: String.t()
+  def help do
+    """
+    Usage:
+
+    `/roll35 help [<command>]`
+
+    When run with no parameters, print general help regarding the bot and a list of commands.
+
+    When run with the name of a command, print out more specific help for that command.
+    """
+  end
+
+  @doc false
+  defp cmdhelp({module, _, _}) do
+    apply(module, :help, [])
+  end
+
+  @doc false
+  defp cmdhelp({module, _, _, _}) do
+    apply(module, :help, [])
   end
 end

@@ -13,6 +13,7 @@ defmodule Roll35Bot.Application do
     use Roll35Bot.Help
     use Roll35Bot.Ping
     use Roll35Bot.Armor
+    use Roll35Bot.Weapon
     run
   end
 end
