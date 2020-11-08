@@ -41,27 +41,24 @@ defmodule Roll35Core.Data.Agent do
       @spec load_data :: term()
       def load_data do
         path = Path.join(Application.app_dir(:roll35_core), unquote(datapath))
-        Logger.notice("Loading data from #{path}.")
+        Logger.info("Loading data from #{path}.")
         data = YamlElixir.read_from_file!(path)
 
-        Logger.notice("Processing data from #{path}.")
+        Logger.info("Processing data from #{path}.")
 
         result = process_data(data)
 
-        Logger.notice("Finished processing data from #{path}.")
+        Logger.info("Finished processing data from #{path}.")
         result
       end
 
       @spec start_link(term()) :: GenServer.on_start()
       def start_link(_) do
-        Logger.notice("Starting #{__MODULE__}.")
+        Logger.info("Starting #{__MODULE__}.")
 
-        {:ok, info} =
-          GenServer.start_link(__MODULE__, [],
-            name: {:via, Registry, {Roll35Core.Registry, unquote(name)}}
-          )
-
-        {:ok, info}
+        GenServer.start_link(__MODULE__, [],
+          name: {:via, Registry, {Roll35Core.Registry, unquote(name)}}
+        )
       end
 
       @impl GenServer
