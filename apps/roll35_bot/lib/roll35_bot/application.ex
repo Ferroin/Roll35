@@ -14,6 +14,7 @@ defmodule Roll35Bot.Application do
     use Roll35Bot.Ping
     use Roll35Bot.Armor
     use Roll35Bot.Weapon
+    use Roll35Bot.Spell
     run
   end
 end

@@ -8,8 +8,17 @@ defmodule Roll35Core.Application do
   @impl Application
   def start(_type, _args) do
     children = [
+      # Registry
       {Registry, keys: :unique, name: Roll35Core.Registry},
+
+      # Data agent dependencies
+      Roll35Core.Data.SpellDB,
+
+      # Data agents
+      # These are sorted in descending order of initialization time.
+      Roll35Core.Data.Spell,
       Roll35Core.Data.Armor,
+      Roll35Core.Data.Weapon,
       Roll35Core.Data.Belt,
       Roll35Core.Data.Body,
       Roll35Core.Data.Category,
@@ -27,7 +36,6 @@ defmodule Roll35Core.Application do
       Roll35Core.Data.Shoulders,
       Roll35Core.Data.Slotless,
       Roll35Core.Data.Wand,
-      Roll35Core.Data.Weapon,
       Roll35Core.Data.Wondrous,
       Roll35Core.Data.Wrists
     ]
