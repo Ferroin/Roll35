@@ -7,9 +7,39 @@ defmodule Roll35Bot.Spell do
 
   alias Roll35Core.Data.Spell
 
+  require Logger
+
   Cogs.set_parser(:spell, fn rest -> [String.split(rest)] end)
 
   Cogs.def spell(params) do
+    try do
+      case cmd(params) do
+        {:ok, msg} ->
+          Cogs.say(msg)
+
+        {:error, msg} ->
+          Cogs.say("ERROR: #{msg}")
+
+        result ->
+          Cogs.say("An unknown error occurred, check the bot logs for more info.")
+          Logger.error("Recieved unknown return value in spell command: #{inspect(result)}")
+      end
+    rescue
+      e ->
+        Cogs.say("ERROR: An internal error occurred, please check the bot logs for more info.")
+        reraise e, __STACKTRACE__
+    catch
+      :exit, info ->
+        Cogs.say("ERROR: An internal error occurred, please check the bot logs for more info.")
+        exit(info)
+    end
+  end
+
+  @doc """
+  Actual command logic.
+  """
+  @spec cmd(term) :: {:ok | :error, String.t()}
+  def cmd(params) do
     opts =
       Enum.reduce_while(params, %{level: nil, class: nil, tag: nil}, fn item, acc ->
         cond do
@@ -34,17 +64,13 @@ defmodule Roll35Bot.Spell do
       end)
 
     if is_map(opts) do
-      case Spell.random({:via, Registry, {Roll35Core.Registry, :spell}},
-             level: opts.level,
-             class: opts.class,
-             tag: opts.tag
-           ) do
-        {:ok, spell} -> Cogs.say(spell)
-        {:error, msg} -> Cogs.say(msg)
-        _ -> Cogs.say("An unknown error occurred.")
-      end
+      Spell.random({:via, Registry, {Roll35Core.Registry, :spell}},
+        level: opts.level,
+        class: opts.class,
+        tag: opts.tag
+      )
     else
-      Cogs.say("Unrecognized parameter #{opts}.")
+      {:error, "Unrecognized parameter #{opts}."}
     end
   end
 

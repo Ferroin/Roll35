@@ -8,9 +8,39 @@ defmodule Roll35Bot.Armor do
   alias Roll35Core.Data.Armor
   alias Roll35Core.Renderer
 
+  require Logger
+
   Cogs.set_parser(:armor, fn i -> [i] end)
 
   Cogs.def armor(options) do
+    try do
+      case cmd(options) do
+        {:ok, msg} ->
+          Cogs.say(msg)
+
+        {:error, msg} ->
+          Cogs.say("ERROR: #{msg}")
+
+        result ->
+          Cogs.say("An unknown error occurred, check the bot logs for more info.")
+          Logger.error("Recieved unknown return value in armor command: #{inspect(result)}")
+      end
+    rescue
+      e ->
+        Cogs.say("ERROR: An internal error occurred, please check the bot logs for more info.")
+        reraise e, __STACKTRACE__
+    catch
+      :exit, info ->
+        Cogs.say("ERROR: An internal error occurred, please check the bot logs for more info.")
+        exit(info)
+    end
+  end
+
+  @doc """
+  Actual command logic.
+  """
+  @spec cmd(String.t()) :: {:ok | :error, String.t()}
+  def cmd(options) do
     _ = Armor.tags({:via, Registry, {Roll35Core.Registry, :armor}})
 
     tags =
@@ -19,9 +49,9 @@ defmodule Roll35Bot.Armor do
       |> Enum.map(&String.to_existing_atom/1)
 
     if item = Armor.random_base({:via, Registry, {Roll35Core.Registry, :armor}}, tags) do
-      Cogs.say(Renderer.format(item))
+      {:ok, Renderer.format(item)}
     else
-      Cogs.say("No items matching specified tags (#{Enum.map(tags, &Atom.to_string/1)}).")
+      {:error, "No items matching specified tags (#{Enum.map(tags, &Atom.to_string/1)})."}
     end
   end
 
