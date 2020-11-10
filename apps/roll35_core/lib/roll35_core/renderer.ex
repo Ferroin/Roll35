@@ -3,7 +3,10 @@ defmodule Roll35Core.Renderer do
   Rendering functions for Roll35.
   """
 
+  alias Roll35Core.Data.Keys
   alias Roll35Core.Data.Spell
+
+  require Logger
 
   @doc """
   Render an item name.
@@ -26,17 +29,22 @@ defmodule Roll35Core.Renderer do
   """
   @spec render(String.t(), map()) :: String.t()
   def render(name, spell) do
-    spell =
-      Spell.random(
-        {:via, Registry, {Roll35Core.Registry, :spell}},
-        level: Map.get(spell, :level, nil),
-        class: Map.get(spell, :cls, "minimum"),
-        tag: Map.get(spell, :tag, nil)
-      )
+    case Spell.random(
+           {:via, Registry, {Roll35Core.Registry, :spell}},
+           level: Map.get(spell, :level, nil),
+           class: Map.get(spell, :cls, "minimum"),
+           tag: Map.get(spell, :tag, nil)
+         ) do
+      {:ok, item_spell} ->
+        name
+        |> EEx.eval_string(spell: item_spell)
+        |> EEx.eval_string()
 
-    name
-    |> EEx.eval_string(spell: spell)
-    |> EEx.eval_string()
+      {:error, msg} ->
+        Logger.error("Unable to generate spell for #{inspect(spell)}, call returned #{msg}.")
+
+        "An internal error occurred while formatting the item: \"#{msg}\"\nSee the bot logs for more information."
+    end
   end
 
   @doc """
@@ -53,6 +61,10 @@ defmodule Roll35Core.Renderer do
         render(name)
       end
 
-    "#{rendered} (cost: #{item.cost}gp)"
+    if Map.has_key?(item, :cost) do
+      "#{rendered} (cost: #{item.cost}gp)"
+    else
+      "#{rendered}"
+    end
   end
 end

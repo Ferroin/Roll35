@@ -15,6 +15,7 @@ defmodule Roll35Bot.Application do
     use Roll35Bot.Armor
     use Roll35Bot.Weapon
     use Roll35Bot.Spell
+    use Roll35Bot.MagicItem
     run
   end
 end

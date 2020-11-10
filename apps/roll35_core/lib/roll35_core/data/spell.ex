@@ -366,7 +366,7 @@ defmodule Roll35Core.Data.Spell do
     tag = Keyword.get(options, :tag)
 
     {:ok, [%{data: valid_cls_result}]} =
-      GenServer.call(server, {:query, "SELECT data FROM info WHERE id='classes';", []}, 5_000)
+      GenServer.call(server, {:query, "SELECT data FROM info WHERE id='columns';", []}, 5_000)
 
     valid_classes = String.split(valid_cls_result, " ")
 

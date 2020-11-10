@@ -48,7 +48,7 @@ minor:
     - {weight:  5, cost:    800, name: 'Steadfast Gut Stone'}
     - {weight:  3, cost:    800, name: 'Dust of Dryness'}
   lesser:
-    - {weight:  3, reroll: 'slotless:minor:least'}
+    - {weight:  3, reroll: [wondrous, slotless, minor, least]}
     - {weight:  1, cost:   1000, name: 'Anatomy Doll'}
     - {weight:  1, cost:   1000, name: 'Bead of Newt Prevention'}
     - {weight:  1, cost:   1000, name: 'Beast-Bond Brand'}

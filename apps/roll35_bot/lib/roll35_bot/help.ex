@@ -16,6 +16,7 @@ defmodule Roll35Bot.Help do
     * `armor`: Roll a random mundane armor item.
     * `weapon`: Roll a random mundane weapon.
     * `spell`: Roll a random spell.
+    * `magicitem`: Roll a random magic item.
     * `ping`: Respond with ‘pong’ if the bot is alive.
     * `help`: Get help about a specific command.
 

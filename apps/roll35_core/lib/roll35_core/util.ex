@@ -212,4 +212,12 @@ defmodule Roll35Core.Util do
 
     Map.put(data, :tags, MapSet.to_list(tags))
   end
+
+  @doc """
+  Square an integer.
+  """
+  @spec squared(integer()) :: integer()
+  def squared(x) when is_integer(x) do
+    x * x
+  end
 end

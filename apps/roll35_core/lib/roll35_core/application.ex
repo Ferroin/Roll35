@@ -23,7 +23,6 @@ defmodule Roll35Core.Application do
       Roll35Core.Data.Body,
       Roll35Core.Data.Category,
       Roll35Core.Data.Chest,
-      Roll35Core.Data.Classes,
       Roll35Core.Data.Eyes,
       Roll35Core.Data.Feet,
       Roll35Core.Data.Hand,

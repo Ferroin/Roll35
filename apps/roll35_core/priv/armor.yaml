@@ -2,14 +2,14 @@
 minor:
   lesser:
     - {weight: 80, bonus: 1, enchants: []}
-    - {weight:  4, reroll: 'armor:specific:shield:minor:lesser'}
-    - {weight: 16, reroll: 'armor:specific:armor:minor:lesser'}
+    - {weight:  4, specific: [shield, minor, lesser]}
+    - {weight: 16, specific: [armor, minor, lesser]}
   greater:
     - {weight: 26, bonus: 1, enchants: []}
     - {weight: 27, bonus: 2, enchants: []}
     - {weight: 27, bonus: 1, enchants: [1]}
-    - {weight:  4, reroll: 'armor:specific:shield:minor:greater'}
-    - {weight: 16, reroll: 'armor:specific:armor:minor:greater'}
+    - {weight:  4, specific: [shield, minor, greater]}
+    - {weight: 16, specific: [armor, minor, greater]}
 medium:
   lesser:
     - {weight: 10, bonus: 1, enchants: []}
@@ -19,8 +19,8 @@ medium:
     - {weight: 12, bonus: 1, enchants: [1, 1]}
     - {weight: 12, bonus: 1, enchants: [2]}
     - {weight: 12, bonus: 2, enchants: [1]}
-    - {weight:  4, reroll: 'armor:specific:shield:medium:lesser'}
-    - {weight: 16, reroll: 'armor:specific:armor:medium:lesser'}
+    - {weight:  4, specific: [shield, medium, lesser]}
+    - {weight: 16, specific: [armor, medium, lesser]}
   greater:
     - {weight: 10, bonus: 2, enchants: []}
     - {weight: 12, bonus: 3, enchants: []}
@@ -29,8 +29,8 @@ medium:
     - {weight: 12, bonus: 2, enchants: [1]}
     - {weight: 12, bonus: 2, enchants: [2]}
     - {weight: 12, bonus: 3, enchants: [1]}
-    - {weight:  4, reroll: 'armor:specific:shield:medium:greater'}
-    - {weight: 16, reroll: 'armor:specific:armor:medium:greater'}
+    - {weight:  4, specific: [shield, medium, greater]}
+    - {weight: 16, specific: [armor, medium, greater]}
 major:
   lesser:
     - {weight: 10, bonus: 3, enchants: []}
@@ -40,8 +40,8 @@ major:
     - {weight: 12, bonus: 2, enchants: [2]}
     - {weight: 12, bonus: 3, enchants: [1]}
     - {weight: 12, bonus: 4, enchants: [1]}
-    - {weight:  4, reroll: 'armor:specific:shield:major:lesser'}
-    - {weight: 16, reroll: 'armor:specific:armor:major:lesser'}
+    - {weight:  4, specific: [shield, major, lesser]}
+    - {weight: 16, specific: [armor, major, lesser]}
   greater:
     - {weight: 10, bonus: 4, enchants: []}
     - {weight: 10, bonus: 5, enchants: []}
@@ -55,8 +55,8 @@ major:
     - {weight:  3, bonus: 5, enchants: [2, 2]}
     - {weight:  3, bonus: 5, enchants: [4]}
     - {weight:  3, bonus: 5, enchants: [5]}
-    - {weight:  4, reroll: 'armor:specific:shield:major:greater'}
-    - {weight: 16, reroll: 'armor:specific:armor:major:greater'}
+    - {weight:  4, specific: [shield, major, greater]}
+    - {weight: 16, specific: [armor, major, greater]}
 base:
   # Certain armors that are only rarely used or very unlikely to be
   # found as magic items are commented out below so that they aren't
