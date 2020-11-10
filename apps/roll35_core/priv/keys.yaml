@@ -77,7 +77,7 @@ metamagic:
       - {weight:  4, value: 'Bouncing'}
       - {weight:  5, value: 'Disruptive'}
       - {weight:  5, value: 'Ectoplasmic'}
-      - {weight:  5, value: 'Elemental ({{ keys.elemental() }})'}
+      - {weight:  5, value: 'Elemental (<%= Keys.random(:elemental) %>)'}
       - {weight: 12, value: 'Enlarge'}
       - {weight: 12, value: 'Extend'}
       - {weight:  5, value: 'Flaring'}

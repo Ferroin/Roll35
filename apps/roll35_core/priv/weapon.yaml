@@ -360,7 +360,7 @@ base:
   # - {cost:   40: type:   ammo, tags: [firearm, cartridge], name: 'Dragon’s Breath Cartridge', count: 1}
   # - {cost:   40: type:   ammo, tags: [firearm, cartridge], name: 'Entangling Shot Cartridge', count: 1}
   # - {cost:   10: type:   ammo, tags: [firearm, cartridge], name: 'Flare Cartridge', count: 1}
-  # - {cost:   12: type:   ammo, tags: [firearm, cartridge], name: 'Paper Cartridge {{ keys.firearm_ammo() }}', count: 1}
+  # - {cost:   12: type:   ammo, tags: [firearm, cartridge], name: 'Paper Cartridge <%= Keys.random(:firearm_ammo) %>', count: 1}
   # - {cost:   12: type:   ammo, tags: [firearm, cartridge], name: 'Salt Shot Cartridge', count: 1}
   # - {cost:   30, type:   ammo, tags: [firearm], name: 'Firearm Bullets (30)', count: 30}
   # - {cost:   15, type:   ammo, tags: [firearm, cartridge], name: 'Metal Cartridge', count: 1}

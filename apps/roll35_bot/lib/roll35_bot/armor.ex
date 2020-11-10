@@ -6,6 +6,7 @@ defmodule Roll35Bot.Armor do
   use Alchemy.Cogs
 
   alias Roll35Core.Data.Armor
+  alias Roll35Core.Renderer
 
   Cogs.set_parser(:armor, fn i -> [i] end)
 
@@ -18,7 +19,7 @@ defmodule Roll35Bot.Armor do
       |> Enum.map(&String.to_existing_atom/1)
 
     if item = Armor.random_base({:via, Registry, {Roll35Core.Registry, :armor}}, tags) do
-      Cogs.say("#{item.name} (cost: #{item.cost}gp)")
+      Cogs.say(Renderer.format(item))
     else
       Cogs.say("No items matching specified tags (#{Enum.map(tags, &Atom.to_string/1)}).")
     end

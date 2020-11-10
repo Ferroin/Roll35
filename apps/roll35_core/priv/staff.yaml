@@ -60,11 +60,11 @@ major:
     - {weight:  3, cost:  62000, name: 'Staff of Defense'}
     - {weight:  3, cost:  63960, name: 'Staff of the Planes'}
     - {weight:  3, cost:  69300, name: 'Staff of Hungry Shadows'}
-    - {weight:  3, cost:  81000, name: '{{ keys.chromatic_dragon() }} Dragon Staff'}
+    - {weight:  3, cost:  81000, name: '<%= Keys.random(:chromatic_dragon) %> Dragon Staff'}
     - {weight:  3, cost:  81766, name: 'Staff of Slumber'}
     # Each staff of a school of magic listed separately in official tables,
     # shortened here because all are equally likely
-    - {weight: 40, cost:  82000, name: 'Staff of {{ keys.school() }}'}
+    - {weight: 40, cost:  82000, name: 'Staff of <%= Keys.random(:school) %>'}
     - {weight:  2, cost:  84066, name: 'Staff of Weather'}
     - {weight:  3, cost:  85800, name: 'Staff of Earth and Stone'}
     - {weight:  2, cost:  86666, name: 'Staff of Vision'}

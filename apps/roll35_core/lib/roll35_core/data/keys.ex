@@ -40,12 +40,10 @@ defmodule Roll35Core.Data.Keys do
 
   @doc """
   Select a random entry from the given set of items.
-
-  This is used for flat and proportional itemlists.
   """
-  @spec random(GenServer.server(), atom()) :: String.t()
-  def random(agent, key) do
-    data = Map.fetch!(get(agent, & &1), key)
+  @spec random(atom()) :: String.t()
+  def random(key) when is_atom(key) do
+    data = Map.fetch!(get({:via, Registry, {Roll35Core.Registry, :keys}}, & &1), key)
 
     if is_map(data[0]) do
       WeightedRandom.complex(data)
@@ -56,13 +54,11 @@ defmodule Roll35Core.Data.Keys do
 
   @doc """
   Select a random entry from the given set and subset of items.
-
-  This is used for grouped and grouped prooportional itemlists.
   """
-  @spec random(GenServer.server(), atom(), term()) :: String.t()
-  def random(agent, key, subkey) do
+  @spec random(atom(), term()) :: String.t()
+  def random(key, subkey) when is_atom(key) do
     data =
-      agent
+      {:via, Registry, {Roll35Core.Registry, :keys}}
       |> get(& &1)
       |> Map.fetch!(key)
       |> Map.fetch!(subkey)
