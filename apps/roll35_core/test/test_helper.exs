@@ -79,7 +79,9 @@ defmodule Roll35Core.TestHarness do
               end
 
               if Map.has_key?(item.value, :reroll) do
-                assert is_binary(item.value.reroll)
+                assert is_list(item.value.reroll)
+
+                assert Enum.all?(item.value.reroll, &is_binary/1)
               end
             end)
           end)
@@ -151,8 +153,8 @@ defmodule Roll35Core.TestHarness do
 
               assert is_map(item.value), "#{prefix} value key is not a map."
 
-              assert Map.has_key?(item.value, :bonus) or Map.has_key?(item.value, :reroll),
-                     "#{prefix} value map is missing a bonus or reroll key."
+              assert Map.has_key?(item.value, :bonus) or Map.has_key?(item.value, :specific),
+                     "#{prefix} value map is missing a bonus or specific key."
 
               if Map.has_key?(item.value, :bonus) do
                 assert is_integer(item.value.bonus),
@@ -179,9 +181,12 @@ defmodule Roll35Core.TestHarness do
                 end
               end
 
-              if Map.has_key?(item.value, :reroll) do
-                assert is_binary(item.value.reroll),
-                       "#{prefix} value map reroll key is not a string."
+              if Map.has_key?(item.value, :specific) do
+                assert is_list(item.value.specific),
+                       "#{prefix} value map specific key is not a list."
+
+                assert Enum.all?(item.value.specific, &is_binary/1),
+                       "#{prefix} value map specific list not all items are strings."
               end
             end)
           end)
