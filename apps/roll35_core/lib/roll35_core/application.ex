@@ -15,7 +15,7 @@ defmodule Roll35Core.Application do
       Roll35Core.Data.SpellDB,
 
       # Data agents
-      # These are sorted in descending order of initialization time.
+      # These are sorted in relative descending order of initialization time.
       Roll35Core.Data.Spell,
       Roll35Core.Data.Armor,
       Roll35Core.Data.Weapon,
@@ -32,9 +32,12 @@ defmodule Roll35Core.Application do
       Roll35Core.Data.Keys,
       Roll35Core.Data.Neck,
       Roll35Core.Data.Potion,
+      Roll35Core.Data.Ring,
+      Roll35Core.Data.Rod,
       Roll35Core.Data.Scroll,
       Roll35Core.Data.Shoulders,
       Roll35Core.Data.Slotless,
+      Roll35Core.Data.Staff,
       Roll35Core.Data.Wand,
       Roll35Core.Data.Wondrous,
       Roll35Core.Data.Wrists
