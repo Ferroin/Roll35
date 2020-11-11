@@ -366,17 +366,39 @@ defmodule Roll35Core.Data.Spell do
     tag = Keyword.get(options, :tag)
 
     {:ok, [%{data: valid_cls_result}]} =
-      GenServer.call(server, {:query, "SELECT data FROM info WHERE id='columns';", []}, 5_000)
+      GenServer.call(server, {:query, "SELECT data FROM info WHERE id='classes';", []}, 5_000)
 
     valid_classes = String.split(valid_cls_result, " ")
 
+    {:ok, [%{data: valid_col_result}]} =
+      GenServer.call(server, {:query, "SELECT data FROM info WHERE id='columns';", []}, 5_000)
+
+    valid_columns = String.split(valid_col_result, " ")
+
     class =
       cond do
-        opt_class == "spellpage" -> Enum.random(["spellpage_arcane", "spellpage_divine"])
-        opt_class == "random" -> Enum.random(valid_classes)
-        opt_class == nil -> "minimum"
-        opt_class in valid_classes -> opt_class
-        true -> nil
+        opt_class == "spellpage" ->
+          Enum.random(["spellpage_arcane", "spellpage_divine"])
+
+        opt_class == "random" and level == nil ->
+          Enum.random(valid_classes)
+
+        opt_class == "random" and level != nil ->
+          valid_classes
+          |> Enum.filter(fn item ->
+            {:ok, clsinfo} = GenServer.call(server, {:get_class, String.to_existing_atom(item)})
+            length(clsinfo.levels) > level
+          end)
+          |> Enum.random()
+
+        opt_class == nil ->
+          "minimum"
+
+        opt_class in valid_columns ->
+          opt_class
+
+        true ->
+          nil
       end
 
     cond do
