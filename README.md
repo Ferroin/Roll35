@@ -14,9 +14,7 @@ related games.
 
 ## Planned Features
 
-* Fix the Adept spell list to reflect the correst set of spells.
 * Allow rolling per-class for scrolls/wands.
-* Add basic usage info to the README.
 * Automatically roll random spells present in items that store spells.
 * Roll against arbitrary data tables.
 * Automatically roll for intelligence/special markings on magic items.
@@ -27,9 +25,12 @@ related games.
   item, including hyperlinks to relevant reference material.
 * Roll specific base weapons or armor as magic items.
 * Roll dice by themselves.
-* The ability to enable and disable specific items at runtime (with
-  per-server config).
 * Fetch data on specific items directly without rolling for them randomly.
+* The ability to enable and disable specific items at runtime (with
+  per-server/user config).
+* Support for custom command prefixes (with per-server/user config).
+* Support for server permissions (with per-server config).
+* Support for joining to specific channels only (with per-server config).
 
 ## Limitations
 
@@ -41,6 +42,20 @@ related games.
   INT. This is intentionally left to the GM to determine, as in many cases
   which skills are picked are not truly random. May be added at some
   point in the future once per-server configuration support is added.
+
+## Using the Bot
+
+All bot commands start with the prefix `/roll35`.
+
+You can see interactive help by running `/roll35 help`
+
+Note that if a command is mistyped, the bot will currently simply not
+respond instead of responding with an error. We plan to fix this for
+commands where the command prefix was specified properly, but cannot do
+so for mistyped command prefixes.
+
+The bot supports responding to DMs, but still requires the command prefix
+for them.
 
 ## Data Sets
 
