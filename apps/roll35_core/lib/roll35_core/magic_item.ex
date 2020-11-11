@@ -6,6 +6,8 @@ defmodule Roll35Core.MagicItem do
   alias Roll35Core.Renderer
   alias Roll35Core.Util
 
+  require Logger
+
   @compound_itemlists [:potion, :scroll, :wand]
   @ranked_itemlists [:ring, :rod, :staff]
   @max_tries 3
@@ -66,6 +68,10 @@ defmodule Roll35Core.MagicItem do
   @spec assemble_magic_item(atom, map, map, non_neg_integer, non_neg_integer, non_neg_integer) ::
           {:ok, String.t()} | {:error, String.t()}
   def assemble_magic_item(type, item, base, cost_mult, masterwork, iter \\ 0) do
+    Logger.debug(
+      "Assembling magic item of type #{inspect(type)} with parameters #{inspect(item)}."
+    )
+
     base_cost = base.cost + masterwork
     item_cost = base_cost + Util.squared(item.bonus) * cost_mult
 
@@ -135,6 +141,8 @@ defmodule Roll35Core.MagicItem do
   """
   @spec reroll(list()) :: {:ok, String.t()} | {:error, term()}
   def reroll(path) do
+    Logger.debug("Rerolling item with parameters #{inspect(path)}.")
+
     case path do
       [category, extra, rank, subrank] ->
         roll(rank, subrank, category, extra)
@@ -155,6 +163,10 @@ defmodule Roll35Core.MagicItem do
   @spec roll(Types.rank(), Types.full_subrank(), Types.category(), term()) ::
           {:ok, String.t()} | {:error, term()}
   def roll(rank, subrank, category, extra \\ nil) do
+    Logger.debug(
+      "Rolling magic item with parameters #{inspect({rank, subrank, category, extra})}."
+    )
+
     item =
       cond do
         category != :wondrous and extra != :slotless and subrank == :least ->

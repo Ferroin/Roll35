@@ -16,6 +16,8 @@ defmodule Roll35Core.Renderer do
   """
   @spec render(String.t()) :: String.t()
   def render(name) do
+    Logger.debug("Rendering \"#{name}\".")
+
     name
     |> EEx.eval_string()
     |> EEx.eval_string()
@@ -29,6 +31,8 @@ defmodule Roll35Core.Renderer do
   """
   @spec render(String.t(), map()) :: String.t()
   def render(name, spell) do
+    Logger.debug("Rendering \"#{name}\" with spell #{inspect(spell)}.")
+
     case Spell.random(
            {:via, Registry, {Roll35Core.Registry, :spell}},
            level: Map.get(spell, :level, nil),

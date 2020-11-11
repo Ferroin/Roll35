@@ -232,6 +232,8 @@ defmodule Roll35Core.Data.Spell do
     classes = Map.keys(classdata)
     columns = [:minimum, :spellpage_arcane, :spellpage_divine | classes]
 
+    Logger.debug("Initializing spell database.")
+
     :ok =
       SpellDB.exec(@spell_db, """
       DROP TABLE IF EXISTS spells;
@@ -247,10 +249,6 @@ defmodule Roll35Core.Data.Spell do
                           spellpage_divine_cls TEXT);
       CREATE VIRTUAL TABLE tagmap USING fts4(name, tags);
       CREATE TABLE info(id TEXT, data TEXT);
-      INSERT INTO info (id, data) VALUES ('rev', '#{
-        Application.fetch_env!(:roll35_core, :spell_db_rev)
-      }');
-      INSERT INTO info (id, data) VALUES ('tstamp', '#{spelltstamp}');
       INSERT INTO info (id, data) VALUES ('columns', '#{Enum.join(columns, " ")}');
       INSERT INTO info (id, data) VALUES ('classes', '#{Enum.join(classes, " ")}');
       VACUUM;
@@ -262,8 +260,9 @@ defmodule Roll35Core.Data.Spell do
       |> Enum.map(fn item ->
         {classdata, item}
       end)
+      |> Enum.with_index()
       |> Task.async_stream(
-        fn {classdata, item} ->
+        fn {{classdata, item}, index} ->
           {:ok, [%{data: columns}]} =
             SpellDB.query(@spell_db, "SELECT data FROM info WHERE id='classes';")
 
@@ -275,6 +274,8 @@ defmodule Roll35Core.Data.Spell do
               acc <> "/n" <> cmd
             end)
 
+          Logger.debug("Writing chunk #{index} to spell database.")
+
           SpellDB.exec(@spell_db, sql)
 
           []
@@ -284,6 +285,16 @@ defmodule Roll35Core.Data.Spell do
         timeout: 60_000
       )
       |> Enum.to_list()
+
+    Logger.debug("Finalizing spell database.")
+
+    :ok =
+      SpellDB.exec(@spell_db, """
+        INSERT INTO info (id, data) VALUES ('rev', '#{
+        Application.fetch_env!(:roll35_core, :spell_db_rev)
+      }');
+        INSERT INTO info (id, data) VALUES ('tstamp', '#{spelltstamp}');
+      """)
 
     Logger.notice("Finished regenerating spell database.")
 
@@ -362,6 +373,8 @@ defmodule Roll35Core.Data.Spell do
     level = Keyword.get(options, :level)
     opt_class = Keyword.get(options, :class, "minimum")
     tag = Keyword.get(options, :tag)
+
+    Logger.debug("Rolling random spell with parameters #{inspect({level, opt_class, tag})}.")
 
     {:ok, [%{data: valid_cls_result}]} =
       GenServer.call(server, {:query, "SELECT data FROM info WHERE id='classes';", []}, 5_000)

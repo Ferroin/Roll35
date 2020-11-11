@@ -5,7 +5,18 @@ defmodule Roll35Bot.Ping do
 
   use Alchemy.Cogs
 
+  require Logger
+
   Cogs.def ping do
+    %Alchemy.Message{
+      author: %Alchemy.User{
+        username: user,
+        discriminator: tag
+      }
+    } = message
+
+    Logger.info("Recieved ping command from #{user}##{tag}.")
+
     Cogs.say("pong")
   end
 

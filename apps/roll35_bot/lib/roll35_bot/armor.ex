@@ -13,6 +13,15 @@ defmodule Roll35Bot.Armor do
   Cogs.set_parser(:armor, fn i -> [i] end)
 
   Cogs.def armor(options) do
+    %Alchemy.Message{
+      author: %Alchemy.User{
+        username: user,
+        discriminator: tag
+      }
+    } = message
+
+    Logger.info("Recieved armor command with parameters #{inspect(options)} from #{user}##{tag}.")
+
     try do
       case cmd(options) do
         {:ok, msg} ->
@@ -22,7 +31,7 @@ defmodule Roll35Bot.Armor do
           Cogs.say("ERROR: #{msg}")
 
         result ->
-          Cogs.say("An unknown error occurred, check the bot logs for more info.")
+          Cogs.say("ERROR: An unknown error occurred, check the bot logs for more info.")
           Logger.error("Recieved unknown return value in armor command: #{inspect(result)}")
       end
     rescue

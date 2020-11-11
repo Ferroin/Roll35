@@ -43,6 +43,12 @@ defmodule Roll35Core.Data.Weapon do
         }
   def random_specific(agent, rank, subrank)
       when Types.is_rank(rank) and Types.is_subrank(subrank) do
+    Logger.debug(
+      "Getting random specific item with rank #{inspect(rank)} and subrank #{inspect(subrank)} from #{
+        __MODULE__
+      }."
+    )
+
     data = get(agent, fn data -> data.specific[rank][subrank] end)
 
     WeightedRandom.complex(data)

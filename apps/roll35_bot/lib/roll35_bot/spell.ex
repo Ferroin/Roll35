@@ -12,6 +12,15 @@ defmodule Roll35Bot.Spell do
   Cogs.set_parser(:spell, fn rest -> [String.split(rest)] end)
 
   Cogs.def spell(params) do
+    %Alchemy.Message{
+      author: %Alchemy.User{
+        username: user,
+        discriminator: tag
+      }
+    } = message
+
+    Logger.info("Recieved spell command with parameters #{inspect(params)} from #{user}##{tag}.")
+
     try do
       case cmd(params) do
         {:ok, msg} ->

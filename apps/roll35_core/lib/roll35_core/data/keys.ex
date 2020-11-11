@@ -7,6 +7,8 @@ defmodule Roll35Core.Data.Keys do
 
   alias Roll35Core.Util
 
+  require Logger
+
   @impl Roll35Core.Data.Agent
   def process_data(data) do
     data
@@ -43,6 +45,8 @@ defmodule Roll35Core.Data.Keys do
   """
   @spec random(atom()) :: String.t()
   def random(key) when is_atom(key) do
+    Logger.debug("Getting random value from key #{inspect(key)}.")
+
     data = Map.fetch!(get({:via, Registry, {Roll35Core.Registry, :keys}}, & &1), key)
 
     if is_map(data[0]) do
@@ -57,6 +61,8 @@ defmodule Roll35Core.Data.Keys do
   """
   @spec random(atom(), term()) :: String.t()
   def random(key, subkey) when is_atom(key) do
+    Logger.debug("Getting random value from key #{inspect({key, subkey})}.")
+
     data =
       {:via, Registry, {Roll35Core.Registry, :keys}}
       |> get(& &1)

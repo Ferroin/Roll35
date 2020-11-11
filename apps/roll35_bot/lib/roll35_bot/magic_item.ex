@@ -13,6 +13,15 @@ defmodule Roll35Bot.MagicItem do
   Cogs.set_parser(:magicitem, fn rest -> [String.split(rest, " ", trim: true)] end)
 
   Cogs.def magicitem(params) do
+    %Alchemy.Message{
+      author: %Alchemy.User{
+        username: user,
+        discriminator: tag
+      }
+    } = message
+
+    Logger.info("Recieved armor command with parameters #{inspect(params)} from #{user}##{tag}.")
+
     try do
       case cmd(params) do
         {:ok, msg} ->

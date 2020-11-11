@@ -13,6 +13,17 @@ defmodule Roll35Bot.Weapon do
   Cogs.set_parser(:weapon, fn i -> [i] end)
 
   Cogs.def weapon(options) do
+    %Alchemy.Message{
+      author: %Alchemy.User{
+        username: user,
+        discriminator: tag
+      }
+    } = message
+
+    Logger.info(
+      "Recieved weapon command with parameters #{inspect(options)} from #{user}##{tag}."
+    )
+
     try do
       case cmd(options) do
         {:ok, msg} ->

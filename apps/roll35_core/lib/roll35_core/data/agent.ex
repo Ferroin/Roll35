@@ -41,14 +41,10 @@ defmodule Roll35Core.Data.Agent do
       @spec load_data :: term()
       def load_data do
         path = Path.join(Application.app_dir(:roll35_core), unquote(datapath))
-        Logger.info("Loading data from #{path}.")
         data = YamlElixir.read_from_file!(path)
-
-        Logger.info("Processing data from #{path}.")
-
         result = process_data(data)
 
-        Logger.info("Finished processing data from #{path}.")
+        Logger.info("Finished initializing #{__MODULE__}.")
         result
       end
 
@@ -119,6 +115,8 @@ defmodule Roll35Core.Data.Agent do
 
       @spec random(GenServer.server()) :: map()
       def random(agent) do
+        Logger.debug("Getting random item with random rank and subrank from #{__MODULE__}.")
+
         data = get(agent, & &1)
 
         rank = Enum.random(Map.keys(data))
@@ -129,6 +127,10 @@ defmodule Roll35Core.Data.Agent do
 
       @spec random(GenServer.server(), Types.rank()) :: map()
       def random(agent, rank) when Types.is_rank(rank) do
+        Logger.debug(
+          "Getting random item with rank #{inspect(rank)} and random subrank from #{__MODULE__}."
+        )
+
         data = get(agent, & &1)
 
         subrank = Enum.random(Map.keys(data[rank]))
@@ -139,6 +141,12 @@ defmodule Roll35Core.Data.Agent do
       @spec random(GenServer.server(), Types.rank(), Types.subrank()) :: map()
       def random(agent, rank, subrank)
           when Types.is_rank(rank) and Types.is_full_subrank(subrank) do
+        Logger.debug(
+          "Getting random item with rank #{inspect(rank)} and subrank #{inspect(subrank)} from #{
+            __MODULE__
+          }."
+        )
+
         data = get(agent, & &1)
 
         WeightedRandom.complex(data[rank][subrank])
@@ -162,6 +170,8 @@ defmodule Roll35Core.Data.Agent do
     quote do
       @spec random(GenServer.server()) :: map()
       def random(agent) do
+        Logger.debug("Getting random item with random rank from #{__MODULE__}.")
+
         data = get(agent, & &1)
 
         rank = Enum.random(Map.keys(data))
@@ -171,6 +181,8 @@ defmodule Roll35Core.Data.Agent do
 
       @spec random(GenServer.server(), Types.rank()) :: map()
       def random(agent, rank) when Types.is_rank(rank) do
+        Logger.debug("Getting random item with rank #{inspect(rank)} from #{__MODULE__}.")
+
         data = get(agent, & &1)
 
         WeightedRandom.complex(data[rank])
@@ -189,6 +201,10 @@ defmodule Roll35Core.Data.Agent do
     quote do
       @spec random_base(GenServer.server(), list(atom())) :: %{atom() => term()}
       def random_base(agent, tags \\ []) do
+        Logger.debug(
+          "Getting random base item with tags matching #{inspect(tags)} from #{__MODULE__}."
+        )
+
         data = get(agent, fn data -> data.base end)
 
         data
@@ -213,6 +229,12 @@ defmodule Roll35Core.Data.Agent do
             ) :: %{atom() => term()} | nil
       def random_enchantment(agent, type, bonus, enchants \\ [], limit \\ [])
           when type in unquote(types) do
+        Logger.debug(
+          "Getting random enchantment of type #{inspect(type)} and level #{inspect(bonus)} excluding #{
+            inspect(enchants)
+          } and limited by #{inspect(limit)} from #{__MODULE__}."
+        )
+
         data = get(agent, fn data -> data.enchantments[type][bonus] end)
 
         possible =
@@ -243,6 +265,12 @@ defmodule Roll35Core.Data.Agent do
 
       @spec random(GenServer.server(), Types.rank(), Types.subrank()) :: %{atom() => term()}
       def random(agent, rank, subrank) when Types.is_rank(rank) and Types.is_subrank(subrank) do
+        Logger.info(
+          "Getting random item of rank #{inspect(rank)} and subrank #{inspect(subrank)} from #{
+            __MODULE__
+          }."
+        )
+
         data = get(agent, fn data -> data[rank][subrank] end)
 
         WeightedRandom.complex(data)
@@ -250,6 +278,8 @@ defmodule Roll35Core.Data.Agent do
 
       @spec tags(GenServer.server()) :: list(atom())
       def tags(agent) do
+        Logger.info("Fetching list of valid tags from #{__MODULE__}.")
+
         get(agent, fn data -> data.tags end)
       end
     end

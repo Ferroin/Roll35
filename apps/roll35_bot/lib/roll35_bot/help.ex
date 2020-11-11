@@ -5,7 +5,18 @@ defmodule Roll35Bot.Help do
 
   use Alchemy.Cogs
 
+  require Logger
+
   Cogs.def help do
+    %Alchemy.Message{
+      author: %Alchemy.User{
+        username: user,
+        discriminator: tag
+      }
+    } = message
+
+    Logger.info("Recieved help command from #{user}##{tag}.")
+
     Cogs.say("""
     General command syntax:
 
@@ -21,10 +32,21 @@ defmodule Roll35Bot.Help do
     * `help`: Get help about a specific command.
 
     For more info on a command, use `/roll35 help <command>`.
+
+    Note that invalid commands will be ignored instead of returning an error.
     """)
   end
 
   Cogs.def help(command) do
+    %Alchemy.Message{
+      author: %Alchemy.User{
+        username: user,
+        discriminator: tag
+      }
+    } = message
+
+    Logger.info("Recieved help #{command} command from #{user}##{tag}.")
+
     cmdinfo = Cogs.all_commands()
 
     if command in Map.keys(cmdinfo) do
