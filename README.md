@@ -14,6 +14,7 @@ related games.
 
 ## Planned Features
 
+* Fix the Adept spell list to reflect the correst set of spells.
 * Allow rolling per-class for scrolls/wands.
 * Add basic usage info to the README.
 * Automatically roll random spells present in items that store spells.
@@ -25,8 +26,7 @@ related games.
 * Respond with embeds containing relevent information about the rolled
   item, including hyperlinks to relevant reference material.
 * Roll specific base weapons or armor as magic items.
-* Roll dice by themselves
-* Rewrite in Elixir to improve performance and scalability.
+* Roll dice by themselves.
 * The ability to enable and disable specific items at runtime (with
   per-server config).
 * Fetch data on specific items directly without rolling for them randomly.
