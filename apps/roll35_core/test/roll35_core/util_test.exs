@@ -156,7 +156,7 @@ defmodule Roll35Core.UtilTest do
           {2, 4},
           {3, 9},
           {-1, 1},
-          {279, 77841}
+          {279, 77_841}
         ],
         fn {arg, expected} ->
           result = Util.squared(arg)
