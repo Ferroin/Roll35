@@ -4,10 +4,18 @@ defmodule Roll35.MixProject do
   def project do
     [
       apps_path: "apps",
-      version: "0.1.0",
+      version: "1.0.0",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      name: "Roll35"
+      name: "Roll35",
+      releases: [
+        roll35_docker: [
+          include_executables: [:unix],
+          applications: [roll35_bot: :permanent, roll35_core: :permanent],
+          strip_beams: false,
+          path: "/app"
+        ]
+      ]
     ]
   end
 
