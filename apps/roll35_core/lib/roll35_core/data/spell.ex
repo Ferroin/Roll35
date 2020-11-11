@@ -201,31 +201,30 @@ defmodule Roll35Core.Data.Spell do
         end
       )
 
-    :ok =
-      SpellDB.exec(@spell_db, """
-      INSERT INTO spells (
-                           name,
-                           #{Enum.join(classes, ", ")},
-                           minimum,
-                           spellpage_arcane,
-                           spellpage_divine,
-                           minimum_cls,
-                           spellpage_arcane_cls,
-                           spellpage_divine_cls
-                         ) VALUES (
-                           '#{sql_escape(entry.name)}',
-                           #{Enum.join(result.levels, ", ")},
-                           #{result.minimum},
-                           #{result.spellpage_arcane},
-                           #{result.spellpage_divine},
-                           '#{result.minimum_cls}',
-                           '#{result.spellpage_arcane_cls}',
-                           '#{result.spellpage_divine_cls}'
-                         );
-      INSERT INTO tagmap (name, tags) VALUES ('#{sql_escape(entry.name)}', '#{entry.school} #{
-        entry.subschool
-      } #{entry.descriptor}');
-      """)
+    """
+    INSERT INTO spells (
+                         name,
+                         #{Enum.join(classes, ", ")},
+                         minimum,
+                         spellpage_arcane,
+                         spellpage_divine,
+                         minimum_cls,
+                         spellpage_arcane_cls,
+                         spellpage_divine_cls
+                       ) VALUES (
+                         '#{sql_escape(entry.name)}',
+                         #{Enum.join(result.levels, ", ")},
+                         #{result.minimum},
+                         #{result.spellpage_arcane},
+                         #{result.spellpage_divine},
+                         '#{result.minimum_cls}',
+                         '#{result.spellpage_arcane_cls}',
+                         '#{result.spellpage_divine_cls}'
+                       );
+    INSERT INTO tagmap (name, tags) VALUES ('#{sql_escape(entry.name)}', '#{entry.school} #{
+      entry.subschool
+    } #{entry.descriptor}');
+    """
   end
 
   @spec prepare_spell_db(list(), integer(), map()) :: :ok | {:error, term()}
@@ -257,14 +256,9 @@ defmodule Roll35Core.Data.Spell do
       VACUUM;
       """)
 
-    # Given that we have to process a _lot_ of spell entries (the official
-    # table provided with the app has almost three thousand entries),
-    # we split them up into chunks to run in parallel.
-    chunksize = div(length(spelldata), System.schedulers_online() + 2) + 1
-
     _ =
       spelldata
-      |> Stream.chunk_every(chunksize)
+      |> Stream.chunk_every(20)
       |> Enum.map(fn item ->
         {classdata, item}
       end)
@@ -275,9 +269,13 @@ defmodule Roll35Core.Data.Spell do
 
           rev_columns = columns |> String.split(" ", trim: true) |> Enum.reverse()
 
-          Enum.each(item, fn entry ->
-            process_spell(entry, rev_columns, classdata, classes)
-          end)
+          sql =
+            Enum.reduce(item, "", fn entry, acc ->
+              cmd = process_spell(entry, rev_columns, classdata, classes)
+              acc <> "/n" <> cmd
+            end)
+
+          SpellDB.exec(@spell_db, sql)
 
           []
         end,
