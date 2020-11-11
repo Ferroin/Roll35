@@ -24,6 +24,9 @@ RUN apk add --no-cache ncurses-libs
 
 ENV LOG_LEVEL="notice"
 
+COPY ./healthcheck.sh /healthcheck.sh
 COPY --from=builder /app /app
 
 CMD [ "/app/bin/roll35_docker", "start" ]
+
+HEALTHCHECK --interval=60s --timeout=10s --retries=3 CMD [ "/healthcheck.sh" ]
