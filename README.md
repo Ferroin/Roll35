@@ -68,17 +68,12 @@ tables. In particular:
   simply did not exist (that is, all the other items keep their
   proper relative proportions), and if there are duplicate values we
   adjust accordingly. All such cases are documented in comments in the
-  [data.yaml](./data.yaml) file.
+  files in `apps/roll35_core/priv`.
 * There are a number of weapons and armors that are only rarely used
   or are logically unlikely to be encountered 'in the wild'. These are
   included in the dataset, but are not enabled by default (so they will
   not appear in rolled items). They can be manually enabled by editing
-  the [data.yaml](./data.yaml) file.
-
-However, it's usable for any system that follows the same general pattern
-that Pathfinder 1e does, it just needs a different data set. See
-[template.yaml](./template.yaml) for a template to use for creating such
-a dataset.
+  the relevant files under `apps/roll35_core/priv`.
 
 Spell data is pulled from the spell database on
 [D20PFSRD](https://www.d20pfsrd), converted to the required format
