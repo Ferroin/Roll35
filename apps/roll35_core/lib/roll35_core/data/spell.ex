@@ -249,6 +249,8 @@ defmodule Roll35Core.Data.Spell do
                           spellpage_divine_cls TEXT);
       CREATE VIRTUAL TABLE tagmap USING fts4(name, tags);
       CREATE TABLE info(id TEXT, data TEXT);
+      PRAGMA journal_mode='MEMORY';
+      PRAGMA synchronous='NORMAL';
       INSERT INTO info (id, data) VALUES ('columns', '#{Enum.join(columns, " ")}');
       INSERT INTO info (id, data) VALUES ('classes', '#{Enum.join(classes, " ")}');
       VACUUM;
@@ -256,7 +258,7 @@ defmodule Roll35Core.Data.Spell do
 
     _ =
       spelldata
-      |> Stream.chunk_every(20)
+      |> Stream.chunk_every(50)
       |> Enum.map(fn item ->
         {classdata, item}
       end)
@@ -271,7 +273,7 @@ defmodule Roll35Core.Data.Spell do
           sql =
             Enum.reduce(item, "", fn entry, acc ->
               cmd = process_spell(entry, rev_columns, classdata, classes)
-              acc <> "/n" <> cmd
+              "#{acc}\n#{cmd}"
             end)
 
           Logger.debug("Writing chunk #{index} to spell database.")
@@ -280,7 +282,7 @@ defmodule Roll35Core.Data.Spell do
 
           []
         end,
-        max_concurrency: System.schedulers_online() + 2,
+        max_concurrency: min(System.schedulers_online(), 8),
         ordered: false,
         timeout: 60_000
       )
@@ -294,6 +296,7 @@ defmodule Roll35Core.Data.Spell do
         Application.fetch_env!(:roll35_core, :spell_db_rev)
       }');
         INSERT INTO info (id, data) VALUES ('tstamp', '#{spelltstamp}');
+        PRAGMA optimize;
       """)
 
     Logger.notice("Finished regenerating spell database.")
