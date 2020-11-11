@@ -18,9 +18,6 @@ related games.
 * Automatically roll random spells present in items that store spells.
 * Roll against arbitrary data tables.
 * Automatically roll for intelligence/special markings on magic items.
-* Finish adding in variant forms for all the magic items that have them:
-  - Defiant Armor
-  - Bane Weapons
 * Respond with embeds containing relevent information about the rolled
   item, including hyperlinks to relevant reference material.
 * Roll specific base weapons or armor as magic items.

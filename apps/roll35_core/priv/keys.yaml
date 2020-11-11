@@ -104,3 +104,100 @@ metamagic:
       - {weight: 20, value: 'Echoing'}
       - {weight: 30, value: 'Maximize'}
       - {weight: 30, value: 'Widen'}
+bane:
+  type: proportional
+  data:
+    - {weight:  5, value: "Abberation"}
+    - {weight:  4, value: "Animal"}
+    - {weight:  7, value: "Construct"}
+    - {weight:  6, value: "Dragon"}
+    - {weight:  5, value: "Fey"}
+    - {weight: 33, value: "Humanoid (<%= Keys.random(:humanoid) %>)"}
+    - {weight:  5, value: "Magical Beast"}
+    - {weight:  5, value: "Monstrous Humanoid"}
+    - {weight:  2, value: "Ooze"}
+    - {weight: 16, value: "Outsider (<%= Keys.random(:outsider) %>)"}
+    - {weight:  2, value: "Plant"}
+    - {weight:  8, value: "Undead"}
+    - {weight:  2, value: "Vermin"}
+humanoid:
+  type: flat
+  data:
+    - "Adlet"
+    - "Aquatic"
+    - "Bahgra"
+    - "Boggard"
+    - "Catfolk"
+    - "Changeling"
+    - "Charau-ka"
+    - "Dark Folk"
+    - "Deep One"
+    - "Derro"
+    - "Dhampir"
+    - "Dwarf"
+    - "Elf"
+    - "Firbolg"
+    - "Giant"
+    - "Gnoll"
+    - "Gnome"
+    - "Goblinoid"
+    - "Grippli"
+    - "Halfling"
+    - "Human"
+    - "Kitsune"
+    - "Kuru"
+    - "Lashunta"
+    - "Mortic"
+    - "Munavri"
+    - "Ogren"
+    - "Ogrillion"
+    - "Orc"
+    - "Ratfolk"
+    - "Reptilian"
+    - "Samsaran"
+    - "Sasquatch"
+    - "Shapechanger"
+    - "Skulk"
+    - "Stormwarden"
+    - "Strix"
+    - "Syrinx"
+    - "Tabaxi"
+    - "Tengu"
+    - "Triaxian"
+    - "Udaeus"
+    - "Vanara"
+    - "Vishkanya"
+    - "Wayang"
+    - "Zoog"
+outsider:
+  type: flat
+  data:
+    - "Aeon"
+    - "Agathion"
+    - "Air"
+    - "Angel"
+    - "Archon"
+    - "Asura"
+    - "Azata"
+    - "Chaotic"
+    - "Daemon"
+    - "Demodand"
+    - "Demon"
+    - "Devil"
+    - "Div"
+    - "Earth"
+    - "Elemental"
+    - "Evil"
+    - "Extraplanar"
+    - "Fire"
+    - "Good"
+    - "Inevitable"
+    - "Kami"
+    - "Kyton"
+    - "Lawful"
+    - "Native"
+    - "Oni"
+    - "Protean"
+    - "Psychopomp"
+    - "Rhakshasa"
+    - "Water"

@@ -521,7 +521,7 @@ enchantments:
       - {weight:  1, name: 'Impervious', cost: 3000}
       - {weight:  1, name: 'Glamered', cost: 4000}
       - {weight:  1, name: 'Allying'}
-      - {weight:  5, name: 'Bane'}
+      - {weight:  5, name: '<%= Keys.random(:bane) %> Bane'}
       - {weight:  1, name: 'Benevolent'}
       - {weight:  1, name: 'Called'}
       - {weight:  2, name: 'Conductive'}
@@ -605,7 +605,7 @@ enchantments:
       - {weight:  1, name: 'Impervious', cost: 3000 }
       - {weight:  1, name: 'Glamered', cost: 4000}
       - {weight:  2, name: 'Allying'}
-      - {weight:  9, name: 'Bane'}
+      - {weight:  9, name: '<%= Keys.random(:bane) %> Bane'}
       - {weight:  1, name: 'Called'}
       - {weight:  3, name: 'Conductive'}
       - {weight:  1, name: 'Conserving', limit: {not: [firearm]}}
@@ -652,7 +652,7 @@ enchantments:
   ammo:
     1:
       - {weight:  5, name: 'Dry Load', cost: 1500, limit: {only: [cartridge]}}
-      - {weight: 11, name: 'Bane'}
+      - {weight: 11, name: '<%= Keys.random(:bane) %> Bane'}
       - {weight:  1, name: 'Conductive'}
       - {weight: 11, name: 'Corrosive', exclude: ['Corrosive Burst']}
       - {weight:  1, name: 'Cruel'}

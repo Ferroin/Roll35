@@ -224,7 +224,7 @@ enchantments:
       - {weight:  7, name: 'Champion'}
       - {weight:  6, name: 'Dastard'}
       - {weight:  7, name: 'Deathless'}
-      - {weight:  6, name: 'Defiant'}
+      - {weight:  6, name: '<%= Keys.random(:bane) %> Defiant'}
       - {weight:  7, name: 'Light Fortification', exclude: ['Moderate Fortification', 'Heavy Fortification']}
       - {weight:  6, name: 'Grinding'}
       - {weight:  6, name: 'Impervious'}
@@ -282,7 +282,7 @@ enchantments:
       - {weight:  9, name: 'Bashing'}
       - {weight:  9, name: 'Blinding'}
       - {weight:  9, name: 'Clangorous'}
-      - {weight:  9, name: 'Defiant'}
+      - {weight:  9, name: '<%= Keys.random(:bane) %> Defiant'}
       - {weight:  9, name: 'Light Fortification', exclude: ['Moderate Fortification', 'Heavy Fortification']}
       - {weight:  9, name: 'Grinding'}
       - {weight:  9, name: 'Impervious'}
