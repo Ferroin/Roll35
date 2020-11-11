@@ -105,7 +105,7 @@ metamagic:
       - {weight: 30, value: 'Maximize'}
       - {weight: 30, value: 'Widen'}
 bane:
-  type: proportional
+  type: flat_proportional
   data:
     - {weight:  5, value: "Abberation"}
     - {weight:  4, value: "Animal"}

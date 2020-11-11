@@ -20,19 +20,26 @@ defmodule Roll35Core.Data.Keys do
         # credo:disable-for-next-line Credo.Check.Warning.UnsafeToAtom
         |> Map.update!(:type, &String.to_atom/1)
         |> (fn item ->
-              if item.type in [:flat_proportional, :grouped_proportional] do
-                Map.update!(item, :data, fn data ->
-                  data
-                  |> Enum.map(fn {key, value} ->
-                    {
-                      key,
-                      Enum.map(value, &Util.atomize_map/1)
-                    }
+              case item.type do
+                :flat_proportional ->
+                  Map.update!(item, :data, fn data ->
+                    Enum.map(data, &Util.atomize_map/1)
                   end)
-                  |> Map.new()
-                end)
-              else
-                item
+
+                :grouped_proportional ->
+                  Map.update!(item, :data, fn data ->
+                    data
+                    |> Enum.map(fn {key, value} ->
+                      {
+                        key,
+                        Enum.map(value, &Util.atomize_map/1)
+                      }
+                    end)
+                    |> Map.new()
+                  end)
+
+                _ ->
+                  item
               end
             end).()
       }

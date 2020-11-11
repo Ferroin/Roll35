@@ -8,9 +8,12 @@ defmodule Roll35Core.Data.KeysTest do
   defp check_key_entry(item) do
     assert is_map(item)
 
-    assert Map.has_key?(item, :weight) and is_integer(item.weight) and item.weight >= 1
+    assert Map.has_key?(item, :weight)
+    assert is_integer(item.weight)
+    assert item.weight >= 1
 
-    assert Map.has_key?(item, :value) and is_binary(item.value)
+    assert Map.has_key?(item, :value)
+    assert is_binary(item.value)
   end
 
   describe "Roll35Core.Data.Keys.load_data/0" do
@@ -34,7 +37,7 @@ defmodule Roll35Core.Data.KeysTest do
 
         assert is_atom(entry.type)
 
-        assert entry.type in [:flat, :grouped, :proportional, :grouped_proportional]
+        assert entry.type in [:flat, :grouped, :flat_proportional, :grouped_proportional]
 
         assert Map.has_key?(entry, :data)
 
@@ -53,7 +56,7 @@ defmodule Roll35Core.Data.KeysTest do
               assert Enum.all?(value, &is_binary/1)
             end)
 
-          :proportional ->
+          :flat_proportional ->
             assert is_list(entry.data)
 
             Enum.each(entry.data, &check_key_entry/1)
