@@ -3,10 +3,12 @@ defmodule Roll35Core.UtilTest do
 
   use ExUnit.Case, async: true
 
+  alias Roll35Core.Util
+
   describe "Roll35Core.Util.atomize_map/1" do
     test "Converts string keys to atoms in maps." do
       data =
-        Roll35Core.Util.atomize_map(%{
+        Util.atomize_map(%{
           "a" => 1,
           "b" => 2
         })
@@ -20,7 +22,7 @@ defmodule Roll35Core.UtilTest do
         b: 2
       }
 
-      data2 = Roll35Core.Util.atomize_map(data1)
+      data2 = Util.atomize_map(data1)
 
       assert data1 |> Map.keys() |> Enum.sort() == data2 |> Map.keys() |> Enum.sort()
     end
@@ -31,7 +33,7 @@ defmodule Roll35Core.UtilTest do
         b: nil
       }
 
-      data2 = Roll35Core.Util.atomize_map(data1)
+      data2 = Util.atomize_map(data1)
 
       assert data1 |> Map.values() |> Enum.sort() == data2 |> Map.values() |> Enum.sort()
     end
@@ -42,14 +44,14 @@ defmodule Roll35Core.UtilTest do
         b: 2
       }
 
-      data2 = Roll35Core.Util.atomize_map(data1)
+      data2 = Util.atomize_map(data1)
 
       assert data1 |> Map.keys() |> Enum.sort() == data2 |> Map.keys() |> Enum.sort()
     end
 
     test "Properly handles nested maps." do
       data1 =
-        Roll35Core.Util.atomize_map(%{
+        Util.atomize_map(%{
           "a" => %{
             "b" => 1,
             c: 2
@@ -91,7 +93,7 @@ defmodule Roll35Core.UtilTest do
         ]
       }
 
-      assert Roll35Core.Util.process_compound_itemlist(data1) == data2
+      assert Util.process_compound_itemlist(data1) == data2
     end
   end
 
@@ -143,7 +145,24 @@ defmodule Roll35Core.UtilTest do
         }
       }
 
-      assert Roll35Core.Util.process_ranked_itemlist(data1) == data2
+      assert Util.process_ranked_itemlist(data1) == data2
+    end
+  end
+
+  describe "Roll35Core.Util.squared/1" do
+    test "Returns correct results." do
+      Enum.each(
+        [
+          {2, 4},
+          {3, 9},
+          {-1, 1},
+          {279, 77841}
+        ],
+        fn {arg, expected} ->
+          result = Util.squared(arg)
+          assert result == expected, "Returned #{expected} instead of #{result}."
+        end
+      )
     end
   end
 end
