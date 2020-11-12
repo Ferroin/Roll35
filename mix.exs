@@ -15,7 +15,8 @@ defmodule Roll35.MixProject do
           strip_beams: false,
           path: "/app"
         ]
-      ]
+      ],
+      aliases: aliases()
     ]
   end
 
@@ -32,6 +33,12 @@ defmodule Roll35.MixProject do
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},
       {:ex_doc, "~> 0.23.0", only: :dev, runtime: false},
       {:git_hooks, "~> 0.5.1", only: :dev, runtime: false}
+    ]
+  end
+
+  defp aliases do
+    [
+      test: "test --no-start"
     ]
   end
 end

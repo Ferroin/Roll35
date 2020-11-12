@@ -11,7 +11,8 @@ defmodule Roll35Core.MixProject do
       lockfile: "../../mix.lock",
       elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      aliases: aliases()
     ]
   end
 
@@ -36,6 +37,12 @@ defmodule Roll35Core.MixProject do
       {:sqlitex, "~> 1.7"},
       {:weighted_random, "~> 0.1.0"},
       {:yaml_elixir, "~> 2.5"}
+    ]
+  end
+
+  defp aliases do
+    [
+      test: "test --no-start"
     ]
   end
 end

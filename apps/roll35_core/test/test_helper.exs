@@ -1,3 +1,6 @@
+Application.load(:roll35_core)
+Application.ensure_all_started(:roll35_core)
+
 ExUnit.start()
 
 defmodule Roll35Core.TestHarness do
