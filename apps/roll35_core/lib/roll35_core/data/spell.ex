@@ -14,6 +14,25 @@ defmodule Roll35Core.Data.Spell do
   require Types
   require Logger
 
+  @spells_schema """
+  CREATE TABLE spells(name TEXT,
+                      <%= Enum.join(classes, " INTEGER, ") %> INTEGER,
+                      minimum INTEGER,
+                      spellpage_arcane INTEGER,
+                      spellpage_divine INTEGER,
+                      minimum_cls TEXT,
+                      spellpage_arcane_cls TEXT,
+                      spellpage_divine_cls TEXT);
+  """
+  @tagmap_schema """
+  CREATE VIRTUAL TABLE tagmap USING fts4(name, tags);
+  """
+  @info_schema """
+  CREATE TABLE info(id TEXT, data TEXT);
+  """
+  @schema_rev Base.encode16(
+                :crypto.hash(:sha256, "#{@spells_schema}\n#{@tagmap_schema}\n#{@info_schema}")
+              )
   @spell_db {:via, Registry, {Roll35Core.Registry, :spell_db}}
   @max_spell_level 9
 
@@ -28,43 +47,33 @@ defmodule Roll35Core.Data.Spell do
     classpath = Path.join(Application.app_dir(:roll35_core, "priv"), "classes.yaml")
 
     spelltstamp = File.stat!(spellpath, time: :posix).mtime
+    clasststamp = File.stat!(classpath, time: :posix).mtime
     classdata = classpath |> YamlElixir.read_from_file!() |> Util.atomize_map()
 
-    case SpellDB.query(@spell_db, "SELECT data FROM info WHERE id='rev';") do
-      {:ok, [%{data: rev}]} ->
-        if rev != Application.fetch_env!(:roll35_core, :spell_db_rev) do
-          Logger.notice("Spell DB revision mismatch, regenerating it from spell data.")
-          spelldata = YamlElixir.read_from_file!(spellpath)
+    try do
+      {:ok, [%{data: rev}]} = SpellDB.query(@spell_db, "SELECT data FROM info WHERE id='rev';")
 
-          :ok = prepare_spell_db(spelldata, spelltstamp, classdata)
-        else
-          case SpellDB.query(@spell_db, "SELECT data FROM info WHERE id='mtime';") do
-            {:ok, [%{data: tstamp}]} ->
-              if Integer.parse(tstamp, 10) != spelltstamp do
-                Logger.notice(
-                  "Spell DB timestamp does not match data, regenerating it from spell data."
-                )
+      {:ok, [%{data: mtime1}]} =
+        SpellDB.query(@spell_db, "SELECT data FROM info WHERE id='spell_mtime''")
 
-                spelldata = YamlElixir.read_from_file!(spellpath)
+      {:ok, [%{data: mtime2}]} =
+        SpellDB.query(@spell_db, "SELECT data FROM info WHERE id='class_mtime''")
 
-                :ok = prepare_spell_db(spelldata, spelltstamp, classdata)
-              else
-                Logger.info("Spell DB revision and timestamp match, using existing DB")
-              end
+      if rev != @schema_rev or Integer.parse(mtime1, 10) != spelltstamp or
+           Integer.parse(mtime2, 10) != clasststamp do
+        Logger.notice("SpellDB out of sync with data, regenerating it from spell data.")
+        spelldata = YamlElixir.read_from_file!(spellpath)
 
-            _ ->
-              Logger.notice("Unable to read spell DB, regenerating it from spell data.")
-              spelldata = YamlElixir.read_from_file!(spellpath)
-
-              :ok = prepare_spell_db(spelldata, spelltstamp, classdata)
-          end
-        end
-
+        :ok = prepare_spell_db(spelldata, spelltstamp, classdata, clasststamp)
+      else
+        Logger.info("SpellDB timestamps and schema match, using existing database.")
+      end
+    rescue
       _ ->
         Logger.notice("Unable to read spell DB, regenerating it from spell data.")
         spelldata = YamlElixir.read_from_file!(spellpath)
 
-        :ok = prepare_spell_db(spelldata, spelltstamp, classdata)
+        :ok = prepare_spell_db(spelldata, spelltstamp, classdata, clasststamp)
     end
 
     %{class: classdata}
@@ -227,8 +236,8 @@ defmodule Roll35Core.Data.Spell do
     """
   end
 
-  @spec prepare_spell_db(list(), integer(), map()) :: :ok | {:error, term()}
-  def prepare_spell_db(spelldata, spelltstamp, classdata) do
+  @spec prepare_spell_db(list(), integer(), map(), integer()) :: :ok | {:error, term()}
+  def prepare_spell_db(spelldata, spelltstamp, classdata, clasststamp) do
     classes = Map.keys(classdata)
     columns = [:minimum, :spellpage_arcane, :spellpage_divine | classes]
 
@@ -239,16 +248,9 @@ defmodule Roll35Core.Data.Spell do
       DROP TABLE IF EXISTS spells;
       DROP TABLE IF EXISTS tagmap;
       DROP TABLE IF EXISTS info;
-      CREATE TABLE spells(name TEXT,
-                          #{Enum.join(classes, " INTEGER, ")} INTEGER,
-                          minimum INTEGER,
-                          spellpage_arcane INTEGER,
-                          spellpage_divine INTEGER,
-                          minimum_cls TEXT,
-                          spellpage_arcane_cls TEXT,
-                          spellpage_divine_cls TEXT);
-      CREATE VIRTUAL TABLE tagmap USING fts4(name, tags);
-      CREATE TABLE info(id TEXT, data TEXT);
+      #{EEx.eval_string(@spells_schema, classes: classes)}
+      #{@tagmap_schema}
+      #{@info_schema}
       PRAGMA journal_mode='MEMORY';
       PRAGMA synchronous='NORMAL';
       INSERT INTO info (id, data) VALUES ('columns', '#{Enum.join(columns, " ")}');
@@ -292,10 +294,9 @@ defmodule Roll35Core.Data.Spell do
 
     :ok =
       SpellDB.exec(@spell_db, """
-        INSERT INTO info (id, data) VALUES ('rev', '#{
-        Application.fetch_env!(:roll35_core, :spell_db_rev)
-      }');
-        INSERT INTO info (id, data) VALUES ('tstamp', '#{spelltstamp}');
+        INSERT INTO info (id, data) VALUES ('rev', '#{@schema_rev}');
+        INSERT INTO info (id, data) VALUES ('spell_mtime', '#{spelltstamp}');
+        INSERT INTO info (id, data) VALUES ('class_mtime', '#{clasststamp}');
         PRAGMA optimize;
       """)
 
