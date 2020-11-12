@@ -54,9 +54,9 @@ defmodule Roll35Core.Data.Keys do
   def random(key) when is_atom(key) do
     Logger.debug("Getting random value from key #{inspect(key)}.")
 
-    data = Map.fetch!(get({:via, Registry, {Roll35Core.Registry, :keys}}, & &1), key)
+    data = get({:via, Registry, {Roll35Core.Registry, :keys}}, & &1[key].data)
 
-    if is_map(data[0]) do
+    if is_map(Enum.at(data, 0)) do
       WeightedRandom.complex(data)
     else
       Enum.random(data)
@@ -72,11 +72,10 @@ defmodule Roll35Core.Data.Keys do
 
     data =
       {:via, Registry, {Roll35Core.Registry, :keys}}
-      |> get(& &1)
-      |> Map.fetch!(key)
+      |> get(& &1[key].data)
       |> Map.fetch!(subkey)
 
-    if is_map(data[0]) do
+    if is_map(Enum.at(data, 0)) do
       WeightedRandom.complex(data)
     else
       Enum.random(data)
