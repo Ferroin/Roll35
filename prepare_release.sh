@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ "$(git status --porcelain | wc -l)" -ne 0 ] ; then
+    echo "You have uncommitted changes in the working directory. Please discard or commit them before attempting to prepare a release."
+    exit 1
+fi
+
 base="$(git describe --tags --abbrev=0)"
 bot_vsn="$(grep 'version: ".*",' apps/roll35_bot/mix.exs | cut -d ':' -f 2 | tr -d ' ,')"
 core_vsn="$(grep 'version: ".*",' apps/roll35_core/mix.exs | cut -d ':' -f 2 | tr -d ' ,')"
@@ -27,3 +32,7 @@ echo "Enter new version number for project (current version: ${project_vsn}):"
 read
 
 ex -s -c "%s/version: ${project_vsn},/version: \"${REPLY}\",/" -c "wq" mix.exs
+
+git commit -a -m "Version ${REPLY} release."
+
+git tag v${REPLY}
