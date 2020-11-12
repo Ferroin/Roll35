@@ -79,9 +79,9 @@ defmodule Roll35Core.MagicItem do
       Enum.reduce_while(
         item.enchants,
         {item_cost, [], item.bonus, base_cost, MapSet.new(base.tags)},
-        fn item, {_item_cost, enchants, enchant_bonus, extra_cost, tags} ->
+        fn ench, {_item_cost, enchants, enchant_bonus, extra_cost, tags} ->
           enchantment =
-            call(:armor, :random_enchantment, [base.type, item, enchants, MapSet.to_list(tags)])
+            call(type, :random_enchantment, [base.type, ench, enchants, MapSet.to_list(tags)])
 
           if enchantment == nil do
             {:halt, {nil, nil, nil, nil, nil}}
@@ -90,7 +90,7 @@ defmodule Roll35Core.MagicItem do
               if Map.has_key?(enchantment, :cost) do
                 {enchant_bonus, extra_cost + enchantment.cost}
               else
-                {enchant_bonus + item, extra_cost}
+                {enchant_bonus + ench, extra_cost}
               end
 
             new_tags =
