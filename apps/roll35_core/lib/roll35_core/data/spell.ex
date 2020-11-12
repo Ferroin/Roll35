@@ -328,12 +328,27 @@ defmodule Roll35Core.Data.Spell do
   end
 
   @impl GenServer
+  def handle_call(:get_classes, _from, state) do
+    {:reply, {:ok, Map.keys(state.class)}}
+  end
+
+  @impl GenServer
   def handle_call({:get_class, cls}, _from, state) do
     if Map.has_key?(state.class, cls) do
       {:reply, {:ok, state.class[cls]}, state}
     else
       {:reply, {:error, "Not a known class."}, state}
     end
+  end
+
+  @doc """
+  Get a list of known class identifiers.
+  """
+  @spec get_classes(GenServer.server()) :: [atom(), ...]
+  def get_classes(server) do
+    {:ok, ret} = GenServer.call(server, :get_classes, 15_000)
+
+    ret
   end
 
   @doc """
@@ -380,10 +395,9 @@ defmodule Roll35Core.Data.Spell do
 
     Logger.debug("Rolling random spell with parameters #{inspect({level, opt_class, tag})}.")
 
-    {:ok, [%{data: valid_cls_result}]} =
-      GenServer.call(server, {:query, "SELECT data FROM info WHERE id='classes';", []}, 5_000)
+    {:ok, valid_cls_result} = GenServer.call(server, :get_classes, 5_000)
 
-    valid_classes = String.split(valid_cls_result, " ")
+    valid_classes = Enum.each(valid_cls_result, &Atom.to_string/1)
 
     {:ok, [%{data: valid_col_result}]} =
       GenServer.call(server, {:query, "SELECT data FROM info WHERE id='columns';", []}, 5_000)
