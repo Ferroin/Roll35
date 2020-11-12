@@ -9,14 +9,15 @@ config :git_hooks,
   hooks: [
     pre_commit: [
       tasks: [
-        "mix format",
-        "mix docs",
+        "mix format --check-formatted",
         "mix compile --force",
         "mix credo --format oneline"
       ]
     ],
     pre_push: [
       tasks: [
+        "mix format --check-formatted",
+        "mix compile --force",
         "mix credo --strict --format oneline",
         "mix test"
       ]
