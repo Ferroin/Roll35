@@ -54,6 +54,38 @@ so for mistyped command prefixes.
 The bot supports responding to DMs, but still requires the command prefix
 for them.
 
+## Running the Bot
+
+Roll35 is designed to be packaged as and run from a Docker image. Images
+built from the official repo with the standard data set are available on
+[Docker Hub](https://hub.docker.com/repository/docker/ahferroin7/roll35).
+
+The following environment variables are used by the image:
+
+* `DISCORD_TOKEN`: Specifies the Discord bot account token to use
+  to connect to Discord. See the excellent [guide provided by
+  `discord.py`](https://discordpy.readthedocs.io/en/latest/discord.html)
+  for info on how to create a bot account and invite it to your server.
+* `LOG_LEVEL`: Specifies the minimum severity level of log messages to
+  produce. Valid values (in descending order of severity) are:
+  `emergency`, `alert`, `critical`, `error`, `warning`, `notice`,
+  `info`, `debuga`. It is not recommended to set this any higher than
+  `error`. Note that debug logging will log the commands the bot recieves,
+  including the user ID of the users who sent them. The default level is
+  `notice`.
+* `DATA_PATH`: Specifies a custom path to use for persistent data. This
+  defaults to `/data`, which is inherently configured as a volume (see below).
+
+In addition to the above, the container by default creats a single
+volume at `/data` inside the container to store persitent data. This
+can be overridden when starting the container if so desired. Currently
+it only stores the spell database that gets generated at startup, but
+it will likely be used for other things in the future.
+
+Note that Roll35 needs _at minimum_ 128M of RAM to operate reliably. If
+you expect particularly active usage or have it joined to a lot of
+servers, it will need more than this.
+
 ## Data Sets
 
 Roll35 comes bundled with a usable dataset for Pathfinder
