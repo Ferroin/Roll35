@@ -7,6 +7,20 @@ defmodule Roll35Core.Application do
 
   @impl Application
   def start(_type, _args) do
+    Enum.each(
+      [
+        "db"
+      ],
+      fn item ->
+        path = Path.join(Application.fetch_env!(:roll35_core, :data_path), "db")
+
+        # credo:disable-for-next-line Credo.Check.Warning.UnsafeToAtom
+        Application.put_env(:roll35_core, String.to_atom("#{item}_path"), path, persistent: true)
+
+        File.mkdir_p!(path)
+      end
+    )
+
     children = [
       # Registry
       {Registry, keys: :unique, name: Roll35Core.Registry},

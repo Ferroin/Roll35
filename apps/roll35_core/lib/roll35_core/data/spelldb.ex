@@ -24,7 +24,7 @@ defmodule Roll35Core.Data.SpellDB do
   def init(_) do
     Process.flag(:trap_exit, true)
 
-    path = Path.join(Application.app_dir(:roll35_core), "spells.sqlite")
+    path = Path.join(Application.fetch_env!(:roll35_core, :db_path), "spells.sqlite3")
 
     {:ok, conn} = Sqlitex.open(path)
 

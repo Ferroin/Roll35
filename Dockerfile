@@ -23,6 +23,9 @@ RUN mkdir -p /app
 RUN apk add --no-cache ncurses-libs
 
 ENV LOG_LEVEL="notice"
+ENV DATA_PATH="/data"
+
+VOLUME [ "/data" ]
 
 COPY ./healthcheck.sh /healthcheck.sh
 COPY --from=builder /app /app
