@@ -91,3 +91,23 @@ Spell data is pulled from the spell database on
 [D20PFSRD](https://www.d20pfsrd), converted to the required format
 using the `convert_spells_csv.py` script bundled with the app, with a
 few manual fixes to the dataset (mostly correcting tags).
+
+## Versions
+
+The bot code and core code are versioned separately, and the overall
+project has it’s own version as well.
+
+The bot and core code both use standard semantic versioning rules. The
+major version increases any time a breaking API change is made, the
+minor version increases any time a new feature is added, and the patch
+number changes any time a bug fix, optimization, or other non-feature
+change is made.
+
+The overall version of the project also uses semantic versioning, but
+it only increases the major and minor versions for **user visible**
+changes. In other words, a change that only alters the API between
+the bot and core code without resulting in any user-visible changes
+will translate to a patch release at the project level, not a major
+relese. Additionally, some non-breaking changes at the project level
+may result in a major release at the project level simply because they
+are so impactful that they warrant a major release.

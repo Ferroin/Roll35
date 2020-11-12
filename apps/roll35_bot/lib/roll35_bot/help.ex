@@ -30,6 +30,7 @@ defmodule Roll35Bot.Help do
     * `magicitem`: Roll a random magic item.
     * `ping`: Respond with ‘pong’ if the bot is alive.
     * `help`: Get help about a specific command.
+    * `version`: Print out version info for the bot.
 
     For more info on a command, use `/roll35 help <command>`.
 
