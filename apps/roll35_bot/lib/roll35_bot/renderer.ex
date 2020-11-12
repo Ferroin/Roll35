@@ -1,6 +1,6 @@
-defmodule Roll35Core.Renderer do
+defmodule Roll35Bot.Renderer do
   @moduledoc """
-  Rendering functions for Roll35.
+  Rendering functions for bot responses.
   """
 
   alias Roll35Core.Data.Keys

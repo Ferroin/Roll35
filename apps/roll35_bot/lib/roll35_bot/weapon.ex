@@ -5,8 +5,8 @@ defmodule Roll35Bot.Weapon do
 
   use Alchemy.Cogs
 
+  alias Roll35Bot.Renderer
   alias Roll35Core.Data.Weapon
-  alias Roll35Core.Renderer
 
   require Logger
 

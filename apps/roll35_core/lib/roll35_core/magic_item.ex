@@ -3,7 +3,6 @@ defmodule Roll35Core.MagicItem do
   Code to actually roll for (and dispatch rendering of) a magic item.
   """
 
-  alias Roll35Core.Renderer
   alias Roll35Core.Util
 
   require Logger
@@ -126,11 +125,11 @@ defmodule Roll35Core.MagicItem do
 
       true ->
         {:ok,
-         Renderer.format(%{
+         %{
            name:
              "+#{item.bonus} #{enchants |> Enum.map(& &1.name) |> Enum.join(" ")} #{base.name}",
            cost: cost
-         })}
+         }}
     end
   end
 
@@ -257,7 +256,7 @@ defmodule Roll35Core.MagicItem do
         if Map.has_key?(item, :reroll) do
           reroll(item.reroll)
         else
-          {:ok, Renderer.format(item)}
+          {:ok, item}
         end
     end
   end

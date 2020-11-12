@@ -5,6 +5,7 @@ defmodule Roll35Bot.MagicItem do
 
   use Alchemy.Cogs
 
+  alias Roll35Bot.Renderer
   alias Roll35Core.MagicItem
   alias Roll35Core.Types
 
@@ -132,7 +133,10 @@ defmodule Roll35Bot.MagicItem do
           {:error, "Only slotless items have a least subrank."}
 
         true ->
-          MagicItem.roll(rank, subrank, category, slot)
+          case MagicItem.roll(rank, subrank, category, slot) do
+            {:ok, item} -> Renderer.format(item)
+            {:error, msg} -> {:error, msg}
+          end
       end
     else
       {:error, "Unrecognized parameters #{Enum.join(MapSet.to_list(invalid_params), ", ")}."}

@@ -5,8 +5,8 @@ defmodule Roll35Bot.Armor do
 
   use Alchemy.Cogs
 
+  alias Roll35Bot.Renderer
   alias Roll35Core.Data.Armor
-  alias Roll35Core.Renderer
 
   require Logger
 
