@@ -57,8 +57,36 @@ defmodule Roll35Core.MagicItem do
   defp server(:wondrous), do: {:via, Registry, {Roll35Core.Registry, :wondrous}}
   defp server(:wrists), do: {:via, Registry, {Roll35Core.Registry, :wrists}}
 
+  @spec call(atom(), atom(), [term()]) :: term()
   defp call(target, function, opts \\ []) do
     apply(modname(target), function, [server(target) | opts])
+  end
+
+  @spec finalize_roll(map()) :: {:ok, String.t()} | {:error, term()}
+  defp finalize_roll(item) do
+    case item do
+      {:error, msg} ->
+        {:error, msg}
+
+      {:ok, msg} ->
+        {:ok, msg}
+
+      item ->
+        if Map.has_key?(item, :reroll) do
+          reroll(item.reroll)
+        else
+          {:ok, item}
+        end
+    end
+  end
+
+  @spec bonus_costs(:armor | :weapon, map()) :: {non_neg_integer(), non_neg_integer()}
+  defp bonus_costs(type, item) do
+    cond do
+      type == :armor -> {150, 1000}
+      type == :weapon and :double in item.tags -> {600, 4000}
+      type == :weapon -> {300, 2000}
+    end
   end
 
   @doc """
@@ -186,7 +214,7 @@ defmodule Roll35Core.MagicItem do
         category == :wondrous ->
           call(extra, :random, [rank, subrank])
 
-        category == :armor ->
+        category in [:armor, :weapon] ->
           pattern = call(category, :random, [rank, subrank])
 
           if Map.has_key?(pattern, :specific) do
@@ -198,34 +226,13 @@ defmodule Roll35Core.MagicItem do
           else
             base = call(:armor, :random_base, [])
 
+            {masterwork, bonus_cost} = bonus_costs(:category, base)
+
             assemble_magic_item(
-              :armor,
-              pattern,
-              base,
-              1000,
-              150
-            )
-          end
-
-        category == :weapon ->
-          pattern = call(category, :random, [rank, subrank])
-
-          if Map.has_key?(pattern, :specific) do
-            call(
               category,
-              :random_specific,
-              Enum.map(pattern.specific, fn i -> String.to_existing_atom(i) end)
-            )
-          else
-            base = call(:weapon, :random_base, [])
-            cost_mult = if :double in base.tags, do: 8000, else: 4000
-            masterwork = if :double in base.tags, do: 600, else: 300
-
-            assemble_magic_item(
-              :weapon,
               pattern,
               base,
-              cost_mult,
+              bonus_cost,
               masterwork
             )
           end
@@ -245,19 +252,6 @@ defmodule Roll35Core.MagicItem do
           {:error, "Invalid item category."}
       end
 
-    case item do
-      {:error, msg} ->
-        {:error, msg}
-
-      {:ok, msg} ->
-        {:ok, msg}
-
-      item ->
-        if Map.has_key?(item, :reroll) do
-          reroll(item.reroll)
-        else
-          {:ok, item}
-        end
-    end
+    finalize_roll(item)
   end
 end

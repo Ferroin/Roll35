@@ -79,6 +79,33 @@ defmodule Roll35Core.Data.Spell do
     %{class: classdata}
   end
 
+  defp eval_minimum(level, cls, minimum, _minimum_cls) when level != "NULL" and level < minimum,
+    do: {level, cls}
+
+  defp eval_minimum(level, cls, minimum, _minimum_cls) when level != "NULL" and minimum == "NULL",
+    do: {level, cls}
+
+  defp eval_minimum(_level, _cls, minimum, minimum_cls), do: {minimum, minimum_cls}
+
+  defp eval_spellpage(_level, _cls, spellpage, spellpage_cls, spellpage_fixed, _cls_match)
+       when spellpage_fixed == true,
+       do: {spellpage, spellpage_cls, true}
+
+  defp eval_spellpage(level, cls, _spellpage, _spellpage_cls, _spellpage_fixed, cls_match)
+       when cls_match == true and level != "NULL",
+       do: {level, cls, true}
+
+  defp eval_spellpage(level, cls, spellpage, _spellpage_cls, _spellpage_fixed, _cls_match)
+       when level != "NULL" and spellpage < level,
+       do: {level, cls, false}
+
+  defp eval_spellpage(level, cls, spellpage, _spellpage_cls, _spellpage_fixed, _cls_match)
+       when level != "NULL" and spellpage == "NULL",
+       do: {level, cls, false}
+
+  defp eval_spellpage(_level, _cls, spellpage, spellpage_cls, spellpage_fixed, _cls_match),
+    do: {spellpage, spellpage_cls, spellpage_fixed}
+
   defp process_spell(spell, rev_columns, classdata, classes) do
     entry = Util.atomize_map(spell)
 
@@ -149,51 +176,34 @@ defmodule Roll35Core.Data.Spell do
                 level
             end
 
-          {minimum, minimum_cls} =
-            cond do
-              level != "NULL" and level < acc.minimum -> {level, cls}
-              level != "NULL" and acc.minimum == "NULL" -> {level, cls}
-              true -> {acc.minimum, acc.minimum_cls}
-            end
+          {minimum, minimum_cls} = eval_minimum(level, cls, acc.minimum, acc.minimum_cls)
 
           {spellpage_arcane, spellpage_arcane_cls, spellpage_arcane_fixed} =
-            cond do
-              acc.spellpage_arcane_fixed ->
-                {acc.spellpage_arcane, acc.spellpage_arcane_cls, true}
-
-              cls == "wizard" and level != "NULL" ->
-                {level, "wizard", true}
-
-              classdata[cls].type == "arcane" and level != "NULL" and
-                  acc.spellpage_arcane < level ->
-                {level, cls, false}
-
-              classdata[cls].type == "arcane" and level != "NULL" and
-                  acc.spellpage_arcane == "NULL" ->
-                {level, cls, false}
-
-              true ->
-                {acc.spellpage_arcane, acc.spellpage_arcane_cls, acc.spellpage_arcane_fixed}
+            if classdata[cls].type == "arcane" do
+              eval_spellpage(
+                level,
+                cls,
+                acc.spellpage_arcane,
+                acc.spellpage_arcane_cls,
+                acc.spellpage_arcane_fixed,
+                cls == "wizard"
+              )
+            else
+              {acc.spellpage_arcane, acc.spellpage_arcane_cls, acc.spellpage_arcane_fixed}
             end
 
           {spellpage_divine, spellpage_divine_cls, spellpage_divine_fixed} =
-            cond do
-              acc.spellpage_divine_fixed ->
-                {acc.spellpage_divine, acc.spellpage_divine_cls, true}
-
-              cls == "cleric" and level != "NULL" ->
-                {level, "cleric", true}
-
-              classdata[cls].type == "divine" and level != "NULL" and
-                  acc.spellpage_divine < level ->
-                {level, cls, false}
-
-              classdata[cls].type == "divine" and level != "NULL" and
-                  acc.spellpage_divine == "NULL" ->
-                {level, cls, false}
-
-              true ->
-                {acc.spellpage_divine, acc.spellpage_divine_cls, acc.spellpage_divine_fixed}
+            if classdata[cls].type == "divine" do
+              eval_spellpage(
+                level,
+                cls,
+                acc.spellpage_divine,
+                acc.spellpage_divine_cls,
+                acc.spellpage_divine_fixed,
+                cls == "cleric"
+              )
+            else
+              {acc.spellpage_divine, acc.spellpage_divine_cls, acc.spellpage_divine_fixed}
             end
 
           %{
@@ -351,6 +361,47 @@ defmodule Roll35Core.Data.Spell do
     ret
   end
 
+  defp get_spells(server, level, cls) when level != nil do
+    {:ok, results} =
+      GenServer.call(
+        server,
+        {:query, "SELECT * FROM spells WHERE #{cls} = #{level};", []},
+        15_000
+      )
+
+    results
+  end
+
+  defp get_spells(server, level, cls) when level == nil do
+    {:ok, results} =
+      GenServer.call(
+        server,
+        {:query, "SELECT * FROM spells WHERE #{cls} IS NOT NULL;", []},
+        15_000
+      )
+
+    results
+  end
+
+  defp get_tagged(server, tag) when tag != nil do
+    {:ok, results} =
+      GenServer.call(
+        server,
+        {:query, "SELECT name FROM tagmap WHERE tags MATCH '#{tag}';", []},
+        15_000
+      )
+
+    Enum.map(results, fn item -> item.name end)
+  end
+
+  defp get_tagged(_server, tag) when tag == nil, do: nil
+
+  defp filter_tagged(base, tagged) when tagged != nil do
+    Enum.filter(base, fn item -> item.name in tagged end)
+  end
+
+  defp filter_tagged(base, tagged) when tagged == nil, do: base
+
   @doc """
   Select a random spell.
 
@@ -438,47 +489,9 @@ defmodule Roll35Core.Data.Spell do
         {:error, "Invalid spell level specified."}
 
       true ->
-        base_list =
-          if level != nil do
-            {:ok, results} =
-              GenServer.call(
-                server,
-                {:query, "SELECT * FROM spells WHERE #{class} = #{level};", []},
-                15_000
-              )
-
-            results
-          else
-            {:ok, results} =
-              GenServer.call(
-                server,
-                {:query, "SELECT * FROM spells WHERE #{class} IS NOT NULL;", []},
-                15_000
-              )
-
-            results
-          end
-
-        tag_filter =
-          if tag != nil do
-            {:ok, results} =
-              GenServer.call(
-                server,
-                {:query, "SELECT name FROM tagmap WHERE tags MATCH '#{tag}';", []},
-                15_000
-              )
-
-            Enum.map(results, fn item -> item.name end)
-          else
-            nil
-          end
-
-        possible =
-          if tag_filter != nil do
-            Enum.filter(base_list, fn item -> item.name in tag_filter end)
-          else
-            base_list
-          end
+        base_list = get_spells(server, level, class)
+        tag_filter = get_tagged(server, tag)
+        possible = filter_tagged(base_list, tag_filter)
 
         if Enum.empty?(possible) do
           {:error, "No spells found for the requested parameters."}
