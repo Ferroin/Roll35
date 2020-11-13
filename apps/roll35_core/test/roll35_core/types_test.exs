@@ -122,4 +122,100 @@ defmodule Roll35Core.TypesTest do
              end)
     end
   end
+
+  describe "Roll35Core.Types.category_from_string/1" do
+    test "Properly handles valid values." do
+      Enum.each(Roll35Core.Types.categories(), fn i ->
+        assert Roll35Core.Types.category_from_string(Atom.to_string(i)) == i
+      end)
+    end
+
+    test "Properly fails for invalid values." do
+      Enum.each(["ζ", "1"], fn i ->
+        assert_raise(ArgumentError, fn ->
+          Roll35Core.Types.category_from_string(i)
+        end)
+      end)
+    end
+  end
+
+  describe "Roll35Core.Types.rank_from_string/1" do
+    test "Properly handles valid values." do
+      Enum.each(Roll35Core.Types.ranks(), fn i ->
+        assert Roll35Core.Types.rank_from_string(Atom.to_string(i)) == i
+      end)
+    end
+
+    test "Properly fails for invalid values." do
+      Enum.each(["ζ", "1"], fn i ->
+        assert_raise(ArgumentError, fn ->
+          Roll35Core.Types.rank_from_string(i)
+        end)
+      end)
+    end
+  end
+
+  describe "Roll35Core.Types.limited_rank_from_string/1" do
+    test "Properly handles valid values." do
+      Enum.each(Roll35Core.Types.limited_ranks(), fn i ->
+        assert Roll35Core.Types.limited_rank_from_string(Atom.to_string(i)) == i
+      end)
+    end
+
+    test "Properly fails for invalid values." do
+      Enum.each(["ζ", "1"], fn i ->
+        assert_raise(ArgumentError, fn ->
+          Roll35Core.Types.limited_rank_from_string(i)
+        end)
+      end)
+    end
+  end
+
+  describe "Roll35Core.Types.subrank_from_string/1" do
+    test "Properly handles valid values." do
+      Enum.each(Roll35Core.Types.subranks(), fn i ->
+        assert Roll35Core.Types.subrank_from_string(Atom.to_string(i)) == i
+      end)
+    end
+
+    test "Properly fails for invalid values." do
+      Enum.each(["ζ", "1"], fn i ->
+        assert_raise(ArgumentError, fn ->
+          Roll35Core.Types.subrank_from_string(i)
+        end)
+      end)
+    end
+  end
+
+  describe "Roll35Core.Types.full_subrank_from_string/1" do
+    test "Properly handles valid values." do
+      Enum.each(Roll35Core.Types.full_subranks(), fn i ->
+        assert Roll35Core.Types.full_subrank_from_string(Atom.to_string(i)) == i
+      end)
+    end
+
+    test "Properly fails for invalid values." do
+      Enum.each(["ζ", "1"], fn i ->
+        assert_raise(ArgumentError, fn ->
+          Roll35Core.Types.full_subrank_from_string(i)
+        end)
+      end)
+    end
+  end
+
+  describe "Roll35Core.Types.slot_from_string/1" do
+    test "Properly handles valid values." do
+      Enum.each(Roll35Core.Types.slots(), fn i ->
+        assert Roll35Core.Types.slot_from_string(Atom.to_string(i)) == i
+      end)
+    end
+
+    test "Properly fails for invalid values." do
+      Enum.each(["ζ", "1"], fn i ->
+        assert_raise(ArgumentError, fn ->
+          Roll35Core.Types.slot_from_string(i)
+        end)
+      end)
+    end
+  end
 end

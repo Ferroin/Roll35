@@ -98,7 +98,7 @@ defmodule Roll35Core.UtilTest do
   end
 
   describe "Roll35Core.Util.process_ranked_itemlist/1" do
-    test "Correctly Transforms it’s input" do
+    test "Correctly transforms it’s input" do
       data1 = %{
         medium: %{
           least: [
@@ -146,6 +146,78 @@ defmodule Roll35Core.UtilTest do
       }
 
       assert Util.process_ranked_itemlist(data1) == data2
+    end
+  end
+
+  describe "Roll35Core.Util.process_subranked_list/1" do
+    test "Correctly transforms full sub-ranked input." do
+      data1 = %{
+        least: [
+          %{weight: 1, name: "a", cost: 10},
+          %{weight: 2, name: "b", cost: 20}
+        ],
+        lesser: [
+          %{weight: 1, name: "c"}
+        ],
+        greater: [
+          %{weight: 1, name: "d"}
+        ]
+      }
+
+      data2 = %{
+        least: [
+          %{weight: 1, value: %{name: "a", cost: 10}},
+          %{weight: 2, value: %{name: "b", cost: 20}}
+        ],
+        lesser: [
+          %{weight: 1, value: %{name: "c"}}
+        ],
+        greater: [
+          %{weight: 1, value: %{name: "d"}}
+        ]
+      }
+
+      assert Util.process_subranked_itemlist(data1) == data2
+    end
+
+    test "Correctly transforms normal sub-ranked input." do
+      data1 = %{
+        lesser: [
+          %{weight: 1, name: "a", cost: 10},
+          %{weight: 2, name: "b", cost: 20}
+        ],
+        greater: [
+          %{weight: 1, name: "c"}
+        ]
+      }
+
+      data2 = %{
+        lesser: [
+          %{weight: 1, value: %{name: "a", cost: 10}},
+          %{weight: 2, value: %{name: "b", cost: 20}}
+        ],
+        greater: [
+          %{weight: 1, value: %{name: "c"}}
+        ]
+      }
+
+      assert Util.process_subranked_itemlist(data1) == data2
+    end
+  end
+
+  describe "Roll35Core.Util.generate_tags_entry/1" do
+    test "Properly produces a list of tags in the right place." do
+      data = %{
+        base: [
+          %{tags: [:a, :b]},
+          %{tags: [:a, :c]},
+          %{tags: [:d, :e]}
+        ]
+      }
+
+      tags = [:a, :b, :c, :d, :e]
+
+      assert Util.generate_tags_entry(data).tags == tags
     end
   end
 
