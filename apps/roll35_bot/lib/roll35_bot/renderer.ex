@@ -19,8 +19,8 @@ defmodule Roll35Bot.Renderer do
     Logger.debug("Rendering \"#{name}\".")
 
     name
-    |> EEx.eval_string()
-    |> EEx.eval_string()
+    |> EEx.eval_string(key: &Keys.random/1, compound_key: &Keys.random/2)
+    |> EEx.eval_string(key: &Keys.random/1, compound_key: &Keys.random/2)
   end
 
   @doc """
@@ -41,8 +41,8 @@ defmodule Roll35Bot.Renderer do
          ) do
       {:ok, item_spell} ->
         name
-        |> EEx.eval_string(spell: item_spell)
-        |> EEx.eval_string()
+        |> EEx.eval_string(spell: item_spell, key: &Keys.random/1, compound_key: &Keys.random/2)
+        |> EEx.eval_string(key: &Keys.random/1, compound_key: &Keys.random/2)
 
       {:error, msg} ->
         Logger.error("Unable to generate spell for #{inspect(spell)}, call returned #{msg}.")

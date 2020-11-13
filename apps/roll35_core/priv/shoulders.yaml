@@ -10,7 +10,7 @@ minor:
     - {weight:  6, cost:   1500, name: 'Quickchange Cloak'}
     - {weight:  6, cost:   1800, name: 'Cowardly Crouching Cloak'}
     - {weight: 18, cost:   2500, name: 'Cloak of Elvenkind'}
-    - {weight:  6, cost:   2500, name: 'Cloak of the Hedge Wizard (<%= Keys.random(:school) %>)'}
+    - {weight:  6, cost:   2500, name: 'Cloak of the Hedge Wizard (<%= key.(:school) %>)'}
     - {weight:  5, cost:   2600, name: 'Cloak of Fiery Vanishing'}
     - {weight:  9, cost:   2800, name: 'Cloak of Fangs'}
     - {weight:  3, cost:   3000, name: 'Pauldrons of the Serpent'}

@@ -360,7 +360,7 @@ base:
   # - {cost:   40: type:   ammo, tags: [firearm, cartridge], name: 'Dragon’s Breath Cartridge', count: 1}
   # - {cost:   40: type:   ammo, tags: [firearm, cartridge], name: 'Entangling Shot Cartridge', count: 1}
   # - {cost:   10: type:   ammo, tags: [firearm, cartridge], name: 'Flare Cartridge', count: 1}
-  # - {cost:   12: type:   ammo, tags: [firearm, cartridge], name: 'Paper Cartridge <%= Keys.random(:firearm_ammo) %>', count: 1}
+  # - {cost:   12: type:   ammo, tags: [firearm, cartridge], name: 'Paper Cartridge <%= key.(:firearm_ammo) %>', count: 1}
   # - {cost:   12: type:   ammo, tags: [firearm, cartridge], name: 'Salt Shot Cartridge', count: 1}
   # - {cost:   30, type:   ammo, tags: [firearm], name: 'Firearm Bullets (30)', count: 30}
   # - {cost:   15, type:   ammo, tags: [firearm, cartridge], name: 'Metal Cartridge', count: 1}
@@ -521,7 +521,7 @@ enchantments:
       - {weight:  1, name: 'Impervious', cost: 3000}
       - {weight:  1, name: 'Glamered', cost: 4000}
       - {weight:  1, name: 'Allying'}
-      - {weight:  5, name: '<%= Keys.random(:bane) %> Bane'}
+      - {weight:  5, name: '<%= key.(:bane) %> Bane'}
       - {weight:  1, name: 'Benevolent'}
       - {weight:  1, name: 'Called'}
       - {weight:  2, name: 'Conductive'}
@@ -605,7 +605,7 @@ enchantments:
       - {weight:  1, name: 'Impervious', cost: 3000 }
       - {weight:  1, name: 'Glamered', cost: 4000}
       - {weight:  2, name: 'Allying'}
-      - {weight:  9, name: '<%= Keys.random(:bane) %> Bane'}
+      - {weight:  9, name: '<%= key.(:bane) %> Bane'}
       - {weight:  1, name: 'Called'}
       - {weight:  3, name: 'Conductive'}
       - {weight:  1, name: 'Conserving', limit: {not: [firearm]}}
@@ -652,7 +652,7 @@ enchantments:
   ammo:
     1:
       - {weight:  5, name: 'Dry Load', cost: 1500, limit: {only: [cartridge]}}
-      - {weight: 11, name: '<%= Keys.random(:bane) %> Bane'}
+      - {weight: 11, name: '<%= key.(:bane) %> Bane'}
       - {weight:  1, name: 'Conductive'}
       - {weight: 11, name: 'Corrosive', exclude: ['Corrosive Burst']}
       - {weight:  1, name: 'Cruel'}

@@ -4,9 +4,9 @@ minor:
     - {weight: 60, cost:   1000, name: 'Phylactery of Faithfulness'}
     - {weight: 40, cost:   3600, name: 'Dead Man’s Headband'}
   greater:
-    - {weight: 27, cost:   4000, name: 'Headband of <%= Keys.random(:stat_headband) %> +2'}
-    - {weight:  6, cost:   4500, name: 'Headband of Aerial Agility +2 (<%= Keys.random(:mental_stat) %>)'}
-    - {weight:  6, cost:   4500, name: 'Shifter’s Headband +2 (<%= Keys.random(:mental_stat) %>)'}
+    - {weight: 27, cost:   4000, name: 'Headband of <%= key.(:stat_headband) %> +2'}
+    - {weight:  6, cost:   4500, name: 'Headband of Aerial Agility +2 (<%= key.(:mental_stat) %>)'}
+    - {weight:  6, cost:   4500, name: 'Shifter’s Headband +2 (<%= key.(:mental_stat) %>)'}
     - {weight:  6, cost:   5100, name: 'Headband of Ponderous Recollection'}
     - {weight:  6, cost:   5400, name: 'Headband of Ki Focus'}
     - {weight:  7, cost:   5600, name: 'Headband of Unbreakable Resolve'}
@@ -19,16 +19,16 @@ medium:
   lesser:
     - {weight:  6, cost:   8000, name: 'Headband of havoc'}
     - {weight:  6, cost:   9000, name: 'Serpent’s Band'}
-    - {weight:  8, cost:  10000, name: 'Headband of Mental Prowess +2 (<%= Keys.random(:mental_prowess) %>)'}
+    - {weight:  8, cost:  10000, name: 'Headband of Mental Prowess +2 (<%= key.(:mental_prowess) %>)'}
     - {weight:  6, cost:  11000, name: 'Hunter’s Band'}
     - {weight:  8, cost:  11000, name: 'Phylactery of Negative Channeling'}
     - {weight:  8, cost:  11000, name: 'Phylactery of Positive Channeling'}
     - {weight:  6, cost:  12000, name: 'Veiled Eye'}
     - {weight:  6, cost:  14000, name: 'Band of the Stalwart Warrior'}
     - {weight:  6, cost:  15000, name: 'Headband of Ninjutsu'}
-    - {weight: 24, cost:  16000, name: 'Headband of <%= Keys.random(:stat_headband) %> +4'}
+    - {weight: 24, cost:  16000, name: 'Headband of <%= key.(:stat_headband) %> +4'}
     - {weight:  9, cost:  16000, name: 'Headband of Mental Superiority +2'}
-    - {weight:  7, cost:  17500, name: 'Shifter’s Headband +4 (<%= Keys.random(:mental_stat) %>)'}
+    - {weight:  7, cost:  17500, name: 'Shifter’s Headband +4 (<%= key.(:mental_stat) %>)'}
   greater:
     - {weight: 30, cost:  20000, name: 'Headband of Arcane Energy'}
     - {weight: 30, cost:  20000, name: 'Headband of Counterspelling'}
@@ -37,14 +37,14 @@ major:
   lesser:
     - {weight:  9, cost:  30000, name: 'Soulbound Eye'}
     - {weight: 10, cost:  32000, name: 'Winter Wolf Headband'}
-    - {weight: 39, cost:  36000, name: 'Headband of <%= Keys.random(:mental_headband) %> +6'}
-    - {weight:  8, cost:  39000, name: 'Shifter’s Headband +6 (<%= Keys.random(:mental_stat) %>)'}
-    - {weight: 15, cost:  40000, name: 'Headband of Mental Prowess +4 (<%= Keys.random(:mental_prowess) %>)'}
+    - {weight: 39, cost:  36000, name: 'Headband of <%= key.(:mental_headband) %> +6'}
+    - {weight:  8, cost:  39000, name: 'Shifter’s Headband +6 (<%= key.(:mental_stat) %>)'}
+    - {weight: 15, cost:  40000, name: 'Headband of Mental Prowess +4 (<%= key.(:mental_prowess) %>)'}
     - {weight:  9, cost:  40000, name: 'Headband of Seduction'}
-    - {weight: 10, cost:  42000, name: 'Headband of Aerial Agility +4 (<%= Keys.random(:mental_stat) %>)'}
+    - {weight: 10, cost:  42000, name: 'Headband of Aerial Agility +4 (<%= key.(:mental_stat) %>)'}
   greater:
-    - {weight: 20, cost:  64000, name: 'Headband of Mental Resiliance (<%= Keys.random(:mental_stat) %>)'}
+    - {weight: 20, cost:  64000, name: 'Headband of Mental Resiliance (<%= key.(:mental_stat) %>)'}
     - {weight: 30, cost:  64000, name: 'Headband of Mental Superiority +4'}
-    - {weight: 15, cost:  81000, name: 'Headband of Aerial Agility +6 (<%= Keys.random(:mental_stat) %>)'}
-    - {weight: 20, cost:  90000, name: 'Headband of Mental Prowess +6 (<%= Keys.random(:mental_prowess) %>)'}
+    - {weight: 15, cost:  81000, name: 'Headband of Aerial Agility +6 (<%= key.(:mental_stat) %>)'}
+    - {weight: 20, cost:  90000, name: 'Headband of Mental Prowess +6 (<%= key.(:mental_prowess) %>)'}
     - {weight: 15, cost: 144000, name: 'Headband of Mental Superiority +6'}

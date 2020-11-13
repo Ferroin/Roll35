@@ -27,14 +27,14 @@ defmodule Roll35Bot.Commands.Help do
     Available commands:
 
     <%= Enum.each(cmdinfo, fn name, info -> %>
-    * `<%= name %>`: <%= cmddesc(info) %>
+    * `<%= name %>`: <%= cmddesc.(info) %>
     <% end) %>
 
     For more info on a command, use `/roll35 help <command>`.
 
     Note that invalid commands will be ignored instead of returning an error.
     """
-    |> EEx.eval_string()
+    |> EEx.eval_string(cmdinfo: cmdinfo, cmddesc: &cmddesc/1)
     |> Cogs.say()
   end
 
