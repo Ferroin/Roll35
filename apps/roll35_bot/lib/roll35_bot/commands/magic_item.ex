@@ -102,7 +102,7 @@ defmodule Roll35Bot.Commands.MagicItem do
 
         true ->
           case MagicItem.roll(rank, subrank, category, slot) do
-            {:ok, item} -> Renderer.format(item)
+            {:ok, item} -> {:ok, Renderer.format(item)}
             {:error, msg} -> {:error, msg}
           end
       end
