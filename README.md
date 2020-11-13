@@ -143,3 +143,12 @@ will translate to a patch release at the project level, not a major
 relese. Additionally, some non-breaking changes at the project level
 may result in a major release at the project level simply because they
 are so impactful that they warrant a major release.
+
+#### Why are there no published images for versions prior to 1.2.0?
+
+My initial plan was to make the code public and publish Docker images
+with version 1.0.0. However, there were a handful of bugs I found
+just after preparing v1.0.0, as well as a number of other refactoring
+changes I decided to make before going public. I would much rather not
+rewrite git history just to make versions sync up correctly with tags,
+so I opted to just release v1.2.0 as the first public verson.
