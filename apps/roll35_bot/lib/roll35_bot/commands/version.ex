@@ -18,12 +18,15 @@ defmodule Roll35Bot.Commands.Version do
 
   @impl Roll35Bot.Command
   def cmd(_) do
-    """
-    App Version: #{@app_version}
-    Bot Code Version: #{@bot_version}
-    Core Code Version: #{@core_version}
-    Build Time: #{@build_time}
-    """
+    {
+      :ok,
+      """
+      App Version: #{@app_version}
+      Bot Code Version: #{@bot_version}
+      Core Code Version: #{@core_version}
+      Build Time: #{@build_time}
+      """
+    }
   end
 
   @impl Roll35Bot.Command
