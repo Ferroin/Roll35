@@ -1,53 +1,21 @@
-defmodule Roll35Bot.Spell do
+defmodule Roll35Bot.Commands.Spell do
   @moduledoc """
   A command to roll random spells.
   """
+
+  @behaviour Roll35Bot.Command
 
   use Alchemy.Cogs
 
   alias Roll35Core.Data.Spell
 
-  require Logger
-
   Cogs.set_parser(:spell, fn rest -> [String.split(rest)] end)
 
-  Cogs.def spell(params) do
-    %Alchemy.Message{
-      author: %Alchemy.User{
-        username: user,
-        discriminator: tag
-      }
-    } = message
-
-    Logger.info("Recieved spell command with parameters #{inspect(params)} from #{user}##{tag}.")
-
-    try do
-      case cmd(params) do
-        {:ok, msg} ->
-          Cogs.say(msg)
-
-        {:error, msg} ->
-          Cogs.say("ERROR: #{msg}")
-
-        result ->
-          Cogs.say("An unknown error occurred, check the bot logs for more info.")
-          Logger.error("Recieved unknown return value in spell command: #{inspect(result)}")
-      end
-    rescue
-      e ->
-        Cogs.say("ERROR: An internal error occurred, please check the bot logs for more info.")
-        reraise e, __STACKTRACE__
-    catch
-      :exit, info ->
-        Cogs.say("ERROR: An internal error occurred, please check the bot logs for more info.")
-        exit(info)
-    end
+  Cogs.def spell(options) do
+    Roll35Bot.Command.run_cmd("spell", options, message, __MODULE__, &Cogs.say/1)
   end
 
-  @doc """
-  Actual command logic.
-  """
-  @spec cmd(term) :: {:ok | :error, String.t()}
+  @impl Roll35Bot.Command
   def cmd(params) do
     opts =
       Enum.reduce_while(params, %{level: nil, class: nil, tag: nil}, fn item, acc ->
@@ -83,10 +51,10 @@ defmodule Roll35Bot.Spell do
     end
   end
 
-  @doc """
-  Return help text for this command.
-  """
-  @spec help :: String.t()
+  @impl Roll35Bot.Command
+  def short_desc, do: "Roll random spells."
+
+  @impl Roll35Bot.Command
   def help do
     """
     Usage:

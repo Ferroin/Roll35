@@ -15,13 +15,13 @@ defmodule Roll35Bot.Application do
 
     Cogs.set_prefix("/roll35 ")
 
-    use Roll35Bot.Help
-    use Roll35Bot.Ping
-    use Roll35Bot.Version
-    use Roll35Bot.Armor
-    use Roll35Bot.Weapon
-    use Roll35Bot.Spell
-    use Roll35Bot.MagicItem
+    use Roll35Bot.Commands.Help
+    use Roll35Bot.Commands.Ping
+    use Roll35Bot.Commands.Version
+    use Roll35Bot.Commands.Armor
+    use Roll35Bot.Commands.Weapon
+    use Roll35Bot.Commands.Spell
+    use Roll35Bot.Commands.MagicItem
 
     Logger.notice("Roll35 Bot started.")
 

@@ -1,4 +1,4 @@
-defmodule Roll35Bot.Help do
+defmodule Roll35Bot.Commands.Help do
   @moduledoc """
   Command to fetch help and usage information.
   """
@@ -15,27 +15,27 @@ defmodule Roll35Bot.Help do
       }
     } = message
 
+    cmdinfo = Cogs.all_commands()
+
     Logger.info("Recieved help command from #{user}##{tag}.")
 
-    Cogs.say("""
+    """
     General command syntax:
 
     `/roll35 <command> [options]`
 
     Available commands:
 
-    * `armor`: Roll a random mundane armor item.
-    * `weapon`: Roll a random mundane weapon.
-    * `spell`: Roll a random spell.
-    * `magicitem`: Roll a random magic item.
-    * `ping`: Respond with ‘pong’ if the bot is alive.
-    * `help`: Get help about a specific command.
-    * `version`: Print out version info for the bot.
+    <%= Enum.each(cmdinfo, fn name, info -> %>
+    * `<%= name %>`: <%= cmddesc(info) %>
+    <% end) %>
 
     For more info on a command, use `/roll35 help <command>`.
 
     Note that invalid commands will be ignored instead of returning an error.
-    """)
+    """
+    |> EEx.eval_string()
+    |> Cogs.say()
   end
 
   Cogs.def help(command) do
@@ -62,6 +62,12 @@ defmodule Roll35Bot.Help do
   end
 
   @doc """
+  Return a short description for this command.
+  """
+  @spec short_desc :: String.t()
+  def short_desc, do: "Get help about a specific command."
+
+  @doc """
   Return help text for this command.
   """
   @spec help :: String.t()
@@ -77,13 +83,9 @@ defmodule Roll35Bot.Help do
     """
   end
 
-  @doc false
-  defp cmdhelp({module, _, _}) do
-    apply(module, :help, [])
-  end
+  defp cmdhelp({module, _, _}), do: apply(module, :help, [])
+  defp cmdhelp({module, _, _, _}), do: apply(module, :help, [])
 
-  @doc false
-  defp cmdhelp({module, _, _, _}) do
-    apply(module, :help, [])
-  end
+  defp cmddesc({module, _, _}), do: apply(module, :short_desc, [])
+  defp cmddesc({module, _, _, _}), do: apply(module, :short_desc, [])
 end

@@ -1,7 +1,9 @@
-defmodule Roll35Bot.MagicItem do
+defmodule Roll35Bot.Commands.MagicItem do
   @moduledoc """
   Command to roll rando magic items.
   """
+
+  @behaviour Roll35Bot.Command
 
   use Alchemy.Cogs
 
@@ -9,47 +11,13 @@ defmodule Roll35Bot.MagicItem do
   alias Roll35Core.MagicItem
   alias Roll35Core.Types
 
-  require Logger
-
   Cogs.set_parser(:magicitem, fn rest -> [String.split(rest, " ", trim: true)] end)
 
-  Cogs.def magicitem(params) do
-    %Alchemy.Message{
-      author: %Alchemy.User{
-        username: user,
-        discriminator: tag
-      }
-    } = message
-
-    Logger.info("Recieved armor command with parameters #{inspect(params)} from #{user}##{tag}.")
-
-    try do
-      case cmd(params) do
-        {:ok, msg} ->
-          Cogs.say(msg)
-
-        {:error, msg} ->
-          Cogs.say("ERROR: #{msg}")
-
-        result ->
-          Cogs.say("An unknown error occurred, check the bot logs for more info.")
-          Logger.error("Recieved unknown return value in magicitem command: #{inspect(result)}")
-      end
-    rescue
-      e ->
-        Cogs.say("ERROR: An internal error occurred, please check the bot logs for more info.")
-        reraise e, __STACKTRACE__
-    catch
-      :exit, info ->
-        Cogs.say("ERROR: An internal error occurred, please check the bot logs for more info.")
-        exit(info)
-    end
+  Cogs.def magicitem(options) do
+    Roll35Bot.Command.run_cmd("magicitem", options, message, __MODULE__, &Cogs.say/1)
   end
 
-  @doc """
-  Actual command logic.
-  """
-  @spec cmd(String.t()) :: {:ok | :error, String.t()}
+  @impl Roll35Bot.Command
   def cmd(params) do
     invalid_params =
       MapSet.difference(
@@ -143,10 +111,10 @@ defmodule Roll35Bot.MagicItem do
     end
   end
 
-  @doc """
-  Return help text for this command.
-  """
-  @spec help :: String.t()
+  @impl Roll35Bot.Command
+  def short_desc, do: "Roll random magic items."
+
+  @impl Roll35Bot.Command
   def help do
     """
     Usage:

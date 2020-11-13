@@ -1,11 +1,11 @@
-defmodule Roll35Bot.Version do
+defmodule Roll35Bot.Commands.Version do
   @moduledoc """
   Provide a command to return version information.
   """
 
-  use Alchemy.Cogs
+  @behaviour Roll35Bot.Command
 
-  require Logger
+  use Alchemy.Cogs
 
   @app_version Roll35.MixProject.project()[:version]
   @bot_version Roll35Bot.MixProject.project()[:version]
@@ -13,18 +13,23 @@ defmodule Roll35Bot.Version do
   @build_time DateTime.to_iso8601(DateTime.utc_now())
 
   Cogs.def version do
-    Cogs.say("""
+    Roll35Bot.Command.run_cmd("version", nil, message, __MODULE__, &Cogs.say/1)
+  end
+
+  @impl Roll35Bot.Command
+  def cmd(_) do
+    """
     App Version: #{@app_version}
     Bot Code Version: #{@bot_version}
     Core Code Version: #{@core_version}
     Build Time: #{@build_time}
-    """)
+    """
   end
 
-  @doc """
-  Return help for this command.
-  """
-  @spec help :: String.t()
+  @impl Roll35Bot.Command
+  def short_desc, do: "Get info about the version of the running bot."
+
+  @impl Roll35Bot.Command
   def help do
     """
     Usage:
