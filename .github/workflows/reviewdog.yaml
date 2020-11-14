@@ -16,7 +16,7 @@ jobs:
           elixir-version: 1.11.x
           otp-version: 23.1.x
       - run: mix deps.get
-      - uses: red-shirts/reviewdog-action-credo@v1
+      - uses: red-shirts/reviewdog-action-credo@v1.2
         with:
           github_token: ${{ secrets.github_token }}
           reporter: github-pr-review
