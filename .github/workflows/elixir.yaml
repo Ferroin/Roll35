@@ -14,6 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-elixir@v1
+        id: setup
         with:
           elixir-version: 1.11.x
           otp-version: 23.1.x
@@ -21,7 +22,11 @@ jobs:
         id: cache
         with:
           path: deps
-          key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+          key: >-
+            ${{ runner.os }}-mix-${{
+            steps.setup.outputs.elixir-version }}-${{
+            steps.setup.outputs.otp-version }}-${{
+            hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
           restore-keys: |
             ${{ runner.os }}-mix-
       - run: mix deps.get
@@ -43,6 +48,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-elixir@v1
+        id: setup
         with:
           elixir-version: 1.11.x
           otp-version: 23.1.x
@@ -50,7 +56,11 @@ jobs:
         id: cache
         with:
           path: deps
-          key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+          key: >
+            ${{ runner.os }}-mix-${{
+            steps.setup.outputs.elixir-version }}-${{
+            steps.setup.outputs.otp-version }}-${{
+            hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
           restore-keys: |
             ${{ runner.os }}-mix-
       - run: mix deps.get
