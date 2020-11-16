@@ -12,7 +12,7 @@ COPY . /build
 
 WORKDIR /build
 
-RUN mix deps.get
+RUN mix deps.get --only prod
 
 RUN MIX_ENV=prod mix release roll35_docker
 
