@@ -68,7 +68,7 @@ jobs:
       - run: mix test
   dialyxir:
     name: Dialyxir
-    runs-on: ubunt-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-elixir@v1
