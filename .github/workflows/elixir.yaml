@@ -70,7 +70,6 @@ jobs:
     name: Dialyxir
     runs-on: ubunt-latest
     steps:
-    steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-elixir@v1
         id: setup
