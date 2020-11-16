@@ -11,10 +11,10 @@ related games.
 * Automatically roll random spells for scrolls, potions, and wands.
 * Roll random spells, optionally for a specific level, class, or category.
 * Roll random mundane weapons and armor.
+* Roll wands or scrolls for a specific class.
 
 ## Planned Features
 
-* Allow rolling per-class for scrolls/wands.
 * Automatically roll random spells present in items that store spells.
 * Roll against arbitrary data tables.
 * Automatically roll for intelligence/special markings on magic items.

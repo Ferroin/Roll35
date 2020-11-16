@@ -8,6 +8,7 @@ defmodule Roll35Bot.Commands.MagicItem do
   use Alchemy.Cogs
 
   alias Roll35Bot.Renderer
+  alias Roll35Core.Data.Spell
   alias Roll35Core.MagicItem
   alias Roll35Core.Types
 
@@ -19,11 +20,19 @@ defmodule Roll35Bot.Commands.MagicItem do
 
   @impl Roll35Bot.Command
   def cmd(params) do
+    spell_classes = Spell.get_classes({:via, Registry, {Roll35Core.Registry, :spell}})
+
     invalid_params =
       MapSet.difference(
         MapSet.new(params),
         MapSet.new(
-          [Types.ranks(), Types.full_subranks(), Types.categories(), Types.slots()]
+          [
+            Types.ranks(),
+            Types.full_subranks(),
+            Types.categories(),
+            Types.slots(),
+            spell_classes
+          ]
           |> Enum.concat()
           |> Enum.map(&Atom.to_string/1)
         )
@@ -40,6 +49,13 @@ defmodule Roll35Bot.Commands.MagicItem do
               nil -> nil
               item -> String.to_existing_atom(item)
             end).()
+
+      class =
+        params
+        |> Enum.filter(fn item ->
+          item in Enum.map(spell_classes, &Atom.to_string/1)
+        end)
+        |> Enum.at(-1)
 
       category =
         if slot == nil do
@@ -91,6 +107,9 @@ defmodule Roll35Bot.Commands.MagicItem do
             end).()
 
       cond do
+        class != nil and not Enum.member?([:scroll, :wand], category) ->
+          {:error, "Spellcasting class may only be specified for scrolls and wands."}
+
         slot != nil and category != nil and category != :wondrous ->
           {:error, "Slots may only be specified for wondrous items."}
 
@@ -99,6 +118,12 @@ defmodule Roll35Bot.Commands.MagicItem do
 
         subrank == :least and slot != :slotless ->
           {:error, "Only slotless items have a least subrank."}
+
+        class != nil ->
+          case MagicItem.roll(rank, subrank, category, class) do
+            {:ok, item} -> {:ok, Renderer.format(item)}
+            {:error, msg} -> {:error, msg}
+          end
 
         true ->
           case MagicItem.roll(rank, subrank, category, slot) do

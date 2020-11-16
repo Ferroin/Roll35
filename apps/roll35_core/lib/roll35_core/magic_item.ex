@@ -29,6 +29,7 @@ defmodule Roll35Core.MagicItem do
   defp modname(:scroll), do: Roll35Core.Data.Scroll
   defp modname(:shoulders), do: Roll35Core.Data.Shoulders
   defp modname(:slotless), do: Roll35Core.Data.Slotless
+  defp modname(:spell), do: Roll35Core.Data.Spell
   defp modname(:staff), do: Roll35Core.Data.Staff
   defp modname(:wand), do: Roll35Core.Data.Wand
   defp modname(:weapon), do: Roll35Core.Data.Weapon
@@ -52,6 +53,7 @@ defmodule Roll35Core.MagicItem do
   defp server(:scroll), do: {:via, Registry, {Roll35Core.Registry, :scroll}}
   defp server(:shoulders), do: {:via, Registry, {Roll35Core.Registry, :shoulders}}
   defp server(:slotless), do: {:via, Registry, {Roll35Core.Registry, :slotless}}
+  defp server(:spell), do: {:via, Registry, {Roll35Core.Registry, :spell}}
   defp server(:staff), do: {:via, Registry, {Roll35Core.Registry, :staff}}
   defp server(:wand), do: {:via, Registry, {Roll35Core.Registry, :wand}}
   defp server(:weapon), do: {:via, Registry, {Roll35Core.Registry, :weapon}}
@@ -237,6 +239,14 @@ defmodule Roll35Core.MagicItem do
               masterwork
             )
           end
+
+        category in [:wand, :scroll] and
+            String.to_existing_atom(extra) in call(:spell, :get_classes, []) ->
+          item = call(category, :random, [rank])
+
+          Map.update(item, :spell, %{}, fn spell ->
+            Map.put(spell, :cls, extra)
+          end)
 
         category in @compound_itemlists ->
           call(category, :random, [rank])
