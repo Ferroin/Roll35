@@ -66,3 +66,38 @@ jobs:
       - run: mix deps.get
         if: steps.cache.outputs.cache-hit != true
       - run: mix test
+  dialyxir:
+    name: Dialyxir
+    runs-on: ubunt-latest
+    steps:
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-elixir@v1
+        id: setup
+        with:
+          elixir-version: 1.11.x
+          otp-version: 23.1.x
+      - uses: actions/cache@v2
+        id: cache
+        with:
+          path: deps
+          key: >-
+            ${{ runner.os }}-mix-${{
+            steps.setup.outputs.elixir-version }}-${{
+            steps.setup.outputs.otp-version }}-${{
+            hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+          restore-keys: |
+            ${{ runner.os }}-mix-
+      - run: mix deps.get
+        if: steps.cache.outputs.cache-hit != true
+      - uses: actions/cache@v2
+        with:
+          path: _build/**/*.plg
+          key: >-
+            ${{ runner.os }}-dialyxir-${{
+            steps.setup.outputs.elixir-version }}-${{
+            steps.setup.outputs.otp-version }}-${{
+            hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+          restore-keys: |
+            ${{ runner.os }}-dialyxir-
+      - run: mix dialyzer
