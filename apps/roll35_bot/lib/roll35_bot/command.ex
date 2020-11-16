@@ -17,7 +17,9 @@ defmodule Roll35Bot.Command do
       }
     } = message
 
-    Logger.info("Recieved armor command with parameters #{inspect(options)} from #{user}##{tag}.")
+    Logger.info(
+      "Recieved #{name} command with parameters #{inspect(options)} from #{user}##{tag}."
+    )
 
     try do
       case apply(module, :cmd, [options]) do
