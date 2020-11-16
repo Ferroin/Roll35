@@ -339,7 +339,7 @@ defmodule Roll35Core.Data.Spell do
 
   @impl GenServer
   def handle_call(:get_classes, _from, state) do
-    {:reply, {:ok, Map.keys(state.class)}}
+    {:reply, {:ok, Map.keys(state.class)}, state}
   end
 
   @impl GenServer
