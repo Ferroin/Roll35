@@ -4,6 +4,14 @@ defmodule Roll35Core.Types do
   """
 
   @typedoc """
+  Represents an item.
+  """
+  @type item :: %{
+          :name => String.t(),
+          optional(atom()) => term()
+        }
+
+  @typedoc """
   Represents the category of an item.
   """
   @type category ::

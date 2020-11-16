@@ -186,7 +186,7 @@ defmodule Roll35Core.Data.Spell do
                 acc.spellpage_arcane,
                 acc.spellpage_arcane_cls,
                 acc.spellpage_arcane_fixed,
-                cls == "wizard"
+                cls == :wizard
               )
             else
               {acc.spellpage_arcane, acc.spellpage_arcane_cls, acc.spellpage_arcane_fixed}
@@ -200,7 +200,7 @@ defmodule Roll35Core.Data.Spell do
                 acc.spellpage_divine,
                 acc.spellpage_divine_cls,
                 acc.spellpage_divine_fixed,
-                cls == "cleric"
+                cls == :cleric
               )
             else
               {acc.spellpage_divine, acc.spellpage_divine_cls, acc.spellpage_divine_fixed}

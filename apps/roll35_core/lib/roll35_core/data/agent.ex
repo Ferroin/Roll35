@@ -199,7 +199,7 @@ defmodule Roll35Core.Data.Agent do
   """
   defmacro armor_weapon_selectors(types) do
     quote do
-      @spec random_base(GenServer.server(), list(atom())) :: %{atom() => term()}
+      @spec random_base(GenServer.server(), list(atom())) :: %{atom() => term()} | nil
       def random_base(agent, tags \\ []) do
         Logger.debug(
           "Getting random base item with tags matching #{inspect(tags)} from #{__MODULE__}."
@@ -207,17 +207,21 @@ defmodule Roll35Core.Data.Agent do
 
         data = get(agent, fn data -> data.base end)
 
-        data
-        |> Stream.filter(fn item ->
-          if Enum.empty?(tags) do
-            true
-          else
-            Enum.all?(tags, fn tag ->
-              tag == item.type or tag in item.tags
-            end)
-          end
-        end)
-        |> Enum.random()
+        try do
+          data
+          |> Stream.filter(fn item ->
+            if Enum.empty?(tags) do
+              true
+            else
+              Enum.all?(tags, fn tag ->
+                tag == item.type or tag in item.tags
+              end)
+            end
+          end)
+          |> Enum.random()
+        rescue
+          e in Enum.EmptyError -> nil
+        end
       end
 
       @spec random_enchantment(

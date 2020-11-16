@@ -3,6 +3,7 @@ defmodule Roll35Core.MagicItem do
   Code to actually roll for (and dispatch rendering of) a magic item.
   """
 
+  alias Roll35Core.Types
   alias Roll35Core.Util
 
   require Logger
@@ -62,7 +63,7 @@ defmodule Roll35Core.MagicItem do
     apply(modname(target), function, [server(target) | opts])
   end
 
-  @spec finalize_roll(map()) :: {:ok, String.t()} | {:error, term()}
+  @spec finalize_roll(map()) :: {:ok, Types.item()} | {:error, term()}
   defp finalize_roll(item) do
     case item do
       {:error, msg} ->
@@ -166,7 +167,7 @@ defmodule Roll35Core.MagicItem do
 
   This is mostly a helper function to keep the `roll/1` function tidy.
   """
-  @spec reroll(list()) :: {:ok, String.t()} | {:error, term()}
+  @spec reroll(list()) :: {:ok, Types.item()} | {:error, term()}
   def reroll(path) do
     Logger.debug("Rerolling item with parameters #{inspect(path)}.")
 
@@ -188,7 +189,7 @@ defmodule Roll35Core.MagicItem do
   This takes a keyword list specifying how to get to the item in question.
   """
   @spec roll(Types.rank(), Types.full_subrank(), Types.category(), term()) ::
-          {:ok, String.t()} | {:error, term()}
+          {:ok, Types.item()} | {:error, term()}
   def roll(rank, subrank, category, extra \\ nil) do
     Logger.debug(
       "Rolling magic item with parameters #{inspect({rank, subrank, category, extra})}."
@@ -226,7 +227,7 @@ defmodule Roll35Core.MagicItem do
           else
             base = call(:armor, :random_base, [])
 
-            {masterwork, bonus_cost} = bonus_costs(:category, base)
+            {masterwork, bonus_cost} = bonus_costs(category, base)
 
             assemble_magic_item(
               category,

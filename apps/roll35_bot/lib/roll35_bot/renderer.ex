@@ -5,6 +5,7 @@ defmodule Roll35Bot.Renderer do
 
   alias Roll35Core.Data.Keys
   alias Roll35Core.Data.Spell
+  alias Roll35Core.Types
 
   require Logger
 
@@ -54,7 +55,7 @@ defmodule Roll35Bot.Renderer do
   @doc """
   Format an item for use as a message.
   """
-  @spec format(map()) :: String.t()
+  @spec format(Types.item()) :: String.t()
   def format(item) do
     name = item.name
 

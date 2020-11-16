@@ -201,7 +201,11 @@ defmodule Roll35Core.Util do
   @doc """
   Process an armor or weapon agent state to add a list of all tags.
   """
-  @spec generate_tags_entry(map(), [atom()]) :: [atom(), ...]
+  @spec generate_tags_entry(%{:base => list(), atom() => term()}, [atom()]) :: %{
+          :base => list(),
+          :tags => list(),
+          atom() => term()
+        }
   def generate_tags_entry(data, base_tags \\ []) do
     tags =
       Enum.reduce(data.base, MapSet.new(base_tags), fn item, acc ->
