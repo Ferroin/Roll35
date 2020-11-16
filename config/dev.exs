@@ -19,6 +19,7 @@ config :git_hooks,
         "mix format --check-formatted",
         "mix compile --force",
         "mix credo --strict --format oneline",
+        "mix dialyzer",
         "mix test"
       ]
     ]
