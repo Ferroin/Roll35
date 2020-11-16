@@ -91,7 +91,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != true
       - uses: actions/cache@v2
         with:
-          path: _build/**/*.plg
+          path: _build/**/*.plt
           key: >-
             ${{ runner.os }}-dialyxir-${{
             steps.setup.outputs.elixir-version }}-${{
