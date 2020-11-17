@@ -31,7 +31,7 @@ jobs:
           key: ${{ runner.os }}-buildx-${{
             hashFiles(format('{0}{1}', github.workspace, '/mix.exs')) }}-${{
             hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}-${{
-            hashfiles(format('{0}{1}', github.workspace, '/dockerfile')) }}
+            hashfiles(format('{0}{1}', github.workspace, '/Dockerfile')) }}
           restore-keys: |
             ${{ runner.os }}-buildx-
       - uses: docker/build-push-action@v2
