@@ -39,6 +39,7 @@ if mix git_hooks.run pre-push ; then
     git tag v${REPLY}
 
     git push origin v${REPLY}
+    git push origin main
 else
     echo "Git pre-push hook failures must be corrected before producing a release."
     exit 1
