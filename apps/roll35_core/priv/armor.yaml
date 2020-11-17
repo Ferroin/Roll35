@@ -113,16 +113,16 @@ base:
   - {cost:   12, type: shield, tags: [light, wood], name: 'Klar'}
   - {cost:   30, type: shield, tags: [light, leather], name: 'Leather Madu'}
   - {cost:   40, type: shield, tags: [light, metal], name: 'Steel Madu'}
-  - {cost:    9, type: shield, tags: [light, metal], name: 'Light Steel Sheild'}
-  - {cost:   59, type: shield, tags: [light, metal], name: 'Quickdraw Light Steel Sheild'}
-  - {cost:    3, type: shield, tags: [light, wood], name: 'Light Wooden Sheild'}
-  - {cost:   53, type: shield, tags: [light, wood], name: 'Quickdraw Light Wooden Sheild'}
-  - {cost:   20, type: shield, tags: [heavy, metal], name: 'Heavy Steel Sheild'}
-  - {cost:    7, type: shield, tags: [heavy, wood], name: 'Heavy Wooden Sheild'}
-  # - {cost:   30, type: shield, tags: [tower, metal], name: 'Tower Sheild'}
+  - {cost:    9, type: shield, tags: [light, metal], name: 'Light Steel Shield'}
+  - {cost:   59, type: shield, tags: [light, metal], name: 'Quickdraw Light Steel Shield'}
+  - {cost:    3, type: shield, tags: [light, wood], name: 'Light Wooden Shield'}
+  - {cost:   53, type: shield, tags: [light, wood], name: 'Quickdraw Light Wooden Shield'}
+  - {cost:   20, type: shield, tags: [heavy, metal], name: 'Heavy Steel Shield'}
+  - {cost:    7, type: shield, tags: [heavy, wood], name: 'Heavy Wooden Shield'}
+  # - {cost:   30, type: shield, tags: [tower, metal], name: 'Tower Shield'}
   - {cost:   50, type: shield, tags: [heavy, metal], name: 'Steel Snarlshield'}
   - {cost:   37, type: shield, tags: [heavy, wood], name: 'Wooden Snarlshield'}
-  - {cost:   50, type: shield, tags: [light, metal], name: 'Dwarven War-Sheild'}
+  - {cost:   50, type: shield, tags: [light, metal], name: 'Dwarven War-Shield'}
 specific:
   armor:
     minor:
