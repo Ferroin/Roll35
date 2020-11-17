@@ -9,7 +9,7 @@ defmodule Roll35Bot.Commands.Spell do
 
   alias Roll35Core.Data.Spell
 
-  Cogs.set_parser(:spell, fn rest -> [String.split(rest)] end)
+  Cogs.set_parser(:spell, &List.wrap/1)
 
   Cogs.def spell(options) do
     Roll35Bot.Command.run_cmd("spell", options, message, __MODULE__, &Cogs.say/1)

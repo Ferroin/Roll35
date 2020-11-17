@@ -10,7 +10,7 @@ defmodule Roll35Bot.Commands.Weapon do
   alias Roll35Bot.Renderer
   alias Roll35Core.Data.Weapon
 
-  Cogs.set_parser(:weapon, fn i -> [i] end)
+  Cogs.set_parser(:weapon, &List.wrap/1)
 
   Cogs.def weapon(options) do
     Roll35Bot.Command.run_cmd("weapon", options, message, __MODULE__, &Cogs.say/1)
@@ -20,10 +20,7 @@ defmodule Roll35Bot.Commands.Weapon do
   def cmd(options) do
     _ = Weapon.tags({:via, Registry, {Roll35Core.Registry, :weapon}})
 
-    tags =
-      options
-      |> String.split(" ", trim: true)
-      |> Enum.map(&String.to_existing_atom/1)
+    tags = Enum.map(options, &String.to_existing_atom/1)
 
     if item = Weapon.random_base({:via, Registry, {Roll35Core.Registry, :weapon}}, tags) do
       {:ok, Renderer.format(item)}

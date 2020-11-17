@@ -6,6 +6,20 @@ defmodule Roll35Bot.Command do
   require Logger
 
   @doc """
+  Parse a command argument string.
+  """
+  @spec parse(String.t() | nil) :: {:ok, [String.t()] | nil} | {:error, String.t()}
+  def parse(opts) when is_binary(opts) do
+    {:ok, OptionParser.split(opts)}
+  rescue
+    _ -> {:error, "Unable to parse options #{inspect(opts)}."}
+  end
+
+  def parse(nil) do
+    {:ok, nil}
+  end
+
+  @doc """
   Contains all the boilerplate code for defining the command.
   """
   @spec run_cmd(String.t(), term(), %Alchemy.Message{}, module(), term()) :: nil
@@ -22,16 +36,22 @@ defmodule Roll35Bot.Command do
     )
 
     try do
-      case apply(module, :cmd, [options]) do
-        {:ok, msg} ->
-          reply.(msg)
+      case parse(options) do
+        {:ok, params} ->
+          case apply(module, :cmd, [params]) do
+            {:ok, msg} ->
+              reply.(msg)
+
+            {:error, msg} ->
+              reply.("ERROR: #{msg}")
+
+            result ->
+              reply.("ERROR: An unknown error occurred, check the bot logs for more info.")
+              Logger.error("Recieved unknown return value in #{name} command: #{inspect(result)}")
+          end
 
         {:error, msg} ->
           reply.("ERROR: #{msg}")
-
-        result ->
-          reply.("ERROR: An unknown error occurred, check the bot logs for more info.")
-          Logger.error("Recieved unknown return value in #{name} command: #{inspect(result)}")
       end
     rescue
       e ->

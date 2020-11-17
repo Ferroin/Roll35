@@ -12,7 +12,7 @@ defmodule Roll35Bot.Commands.MagicItem do
   alias Roll35Core.MagicItem
   alias Roll35Core.Types
 
-  Cogs.set_parser(:magicitem, fn rest -> [String.split(rest, " ", trim: true)] end)
+  Cogs.set_parser(:magicitem, &List.wrap/1)
 
   Cogs.def magicitem(options) do
     Roll35Bot.Command.run_cmd("magicitem", options, message, __MODULE__, &Cogs.say/1)
