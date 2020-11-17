@@ -8,22 +8,29 @@ defmodule Roll35Bot.Command do
   @doc """
   Parse a command argument string.
   """
-  @spec parse(String.t() | nil) :: {:ok, [String.t()] | nil} | {:error, String.t()}
-  def parse(opts) when is_binary(opts) do
-    {:ok, OptionParser.split(opts)}
+  @spec parse(String.t() | nil, OptionParser.options()) ::
+          {:ok, {[{atom(), String.t()}] | nil, [String.t()] | nil}} | {:error, String.t()}
+  def parse(opts, argspec) when is_binary(opts) do
+    {options, args} =
+      opts
+      |> OptionParser.split()
+      |> OptionParser.parse!(argspec)
+
+    {:ok, {args, options}}
   rescue
-    _ -> {:error, "Unable to parse options #{inspect(opts)}."}
+    e -> {:error, "Unable to parse options: #{Exception.message(e)}"}
   end
 
-  def parse(nil) do
-    {:ok, nil}
+  def parse(nil, _) do
+    {:ok, {nil, nil}}
   end
 
   @doc """
   Contains all the boilerplate code for defining the command.
   """
-  @spec run_cmd(String.t(), term(), %Alchemy.Message{}, module(), term()) :: nil
-  def run_cmd(name, options, message, module, reply) do
+  @spec run_cmd(String.t(), term(), OptionParser.options(), %Alchemy.Message{}, module(), term()) ::
+          nil
+  def run_cmd(name, options, argspec, message, module, reply) do
     %Alchemy.Message{
       author: %Alchemy.User{
         username: user,
@@ -36,9 +43,9 @@ defmodule Roll35Bot.Command do
     )
 
     try do
-      case parse(options) do
-        {:ok, params} ->
-          case apply(module, :cmd, [params]) do
+      case parse(options, argspec) do
+        {:ok, {args, options}} ->
+          case apply(module, :cmd, [args, options]) do
             {:ok, msg} ->
               reply.(msg)
 
@@ -67,11 +74,11 @@ defmodule Roll35Bot.Command do
   @doc """
   The callback that actually runs the command.
 
-  This should take an arbitrary term as options (produced by the
-  `Roll35Bot.Command.parse_options/1` callback). and return a success or error state with an
-  associated message. The returned message is what gets sent to the user.
+  The first argument is any positional parameters passed to the command,
+  while the second is a keyword list of options passed (based on the
+  `argspec` argument passed to `Roll35Bot.Command.run_cmd/6`).
   """
-  @callback cmd(term()) :: {:ok | :error, String.t()}
+  @callback cmd(list(String.t()), keyword()) :: {:ok | :error, String.t()}
 
   @doc """
   Return the help text for this command.

@@ -8,11 +8,11 @@ defmodule Roll35Bot.Commands.Ping do
   use Alchemy.Cogs
 
   Cogs.def ping do
-    Roll35Bot.Command.run_cmd("ping", nil, message, __MODULE__, &Cogs.say/1)
+    Roll35Bot.Command.run_cmd("ping", nil, [strict: []], message, __MODULE__, &Cogs.say/1)
   end
 
   @impl Roll35Bot.Command
-  def cmd(_), do: {:ok, "pong"}
+  def cmd(_, _), do: {:ok, "pong"}
 
   @impl Roll35Bot.Command
   def short_desc, do: "Check if the bot is alive."

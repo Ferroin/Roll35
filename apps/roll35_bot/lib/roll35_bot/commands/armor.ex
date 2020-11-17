@@ -13,14 +13,21 @@ defmodule Roll35Bot.Commands.Armor do
   Cogs.set_parser(:armor, &List.wrap/1)
 
   Cogs.def armor(options) do
-    Roll35Bot.Command.run_cmd("armor", options, message, __MODULE__, &Cogs.say/1)
+    Roll35Bot.Command.run_cmd(
+      "armor",
+      options,
+      [strict: []],
+      message,
+      __MODULE__,
+      &Cogs.say/1
+    )
   end
 
   @impl Roll35Bot.Command
-  def cmd(options) do
+  def cmd(args, _) do
     _ = Armor.tags({:via, Registry, {Roll35Core.Registry, :armor}})
 
-    tags = Enum.map(options, &String.to_existing_atom/1)
+    tags = Enum.map(args, &String.to_existing_atom/1)
 
     if item = Armor.random_base({:via, Registry, {Roll35Core.Registry, :armor}}, tags) do
       {:ok, Renderer.format(item)}

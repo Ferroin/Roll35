@@ -13,11 +13,11 @@ defmodule Roll35Bot.Commands.Version do
   @build_time DateTime.to_iso8601(DateTime.utc_now())
 
   Cogs.def version do
-    Roll35Bot.Command.run_cmd("version", nil, message, __MODULE__, &Cogs.say/1)
+    Roll35Bot.Command.run_cmd("version", nil, [strict: []], message, __MODULE__, &Cogs.say/1)
   end
 
   @impl Roll35Bot.Command
-  def cmd(_) do
+  def cmd(_, _) do
     {
       :ok,
       """

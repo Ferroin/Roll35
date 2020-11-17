@@ -12,42 +12,28 @@ defmodule Roll35Bot.Commands.Spell do
   Cogs.set_parser(:spell, &List.wrap/1)
 
   Cogs.def spell(options) do
-    Roll35Bot.Command.run_cmd("spell", options, message, __MODULE__, &Cogs.say/1)
+    Roll35Bot.Command.run_cmd(
+      "spell",
+      options,
+      [
+        strict: [
+          level: :integer,
+          class: :string,
+          tag: :string
+        ]
+      ],
+      message,
+      __MODULE__,
+      &Cogs.say/1
+    )
   end
 
   @impl Roll35Bot.Command
-  def cmd(params) do
-    opts =
-      Enum.reduce_while(params, %{level: nil, class: nil, tag: nil}, fn item, acc ->
-        cond do
-          String.starts_with?(item, "level:") ->
-            ["level", value] = String.split(item, ":")
-
-            {:cont, Map.put(acc, :level, String.to_integer(value))}
-
-          String.starts_with?(item, "class:") ->
-            ["class", value] = String.split(item, ":")
-
-            {:cont, Map.put(acc, :class, value)}
-
-          String.starts_with?(item, "tag:") ->
-            ["tag", value] = String.split(item, ":")
-
-            {:cont, Map.put(acc, :tag, value)}
-
-          true ->
-            {:halt, item}
-        end
-      end)
-
-    if is_map(opts) do
-      Spell.random({:via, Registry, {Roll35Core.Registry, :spell}},
-        level: opts.level,
-        class: opts.class,
-        tag: opts.tag
-      )
+  def cmd(args, options) do
+    if args == [] do
+      Spell.random({:via, Registry, {Roll35Core.Registry, :spell}}, options)
     else
-      {:error, "Unrecognized parameter #{opts}."}
+      {:error, "`/roll35 spell` command does not take any positional parameters.`"}
     end
   end
 
@@ -59,20 +45,20 @@ defmodule Roll35Bot.Commands.Spell do
     """
     Usage:
 
-    `/roll35 spell [level:<level>] [class:<class>] [tag:<tag>]`
+    `/roll35 spell [--level <level>] [--class <class>] [--tag <tag>]`
 
     Roll a random spell, optionally limited by level, class, or tag.
 
     Examples:
 
     Roll a random first level wizard spell:
-    `/roll35 spell level:1 class:wizard`
+    `/roll35 spell --level 1 --class wizard`
 
     Roll a random necromancy spell from the cleric spell list:
-    `/roll35 spell tag:necromancy class:cleric`
+    `/roll35 spell --tag necromancy --class cleric`
 
     Roll a spell from a random class
-    `/roll35 spell class:random`
+    `/roll35 spell --class random`
 
     The level specifier must be an integer between 0 and 9 inclusive.
 
@@ -85,8 +71,6 @@ defmodule Roll35Bot.Commands.Spell do
     * `spellpage`: Pick one of `spellpage_arcane` or `spellpage_divine` at random.
 
     The tag specifier must be all lower-case with any spaces or `-` replaced with `_`. It matches on any of the school, sub-school, or descriptors for the spell.
-
-    If a specifier is listed more than once, only the last one is honored.
     """
   end
 end

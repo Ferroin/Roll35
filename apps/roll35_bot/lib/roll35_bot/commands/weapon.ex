@@ -13,14 +13,21 @@ defmodule Roll35Bot.Commands.Weapon do
   Cogs.set_parser(:weapon, &List.wrap/1)
 
   Cogs.def weapon(options) do
-    Roll35Bot.Command.run_cmd("weapon", options, message, __MODULE__, &Cogs.say/1)
+    Roll35Bot.Command.run_cmd(
+      "weapon",
+      options,
+      [strict: []],
+      message,
+      __MODULE__,
+      &Cogs.say/1
+    )
   end
 
   @impl Roll35Bot.Command
-  def cmd(options) do
+  def cmd(args, _) do
     _ = Weapon.tags({:via, Registry, {Roll35Core.Registry, :weapon}})
 
-    tags = Enum.map(options, &String.to_existing_atom/1)
+    tags = Enum.map(args, &String.to_existing_atom/1)
 
     if item = Weapon.random_base({:via, Registry, {Roll35Core.Registry, :weapon}}, tags) do
       {:ok, Renderer.format(item)}
