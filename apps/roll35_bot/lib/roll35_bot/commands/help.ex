@@ -7,6 +7,19 @@ defmodule Roll35Bot.Commands.Help do
 
   require Logger
 
+  defp cmdhelp({module, _, _}), do: apply(module, :help, [])
+  defp cmdhelp({module, _, _, _}), do: apply(module, :help, [])
+
+  defp get_cmd_list do
+    Cogs.all_commands()
+    |> Enum.map(fn
+      {name, {mod, _, _}} -> "* `#{name}`: #{apply(mod, :short_desc, [])}"
+      {name, {mod, _, _, _}} -> "* `#{name}`: #{apply(mod, :short_desc, [])}"
+    end)
+    |> Enum.sort()
+    |> Enum.join("\n")
+  end
+
   Cogs.def help do
     %Alchemy.Message{
       author: %Alchemy.User{
@@ -15,27 +28,23 @@ defmodule Roll35Bot.Commands.Help do
       }
     } = message
 
-    cmdinfo = Cogs.all_commands()
+    cmdlist = get_cmd_list()
 
     Logger.info("Recieved help command from #{user}##{tag}.")
 
-    """
+    Cogs.say("""
     General command syntax:
 
     `/roll35 <command> [options]`
 
     Available commands:
 
-    <%= Enum.each(cmdinfo, fn name, info -> %>
-    * `<%= name %>`: <%= cmddesc.(info) %>
-    <% end) %>
+    #{cmdlist}
 
     For more info on a command, use `/roll35 help <command>`.
 
     Note that invalid commands will be ignored instead of returning an error.
-    """
-    |> EEx.eval_string(cmdinfo: cmdinfo, cmddesc: &cmddesc/1)
-    |> Cogs.say()
+    """)
   end
 
   Cogs.def help(command) do
@@ -82,10 +91,4 @@ defmodule Roll35Bot.Commands.Help do
     When run with the name of a command, print out more specific help for that command.
     """
   end
-
-  defp cmdhelp({module, _, _}), do: apply(module, :help, [])
-  defp cmdhelp({module, _, _, _}), do: apply(module, :help, [])
-
-  defp cmddesc({module, _, _}), do: apply(module, :short_desc, [])
-  defp cmddesc({module, _, _, _}), do: apply(module, :short_desc, [])
 end
