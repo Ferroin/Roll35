@@ -23,8 +23,19 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+      - uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{
+            hashFiles(format('{0}{1}', github.workspace, '/mix.exs')) }}-${{
+            hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}-${{
+            hashfiles(format('{0}{1}', github.workspace, '/dockerfile')) }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
       - uses: docker/build-push-action@v2
         with:
           push: false
           platforms: ${{ matrix.arch }}
           tags: ${{ secrets.DOCKER_IMAGE_NAME }}:test
+          cache-from: type=local,src=/tmp/.buildx-cache,mode=max
+          cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
