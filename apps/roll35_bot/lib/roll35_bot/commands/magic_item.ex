@@ -221,23 +221,19 @@ defmodule Roll35Bot.Commands.MagicItem do
     """
     Usage:
 
-    `/roll35 magicitem [[least|lesser|greater] minor|medium|major] [armor|weapon|potion|ring|rod|scroll|staff|wand|wondrous] [<extra>]`
+    `/roll35 magicitem [--rank minor|medium|major] [--subrank least|lesser|greater] [--type armor|weapon|potion|ring|rod|scroll|staff|wand|wondrous] [--class <class>] [--slot belt|body|chest|eyes|feet|hands|head|headband|neck|shoulders|wrists|slotless]`
 
     Roll a random magic item of the specified type. Exact order of parameters is not relevant.
 
-    If the type is `wondrous` or unspecified, you can specify a slot by lowercase name as the `<extra>` parameter. Any parameters not specified are determined randomly.
+    `--class`: Specifies a spellcasting class to use for rolling wands and scrolls. Class names must be in lowercase with any spaces replaced with `_`. If specified, `--type` must also be specified and must be either `wand` or `scroll`.
+    `--rank`: Specifies the item’s rank (minor/medium/major)
+    `--slot`: Specifies the slot for a wondrous item. Rolled randomly if left unspecified. If passed without specifying a `--type`, the type is assumed to be `wondrous`.
+    `--subrank`: Specifies the item’s sub-rank (least/lesser/greater)
+    `--type`: Specifies the type of magic item. Rolled randomly if left unspecified.
 
-    Examples:
+    At least one of `--rank`, `--type` or `--slot` must be specified.
 
-    Roll a random lesser major item: `/roll35 magicitem lesser major`
-
-    Roll a random scroll: `/roll35 magicitem scroll`
-
-    Roll a random major magic weapon: `/roll35 magicitem major weapon`
-
-    Roll a random belt slot item: `/roll35 magicitem wondrous belt` or `/roll35 magicitem belt`
-
-    Roll a completely random magic item: `roll35 magicitem`
+    If a parameter is specified more than once, the last instance specified gets used.
     """
   end
 end
