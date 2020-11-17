@@ -23,9 +23,7 @@ COPY apps /build/apps
 
 RUN MIX_ENV=prod mix release roll35_docker
 
-FROM alpine:3.12
-
-RUN mkdir -p /app
+FROM alpine:3.12 as runtime
 
 RUN apk add --no-cache ncurses-libs
 
