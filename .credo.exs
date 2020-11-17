@@ -190,8 +190,9 @@
         {CredoContrib.Check.FunctionNameUnderscorePrefix, []},
         {CredoContrib.Check.ModuleAlias, []},
         {CredoContrib.Check.ModuleDirectivesOrder, []},
+        {CredoContrib.Check.Unstable.ModuleFilePath, false},
         {CredoContrib.Check.PublicPrivateFunctionName, []},
-        {CredoRuntimeOnly.Check.Warning.SystemGetEnv, []},
+        {CredoContrib.Check.SingleFunctionPipe, []},
 
         #
         # Custom checks can be created using `mix credo.gen.check`.
