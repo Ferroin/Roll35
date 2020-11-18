@@ -4,7 +4,7 @@ defmodule Roll35Core.MixProject do
   def project do
     [
       app: :roll35_core,
-      version: "3.1.1",
+      version: "3.1.2",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
