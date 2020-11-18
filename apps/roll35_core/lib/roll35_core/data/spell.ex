@@ -261,7 +261,7 @@ defmodule Roll35Core.Data.Spell do
       #{EEx.eval_string(@spells_schema, classes: classes)}
       #{@tagmap_schema}
       #{@info_schema}
-      PRAGMA journal_mode='MEMORY';
+      PRAGMA journal_mode='WAL';
       PRAGMA synchronous='NORMAL';
       INSERT INTO info (id, data) VALUES ('columns', '#{Enum.join(columns, " ")}');
       INSERT INTO info (id, data) VALUES ('classes', '#{Enum.join(classes, " ")}');
