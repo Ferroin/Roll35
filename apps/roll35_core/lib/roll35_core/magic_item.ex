@@ -227,7 +227,7 @@ defmodule Roll35Core.MagicItem do
               Enum.map(pattern.specific, fn i -> String.to_existing_atom(i) end)
             )
           else
-            base = call(:armor, :random_base, [])
+            base = call(category, :random_base, [])
 
             {masterwork, bonus_cost} = bonus_costs(category, base)
 
@@ -240,8 +240,7 @@ defmodule Roll35Core.MagicItem do
             )
           end
 
-        category in [:wand, :scroll] and
-            String.to_existing_atom(extra) in call(:spell, :get_classes, []) ->
+        category in [:wand, :scroll] and extra in call(:spell, :get_classes, []) ->
           item = call(category, :random, [rank])
 
           Map.update(item, :spell, %{}, fn spell ->

@@ -413,7 +413,7 @@ defmodule Roll35Core.Data.Spell do
   `nil` to not limit the search by level.
 
   `class`: Specifies the class spell list to search within. This should be
-  a string with the class name in lower-case with any spaces replaced by
+  an atom with the class name in lower-case with any spaces replaced by
   `_`. In addition to the standard class names, there are three special
   values this can take. `minimum` searches for the spell based on the
   lowest level it appears at on any class list. `spellpage_arcane`
@@ -441,7 +441,7 @@ defmodule Roll35Core.Data.Spell do
   @spec random(GenServer.server(), keyword()) :: {:ok, term()} | {:error, term()}
   def random(server, options) do
     level = Keyword.get(options, :level)
-    opt_class = Keyword.get(options, :class, "minimum")
+    opt_class = Atom.to_string(Keyword.get(options, :class, :minimum))
     tag = Keyword.get(options, :tag)
 
     Logger.debug("Rolling random spell with parameters #{inspect({level, opt_class, tag})}.")
@@ -471,7 +471,7 @@ defmodule Roll35Core.Data.Spell do
           end)
           |> Enum.random()
 
-        opt_class == nil ->
+        opt_class == "nil" ->
           "minimum"
 
         opt_class in valid_columns ->
