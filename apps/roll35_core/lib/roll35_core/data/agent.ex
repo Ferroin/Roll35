@@ -9,17 +9,8 @@ defmodule Roll35Core.Data.Agent do
   as defining the expected callbacks.
 
   The implementation actually uses a `GenServer` instance instead of an
-  `Agent` instance for two reasons:
-
-  * It allows the initialization of the state to be asynchronous relative
-    to the startup of the server. This is important because some of the
-    agents need to load and process a very large amount of data, which
-    would cause the overall startup sequence to be much slower due to
-    how the startup of supervised processes is handled by `Supervisor`
-    instances.
-  * It allows us to hibernate the process when there is no active
-    usage. This is important for resource efficiency because the bot is
-    expected to be mostly inactive with short bouts of high frequency usage.
+  `Agent` instance because it allows us to handle initialization
+  asynchronously.
   """
 
   alias Roll35Core.Types
@@ -30,8 +21,27 @@ defmodule Roll35Core.Data.Agent do
 
   @call_timeout 15_000
 
-  defmacro __using__({name, datapath}) do
+  defmacro __before_compile__(_env) do
     quote do
+      @spec __r35_agent :: term()
+      # credo:disable-for-next-line CredoContrib.Check.FunctionNameUnderscorePrefix
+      def __r35_agent do
+        {__MODULE__,
+         {:via, Registry,
+          {Roll35Core.Registry,
+           __MODULE__
+           |> Atom.to_string()
+           |> String.split(".")
+           |> Enum.at(-1)
+           |> String.downcase()
+           |> String.to_atom()}}}
+      end
+    end
+  end
+
+  defmacro __using__(datapath) do
+    quote do
+      @before_compile Roll35Core.Data.Agent
       @behaviour Roll35Core.Data.Agent
 
       use GenServer
@@ -51,12 +61,10 @@ defmodule Roll35Core.Data.Agent do
       end
 
       @spec start_link(term()) :: GenServer.on_start()
-      def start_link(_) do
+      def start_link(name) do
         Logger.info("Starting #{__MODULE__}.")
 
-        GenServer.start_link(__MODULE__, [],
-          name: {:via, Registry, {Roll35Core.Registry, unquote(name)}}
-        )
+        GenServer.start_link(__MODULE__, [], name: name)
       end
 
       @impl GenServer
@@ -74,6 +82,23 @@ defmodule Roll35Core.Data.Agent do
         {:reply, function.(state), state}
       end
     end
+  end
+
+  @doc """
+  Get a list of all known data agents, in the form of supervisor specs.
+  """
+  @spec agents() :: [{atom(), [GenServer.server()]}, ...]
+  def agents do
+    {:ok, modules} = :application.get_key(:roll35_core, :modules)
+
+    modules
+    |> Stream.filter(fn module ->
+      Enum.any?(module.__info__(:functions), &match?({:__r35_agent, 0}, &1))
+    end)
+    |> Stream.map(fn module ->
+      apply(module, :__r35_agent, [])
+    end)
+    |> Enum.to_list()
   end
 
   @doc """

@@ -3,7 +3,7 @@ defmodule Roll35Core.Data.Staff do
   Data handling for staves.
   """
 
-  use Roll35Core.Data.Agent, {:staff, "priv/staff.yaml"}
+  use Roll35Core.Data.Agent, "priv/staff.yaml"
 
   alias Roll35Core.Util
 

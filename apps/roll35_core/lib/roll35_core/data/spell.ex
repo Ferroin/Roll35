@@ -3,6 +3,8 @@ defmodule Roll35Core.Data.Spell do
   Data handling for spells.
   """
 
+  @before_compile Roll35Core.Data.Agent
+
   # Due to complexities and caching requirements, we need to implement
   # this from scratch instead of building on Roll35Core.Data.Agent.
   use GenServer

@@ -27,34 +27,10 @@ defmodule Roll35Core.Application do
 
       # Database instances
       {Roll35Core.DB,
-       [:spell_db, Path.join(Application.fetch_env!(:roll35_core, :db_path), "spells.sqlite3")]},
+       [:spell_db, Path.join(Application.fetch_env!(:roll35_core, :db_path), "spells.sqlite3")]}
 
       # Data agents
-      # These are sorted in relative descending order of initialization time.
-      Roll35Core.Data.Spell,
-      Roll35Core.Data.Armor,
-      Roll35Core.Data.Weapon,
-      Roll35Core.Data.Belt,
-      Roll35Core.Data.Body,
-      Roll35Core.Data.Category,
-      Roll35Core.Data.Chest,
-      Roll35Core.Data.Eyes,
-      Roll35Core.Data.Feet,
-      Roll35Core.Data.Hand,
-      Roll35Core.Data.Headband,
-      Roll35Core.Data.Head,
-      Roll35Core.Data.Keys,
-      Roll35Core.Data.Neck,
-      Roll35Core.Data.Potion,
-      Roll35Core.Data.Ring,
-      Roll35Core.Data.Rod,
-      Roll35Core.Data.Scroll,
-      Roll35Core.Data.Shoulders,
-      Roll35Core.Data.Slotless,
-      Roll35Core.Data.Staff,
-      Roll35Core.Data.Wand,
-      Roll35Core.Data.Wondrous,
-      Roll35Core.Data.Wrists
+      | Roll35Core.Data.Agent.agents()
     ]
 
     opts = [strategy: :one_for_one, name: Roll35Core.Supervisor]

@@ -3,7 +3,7 @@ defmodule Roll35Core.Data.Armor do
   Data handling for armor and shield items.
   """
 
-  use Roll35Core.Data.Agent, {:armor, "priv/armor.yaml"}
+  use Roll35Core.Data.Agent, "priv/armor.yaml"
 
   alias Roll35Core.Types
   alias Roll35Core.Util

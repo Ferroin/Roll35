@@ -3,7 +3,7 @@ defmodule Roll35Core.Data.Weapon do
   Data handling for weapon and shield items.
   """
 
-  use Roll35Core.Data.Agent, {:weapon, "priv/weapon.yaml"}
+  use Roll35Core.Data.Agent, "priv/weapon.yaml"
 
   alias Roll35Core.Types
   alias Roll35Core.Util
