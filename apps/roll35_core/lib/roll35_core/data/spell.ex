@@ -54,10 +54,10 @@ defmodule Roll35Core.Data.Spell do
       {:ok, [%{data: rev}]} = SpellDB.query(@spell_db, "SELECT data FROM info WHERE id='rev';")
 
       {:ok, [%{data: mtime1}]} =
-        SpellDB.query(@spell_db, "SELECT data FROM info WHERE id='spell_mtime''")
+        SpellDB.query(@spell_db, "SELECT data FROM info WHERE id='spell_mtime;'")
 
       {:ok, [%{data: mtime2}]} =
-        SpellDB.query(@spell_db, "SELECT data FROM info WHERE id='class_mtime''")
+        SpellDB.query(@spell_db, "SELECT data FROM info WHERE id='class_mtime;'")
 
       if rev != @schema_rev or Integer.parse(mtime1, 10) != spelltstamp or
            Integer.parse(mtime2, 10) != clasststamp do
@@ -69,8 +69,9 @@ defmodule Roll35Core.Data.Spell do
         Logger.info("SpellDB timestamps and schema match, using existing database.")
       end
     rescue
-      _ ->
+      e ->
         Logger.notice("Unable to read spell DB, regenerating it from spell data.")
+        Logger.debug(inspect(e))
         spelldata = YamlElixir.read_from_file!(spellpath)
 
         :ok = prepare_spell_db(spelldata, spelltstamp, classdata, clasststamp)
