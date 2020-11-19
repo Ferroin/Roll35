@@ -12,5 +12,6 @@ defmodule Roll35Core.Data.Wand do
     Util.process_compound_itemlist(data)
   end
 
-  Roll35Core.Data.Agent.compound_itemlist_selectors()
+  defdelegate random(agent), to: Roll35Core.Data.Agent, as: :random_compound
+  defdelegate random(agent, rank), to: Roll35Core.Data.Agent, as: :random_compound
 end

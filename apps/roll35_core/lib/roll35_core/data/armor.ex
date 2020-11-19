@@ -38,7 +38,15 @@ defmodule Roll35Core.Data.Armor do
     |> Util.generate_tags_entry(@item_types)
   end
 
-  Roll35Core.Data.Agent.armor_weapon_selectors(@item_types)
+  defdelegate tags(agent), to: Roll35Core.Data.Agent
+  defdelegate get_base(agent, base), to: Roll35Core.Data.Agent
+  defdelegate random_base(agent), to: Roll35Core.Data.Agent
+  defdelegate random_base(agent, tags), to: Roll35Core.Data.Agent
+  defdelegate random_enchantment(agent, type, bonus), to: Roll35Core.Data.Agent
+  defdelegate random_enchantment(agent, type, bonus, enchants), to: Roll35Core.Data.Agent
+  defdelegate random_enchantment(agent, type, bonus, enchants, limit), to: Roll35Core.Data.Agent
+  defdelegate random(agent, rank, subrank), to: Roll35Core.Data.Agent, as: :random_pattern
+  defdelegate random(agent, rank, subrank, opts), to: Roll35Core.Data.Agent, as: :random_pattern
 
   @doc """
   Roll a random specific item of a given type, rank, and subrank.
@@ -54,7 +62,7 @@ defmodule Roll35Core.Data.Armor do
       } from #{__MODULE__}."
     )
 
-    data = get(agent, fn data -> data.specific[type][rank][subrank] end)
+    data = Roll35Core.Data.Agent.get(agent, fn data -> data.specific[type][rank][subrank] end)
 
     WeightedRandom.complex(data)
   end
