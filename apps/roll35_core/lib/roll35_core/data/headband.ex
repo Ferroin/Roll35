@@ -3,7 +3,7 @@ defmodule Roll35Core.Data.Headband do
   Data handling for headband items.
   """
 
-  use Roll35Core.Data.Agent, {:headband, "priv/headband.yaml"}
+  use Roll35Core.Data.Agent, "priv/headband.yaml"
 
   alias Roll35Core.Util
 

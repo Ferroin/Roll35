@@ -3,7 +3,7 @@ defmodule Roll35Core.Data.Scroll do
   Data handling for scrolls.
   """
 
-  use Roll35Core.Data.Agent, {:scroll, "priv/scroll.yaml"}
+  use Roll35Core.Data.Agent, "priv/scroll.yaml"
 
   alias Roll35Core.Util
 

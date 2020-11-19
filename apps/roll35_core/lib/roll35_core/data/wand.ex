@@ -3,7 +3,7 @@ defmodule Roll35Core.Data.Wand do
   Data handling for wands.
   """
 
-  use Roll35Core.Data.Agent, {:wand, "priv/wand.yaml"}
+  use Roll35Core.Data.Agent, "priv/wand.yaml"
 
   alias Roll35Core.Util
 

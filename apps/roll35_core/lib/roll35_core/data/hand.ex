@@ -3,7 +3,7 @@ defmodule Roll35Core.Data.Hand do
   Data handling for hand items.
   """
 
-  use Roll35Core.Data.Agent, {:hand, "priv/hand.yaml"}
+  use Roll35Core.Data.Agent, "priv/hand.yaml"
 
   alias Roll35Core.Util
 

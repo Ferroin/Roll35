@@ -3,7 +3,7 @@ defmodule Roll35Core.Data.Potion do
   Data handling for potions.
   """
 
-  use Roll35Core.Data.Agent, {:potion, "priv/potion.yaml"}
+  use Roll35Core.Data.Agent, "priv/potion.yaml"
 
   alias Roll35Core.Util
 

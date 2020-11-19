@@ -3,7 +3,7 @@ defmodule Roll35Core.Data.Slotless do
   Data handling for slotless items.
   """
 
-  use Roll35Core.Data.Agent, {:slotless, "priv/slotless.yaml"}
+  use Roll35Core.Data.Agent, "priv/slotless.yaml"
 
   alias Roll35Core.Util
 

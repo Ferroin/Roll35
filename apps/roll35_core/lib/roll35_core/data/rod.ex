@@ -3,7 +3,7 @@ defmodule Roll35Core.Data.Rod do
   Data handling for rods.
   """
 
-  use Roll35Core.Data.Agent, {:rod, "priv/rod.yaml"}
+  use Roll35Core.Data.Agent, "priv/rod.yaml"
 
   alias Roll35Core.Util
 

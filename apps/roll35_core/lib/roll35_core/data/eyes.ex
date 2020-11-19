@@ -3,7 +3,7 @@ defmodule Roll35Core.Data.Eyes do
   Data handling for eyes items.
   """
 
-  use Roll35Core.Data.Agent, {:eyes, "priv/eyes.yaml"}
+  use Roll35Core.Data.Agent, "priv/eyes.yaml"
 
   alias Roll35Core.Util
 

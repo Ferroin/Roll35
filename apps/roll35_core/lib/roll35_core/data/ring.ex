@@ -3,7 +3,7 @@ defmodule Roll35Core.Data.Ring do
   Data handling for rings.
   """
 
-  use Roll35Core.Data.Agent, {:ring, "priv/ring.yaml"}
+  use Roll35Core.Data.Agent, "priv/ring.yaml"
 
   alias Roll35Core.Util
 
