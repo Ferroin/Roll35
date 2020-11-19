@@ -245,6 +245,31 @@ defmodule Roll35Core.MagicItem do
     )
   end
 
+  def roll(rank, subrank, category, base: base) when category in [:armor, :weapon] do
+    Logger.debug("Rolling magic item with parameters #{inspect({rank, subrank, category})}.")
+
+    pattern = call(category, :random, [rank, subrank, no_specific: true])
+
+    item =
+      case call(category, :get_base, [base]) do
+        {:ok, base} ->
+          {masterwork, bonus_cost} = bonus_costs(category, base)
+
+          assemble_magic_item(
+            category,
+            pattern,
+            base,
+            bonus_cost,
+            masterwork
+          )
+
+        {:error, msg} ->
+          {:error, msg}
+      end
+
+    finalize_roll(item)
+  end
+
   def roll(rank, subrank, category, _opts) when category in [:armor, :weapon] do
     Logger.debug("Rolling magic item with parameters #{inspect({rank, subrank, category})}.")
     pattern = call(category, :random, [rank, subrank])
