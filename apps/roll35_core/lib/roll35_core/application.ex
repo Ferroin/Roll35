@@ -25,8 +25,9 @@ defmodule Roll35Core.Application do
       # Registry
       {Registry, keys: :unique, name: Roll35Core.Registry},
 
-      # Data agent dependencies
-      Roll35Core.Data.SpellDB,
+      # Database instances
+      {Roll35Core.DB,
+       [:spell_db, Path.join(Application.fetch_env!(:roll35_core, :db_path), "spells.sqlite3")]},
 
       # Data agents
       # These are sorted in relative descending order of initialization time.
