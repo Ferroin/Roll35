@@ -25,5 +25,6 @@ defmodule Roll35Core.Data.Category do
 
   # This is not actually a compound itemlist, but the data format is
   # identical, so we just use the same selectors.
-  Roll35Core.Data.Agent.compound_itemlist_selectors()
+  defdelegate random(agent), to: Roll35Core.Data.Agent, as: :random_compound
+  defdelegate random(agent, rank), to: Roll35Core.Data.Agent, as: :random_compound
 end

@@ -12,5 +12,7 @@ defmodule Roll35Core.Data.Hand do
     Util.process_ranked_itemlist(data)
   end
 
-  Roll35Core.Data.Agent.ranked_itemlist_selectors()
+  defdelegate random(agent), to: Roll35Core.Data.Agent, as: :random_ranked
+  defdelegate random(agent, rank), to: Roll35Core.Data.Agent, as: :random_ranked
+  defdelegate random(agent, rank, subrank), to: Roll35Core.Data.Agent, as: :random_ranked
 end

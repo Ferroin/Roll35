@@ -26,7 +26,7 @@ defmodule Roll35Core.Data.Wondrous do
   def random(agent) do
     Logger.debug("Rolling random slot.")
 
-    data = get(agent, & &1)
+    data = Roll35Core.Data.Agent.get(agent, & &1)
 
     WeightedRandom.complex(data)
   end
