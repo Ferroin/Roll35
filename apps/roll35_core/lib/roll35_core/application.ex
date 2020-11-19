@@ -23,11 +23,7 @@ defmodule Roll35Core.Application do
 
     children = [
       # Registry
-      {Registry, keys: :unique, name: Roll35Core.Registry},
-
-      # Database instances
-      {Roll35Core.DB,
-       [:spell_db, Path.join(Application.fetch_env!(:roll35_core, :db_path), "spells.sqlite3")]}
+      {Registry, keys: :unique, name: Roll35Core.Registry}
 
       # Data agents
       | Roll35Core.Data.Agent.agents()
