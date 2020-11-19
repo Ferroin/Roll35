@@ -1,10 +1,9 @@
-defmodule Roll35Core.Data.SpellDB do
+defmodule Roll35Core.DB do
   @moduledoc """
-  A server for handling access to the spell database.
+  A GenServer for handling access to an SQLite database.
 
-  This is intentionally kept separate from `Roll35Core.Data.Spell`
-  to allow for parallel initialization of the tables, as there are a
-  _very_ large number of spells to process.
+  This exists because Sqlitex.Server doesn’t provide a way to run
+  arbirary SQL scripts against databases.
   """
 
   use GenServer
@@ -13,18 +12,16 @@ defmodule Roll35Core.Data.SpellDB do
 
   @call_timeout 10_000
 
-  @spec start_link(term()) :: GenServer.on_start()
-  def start_link(_) do
+  @spec start_link(atom(), String.t()) :: GenServer.on_start()
+  def start_link(name, path) do
     Logger.info("Starting #{__MODULE__}.")
 
-    GenServer.start_link(__MODULE__, [], name: {:via, Registry, {Roll35Core.Registry, :spell_db}})
+    GenServer.start_link(__MODULE__, [path], name: {:via, Registry, {Roll35Core.Registry, name}})
   end
 
   @impl GenServer
-  def init(_) do
+  def init(path) do
     Process.flag(:trap_exit, true)
-
-    path = Path.join(Application.fetch_env!(:roll35_core, :db_path), "spells.sqlite3")
 
     {:ok, conn} = Sqlitex.open(path)
 
