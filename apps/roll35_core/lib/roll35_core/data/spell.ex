@@ -35,7 +35,6 @@ defmodule Roll35Core.Data.Spell do
   @schema_rev Base.encode16(
                 :crypto.hash(:sha256, "#{@spells_schema}\n#{@tagmap_schema}\n#{@info_schema}")
               )
-  @spell_db {:via, Registry, {Roll35Core.Registry, :spell_db}}
   @max_spell_level 9
 
   @spec sql_escape(String.t()) :: String.t()
@@ -43,8 +42,8 @@ defmodule Roll35Core.Data.Spell do
     String.replace(string, "'", "''")
   end
 
-  @spec load_data :: term()
-  def load_data do
+  @spec load_data(GenServer.server()) :: term()
+  def load_data(spell_db) do
     spellpath = Path.join(Application.app_dir(:roll35_core, "priv"), "spells.yaml")
     classpath = Path.join(Application.app_dir(:roll35_core, "priv"), "classes.yaml")
 
@@ -53,20 +52,20 @@ defmodule Roll35Core.Data.Spell do
     classdata = classpath |> YamlElixir.read_from_file!() |> Util.atomize_map()
 
     try do
-      {:ok, [%{data: rev}]} = DB.query(@spell_db, "SELECT data FROM info WHERE id='rev';")
+      {:ok, [%{data: rev}]} = DB.query(spell_db, "SELECT data FROM info WHERE id='rev';")
 
       {:ok, [%{data: mtime1}]} =
-        DB.query(@spell_db, "SELECT data FROM info WHERE id='spell_mtime;'")
+        DB.query(spell_db, "SELECT data FROM info WHERE id='spell_mtime;'")
 
       {:ok, [%{data: mtime2}]} =
-        DB.query(@spell_db, "SELECT data FROM info WHERE id='class_mtime;'")
+        DB.query(spell_db, "SELECT data FROM info WHERE id='class_mtime;'")
 
       if rev != @schema_rev or Integer.parse(mtime1, 10) != spelltstamp or
            Integer.parse(mtime2, 10) != clasststamp do
         Logger.notice("DB out of sync with data, regenerating it from spell data.")
         spelldata = YamlElixir.read_from_file!(spellpath)
 
-        :ok = prepare_spell_db(spelldata, spelltstamp, classdata, clasststamp)
+        :ok = prepare_spell_db(spell_db, spelldata, spelltstamp, classdata, clasststamp)
       else
         Logger.info("DB timestamps and schema match, using existing database.")
       end
@@ -76,10 +75,10 @@ defmodule Roll35Core.Data.Spell do
         Logger.debug(inspect(e))
         spelldata = YamlElixir.read_from_file!(spellpath)
 
-        :ok = prepare_spell_db(spelldata, spelltstamp, classdata, clasststamp)
+        :ok = prepare_spell_db(spell_db, spelldata, spelltstamp, classdata, clasststamp)
     end
 
-    %{class: classdata}
+    %{db: spell_db, class: classdata}
   end
 
   defp eval_minimum(level, cls, minimum, minimum_cls) when level == minimum and minimum_cls == "",
@@ -252,15 +251,16 @@ defmodule Roll35Core.Data.Spell do
     """
   end
 
-  @spec prepare_spell_db(list(), integer(), map(), integer()) :: :ok | {:error, term()}
-  def prepare_spell_db(spelldata, spelltstamp, classdata, clasststamp) do
+  @spec prepare_spell_db(GenServer.server(), list(), integer(), map(), integer()) ::
+          :ok | {:error, term()}
+  def prepare_spell_db(spell_db, spelldata, spelltstamp, classdata, clasststamp) do
     classes = Map.keys(classdata)
     columns = [:minimum, :spellpage_arcane, :spellpage_divine | classes]
 
     Logger.debug("Initializing spell database.")
 
     :ok =
-      DB.exec(@spell_db, """
+      DB.exec(spell_db, """
       DROP TABLE IF EXISTS spells;
       DROP TABLE IF EXISTS tagmap;
       DROP TABLE IF EXISTS info;
@@ -284,7 +284,7 @@ defmodule Roll35Core.Data.Spell do
       |> Task.async_stream(
         fn {{classdata, item}, index} ->
           {:ok, [%{data: columns}]} =
-            DB.query(@spell_db, "SELECT data FROM info WHERE id='classes';")
+            DB.query(spell_db, "SELECT data FROM info WHERE id='classes';")
 
           rev_columns = columns |> String.split(" ", trim: true) |> Enum.reverse()
 
@@ -296,7 +296,7 @@ defmodule Roll35Core.Data.Spell do
 
           Logger.debug("Writing chunk #{index} to spell database.")
 
-          DB.exec(@spell_db, sql)
+          DB.exec(spell_db, sql)
 
           []
         end,
@@ -309,7 +309,7 @@ defmodule Roll35Core.Data.Spell do
     Logger.debug("Finalizing spell database.")
 
     :ok =
-      DB.exec(@spell_db, """
+      DB.exec(spell_db, """
         INSERT INTO info (id, data) VALUES ('rev', '#{@schema_rev}');
         INSERT INTO info (id, data) VALUES ('spell_mtime', '#{spelltstamp}');
         INSERT INTO info (id, data) VALUES ('class_mtime', '#{clasststamp}');
@@ -330,17 +330,20 @@ defmodule Roll35Core.Data.Spell do
 
   @impl GenServer
   def init(_) do
-    {:ok, %{}, {:continue, :init}}
+    {:ok, pid} =
+      DB.start_link(Path.join(Application.fetch_env!(:roll35_core, :db_path), "spells.sqlite3"))
+
+    {:ok, %{db: pid}, {:continue, :init}}
   end
 
   @impl GenServer
-  def handle_continue(:init, _) do
-    {:noreply, load_data()}
+  def handle_continue(:init, state) do
+    {:noreply, load_data(state.db)}
   end
 
   @impl GenServer
   def handle_call({:query, sql, bind}, _from, state) do
-    {:reply, DB.query(@spell_db, sql, bind), state}
+    {:reply, DB.query(state.db, sql, bind), state}
   end
 
   @impl GenServer
