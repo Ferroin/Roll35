@@ -1,4 +1,7 @@
 Application.load(:roll35_core)
+
+Logger.configure(level: :warn)
+
 Application.ensure_all_started(:roll35_core)
 
 ExUnit.start()
