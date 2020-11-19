@@ -125,7 +125,14 @@ defmodule Roll35Bot.Commands.MagicItem do
     params =
       Enum.reduce_while(
         opts,
-        %{category: nil, rank: nil, subrank: nil, slot: nil, class: nil},
+        %{
+          base: nil,
+          category: nil,
+          class: nil,
+          rank: nil,
+          slot: nil,
+          subrank: nil
+        },
         fn {key, value}, acc ->
           check_arg(key, value, acc, spell_classes)
         end
