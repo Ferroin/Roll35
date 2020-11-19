@@ -55,7 +55,11 @@ defmodule Roll35Bot.Renderer do
   @doc """
   Format an item for use as a message.
   """
-  @spec format(Types.item()) :: String.t()
+  @spec format(Types.item() | String.t()) :: String.t()
+  def format(item) when is_binary(item) do
+    item
+  end
+
   def format(item) do
     name = item.name
 

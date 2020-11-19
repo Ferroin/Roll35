@@ -441,14 +441,22 @@ defmodule Roll35Core.Data.Spell do
   @spec random(GenServer.server(), keyword()) :: {:ok, term()} | {:error, term()}
   def random(server, options) do
     level = Keyword.get(options, :level)
-    opt_class = Atom.to_string(Keyword.get(options, :class, :minimum))
+
+    opt_class =
+      options
+      |> Keyword.get(:class, :minimum)
+      |> (fn
+            item when is_atom(item) -> Atom.to_string(item)
+            item -> item
+          end).()
+
     tag = Keyword.get(options, :tag)
 
     Logger.debug("Rolling random spell with parameters #{inspect({level, opt_class, tag})}.")
 
     {:ok, valid_cls_result} = GenServer.call(server, :get_classes, 5_000)
 
-    valid_classes = Enum.each(valid_cls_result, &Atom.to_string/1)
+    valid_classes = Enum.map(valid_cls_result, &Atom.to_string/1)
 
     {:ok, [%{data: valid_col_result}]} =
       GenServer.call(server, {:query, "SELECT data FROM info WHERE id='columns';", []}, 5_000)
