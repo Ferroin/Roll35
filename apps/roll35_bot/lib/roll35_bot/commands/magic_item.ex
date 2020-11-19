@@ -20,11 +20,12 @@ defmodule Roll35Bot.Commands.MagicItem do
       options,
       [
         strict: [
+          base: :string,
+          class: :string,
           rank: :string,
-          subrank: :string,
-          type: :string,
           slot: :string,
-          class: :string
+          subrank: :string,
+          type: :string
         ]
       ],
       message,
@@ -114,6 +115,10 @@ defmodule Roll35Bot.Commands.MagicItem do
     end
   end
 
+  defp check_arg(:base, value, acc, _classes) do
+    {:cont, Map.put(acc, :base, value)}
+  end
+
   defp get_params(opts) do
     spell_classes = Spell.get_classes({:via, Registry, {Roll35Core.Registry, :spell}})
 
@@ -158,6 +163,7 @@ defmodule Roll35Bot.Commands.MagicItem do
            end).()
        |> (fn map ->
              {
+               map.base,
                map.category,
                map.class,
                map.rank,
@@ -173,6 +179,7 @@ defmodule Roll35Bot.Commands.MagicItem do
     case get_params(opts) do
       {:ok,
        {
+         base,
          category,
          class,
          rank,
@@ -182,6 +189,9 @@ defmodule Roll35Bot.Commands.MagicItem do
         cond do
           args != [] ->
             {:error, "`/roll35 magicitem` command does not take any positional parameters."}
+
+          base != nil and category not in [:weapon, :armor] ->
+            {:error, "Base item may only be specified when rolling for magic weapons or armor."}
 
           class != nil and not Enum.member?([:scroll, :wand], category) ->
             {:error, "Spellcasting class may only be specified for scrolls and wands."}
@@ -198,6 +208,7 @@ defmodule Roll35Bot.Commands.MagicItem do
           true ->
             {ret, msg} =
               cond do
+                base != nil -> MagicItem.roll(rank, subrank, category, base: base)
                 class != nil -> MagicItem.roll(rank, subrank, category, class: class)
                 slot != nil -> MagicItem.roll(rank, subrank, category, slot: slot)
                 true -> MagicItem.roll(rank, subrank, category)
@@ -219,10 +230,11 @@ defmodule Roll35Bot.Commands.MagicItem do
     """
     Usage:
 
-    `/roll35 magicitem [--rank minor|medium|major] [--subrank least|lesser|greater] [--type armor|weapon|potion|ring|rod|scroll|staff|wand|wondrous] [--class <class>] [--slot belt|body|chest|eyes|feet|hands|head|headband|neck|shoulders|wrists|slotless]`
+    `/roll35 magicitem [--rank minor|medium|major] [--subrank least|lesser|greater] [--type armor|weapon|potion|ring|rod|scroll|staff|wand|wondrous] [--slot belt|body|chest|eyes|feet|hands|head|headband|neck|shoulders|wrists|slotless] [--class <class>] [--base <base>]`
 
     Roll a random magic item of the specified type. Exact order of parameters is not relevant.
 
+    `--base`: Specifies a base item to use when rolling a magic weapon or magic armor. This is matched case insensitively, but the item name must be quoted if it contains spaces.
     `--class`: Specifies a spellcasting class to use for rolling wands and scrolls. Class names must be in lowercase with any spaces replaced with `_`. If specified, `--type` must also be specified and must be either `wand` or `scroll`.
     `--rank`: Specifies the item’s rank (minor/medium/major)
     `--slot`: Specifies the slot for a wondrous item. Rolled randomly if left unspecified. If passed without specifying a `--type`, the type is assumed to be `wondrous`.
