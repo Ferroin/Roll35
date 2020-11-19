@@ -11,16 +11,17 @@ related games.
 * Automatically roll random spells for scrolls, potions, and wands.
 * Roll random spells, optionally for a specific level, class, or category.
 * Roll random mundane weapons and armor.
+* Roll specific base weapons or armor as magic items.
 * Roll wands or scrolls for a specific class.
 
 ## Planned Features
 
 * Automatically roll random spells present in items that store spells.
-* Roll against arbitrary data tables.
 * Automatically roll for intelligence/special markings on magic items.
+* Roll for random weather conditions.
+* Roll against arbitrary data tables.
 * Respond with embeds containing relevent information about the rolled
   item, including hyperlinks to relevant reference material.
-* Roll specific base weapons or armor as magic items.
 * Roll dice by themselves.
 * Fetch data on specific items directly without rolling for them randomly.
 * The ability to enable and disable specific items at runtime (with
