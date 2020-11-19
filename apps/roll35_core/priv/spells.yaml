@@ -1836,7 +1836,6 @@
     alchemist: 6
     bard: 6
     druid: 7
-    medium: 6
     shaman: 6
     spiritualist: 6
     summoner: 6
@@ -8749,7 +8748,6 @@
     cleric: 6
     inquisitor: 6
     magus: 6
-    medium: 6
     shaman: 7
     wizard: 6
   descriptor: ''
@@ -17766,7 +17764,6 @@
   school: enchantment
   subschool: compulsion
 - classes:
-    bloodrager: 5
     cleric: 5
     inquisitor: 5
     shaman: 5
@@ -18774,7 +18771,6 @@
   subschool: polymorph
 - classes:
     alchemist: 5
-    bloodrager: 5
     magus: 5
     wizard: 5
   descriptor: ''
@@ -18784,7 +18780,6 @@
   subschool: polymorph
 - classes:
     alchemist: 6
-    bloodrager: 6
     magus: 6
     wizard: 6
   descriptor: ''
@@ -20145,7 +20140,6 @@
   subschool: phantasm
 - classes:
     alchemist: 6
-    antipaladin: 6
     cleric: 6
     druid: 6
     inquisitor: 6
@@ -23801,7 +23795,6 @@
   subschool: shadow
 - classes:
     bard: 6
-    medium: 6
     shaman: 6
     spiritualist: 6
     summoner: 6
@@ -25995,7 +25988,6 @@
   subschool: ''
 - classes:
     bard: 6
-    medium: 5
     mesmerist: 5
     psychic: 6
     wizard: 7
