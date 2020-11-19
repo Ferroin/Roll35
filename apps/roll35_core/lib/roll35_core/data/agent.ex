@@ -199,6 +199,40 @@ defmodule Roll35Core.Data.Agent do
   """
   defmacro armor_weapon_selectors(types) do
     quote do
+      @spec get_base(GenServer.server(), String.t()) ::
+              {:ok, %{atom() => term()}} | {:error, String.t()}
+      def get_base(agent, name) do
+        Logger.debug("Fetching bse item \"#{name}\".")
+
+        data = get(agent, fn data -> data.base end)
+
+        result =
+          Enum.find(data, fn item -> String.downcase(item.name) == String.downcase(name) end)
+
+        if result == nil do
+          possible =
+            data
+            |> Enum.map(fn item ->
+              {item.name, String.jaro_distance(String.downcase(name), String.downcase(item.name))}
+            end)
+            |> Enum.filter(fn {_, d} -> d > 0.8 end)
+            |> Enum.sort(fn {_, d1}, {_, d2} -> d2 >= d1 end)
+            |> Enum.take(3)
+            |> Enum.map(fn {i, _} -> i end)
+
+          if possible == [] do
+            {:error, "No matching items found."}
+          else
+            {:error,
+             "\"#{name}\" is not a recognized item, did you possibly mean one of: \"#{
+               Enum.join(possible, "\", \"")
+             }\"?"}
+          end
+        else
+          {:ok, result}
+        end
+      end
+
       @spec random_base(GenServer.server(), list(atom())) :: %{atom() => term()} | nil
       def random_base(agent, tags \\ []) do
         Logger.debug(
