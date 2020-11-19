@@ -7,6 +7,7 @@ defmodule Roll35Core.MagicItem do
   alias Roll35Core.Util
 
   require Logger
+  require Types
 
   @compound_itemlists [:potion, :scroll, :wand]
   @ranked_itemlists [:ring, :rod, :staff]
@@ -65,7 +66,8 @@ defmodule Roll35Core.MagicItem do
     apply(modname(target), function, [server(target) | opts])
   end
 
-  @spec finalize_roll(map()) :: {:ok, Types.item()} | {:error, term()}
+  @spec finalize_roll(map() | {:ok, String.t()} | {:error, String.t()}) ::
+          {:ok, Types.item()} | {:error, term()}
   defp finalize_roll(item) do
     case item do
       {:error, msg} ->
@@ -188,80 +190,124 @@ defmodule Roll35Core.MagicItem do
   @doc """
   Roll a magic item.
 
-  This takes a keyword list specifying how to get to the item in question.
+  This takes a rank, subrank, and category, and optionally a keyword
+  list of extra options, and produces an item that can be passed to
+  a formatter.
   """
-  @spec roll(Types.rank(), Types.full_subrank(), Types.category(), term()) ::
+  @spec roll(Types.rank(), Types.full_subrank(), Types.category(), keyword()) ::
           {:ok, Types.item()} | {:error, term()}
-  def roll(rank, subrank, category, extra \\ nil) do
+  def roll(rank, subrank, category, opts \\ [])
+
+  def roll(:minor, :least, :wondrous, slot: :slotless) do
     Logger.debug(
-      "Rolling magic item with parameters #{inspect({rank, subrank, category, extra})}."
+      "Rolling magic item with parameters #{
+        inspect({:least, :minor, :wondrous, {:slot, :slotless}})
+      }."
     )
 
+    finalize_roll(call(:slotless, :random, [:minor, :least]))
+  end
+
+  def roll(_rank, :least, :wondrous, slot: _slot) do
+    finalize_roll({:error, "Only slotless wondrous items have a least subrank."})
+  end
+
+  def roll(_rank, :least, _category, _opts) do
+    finalize_roll({:error, "Only slotless wondrous items have a least subrank."})
+  end
+
+  def roll(rank, subrank, :wondrous, slot: slot) do
+    Logger.debug(
+      "Rolling magic item with parameters #{inspect({rank, subrank, :wondrous, {:slot, slot}})}."
+    )
+
+    finalize_roll(call(slot, :random, [rank, subrank]))
+  end
+
+  def roll(rank, subrank, nil, slot: slot) do
+    Logger.debug(
+      "Rolling magic item with parameters #{inspect({rank, subrank, :wondrous, {:slot, slot}})}."
+    )
+
+    finalize_roll(call(slot, :random, [rank, subrank]))
+  end
+
+  def roll(rank, subrank, :wondrous, _opts) do
+    Logger.debug("Rolling magic item with parameters #{inspect({rank, subrank, :wondrous})}.")
+    slot = call(:wondrous, :random)
+    finalize_roll(call(slot, :random, [rank, subrank]))
+  end
+
+  def roll(:minor, _subrank, category, _opts) when category in [:rod, :staff] do
+    finalize_roll(
+      {:error,
+       "#{category |> Atom.to_string() |> String.capitalize()} items do not have a minor rank."}
+    )
+  end
+
+  def roll(rank, subrank, category, _opts) when category in [:armor, :weapon] do
+    Logger.debug("Rolling magic item with parameters #{inspect({rank, subrank, category})}.")
+    pattern = call(category, :random, [rank, subrank])
+
     item =
-      cond do
-        category != :wondrous and extra != :slotless and subrank == :least ->
-          {:error, "Only slotless wondrous items have a least subrank."}
+      if Map.has_key?(pattern, :specific) do
+        call(
+          category,
+          :random_specific,
+          Enum.map(pattern.specific, fn i -> String.to_existing_atom(i) end)
+        )
+      else
+        base = call(category, :random_base, [])
 
-        category in [:rod, :staff] and rank == :minor ->
-          {:error,
-           "#{category |> Atom.to_string() |> String.capitalize()} items do not have a minor rank."}
+        {masterwork, bonus_cost} = bonus_costs(category, base)
 
-        category == :wondrous and extra == nil ->
-          slot = call(:wondrous, :random)
-
-          call(slot, :random, [rank, subrank])
-
-        category == nil and extra != nil ->
-          call(extra, :random, [rank, subrank])
-
-        category == :wondrous ->
-          call(extra, :random, [rank, subrank])
-
-        category in [:armor, :weapon] ->
-          pattern = call(category, :random, [rank, subrank])
-
-          if Map.has_key?(pattern, :specific) do
-            call(
-              category,
-              :random_specific,
-              Enum.map(pattern.specific, fn i -> String.to_existing_atom(i) end)
-            )
-          else
-            base = call(category, :random_base, [])
-
-            {masterwork, bonus_cost} = bonus_costs(category, base)
-
-            assemble_magic_item(
-              category,
-              pattern,
-              base,
-              bonus_cost,
-              masterwork
-            )
-          end
-
-        category in [:wand, :scroll] and extra in call(:spell, :get_classes, []) ->
-          item = call(category, :random, [rank])
-
-          Map.update(item, :spell, %{}, fn spell ->
-            Map.put(spell, :cls, extra)
-          end)
-
-        category in @compound_itemlists ->
-          call(category, :random, [rank])
-
-        category in @ranked_itemlists ->
-          call(category, :random, [rank, subrank])
-
-        category == nil ->
-          category = call(:category, :random, [rank])
-
-          roll(rank, subrank, category)
-
-        true ->
-          {:error, "Invalid item category."}
+        assemble_magic_item(
+          category,
+          pattern,
+          base,
+          bonus_cost,
+          masterwork
+        )
       end
 
     finalize_roll(item)
+  end
+
+  def roll(rank, _subrank, category, class: class) when category in [:wand, :scroll] do
+    Logger.debug(
+      "Rolling magic item with parameters #{inspect({rank, nil, category, {:class, class}})}."
+    )
+
+    item =
+      if class in call(:spell, :get_classes, []) do
+        Map.update(call(category, :random, [rank]), :spell, %{}, fn spell ->
+          Map.put(spell, :cls, class)
+        end)
+      else
+        {:error, "Unknown spellcasting class #{class}."}
+      end
+
+    finalize_roll(item)
+  end
+
+  def roll(rank, _subrank, category, _opts) when category in @compound_itemlists do
+    Logger.debug("Rolling magic item with parameters #{inspect({rank, nil, category})}.")
+    finalize_roll(call(category, :random, [rank]))
+  end
+
+  def roll(rank, subrank, category, _opts) when category in @ranked_itemlists do
+    Logger.debug("Rolling magic item with parameters #{inspect({rank, subrank, category})}.")
+    finalize_roll(call(category, :random, [rank, subrank]))
+  end
+
+  def roll(rank, subrank, nil, _opts) when Types.is_rank(rank) and Types.is_subrank(subrank) do
+    Logger.debug("Rolling magic item with parameters #{inspect({rank, subrank, nil})}.")
+    category = call(:category, :random, [rank])
+
+    roll(rank, subrank, category, [])
+  end
+
+  def roll(_rank, _subrank, _category, _opts) do
+    finalize_roll({:error, "Invalid parameters."})
   end
 end

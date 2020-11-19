@@ -195,17 +195,15 @@ defmodule Roll35Bot.Commands.MagicItem do
           subrank == :least and slot != :slotless ->
             {:error, "Only slotless items have a least subrank."}
 
-          class != nil ->
-            case MagicItem.roll(rank, subrank, category, class) do
-              {:ok, item} -> {:ok, Renderer.format(item)}
-              {:error, msg} -> {:error, msg}
-            end
-
           true ->
-            case MagicItem.roll(rank, subrank, category, slot) do
-              {:ok, item} -> {:ok, Renderer.format(item)}
-              {:error, msg} -> {:error, msg}
-            end
+            {ret, msg} =
+              cond do
+                class != nil -> MagicItem.roll(rank, subrank, category, class: class)
+                slot != nil -> MagicItem.roll(rank, subrank, category, slot: slot)
+                true -> MagicItem.roll(rank, subrank, category)
+              end
+
+            {ret, Renderer.format(msg)}
         end
 
       {:error, msg} ->
