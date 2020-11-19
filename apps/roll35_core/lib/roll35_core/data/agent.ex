@@ -206,18 +206,40 @@ defmodule Roll35Core.Data.Agent do
 
         data = get(agent, fn data -> data.base end)
 
+        norm_name =
+          name
+          |> String.normalize(:nfd)
+          |> String.downcase()
+
         result =
-          Enum.find(data, fn item -> String.downcase(item.name) == String.downcase(name) end)
+          Enum.find(data, fn item ->
+            item.name |> String.normalize(:nfd) |> String.downcase() == norm_name
+          end)
 
         if result == nil do
           possible =
             data
-            |> Enum.map(fn item ->
-              {item.name, String.jaro_distance(String.downcase(name), String.downcase(item.name))}
-            end)
-            |> Enum.filter(fn {_, d} -> d > 0.8 end)
+            |> Task.async_stream(
+              fn item ->
+                item_name =
+                  item.name
+                  |> String.normalize(:nfd)
+                  |> String.downcase()
+
+                cond do
+                  String.starts_with?(item_name, norm_name) -> {item.name, 1.2}
+                  String.ends_with?(item_name, norm_name) -> {item.name, 1.2}
+                  String.contains?(item_name, norm_name) -> {item.name, 1.1}
+                  true -> {item.name, String.jaro_distance(norm_name, item_name)}
+                end
+              end,
+              max_concurrency: min(System.schedulers_online(), 4),
+              ordered: false
+            )
+            |> Stream.map(fn {:ok, v} -> v end)
+            |> Stream.filter(fn {_, d} -> d > 0.8 end)
             |> Enum.sort(fn {_, d1}, {_, d2} -> d2 >= d1 end)
-            |> Enum.take(3)
+            |> Enum.take(4)
             |> Enum.map(fn {i, _} -> i end)
 
           if possible == [] do
