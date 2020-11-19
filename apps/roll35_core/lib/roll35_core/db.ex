@@ -12,11 +12,11 @@ defmodule Roll35Core.DB do
 
   @call_timeout 10_000
 
-  @spec start_link(atom(), String.t()) :: GenServer.on_start()
-  def start_link(name, path) do
+  @spec start_link(term()) :: GenServer.on_start()
+  def start_link([name, path]) do
     Logger.info("Starting #{__MODULE__}.")
 
-    GenServer.start_link(__MODULE__, [path], name: {:via, Registry, {Roll35Core.Registry, name}})
+    GenServer.start_link(__MODULE__, path, name: {:via, Registry, {Roll35Core.Registry, name}})
   end
 
   @impl GenServer
