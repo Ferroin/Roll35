@@ -301,8 +301,28 @@ defmodule Roll35Core.Data.Agent do
         end
       end
 
-      @spec random(GenServer.server(), Types.rank(), Types.subrank()) :: %{atom() => term()}
-      def random(agent, rank, subrank) when Types.is_rank(rank) and Types.is_subrank(subrank) do
+      @spec random(GenServer.server(), Types.rank(), Types.subrank(), keyword()) :: %{
+              atom() => term()
+            }
+      def random(agent, rank, subrank, opts \\ [])
+
+      def random(agent, rank, subrank, no_specific: true)
+          when Types.is_rank(rank) and Types.is_subrank(subrank) do
+        Logger.info(
+          "Getting random item of rank #{inspect(rank)} and subrank #{inspect(subrank)} from #{
+            __MODULE__
+          }, ignoring specific rolls."
+        )
+
+        data = get(agent, fn data -> data[rank][subrank] end)
+
+        data
+        |> Enum.filter(fn item -> :specific not in Map.keys(item.value) end)
+        |> WeightedRandom.complex()
+      end
+
+      def random(agent, rank, subrank, _)
+          when Types.is_rank(rank) and Types.is_subrank(subrank) do
         Logger.info(
           "Getting random item of rank #{inspect(rank)} and subrank #{inspect(subrank)} from #{
             __MODULE__
