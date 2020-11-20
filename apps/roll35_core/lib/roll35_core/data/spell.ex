@@ -80,6 +80,9 @@ defmodule Roll35Core.Data.Spell do
     %{class: classdata}
   end
 
+  defp eval_minimum(level, cls, minimum, minimum_cls) when level == minimum and minimum_cls == "",
+    do: {level, cls}
+
   defp eval_minimum(level, cls, minimum, _minimum_cls) when level != "NULL" and level < minimum,
     do: {level, cls}
 
