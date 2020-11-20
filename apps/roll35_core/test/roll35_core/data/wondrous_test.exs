@@ -7,7 +7,7 @@ defmodule Roll35Core.Data.WondrousTest do
 
   describe "Roll35Core.Data.Wondrous.load_data/0" do
     setup do
-      data = Wondrous.load_data()
+      data = Wondrous.load_data(Path.join("priv", "wondrous.yaml"))
 
       {:ok, [data: data]}
     end

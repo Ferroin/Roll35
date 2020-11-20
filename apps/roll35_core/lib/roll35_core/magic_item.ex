@@ -14,28 +14,28 @@ defmodule Roll35Core.MagicItem do
   @max_tries 3
 
   defp modname(:armor), do: Roll35Core.Data.Armor
-  defp modname(:belt), do: Roll35Core.Data.Belt
-  defp modname(:body), do: Roll35Core.Data.Body
+  defp modname(:belt), do: Roll35Core.Data.RankedAgent
+  defp modname(:body), do: Roll35Core.Data.RankedAgent
   defp modname(:category), do: Roll35Core.Data.Category
-  defp modname(:chest), do: Roll35Core.Data.Chest
-  defp modname(:eyes), do: Roll35Core.Data.Eyes
-  defp modname(:feet), do: Roll35Core.Data.Feet
-  defp modname(:hand), do: Roll35Core.Data.Hand
-  defp modname(:headband), do: Roll35Core.Data.Headband
-  defp modname(:head), do: Roll35Core.Data.Head
-  defp modname(:neck), do: Roll35Core.Data.Neck
-  defp modname(:potion), do: Roll35Core.Data.Potion
-  defp modname(:ring), do: Roll35Core.Data.Ring
-  defp modname(:rod), do: Roll35Core.Data.Rod
-  defp modname(:scroll), do: Roll35Core.Data.Scroll
-  defp modname(:shoulders), do: Roll35Core.Data.Shoulders
-  defp modname(:slotless), do: Roll35Core.Data.Slotless
+  defp modname(:chest), do: Roll35Core.Data.RankedAgent
+  defp modname(:eyes), do: Roll35Core.Data.RankedAgent
+  defp modname(:feet), do: Roll35Core.Data.RankedAgent
+  defp modname(:hands), do: Roll35Core.Data.RankedAgent
+  defp modname(:headband), do: Roll35Core.Data.RankedAgent
+  defp modname(:head), do: Roll35Core.Data.RankedAgent
+  defp modname(:neck), do: Roll35Core.Data.RankedAgent
+  defp modname(:potion), do: Roll35Core.Data.CompoundAgent
+  defp modname(:ring), do: Roll35Core.Data.RankedAgent
+  defp modname(:rod), do: Roll35Core.Data.RankedAgent
+  defp modname(:scroll), do: Roll35Core.Data.CompoundAgent
+  defp modname(:shoulders), do: Roll35Core.Data.RankedAgent
+  defp modname(:slotless), do: Roll35Core.Data.RankedAgent
   defp modname(:spell), do: Roll35Core.Data.Spell
-  defp modname(:staff), do: Roll35Core.Data.Staff
-  defp modname(:wand), do: Roll35Core.Data.Wand
+  defp modname(:staff), do: Roll35Core.Data.RankedAgent
+  defp modname(:wand), do: Roll35Core.Data.CompoundAgent
   defp modname(:weapon), do: Roll35Core.Data.Weapon
   defp modname(:wondrous), do: Roll35Core.Data.Wondrous
-  defp modname(:wrists), do: Roll35Core.Data.Wrists
+  defp modname(:wrists), do: Roll35Core.Data.RankedAgent
 
   defp server(:armor), do: {:via, Registry, {Roll35Core.Registry, :armor}}
   defp server(:belt), do: {:via, Registry, {Roll35Core.Registry, :belt}}
@@ -44,7 +44,7 @@ defmodule Roll35Core.MagicItem do
   defp server(:chest), do: {:via, Registry, {Roll35Core.Registry, :chest}}
   defp server(:eyes), do: {:via, Registry, {Roll35Core.Registry, :eyes}}
   defp server(:feet), do: {:via, Registry, {Roll35Core.Registry, :feet}}
-  defp server(:hand), do: {:via, Registry, {Roll35Core.Registry, :hand}}
+  defp server(:hands), do: {:via, Registry, {Roll35Core.Registry, :hand}}
   defp server(:headband), do: {:via, Registry, {Roll35Core.Registry, :headband}}
   defp server(:head), do: {:via, Registry, {Roll35Core.Registry, :head}}
   defp server(:neck), do: {:via, Registry, {Roll35Core.Registry, :neck}}

@@ -3,8 +3,6 @@ defmodule Roll35Core.Data.Spell do
   Data handling for spells.
   """
 
-  @before_compile Roll35Core.Data.Agent
-
   # Due to complexities and caching requirements, we need to implement
   # this from scratch instead of building on Roll35Core.Data.Agent.
   use GenServer
@@ -42,10 +40,10 @@ defmodule Roll35Core.Data.Spell do
     String.replace(string, "'", "''")
   end
 
-  @spec load_data(GenServer.server()) :: term()
-  def load_data(spell_db) do
-    spellpath = Path.join(Application.app_dir(:roll35_core, "priv"), "spells.yaml")
-    classpath = Path.join(Application.app_dir(:roll35_core, "priv"), "classes.yaml")
+  @spec load_data({GenServer.server(), Path.t(), Path.t()}) :: term()
+  def load_data({spell_db, spath, cpath}) do
+    spellpath = Path.join(Application.app_dir(:roll35_core), spath)
+    classpath = Path.join(Application.app_dir(:roll35_core), cpath)
 
     spelltstamp = File.stat!(spellpath, time: :posix).mtime
     clasststamp = File.stat!(classpath, time: :posix).mtime
@@ -321,24 +319,24 @@ defmodule Roll35Core.Data.Spell do
     :ok
   end
 
-  @spec start_link(term()) :: GenServer.on_start()
-  def start_link(_) do
+  @spec start_link({GenServer.server(), Path.t(), Path.t()}) :: GenServer.on_start()
+  def start_link({name, spellpath, classpath}) do
     Logger.info("Starting #{__MODULE__}.")
 
-    GenServer.start_link(__MODULE__, [], name: {:via, Registry, {Roll35Core.Registry, :spell}})
+    GenServer.start_link(__MODULE__, {spellpath, classpath}, name: name)
   end
 
   @impl GenServer
-  def init(_) do
+  def init({spellpath, classpath}) do
     {:ok, pid} =
       DB.start_link(Path.join(Application.fetch_env!(:roll35_core, :db_path), "spells.sqlite3"))
 
-    {:ok, %{db: pid}, {:continue, :init}}
+    {:ok, %{db: pid, spellpath: spellpath, classpath: classpath}, {:continue, :init}}
   end
 
   @impl GenServer
   def handle_continue(:init, state) do
-    {:noreply, load_data(state.db)}
+    {:noreply, load_data({state.db, state.spellpath, state.classpath})}
   end
 
   @impl GenServer

@@ -21,27 +21,8 @@ defmodule Roll35Core.Data.Agent do
 
   @call_timeout 15_000
 
-  defmacro __before_compile__(_env) do
+  defmacro __using__(_) do
     quote do
-      @spec __r35_agent :: term()
-      # credo:disable-for-next-line CredoContrib.Check.FunctionNameUnderscorePrefix
-      def __r35_agent do
-        {__MODULE__,
-         {:via, Registry,
-          {Roll35Core.Registry,
-           __MODULE__
-           |> Atom.to_string()
-           |> String.split(".")
-           |> Enum.at(-1)
-           |> String.downcase()
-           |> String.to_atom()}}}
-      end
-    end
-  end
-
-  defmacro __using__(datapath) do
-    quote do
-      @before_compile Roll35Core.Data.Agent
       @behaviour Roll35Core.Data.Agent
 
       use GenServer
@@ -50,9 +31,9 @@ defmodule Roll35Core.Data.Agent do
       require Roll35Core.Types
       require Logger
 
-      @spec load_data :: term()
-      def load_data do
-        path = Path.join(Application.app_dir(:roll35_core), unquote(datapath))
+      @spec load_data(Path.t()) :: term()
+      def load_data(path) do
+        path = Path.join(Application.app_dir(:roll35_core), path)
         data = YamlElixir.read_from_file!(path)
         result = process_data(data)
 
@@ -60,21 +41,21 @@ defmodule Roll35Core.Data.Agent do
         result
       end
 
-      @spec start_link(term()) :: GenServer.on_start()
-      def start_link(name) do
+      @spec start_link({atom(), Path.t()}) :: GenServer.on_start()
+      def start_link({name, datapath}) do
         Logger.info("Starting #{__MODULE__}.")
 
-        GenServer.start_link(__MODULE__, [], name: name)
+        GenServer.start_link(__MODULE__, datapath, name: name)
       end
 
       @impl GenServer
-      def init(_) do
-        {:ok, %{}, {:continue, :init}}
+      def init(datapath) do
+        {:ok, %{datapath: datapath}, {:continue, :init}}
       end
 
       @impl GenServer
-      def handle_continue(:init, _) do
-        {:noreply, load_data()}
+      def handle_continue(:init, state) do
+        {:noreply, load_data(state.datapath)}
       end
 
       @impl GenServer
@@ -82,23 +63,6 @@ defmodule Roll35Core.Data.Agent do
         {:reply, function.(state), state}
       end
     end
-  end
-
-  @doc """
-  Get a list of all known data agents, in the form of supervisor specs.
-  """
-  @spec agents() :: [{atom(), [GenServer.server()]}, ...]
-  def agents do
-    {:ok, modules} = :application.get_key(:roll35_core, :modules)
-
-    modules
-    |> Stream.filter(fn module ->
-      Enum.any?(module.__info__(:functions), &match?({:__r35_agent, 0}, &1))
-    end)
-    |> Stream.map(fn module ->
-      apply(module, :__r35_agent, [])
-    end)
-    |> Enum.to_list()
   end
 
   @doc """

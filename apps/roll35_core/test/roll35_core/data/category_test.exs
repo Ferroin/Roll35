@@ -7,7 +7,7 @@ defmodule Roll35Core.Data.CategoryTest do
 
   describe "Roll35Core.Data.Category.load_data/0" do
     setup do
-      data = Category.load_data()
+      data = Category.load_data(Path.join("priv", "category.yaml"))
 
       {:ok, [data: data]}
     end

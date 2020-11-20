@@ -1,9 +1,9 @@
-defmodule Roll35Core.Data.Body do
+defmodule Roll35Core.Data.RankedAgent do
   @moduledoc """
-  Data handling for body items.
+  A data agent for handling ranked item lists.
   """
 
-  use Roll35Core.Data.Agent, "priv/body.yaml"
+  use Roll35Core.Data.Agent
 
   alias Roll35Core.Util
 
