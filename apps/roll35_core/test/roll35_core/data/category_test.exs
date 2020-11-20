@@ -5,9 +5,13 @@ defmodule Roll35Core.Data.CategoryTest do
   alias Roll35Core.Data.Category
   alias Roll35Core.Types
 
+  @not_minor [:rod, :staff]
+  @testfile Path.join("priv", "category.yaml")
+  @testiter 20
+
   describe "Roll35Core.Data.Category.load_data/0" do
     setup do
-      data = Category.load_data(Path.join("priv", "category.yaml"))
+      data = Category.load_data(@testfile)
 
       {:ok, [data: data]}
     end
@@ -36,6 +40,66 @@ defmodule Roll35Core.Data.CategoryTest do
           assert is_atom(item.value)
           assert item.value in Types.categories()
         end)
+      end)
+    end
+  end
+
+  describe "Roll35Core.Data.Category.random/1" do
+    setup do
+      {:ok, server} = start_supervised({Category, {nil, @testfile}})
+
+      %{server: server}
+    end
+
+    test "Returns valid items of a random rank.", context do
+      agent = context.server
+
+      Enum.each(1..@testiter, fn _ ->
+        item = Category.random(agent)
+
+        assert is_atom(item)
+        assert item in Types.categories()
+      end)
+    end
+  end
+
+  describe "Roll35Core.Data.Category.random/2" do
+    setup do
+      {:ok, server} = start_supervised({Category, {nil, @testfile}})
+
+      %{server: server}
+    end
+
+    test "Returns valid minor items.", context do
+      agent = context.server
+
+      Enum.each(1..@testiter, fn _ ->
+        item = Category.random(agent, :minor)
+
+        assert is_atom(item)
+        assert item in Enum.filter(Types.categories(), fn i -> i not in @not_minor end)
+      end)
+    end
+
+    test "Returns valid medium items.", context do
+      agent = context.server
+
+      Enum.each(1..@testiter, fn _ ->
+        item = Category.random(agent, :medium)
+
+        assert is_atom(item)
+        assert item in Types.categories()
+      end)
+    end
+
+    test "Returns valid major items.", context do
+      agent = context.server
+
+      Enum.each(1..@testiter, fn _ ->
+        item = Category.random(agent, :major)
+
+        assert is_atom(item)
+        assert item in Types.categories()
       end)
     end
   end

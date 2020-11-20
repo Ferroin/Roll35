@@ -15,11 +15,13 @@ defmodule Roll35Core.Data.CompoundAgentTest do
   - {minor: 0, medium: 1, major: 1, name: "Item 7"}
   ...
   """
-  # @minor_items ["Item 1", "Item 2", "Item 3", "Item 4"]
-  # @medium_items ["Item 2", "Item 4", "Item 5", "Item 7"]
-  # @major_items ["Item 3", "Item 4", "Item 6", "Item 7"]
+  @minor_items ["Item 1", "Item 2", "Item 3", "Item 4"]
+  @medium_items ["Item 2", "Item 4", "Item 5", "Item 7"]
+  @major_items ["Item 3", "Item 4", "Item 6", "Item 7"]
+  @all_items (@minor_items ++ @medium_items ++ @major_items) |> Enum.sort() |> Enum.dedup()
   @testfile "compound_agent_test.yaml"
   @testpath Path.join(Application.app_dir(:roll35_core), @testfile)
+  @testiter 20
 
   setup_all do
     on_exit(fn -> File.rm!(@testpath) end)
@@ -50,17 +52,84 @@ defmodule Roll35Core.Data.CompoundAgentTest do
       Enum.each(context.data, fn {_, entry} ->
         Enum.each(entry, fn item ->
           assert is_map(item)
+          assert Roll35Core.TestHarness.map_has_weighted_random_keys(item)
 
-          assert Map.has_key?(item, :weight)
           assert is_integer(item.weight)
           assert item.weight >= 0
 
-          assert Map.has_key?(item, :value)
           assert is_map(item.value)
 
           assert Map.has_key?(item.value, :name)
           assert is_binary(item.value.name)
         end)
+      end)
+    end
+  end
+
+  describe "Roll35Core.Data.CompoundAgent.random/1" do
+    setup do
+      {:ok, server} = start_supervised({CompoundAgent, {nil, @testfile}})
+
+      %{server: server}
+    end
+
+    test "Returns valid items of a random rank.", context do
+      agent = context.server
+
+      Enum.each(1..@testiter, fn _ ->
+        item = CompoundAgent.random(agent)
+
+        assert is_map(item)
+        assert Map.has_key?(item, :name)
+        assert is_binary(item.name)
+        assert item.name in @all_items
+      end)
+    end
+  end
+
+  describe "Roll35Core.Data.CompoundAgent.random/2" do
+    setup do
+      {:ok, server} = start_supervised({CompoundAgent, {nil, @testfile}})
+
+      %{server: server}
+    end
+
+    test "Returns valid minor items.", context do
+      agent = context.server
+
+      Enum.each(1..@testiter, fn _ ->
+        item = CompoundAgent.random(agent, :minor)
+
+        assert is_map(item)
+        assert Map.has_key?(item, :name)
+        assert is_binary(item.name)
+        assert item.name in @minor_items
+      end)
+    end
+
+    test "Returns valid medium items.", context do
+      agent = context.server
+
+      Enum.each(1..@testiter, fn _ ->
+        item = CompoundAgent.random(agent, :medium)
+
+        assert is_map(item)
+        assert Map.has_key?(item, :name)
+        assert is_binary(item.name)
+        assert item.name in @medium_items
+      end)
+    end
+
+    test "Returns valid major items.", context do
+      agent = context.server
+
+      Enum.each(1..@testiter, fn _ ->
+        item = CompoundAgent.random(agent, :major)
+
+        assert is_map(item)
+        assert Map.has_key?(item, :name)
+        assert is_binary(item.name)
+        assert item.name in @major_items
       end)
     end
   end

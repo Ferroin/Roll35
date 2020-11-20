@@ -47,9 +47,13 @@ defmodule Roll35Core.Util do
     |> Enum.map(fn rank ->
       {
         rank,
-        Enum.map(newdata, fn entry ->
+        newdata
+        |> Enum.map(fn entry ->
           {_, value} = Map.split(entry, Types.ranks())
           %{weight: entry[rank], value: value}
+        end)
+        |> Enum.filter(fn entry ->
+          entry.weight != 0
         end)
       }
     end)
