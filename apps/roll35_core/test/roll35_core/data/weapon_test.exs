@@ -1,10 +1,11 @@
 defmodule Roll35Core.Data.WeaponTest do
   @moduledoc false
-  use ExUnit.Case, async: true
+  use Roll35Core.TestHarness.BattleGear, async: true
 
   alias Roll35Core.Data.Weapon
 
   alias Roll35Core.TestHarness
+  alias Roll35Core.TestHarness.BattleGear
 
   require TestHarness
 
@@ -17,9 +18,29 @@ defmodule Roll35Core.Data.WeaponTest do
       {:ok, [data: data]}
     end
 
-    TestHarness.armor_weapon_core_tests("Weapon")
-    TestHarness.armor_weapon_base_tests("Weapon", @item_types)
-    TestHarness.armor_weapon_enchantment_tests("Weapon", @item_types, 1..4)
+    test "Returned data structure is a map.", context do
+      BattleGear.check_core_data_type("Weapon", context)
+    end
+
+    test "Returned map has expected keys with expected value types.", context do
+      BattleGear.check_core_data_keys("Weapon", context)
+    end
+
+    test "Tags list has the correct format.", context do
+      BattleGear.check_tag_types("Weapon", context)
+    end
+
+    test "Rank maps have the correct format.", context do
+      BattleGear.check_rank_maps("Weapon", context)
+    end
+
+    test "Base item list has the correct format.", context do
+      BattleGear.check_base("Weapon", context, @item_types)
+    end
+
+    test "Enchantment map has the correct format.", context do
+      BattleGear.check_enchantments("Weapon", context, @item_types, 1..4)
+    end
 
     test "Specific map has the correct format.", context do
       assert TestHarness.map_has_rank_keys(context.data.specific)
@@ -32,7 +53,7 @@ defmodule Roll35Core.Data.WeaponTest do
       |> Task.async_stream(fn {rank, map} ->
         prefix = "Weapon specifc item #{rank}"
 
-        TestHarness.armor_weapon_specific_subtests(prefix, map)
+        BattleGear.specific_item_subchecks(prefix, map)
       end)
       |> Enum.to_list()
     end
