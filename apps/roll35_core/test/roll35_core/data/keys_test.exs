@@ -18,7 +18,7 @@ defmodule Roll35Core.Data.KeysTest do
 
   describe "Roll35Core.Data.Keys.load_data/0" do
     setup do
-      data = Keys.load_data()
+      data = Keys.load_data(Path.join("priv", "keys.yaml"))
 
       {:ok, [data: data]}
     end

@@ -12,7 +12,7 @@ defmodule Roll35Core.Data.WeaponTest do
 
   describe "Roll35Core.Data.Weapon.load_data/1" do
     setup do
-      data = Weapon.load_data()
+      data = Weapon.load_data(Path.join("priv", "weapon.yaml"))
 
       {:ok, [data: data]}
     end

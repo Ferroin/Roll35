@@ -1,9 +1,9 @@
-defmodule Roll35Core.Data.Wand do
+defmodule Roll35Core.Data.CompoundAgent do
   @moduledoc """
-  Data handling for wands.
+  A data agent for ahndling compound item lists.
   """
 
-  use Roll35Core.Data.Agent, "priv/wand.yaml"
+  use Roll35Core.Data.Agent
 
   alias Roll35Core.Util
 

@@ -12,7 +12,7 @@ defmodule Roll35Core.Data.ArmorTest do
 
   describe "Roll35Core.Data.Armor.load_data/1" do
     setup do
-      data = Armor.load_data()
+      data = Armor.load_data(Path.join("priv", "armor.yaml"))
 
       {:ok, [data: data]}
     end

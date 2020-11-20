@@ -3,7 +3,7 @@ defmodule Roll35Core.Data.Wondrous do
   Data handling for wondrous item slots.
   """
 
-  use Roll35Core.Data.Agent, "priv/wondrous.yaml"
+  use Roll35Core.Data.Agent
 
   alias Roll35Core.Types
   alias Roll35Core.Util
