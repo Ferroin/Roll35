@@ -5,9 +5,12 @@ defmodule Roll35Core.Data.WondrousTest do
   alias Roll35Core.Data.Wondrous
   alias Roll35Core.Types
 
+  @testfile Path.join("priv", "wondrous.yaml")
+  @testiter 20
+
   describe "Roll35Core.Data.Wondrous.load_data/0" do
     setup do
-      data = Wondrous.load_data(Path.join("priv", "wondrous.yaml"))
+      data = Wondrous.load_data(@testfile)
 
       {:ok, [data: data]}
     end
@@ -27,6 +30,25 @@ defmodule Roll35Core.Data.WondrousTest do
 
         assert Map.has_key?(entry, :value)
         assert entry.value in Types.slots()
+      end)
+    end
+  end
+
+  describe "Roll35Core.Data.Wondrous.random/1" do
+    setup do
+      {:ok, server} = start_supervised({Wondrous, {nil, @testfile}})
+
+      %{server: server}
+    end
+
+    test "Correctly returns an item slot.", context do
+      agent = context.server
+
+      Enum.each(1..@testiter, fn _ ->
+        item = Wondrous.random(agent)
+
+        assert is_atom(item)
+        assert item in Types.slots()
       end)
     end
   end

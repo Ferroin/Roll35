@@ -88,8 +88,7 @@ defmodule Roll35Core.UtilTest do
           %{weight: 2, value: %{a: 2, b: 1}}
         ],
         major: [
-          %{weight: 3, value: %{a: 1, b: 2}},
-          %{weight: 0, value: %{a: 2, b: 1}}
+          %{weight: 3, value: %{a: 1, b: 2}}
         ]
       }
 
