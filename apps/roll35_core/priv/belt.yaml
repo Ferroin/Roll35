@@ -9,7 +9,7 @@ minor:
     - {weight: 14, cost:   2600, name: 'Aquatic Cummerbund'}
     - {weight: 16, cost:   3200, name: 'Equestrian Belt'}
   greater:
-    - {weight: 36, cost:   4000, name: 'Belt of <%= key.(:stat_belt) %> +2'}
+    - {weight: 36, cost:   4000, name: 'Belt of <%= key.(key: :stat_belt) %> +2'}
     - {weight:  8, cost:   4000, name: 'Belt of Teeth'}
     - {weight: 12, cost:   5000, name: 'Blinkback Belt'}
     - {weight: 10, cost:   5200, name: 'Plague Rat Belt'}
@@ -18,7 +18,7 @@ medium:
   lesser:
     - {weight:  4, cost:   9000, name: 'Serpent Belt'}
     - {weight:  4, cost:   9400, name: 'Monkey Belt'}
-    - {weight:  8, cost:  10000, name: 'Belt of Physical Might +2 (<%= key.(:physical_might) %>)'}
+    - {weight:  8, cost:  10000, name: 'Belt of Physical Might +2 (<%= key.(key: :physical_might) %>)'}
     - {weight:  6, cost:  10000, name: 'Belt of the Weasel'}
     - {weight:  5, cost:  10000, name: 'Belt of Thunderous Charging'}
     - {weight:  5, cost:  11000, name: 'Minotaur Belt'}
@@ -28,7 +28,7 @@ medium:
     - {weight:  5, cost:  14000, name: 'Lesser Belt of Might Hurling'}
     - {weight:  6, cost:  14900, name: 'Belt of Dwarvenkind'}
     - {weight:  4, cost:  15000, name: 'Cord of Stubborn Resolve'}
-    - {weight: 30, cost:  18000, name: 'Belt of <%= key.(:stat_belt) %> +4'}
+    - {weight: 30, cost:  18000, name: 'Belt of <%= key.(key: :stat_belt) %> +4'}
     - {weight:  9, cost:  18000, name: 'Belt of Physical Perfection +2'}
   greater:
     - {weight: 12, cost:  18000, name: 'Greater Monkey Belt'}
@@ -41,12 +41,12 @@ medium:
 major:
   lesser:
     - {weight: 12, cost:  32000, name: 'Merform Belt'}
-    - {weight: 36, cost:  36000, name: 'Belt of <%= key.(:stat_belt) %> +6'}
-    - {weight: 22, cost:  40000, name: 'Belt of Physical Might +4 (<%= key.(:physical_might) %>)'}
+    - {weight: 36, cost:  36000, name: 'Belt of <%= key.(key: :stat_belt) %> +6'}
+    - {weight: 22, cost:  40000, name: 'Belt of Physical Might +4 (<%= key.(key: :physical_might) %>)'}
     - {weight: 12, cost:  42000, name: 'Greater Belt of Mighty Hurling'}
   greater:
     - {weight: 25, cost:  60000, name: 'Belt of Stoneskin'}
     - {weight: 30, cost:  64000, name: 'Belt of Physical Perfection +4'}
-    - {weight: 20, cost:  90000, name: 'Belt of Physical Might +6 (<%= key.(:physical_might) %>)'}
+    - {weight: 20, cost:  90000, name: 'Belt of Physical Might +6 (<%= key.(key: :physical_might) %>)'}
     - {weight: 15, cost: 110000, name: 'Shadowform Belt'}
     - {weight: 10, cost: 144000, name: 'Belt of Physical Perfection +6'}

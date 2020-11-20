@@ -4,6 +4,9 @@ defmodule Roll35Core.Data.KeysTest do
 
   alias Roll35Core.Data.Keys
 
+  @testfile Path.join("priv", "keys.yaml")
+  @testiter 20
+
   @spec check_key_entry(term()) :: none()
   defp check_key_entry(item) do
     assert is_map(item)
@@ -18,7 +21,7 @@ defmodule Roll35Core.Data.KeysTest do
 
   describe "Roll35Core.Data.Keys.load_data/0" do
     setup do
-      data = Keys.load_data(Path.join("priv", "keys.yaml"))
+      data = Keys.load_data(@testfile)
 
       {:ok, [data: data]}
     end
@@ -70,6 +73,100 @@ defmodule Roll35Core.Data.KeysTest do
               Enum.each(value, &check_key_entry/1)
             end)
         end
+      end)
+    end
+  end
+
+  describe "Roll35Core.Data.Keys.get_keys/2" do
+    setup do
+      {:ok, server} = start_supervised({Keys, {nil, @testfile}})
+
+      %{server: server}
+    end
+
+    test "Returns proper lists of keys.", context do
+      agent = context.server
+
+      flat = Keys.get_keys(agent, :flat)
+
+      assert is_list(flat)
+      refute Enum.empty?(flat)
+      assert Enum.all?(flat, &is_atom/1)
+
+      flat_proportional = Keys.get_keys(agent, :flat_proportional)
+
+      assert is_list(flat_proportional)
+      refute Enum.empty?(flat_proportional)
+      assert Enum.all?(flat_proportional, &is_atom/1)
+
+      grouped = Keys.get_keys(agent, :grouped)
+
+      assert is_list(grouped)
+      refute Enum.empty?(grouped)
+      assert Enum.all?(grouped, &is_atom/1)
+
+      grouped_proportional = Keys.get_keys(agent, :grouped_proportional)
+
+      assert is_list(grouped_proportional)
+      refute Enum.empty?(grouped_proportional)
+      assert Enum.all?(grouped_proportional, &is_atom/1)
+    end
+  end
+
+  describe "Roll35Core.Data.Keys.get_subkeys/2" do
+    setup do
+      {:ok, server} = start_supervised({Keys, {nil, @testfile}})
+
+      %{server: server}
+    end
+
+    test "Returns proper lists of subkeys.", context do
+      agent = context.server
+
+      grouped_keys = Keys.get_keys(agent, :grouped) ++ Keys.get_keys(agent, :grouped_proportional)
+
+      Enum.each(1..@testiter, fn _ ->
+        key = Enum.random(grouped_keys)
+
+        {:ok, subkeys} = Keys.get_subkeys(agent, key)
+
+        assert is_list(subkeys)
+        refute Enum.empty?(subkeys)
+      end)
+    end
+  end
+
+  describe "Roll35Core.Data.Keys.random/2" do
+    setup do
+      {:ok, server} = start_supervised({Keys, {nil, @testfile}})
+
+      %{server: server}
+    end
+
+    test "Returns random strings for flat keys.", context do
+      agent = context.server
+
+      keys = Keys.get_keys(agent, :flat) ++ Keys.get_keys(agent, :flat_proportional)
+
+      Enum.each(1..@testiter, fn _ ->
+        result = Keys.random(agent, key: Enum.random(keys))
+
+        assert is_binary(result)
+      end)
+    end
+
+    test "Returns random strings for grouped keys.", context do
+      agent = context.server
+
+      keys = Keys.get_keys(agent, :grouped) ++ Keys.get_keys(agent, :grouped_proportional)
+
+      Enum.each(1..@testiter, fn _ ->
+        key = Enum.random(keys)
+        {:ok, subkeys} = Keys.get_subkeys(agent, key)
+
+        result = Keys.random(agent, key: key, subkey: Enum.random(subkeys))
+
+        assert is_binary(result)
       end)
     end
   end
