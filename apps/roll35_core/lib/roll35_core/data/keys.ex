@@ -9,6 +9,8 @@ defmodule Roll35Core.Data.Keys do
 
   require Logger
 
+  @default_server {:via, Registry, {Roll35Core.Registry, :keys}}
+
   @impl Roll35Core.Data.Agent
   def process_data(data) do
     data
@@ -48,14 +50,59 @@ defmodule Roll35Core.Data.Keys do
   end
 
   @doc """
-  Select a random entry from the given set of items.
+  Get a list of all known keys of a given type.
   """
-  @spec random(atom()) :: String.t()
-  def random(key) when is_atom(key) do
-    Logger.debug("Getting random value from key #{inspect(key)}.")
+  @spec get_keys(GenServer.server(), atom()) :: [atom()]
+  def get_keys(agent, type) do
+    data = Roll35Core.Data.Agent.get(agent, & &1)
+
+    data
+    |> Stream.filter(fn {_, value} ->
+      value.type == type
+    end)
+    |> Stream.map(fn {key, _} -> key end)
+    |> Enum.to_list()
+  end
+
+  @doc """
+  Get a list of known subkeys for a given key.
+  """
+  @spec get_subkeys(GenServer.server(), atom()) :: {:ok, [term()]} | {:error, term()}
+  def get_subkeys(agent, key) do
+    data = Roll35Core.Data.Agent.get(agent, & &1[key])
+
+    if data.type in [:grouped, :grouped_proportional] do
+      {:ok, Map.keys(data.data)}
+    else
+      {:error, :invalid_key_type}
+    end
+  end
+
+  @doc """
+  Select a random entry using a given set of parameters.
+  """
+  @spec random(GenServer.server(), keyword()) :: String.t()
+  def random(agent, opts)
+
+  def random(agent, key: key, subkey: subkey) do
+    Logger.debug("Getting random value from key #{inspect({key, subkey})}.")
 
     data =
-      Roll35Core.Data.Agent.get({:via, Registry, {Roll35Core.Registry, :keys}}, & &1[key].data)
+      agent
+      |> Roll35Core.Data.Agent.get(& &1[key].data)
+      |> Map.fetch!(subkey)
+
+    if is_map(Enum.at(data, 0)) do
+      WeightedRandom.complex(data)
+    else
+      Enum.random(data)
+    end
+  end
+
+  def random(agent, key: key) do
+    Logger.debug("Getting random value from key #{inspect(key)}.")
+
+    data = Roll35Core.Data.Agent.get(agent, & &1[key].data)
 
     if is_map(Enum.at(data, 0)) do
       WeightedRandom.complex(data)
@@ -65,21 +112,10 @@ defmodule Roll35Core.Data.Keys do
   end
 
   @doc """
-  Select a random entry from the given set and subset of items.
+  Select a random entry using a given set of parameters from the default server.
   """
-  @spec random(atom(), term()) :: String.t()
-  def random(key, subkey) when is_atom(key) do
-    Logger.debug("Getting random value from key #{inspect({key, subkey})}.")
-
-    data =
-      {:via, Registry, {Roll35Core.Registry, :keys}}
-      |> Roll35Core.Data.Agent.get(& &1[key].data)
-      |> Map.fetch!(subkey)
-
-    if is_map(Enum.at(data, 0)) do
-      WeightedRandom.complex(data)
-    else
-      Enum.random(data)
-    end
+  @spec random(keyword()) :: String.t()
+  def random(opts) do
+    random(@default_server, opts)
   end
 end

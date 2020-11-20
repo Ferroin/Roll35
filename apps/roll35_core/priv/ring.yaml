@@ -43,7 +43,7 @@ medium:
     - {weight:  3, cost:  12000, name: 'Decoy Ring'}
     - {weight:  3, cost:  12000, name: 'Ring of Craft Magic'}
     - {weight:  3, cost:  12000, name: 'Ring of Ectoplasmic Invigoration'}
-    - {weight:  3, cost:  12000, name: 'Minor Ring of Energy Resistance (<%= key.(:energy) %>)'}
+    - {weight:  3, cost:  12000, name: 'Minor Ring of Energy Resistance (<%= key.(key: :energy) %>)'}
     - {weight:  3, cost:  12000, name: 'Ring of the Troglodyte'}
     - {weight:  3, cost:  12000, name: 'Steelband Circle'}
     - {weight:  6, cost:  12700, name: 'Ring of Chameleon Power'}
@@ -68,14 +68,14 @@ medium:
     - {weight: 12, cost:  27000, name: 'Ring of Blinking'}
 major:
   lesser:
-    - {weight:  9, cost:  28000, name: 'Major Ring of Energy Resistance (<%= key.(:energy) %>)'}
+    - {weight:  9, cost:  28000, name: 'Major Ring of Energy Resistance (<%= key.(key: :energy) %>)'}
     - {weight:  7, cost:  28500, name: 'Ring of the Ecclesiarch'}
     - {weight: 17, cost:  32000, name: 'Ring of Protection +4'}
     - {weight:  6, cost:  33000, name: 'Ring of Return'}
     - {weight: 16, cost:  40000, name: 'Ring of Freedom of Movement'}
     - {weight: 15, cost:  40000, name: 'Ring of Wizardry II'}
     - {weight:  5, cost:  42000, name: 'Major Ring of Inner Fortitude'}
-    - {weight: 17, cost:  44000, name: 'Greater Ring of Energy Resistance (<%= key.(:energy) %>)'}
+    - {weight: 17, cost:  44000, name: 'Greater Ring of Energy Resistance (<%= key.(key: :energy) %>)'}
     - {weight:  8, cost:  45000, name: 'Ring of Delayed Doom'}
   greater:
     - {weight:  6, cost:  50000, name: 'Ring of Friend Shield'}

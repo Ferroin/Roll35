@@ -12,14 +12,11 @@ elemental_plane:
   type: flat
   data: ['Fire', 'Water', 'Earth', 'Air']
 dragon:
-  type: flat
-  data: ['Red', 'Blue', 'Green', 'White', 'Black', 'Gold', 'Silver', 'Bronze', 'Copper', 'Brass']
-metallic_dragon:
-  type: flat
-  data: ['Gold', 'Silver', 'Bronze', 'Copper', 'Brass']
-chromatic_dragon:
-  type: flat
-  data: ['Red', 'Blue', 'Green', 'White', 'Black']
+  type: grouped
+  data:
+    any: ['Red', 'Blue', 'Green', 'White', 'Black', 'Gold', 'Silver', 'Bronze', 'Copper', 'Brass']
+    metallic: ['Gold', 'Silver', 'Bronze', 'Copper', 'Brass']
+    chromatic: ['Red', 'Blue', 'Green', 'White', 'Black']
 school:
   type: flat
   data:
@@ -77,7 +74,7 @@ metamagic:
       - {weight:  4, value: 'Bouncing'}
       - {weight:  5, value: 'Disruptive'}
       - {weight:  5, value: 'Ectoplasmic'}
-      - {weight:  5, value: 'Elemental (<%= Keys.random(:elemental) %>)'}
+      - {weight:  5, value: 'Elemental (<%= key.(key: :elemental) %>)'}
       - {weight: 12, value: 'Enlarge'}
       - {weight: 12, value: 'Extend'}
       - {weight:  5, value: 'Flaring'}
@@ -112,11 +109,11 @@ bane:
     - {weight:  7, value: "Construct"}
     - {weight:  6, value: "Dragon"}
     - {weight:  5, value: "Fey"}
-    - {weight: 33, value: "Humanoid (<%= Keys.random(:humanoid) %>)"}
+    - {weight: 33, value: "Humanoid (<%= key.(key: :humanoid) %>)"}
     - {weight:  5, value: "Magical Beast"}
     - {weight:  5, value: "Monstrous Humanoid"}
     - {weight:  2, value: "Ooze"}
-    - {weight: 16, value: "Outsider (<%= Keys.random(:outsider) %>)"}
+    - {weight: 16, value: "Outsider (<%= key.(key: :outsider) %>)"}
     - {weight:  2, value: "Plant"}
     - {weight:  8, value: "Undead"}
     - {weight:  2, value: "Vermin"}

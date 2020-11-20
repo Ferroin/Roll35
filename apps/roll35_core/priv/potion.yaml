@@ -9,7 +9,7 @@
 - {minor:  1, medium:  0, major:  0, cost:   50, name: 'Potion of Magic Stone'}
 - {minor:  3, medium:  0, major:  0, cost:   50, name: 'Potion of Magic Weapon'}
 - {minor:  1, medium:  0, major:  0, cost:   50, name: 'Potion of Pass Without Trace'}
-- {minor:  2, medium:  0, major:  0, cost:   50, name: 'Potion of Protection from <%= key.(:alignment) %>'}
+- {minor:  2, medium:  0, major:  0, cost:   50, name: 'Potion of Protection from <%= key.(key: :alignment) %>'}
 - {minor:  2, medium:  0, major:  0, cost:   50, name: 'Potion of Remove Fear'}
 - {minor:  1, medium:  0, major:  0, cost:   50, name: 'Potion of Sanctuary'}
 - {minor:  3, medium:  0, major:  0, cost:   50, name: 'Potion of Shield of Faith +2'}
@@ -36,13 +36,13 @@
 - {minor:  2, medium:  2, major:  0, cost:  300, name: 'Potion of Owl’s Wisdom'}
 - {minor:  2, medium:  1, major:  0, cost:  300, name: 'Potion of Protection from Arrows, 30 points'}
 - {minor:  2, medium:  1, major:  1, cost:  300, name: 'Potion of Remove Paralysis'}
-- {minor:  3, medium:  2, major:  0, cost:  300, name: 'Potion of Resist Energy (<%= key.(:energy) %>) 10'}
+- {minor:  3, medium:  2, major:  0, cost:  300, name: 'Potion of Resist Energy (<%= key.(key: :energy) %>) 10'}
 - {minor:  1, medium:  2, major:  1, cost:  300, name: 'Potion of Shield of Faith +3'}
 - {minor:  2, medium:  1, major:  0, cost:  300, name: 'Potion of Spider Climb'}
 - {minor:  1, medium:  1, major:  1, cost:  300, name: 'Potion of Undetectable Alignment'}
 - {minor:  0, medium:  1, major:  1, cost:  600, name: 'Potion of Barkskin +3'}
 - {minor:  0, medium:  1, major:  2, cost:  600, name: 'Potion of Shield of Faith +4'}
-- {minor:  0, medium:  3, major:  2, cost:  700, name: 'Potion of Resist Energy (<%= key.(:energy) %>) 20'}
+- {minor:  0, medium:  3, major:  2, cost:  700, name: 'Potion of Resist Energy (<%= key.(key: :energy) %>) 20'}
 - {minor:  0, medium:  5, major:  8, cost:  750, name: 'Potion of Cure Serious Wounds'}
 - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Potion of Daylight'}
 - {minor:  0, medium:  3, major:  3, cost:  750, name: 'Potion of Displacement'}
@@ -54,11 +54,11 @@
 - {minor:  0, medium:  2, major:  2, cost:  750, name: 'Potion of Haste'}
 - {minor:  0, medium:  3, major:  3, cost:  750, name: 'Potion of Heroism'}
 - {minor:  0, medium:  2, major:  2, cost:  750, name: 'Potion of Keen Edge'}
-- {minor:  0, medium:  1, major:  1, cost:  750, name: 'Potion of Magic Circle Against <%= key.(:alignment) %>'}
+- {minor:  0, medium:  1, major:  1, cost:  750, name: 'Potion of Magic Circle Against <%= key.(key: :alignment) %>'}
 - {minor:  0, medium:  2, major:  0, cost:  750, name: 'Potion of Magic Vestament +1'}
 - {minor:  0, medium:  3, major:  3, cost:  750, name: 'Potion of Neutralize Poison'}
 - {minor:  0, medium:  2, major:  2, cost:  750, name: 'Potion of Nondetection'}
-- {minor:  0, medium:  3, major:  2, cost:  750, name: 'Potion of Protection from Energy (<%= key.(:energy) %>)'}
+- {minor:  0, medium:  3, major:  2, cost:  750, name: 'Potion of Protection from Energy (<%= key.(key: :energy) %>)'}
 - {minor:  0, medium:  2, major:  1, cost:  750, name: 'Potion of Rage'}
 - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Potion of Remove Blindness/Deafness'}
 - {minor:  0, medium:  1, major:  1, cost:  750, name: 'Potion of Remove Curse'}
@@ -70,7 +70,7 @@
 - {minor:  0, medium:  0, major:  1, cost:  900, name: 'Potion of Shield of Faith +5'}
 - {minor:  0, medium:  0, major:  1, cost: 1000, name: 'Potion of Protection from Arrows, 100 points'}
 - {minor:  0, medium:  0, major:  3, cost: 1050, name: 'Potion of Good Hope'}
-- {minor:  0, medium:  0, major:  1, cost: 1100, name: 'Potion of Resist Energy (<%= key.(:energy) %>) 30'}
+- {minor:  0, medium:  0, major:  1, cost: 1100, name: 'Potion of Resist Energy (<%= key.(key: :energy) %>) 30'}
 - {minor:  0, medium:  0, major:  4, cost: 1200, name: 'Potion of Barkskin +5'}
 - {minor:  0, medium:  0, major:  4, cost: 1200, name: 'Potion of Greater Magic Fang +2'}
 - {minor:  0, medium:  0, major:  4, cost: 1200, name: 'Potion of Greater Magic Weapon +2'}
