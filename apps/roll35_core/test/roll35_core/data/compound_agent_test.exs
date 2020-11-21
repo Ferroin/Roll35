@@ -60,7 +60,7 @@ defmodule Roll35Core.Data.CompoundAgentTest do
           assert is_map(item.value)
 
           assert Map.has_key?(item.value, :name)
-          assert is_binary(item.value.name)
+          assert String.valid?(item.value.name)
         end)
       end)
     end
@@ -81,7 +81,7 @@ defmodule Roll35Core.Data.CompoundAgentTest do
 
         assert is_map(item)
         assert Map.has_key?(item, :name)
-        assert is_binary(item.name)
+        assert String.valid?(item.name)
         assert item.name in @all_items
       end)
     end
@@ -102,7 +102,7 @@ defmodule Roll35Core.Data.CompoundAgentTest do
 
         assert is_map(item)
         assert Map.has_key?(item, :name)
-        assert is_binary(item.name)
+        assert String.valid?(item.name)
         assert item.name in @minor_items
       end)
     end
@@ -115,7 +115,7 @@ defmodule Roll35Core.Data.CompoundAgentTest do
 
         assert is_map(item)
         assert Map.has_key?(item, :name)
-        assert is_binary(item.name)
+        assert String.valid?(item.name)
         assert item.name in @medium_items
       end)
     end
@@ -128,7 +128,7 @@ defmodule Roll35Core.Data.CompoundAgentTest do
 
         assert is_map(item)
         assert Map.has_key?(item, :name)
-        assert is_binary(item.name)
+        assert String.valid?(item.name)
         assert item.name in @major_items
       end)
     end

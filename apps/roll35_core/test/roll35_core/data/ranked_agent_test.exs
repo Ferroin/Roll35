@@ -87,13 +87,13 @@ defmodule Roll35Core.Data.RankedAgentTest do
             assert Map.has_key?(item.value, :name) or Map.has_key?(item.value, :reroll)
 
             if Map.has_key?(item.value, :name) do
-              assert is_binary(item.value.name)
+              assert String.valid?(item.value.name)
             end
 
             if Map.has_key?(item.value, :reroll) do
               assert is_list(item.value.reroll)
 
-              assert Enum.all?(item.value.reroll, &is_binary/1)
+              assert Enum.all?(item.value.reroll, &String.valid?/1)
             end
           end)
         end)
@@ -116,7 +116,7 @@ defmodule Roll35Core.Data.RankedAgentTest do
 
         assert is_map(item)
         assert Map.has_key?(item, :name)
-        assert is_binary(item.name)
+        assert String.valid?(item.name)
         assert item.name in @all_items
       end)
     end
@@ -137,7 +137,7 @@ defmodule Roll35Core.Data.RankedAgentTest do
 
         assert is_map(item)
         assert Map.has_key?(item, :name)
-        assert is_binary(item.name)
+        assert String.valid?(item.name)
         assert item.name in @minor_items
       end)
     end
@@ -150,7 +150,7 @@ defmodule Roll35Core.Data.RankedAgentTest do
 
         assert is_map(item)
         assert Map.has_key?(item, :name)
-        assert is_binary(item.name)
+        assert String.valid?(item.name)
         assert item.name in @medium_items
       end)
     end
@@ -163,7 +163,7 @@ defmodule Roll35Core.Data.RankedAgentTest do
 
         assert is_map(item)
         assert Map.has_key?(item, :name)
-        assert is_binary(item.name)
+        assert String.valid?(item.name)
         assert item.name in @major_items
       end)
     end
@@ -184,7 +184,7 @@ defmodule Roll35Core.Data.RankedAgentTest do
 
         assert is_map(item)
         assert Map.has_key?(item, :name)
-        assert is_binary(item.name)
+        assert String.valid?(item.name)
         assert item.name in @minor_least_items
       end)
     end
@@ -197,7 +197,7 @@ defmodule Roll35Core.Data.RankedAgentTest do
 
         assert is_map(item)
         assert Map.has_key?(item, :name)
-        assert is_binary(item.name)
+        assert String.valid?(item.name)
         assert item.name in @minor_lesser_items
       end)
     end
@@ -210,7 +210,7 @@ defmodule Roll35Core.Data.RankedAgentTest do
 
         assert is_map(item)
         assert Map.has_key?(item, :name)
-        assert is_binary(item.name)
+        assert String.valid?(item.name)
         assert item.name in @minor_greater_items
       end)
     end
@@ -223,7 +223,7 @@ defmodule Roll35Core.Data.RankedAgentTest do
 
         assert is_map(item)
         assert Map.has_key?(item, :name)
-        assert is_binary(item.name)
+        assert String.valid?(item.name)
         assert item.name in @medium_lesser_items
       end)
     end
@@ -236,7 +236,7 @@ defmodule Roll35Core.Data.RankedAgentTest do
 
         assert is_map(item)
         assert Map.has_key?(item, :name)
-        assert is_binary(item.name)
+        assert String.valid?(item.name)
         assert item.name in @medium_greater_items
       end)
     end
@@ -249,7 +249,7 @@ defmodule Roll35Core.Data.RankedAgentTest do
 
         assert is_map(item)
         assert Map.has_key?(item, :name)
-        assert is_binary(item.name)
+        assert String.valid?(item.name)
         assert item.name in @major_lesser_items
       end)
     end
@@ -262,7 +262,7 @@ defmodule Roll35Core.Data.RankedAgentTest do
 
         assert is_map(item)
         assert Map.has_key?(item, :name)
-        assert is_binary(item.name)
+        assert String.valid?(item.name)
         assert item.name in @major_greater_items
       end)
     end
