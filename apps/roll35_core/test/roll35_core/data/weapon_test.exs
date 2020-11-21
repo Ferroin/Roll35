@@ -8,10 +8,7 @@ defmodule Roll35Core.Data.WeaponTest do
   alias Roll35Core.TestHarness
   alias Roll35Core.TestHarness.BattleGear
 
-  require TestHarness
-
   @testfile Path.join("priv", "weapon.yaml")
-  @testiter 20
 
   @item_types [:melee, :ranged, :ammo]
   @enchant_range 1..4
@@ -84,7 +81,7 @@ defmodule Roll35Core.Data.WeaponTest do
     end
 
     test "Properly returns a map based on the passed string.", context do
-      BattleGear.live_get_base_test(Weapon, context, @testiter)
+      BattleGear.live_get_base_test(Weapon, context)
     end
   end
 
@@ -96,11 +93,11 @@ defmodule Roll35Core.Data.WeaponTest do
     end
 
     test "Returns a valid item.", context do
-      BattleGear.live_random_base_test(Weapon, context, @testiter)
+      BattleGear.live_random_base_test(Weapon, context)
     end
 
     test "Returns correct items for given tags.", context do
-      BattleGear.live_random_base_tags_test(Weapon, context, @testiter, @item_types)
+      BattleGear.live_random_base_tags_test(Weapon, context, @item_types)
     end
   end
 
@@ -115,7 +112,6 @@ defmodule Roll35Core.Data.WeaponTest do
       BattleGear.live_random_enchantment_test(
         Weapon,
         context,
-        @testiter,
         @item_types,
         @enchant_range
       )
@@ -130,11 +126,11 @@ defmodule Roll35Core.Data.WeaponTest do
     end
 
     test "Returns correctly formatted items.", context do
-      BattleGear.live_random_test(Weapon, context, @testiter, @enchant_range)
+      BattleGear.live_random_test(Weapon, context, @enchant_range)
     end
 
     test "Does not return specific items when told not to.", context do
-      BattleGear.live_random_nonspecific_test(Weapon, context, @testiter)
+      BattleGear.live_random_nonspecific_test(Weapon, context)
     end
   end
 
@@ -148,7 +144,7 @@ defmodule Roll35Core.Data.WeaponTest do
     test "Returns items correctly.", context do
       agent = context.server
 
-      Enum.each(1..@testiter, fn _ ->
+      Enum.each(TestHarness.iter(), fn _ ->
         rank = Enum.random(Types.ranks())
         subrank = Enum.random(Types.subranks())
         item = Weapon.random_specific(agent, rank, subrank)

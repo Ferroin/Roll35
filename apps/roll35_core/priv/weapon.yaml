@@ -122,7 +122,7 @@ base:
   # - {cost:    3, type:  melee, tags: [martial, light, slashing], name: 'Razored Kobold Tail Attachment'}
   # - {cost:    3, type:  melee, tags: [martial, light, piercing], name: 'Spiked Kobold Tail Attachment'}
   # - {cost:    7, type:  melee, tags: [martial, light, trip, bludgeoning], name: 'Sweeper Kobold Tail Attachment'}
-  - {cost:    8, type:  melee, tags: [martial, light, slashing], name: 'Kukri'}
+  # - {cost:    8, type:  melee, tags: [martial, light, slashing], name: 'Kukri'}
   - {cost:   10, type:  melee, tags: [martial, light, slashing], name: 'Machete'}
   - {cost:    4, type:  melee, tags: [martial, light, piercing], name: 'Light Pick'}
   # - {cost:   11, type:  melee, tags: [martial, light, slashing], name: 'Ratfolk Tail Blade'}
