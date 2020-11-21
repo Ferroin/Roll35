@@ -28,6 +28,17 @@ defmodule Roll35Core.TestHarness.BattleGear do
 
   alias Roll35Core.Types
 
+  @spec check_specific_item(map()) :: nil
+  def check_specific_item(item) do
+    assert is_map(item)
+
+    assert Map.has_key?(item, :name)
+    assert String.valid?(item.name)
+
+    assert Map.has_key?(item, :cost)
+    assert is_integer(item.cost) or String.valid?(item.cost)
+  end
+
   @spec check_core_data_type(String.t(), map()) :: nil
   def check_core_data_type(prefix, ctx) do
     assert is_map(ctx.data), "#{prefix} data is not a map."
@@ -120,7 +131,7 @@ defmodule Roll35Core.TestHarness.BattleGear do
             assert is_list(item.value.specific),
                    "#{prefix} value map specific key is not a list."
 
-            assert Enum.all?(item.value.specific, &is_binary/1),
+            assert Enum.all?(item.value.specific, &String.valid?/1),
                    "#{prefix} value map specific list not all items are strings."
           end
         end)
@@ -145,7 +156,7 @@ defmodule Roll35Core.TestHarness.BattleGear do
 
       "#{prefix} does not have the correct keys (#{inspect(Map.keys(entry))})."
 
-      assert is_binary(entry.name), "#{prefix} name key is not a string."
+      assert String.valid?(entry.name), "#{prefix} name key is not a string."
 
       assert is_integer(entry.cost) or is_float(entry.cost),
              "#{prefix} cost key is not a number."
@@ -205,7 +216,7 @@ defmodule Roll35Core.TestHarness.BattleGear do
                  })."
 
           assert Map.has_key?(item.value, :name), "#{prefix} value map is missing name key."
-          assert is_binary(item.value.name), "#{prefix} value map name key is not a string."
+          assert String.valid?(item.value.name), "#{prefix} value map name key is not a string."
 
           if Map.has_key?(item.value, :cost) do
             assert is_integer(item.value.cost) or is_float(item.value.cost),
@@ -254,7 +265,7 @@ defmodule Roll35Core.TestHarness.BattleGear do
             assert is_list(item.value.exclude),
                    "#{prefix} value map exclude key is not a list."
 
-            assert Enum.all?(item.value.exclude, &is_binary/1),
+            assert Enum.all?(item.value.exclude, &String.valid?/1),
                    "#{prefix} value map limit list contains values that are not strings."
           end
         end)
@@ -290,6 +301,126 @@ defmodule Roll35Core.TestHarness.BattleGear do
         assert MapSet.equal?(MapSet.new(Map.keys(item.value)), MapSet.new([:name, :cost])),
                "#{prefix} value map does not have correct keys (#{inspect(Map.keys(item.value))})."
       end)
+    end)
+  end
+
+  @spec live_tags_test(module(), map()) :: nil
+  def live_tags_test(module, ctx) do
+    agent = ctx.server
+
+    tags = apply(module, :tags, [agent])
+
+    assert is_list(tags)
+    assert Enum.all?(tags, &is_atom/1)
+  end
+
+  @spec live_get_base_test(module(), map(), pos_integer()) :: nil
+  def live_get_base_test(module, ctx, iter) do
+    agent = ctx.server
+
+    Enum.each(1..iter, fn _ ->
+      base1 = apply(module, :random_base, [agent])
+
+      {:ok, base2} = apply(module, :get_base, [agent, base1.name])
+
+      assert base1 == base2
+    end)
+  end
+
+  @spec live_random_base_test(module(), map(), pos_integer()) :: nil
+  def live_random_base_test(module, ctx, iter) do
+    agent = ctx.server
+
+    Enum.each(1..iter, fn _ ->
+      item = apply(module, :random_base, [agent])
+
+      assert is_map(item)
+
+      assert Map.has_key?(item, :name)
+      assert String.valid?(item.name)
+
+      assert Map.has_key?(item, :cost)
+      assert is_integer(item.cost)
+    end)
+  end
+
+  @spec live_random_base_tags_test(module(), map(), pos_integer(), [atom()]) :: nil
+  def live_random_base_tags_test(module, ctx, iter, types) do
+    agent = ctx.server
+    tags = apply(module, :tags, [agent]) ++ types
+
+    Enum.each(1..iter, fn _ ->
+      tag = Enum.random(tags)
+
+      item = apply(module, :random_base, [agent, [tag]])
+
+      assert tag == item.type or tag in item.tags
+    end)
+  end
+
+  @spec live_random_enchantment_test(module(), map(), pos_integer(), [atom()], Range.t()) :: nil
+  def live_random_enchantment_test(module, ctx, iter, types, enchant_range) do
+    agent = ctx.server
+
+    Enum.each(1..iter, fn _ ->
+      type = Enum.random(types)
+      bonus = Enum.random(enchant_range)
+      item = apply(module, :random_enchantment, [agent, type, bonus])
+
+      assert is_map(item)
+
+      assert Map.has_key?(item, :name)
+      assert String.valid?(item.name)
+
+      if Map.has_key?(item, :cost) do
+        assert is_integer(item.cost)
+        assert item.cost > 0
+      end
+    end)
+  end
+
+  @spec live_random_test(module(), map(), pos_integer(), Range.t()) :: nil
+  def live_random_test(module, ctx, iter, enchant_range) do
+    agent = ctx.server
+
+    Enum.each(1..iter, fn _ ->
+      rank = Enum.random(Types.ranks())
+      subrank = Enum.random(Types.subranks())
+      item = apply(module, :random, [agent, rank, subrank])
+
+      if Map.has_key?(item, :specific) do
+        assert MapSet.equal?(MapSet.new(Map.keys(item)), MapSet.new([:specific]))
+
+        assert is_list(item.specific)
+
+        # TODO: This should be more thorough, only certain sequences of strings are valid.
+        assert Enum.all?(item.specific, &String.valid?/1)
+      else
+        assert MapSet.equal?(MapSet.new(Map.keys(item)), MapSet.new([:bonus, :enchants]))
+
+        assert is_integer(item.bonus)
+        assert item.bonus in 1..5
+
+        assert is_list(item.enchants)
+
+        assert Enum.all?(item.enchants, fn i ->
+                 is_integer(i) and i in enchant_range
+               end)
+      end
+    end)
+  end
+
+  @spec live_random_nonspecific_test(module(), map(), pos_integer()) :: nil
+  def live_random_nonspecific_test(module, ctx, iter) do
+    agent = ctx.server
+
+    Enum.each(1..iter, fn _ ->
+      rank = Enum.random(Types.ranks())
+      subrank = Enum.random(Types.subranks())
+      item = apply(module, :random, [agent, rank, subrank, [no_specific: true]])
+
+      assert is_map(item)
+      refute Map.has_key?(item, :specific)
     end)
   end
 end
