@@ -16,7 +16,7 @@ defmodule Roll35Core.Data.KeysTest do
     assert item.weight >= 1
 
     assert Map.has_key?(item, :value)
-    assert is_binary(item.value)
+    assert String.valid?(item.value)
   end
 
   describe "Roll35Core.Data.Keys.load_data/0" do
@@ -48,7 +48,7 @@ defmodule Roll35Core.Data.KeysTest do
           :flat ->
             assert is_list(entry.data)
 
-            assert Enum.all?(entry.data, &is_binary/1)
+            assert Enum.all?(entry.data, &String.valid?/1)
 
           :grouped ->
             assert is_map(entry.data)
@@ -56,7 +56,7 @@ defmodule Roll35Core.Data.KeysTest do
             Enum.each(entry.data, fn {_, value} ->
               assert is_list(value)
 
-              assert Enum.all?(value, &is_binary/1)
+              assert Enum.all?(value, &String.valid?/1)
             end)
 
           :flat_proportional ->
@@ -151,7 +151,7 @@ defmodule Roll35Core.Data.KeysTest do
       Enum.each(1..@testiter, fn _ ->
         result = Keys.random(agent, key: Enum.random(keys))
 
-        assert is_binary(result)
+        assert String.valid?(result)
       end)
     end
 
@@ -166,7 +166,7 @@ defmodule Roll35Core.Data.KeysTest do
 
         result = Keys.random(agent, key: key, subkey: Enum.random(subkeys))
 
-        assert is_binary(result)
+        assert String.valid?(result)
       end)
     end
   end
