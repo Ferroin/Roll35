@@ -14,6 +14,7 @@ defmodule Roll35Core.Data.Agent do
   """
 
   alias Roll35Core.Types
+  alias Roll35Core.Util
 
   require Roll35Core.Types
 
@@ -96,7 +97,7 @@ defmodule Roll35Core.Data.Agent do
 
     data = get(agent, & &1)
 
-    WeightedRandom.complex(data[rank][subrank])
+    Util.random(data[rank][subrank])
   end
 
   @doc """
@@ -110,9 +111,9 @@ defmodule Roll35Core.Data.Agent do
 
     data = get(agent, & &1)
 
-    subrank = Enum.random(Map.keys(data[rank]))
+    subrank = Util.random(Map.keys(data[rank]))
 
-    WeightedRandom.complex(data[rank][subrank])
+    Util.random(data[rank][subrank])
   end
 
   @doc """
@@ -124,10 +125,10 @@ defmodule Roll35Core.Data.Agent do
 
     data = get(agent, & &1)
 
-    rank = Enum.random(Map.keys(data))
-    subrank = Enum.random(Map.keys(data[rank]))
+    rank = Util.random(Map.keys(data))
+    subrank = Util.random(Map.keys(data[rank]))
 
-    WeightedRandom.complex(data[rank][subrank])
+    Util.random(data[rank][subrank])
   end
 
   @doc """
@@ -139,7 +140,7 @@ defmodule Roll35Core.Data.Agent do
 
     data = get(agent, & &1)
 
-    WeightedRandom.complex(data[rank])
+    Util.random(data[rank])
   end
 
   @doc """
@@ -151,9 +152,9 @@ defmodule Roll35Core.Data.Agent do
 
     data = get(agent, & &1)
 
-    rank = Enum.random(Map.keys(data))
+    rank = Util.random(Map.keys(data))
 
-    WeightedRandom.complex(data[rank])
+    Util.random(data[rank])
   end
 
   @doc """
@@ -237,7 +238,8 @@ defmodule Roll35Core.Data.Agent do
           end)
         end
       end)
-      |> Enum.random()
+      |> Enum.to_list()
+      |> Util.random()
     rescue
       _ in Enum.EmptyError -> nil
     end
@@ -284,7 +286,7 @@ defmodule Roll35Core.Data.Agent do
     if Enum.empty?(possible) do
       nil
     else
-      WeightedRandom.complex(possible)
+      Util.random(possible)
     end
   end
 
@@ -308,7 +310,7 @@ defmodule Roll35Core.Data.Agent do
 
     data
     |> Enum.filter(fn item -> :specific not in Map.keys(item.value) end)
-    |> WeightedRandom.complex()
+    |> Util.random()
   end
 
   def random_pattern(agent, rank, subrank, _)
@@ -321,7 +323,7 @@ defmodule Roll35Core.Data.Agent do
 
     data = get(agent, fn data -> data[rank][subrank] end)
 
-    WeightedRandom.complex(data)
+    Util.random(data)
   end
 
   @doc """

@@ -59,6 +59,6 @@ defmodule Roll35Core.Data.Weapon do
 
     data = Roll35Core.Data.Agent.get(agent, fn data -> data.specific[rank][subrank] end)
 
-    WeightedRandom.complex(data)
+    Util.random(data)
   end
 end

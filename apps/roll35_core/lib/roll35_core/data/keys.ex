@@ -92,11 +92,7 @@ defmodule Roll35Core.Data.Keys do
       |> Roll35Core.Data.Agent.get(& &1[key].data)
       |> Map.fetch!(subkey)
 
-    if is_map(Enum.at(data, 0)) do
-      WeightedRandom.complex(data)
-    else
-      Enum.random(data)
-    end
+    Util.random(data)
   end
 
   def random(agent, key: key) do
@@ -104,11 +100,7 @@ defmodule Roll35Core.Data.Keys do
 
     data = Roll35Core.Data.Agent.get(agent, & &1[key].data)
 
-    if is_map(Enum.at(data, 0)) do
-      WeightedRandom.complex(data)
-    else
-      Enum.random(data)
-    end
+    Util.random(data)
   end
 
   @doc """

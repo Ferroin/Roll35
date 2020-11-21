@@ -28,6 +28,6 @@ defmodule Roll35Core.Data.Wondrous do
 
     data = Roll35Core.Data.Agent.get(agent, & &1)
 
-    WeightedRandom.complex(data)
+    Util.random(data)
   end
 end

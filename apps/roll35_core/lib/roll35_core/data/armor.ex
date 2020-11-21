@@ -64,6 +64,6 @@ defmodule Roll35Core.Data.Armor do
 
     data = Roll35Core.Data.Agent.get(agent, fn data -> data.specific[type][rank][subrank] end)
 
-    WeightedRandom.complex(data)
+    Util.random(data)
   end
 end
