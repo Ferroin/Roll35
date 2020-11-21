@@ -473,10 +473,10 @@ defmodule Roll35Core.Data.Spell do
     class =
       cond do
         opt_class == "spellpage" ->
-          Enum.random(["spellpage_arcane", "spellpage_divine"])
+          Util.random(["spellpage_arcane", "spellpage_divine"])
 
         opt_class == "random" and level == nil ->
-          Enum.random(valid_classes)
+          Util.random(valid_classes)
 
         opt_class == "random" and level != nil ->
           valid_classes
@@ -484,7 +484,7 @@ defmodule Roll35Core.Data.Spell do
             {:ok, clsinfo} = GenServer.call(server, {:get_class, String.to_existing_atom(item)})
             length(clsinfo.levels) > level
           end)
-          |> Enum.random()
+          |> Util.random()
 
         opt_class == "nil" ->
           "minimum"
@@ -511,7 +511,7 @@ defmodule Roll35Core.Data.Spell do
         if Enum.empty?(possible) do
           {:error, "No spells found for the requested parameters."}
         else
-          spell = Enum.random(possible)
+          spell = Util.random(possible)
 
           cls =
             case class do

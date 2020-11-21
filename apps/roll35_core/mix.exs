@@ -34,7 +34,6 @@ defmodule Roll35Core.MixProject do
       {:ex_doc, "~> 0.23.0", only: :dev, runtime: false},
       {:git_hooks, "~> 0.5.1", only: :dev, runtime: false},
       {:sqlitex, "~> 1.7"},
-      {:weighted_random, "~> 0.1.0"},
       {:yaml_elixir, "~> 2.5"}
     ]
   end

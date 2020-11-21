@@ -6,6 +6,31 @@ defmodule Roll35Core.Util do
   alias Roll35Core.Types
 
   @doc """
+  Roll a random item from a list.
+
+  If the list is a list of maps with `weight` and `value` keys, then
+  we make a weighted selection based on that info and return the
+  value. Otherwise, this is the same as `Enum.random/1`.
+  """
+  @spec random([term]) :: term()
+  def random(items) do
+    firstitem = Enum.at(items, 0)
+
+    if is_map(firstitem) and Map.has_key?(firstitem, :weight) and Map.has_key?(firstitem, :value) do
+      items
+      |> Stream.flat_map(fn item ->
+        item.value
+        |> Stream.iterate(fn i -> i end)
+        |> Stream.take(item.weight)
+        |> Enum.to_list()
+      end)
+      |> Enum.random()
+    else
+      Enum.random(items)
+    end
+  end
+
+  @doc """
   Convert string keys in a map into atoms.
 
   This operates recursively, processing any maps that are values within
