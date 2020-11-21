@@ -5,8 +5,9 @@ defmodule Roll35Core.Data.WondrousTest do
   alias Roll35Core.Data.Wondrous
   alias Roll35Core.Types
 
+  alias Roll35Core.TestHarness
+
   @testfile Path.join("priv", "wondrous.yaml")
-  @testiter 20
 
   describe "Roll35Core.Data.Wondrous.load_data/0" do
     setup do
@@ -44,7 +45,7 @@ defmodule Roll35Core.Data.WondrousTest do
     test "Correctly returns an item slot.", context do
       agent = context.server
 
-      Enum.each(1..@testiter, fn _ ->
+      Enum.each(TestHarness.iter(), fn _ ->
         item = Wondrous.random(agent)
 
         assert is_atom(item)

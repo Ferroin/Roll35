@@ -4,6 +4,8 @@ defmodule Roll35Core.Data.CompoundAgentTest do
 
   alias Roll35Core.Data.CompoundAgent
 
+  alias Roll35Core.TestHarness
+
   @testdata """
   ---
   - {minor: 1, medium: 0, major: 0, name: "Item 1"}
@@ -21,7 +23,6 @@ defmodule Roll35Core.Data.CompoundAgentTest do
   @all_items (@minor_items ++ @medium_items ++ @major_items) |> Enum.sort() |> Enum.dedup()
   @testfile "compound_agent_test.yaml"
   @testpath Path.join(Application.app_dir(:roll35_core), @testfile)
-  @testiter 20
 
   setup_all do
     on_exit(fn -> File.rm!(@testpath) end)
@@ -76,7 +77,7 @@ defmodule Roll35Core.Data.CompoundAgentTest do
     test "Returns valid items of a random rank.", context do
       agent = context.server
 
-      Enum.each(1..@testiter, fn _ ->
+      Enum.each(TestHarness.iter(), fn _ ->
         item = CompoundAgent.random(agent)
 
         assert is_map(item)
@@ -97,7 +98,7 @@ defmodule Roll35Core.Data.CompoundAgentTest do
     test "Returns valid minor items.", context do
       agent = context.server
 
-      Enum.each(1..@testiter, fn _ ->
+      Enum.each(TestHarness.iter(), fn _ ->
         item = CompoundAgent.random(agent, :minor)
 
         assert is_map(item)
@@ -110,7 +111,7 @@ defmodule Roll35Core.Data.CompoundAgentTest do
     test "Returns valid medium items.", context do
       agent = context.server
 
-      Enum.each(1..@testiter, fn _ ->
+      Enum.each(TestHarness.iter(), fn _ ->
         item = CompoundAgent.random(agent, :medium)
 
         assert is_map(item)
@@ -123,7 +124,7 @@ defmodule Roll35Core.Data.CompoundAgentTest do
     test "Returns valid major items.", context do
       agent = context.server
 
-      Enum.each(1..@testiter, fn _ ->
+      Enum.each(TestHarness.iter(), fn _ ->
         item = CompoundAgent.random(agent, :major)
 
         assert is_map(item)

@@ -5,9 +5,10 @@ defmodule Roll35Core.Data.CategoryTest do
   alias Roll35Core.Data.Category
   alias Roll35Core.Types
 
+  alias Roll35Core.TestHarness
+
   @not_minor [:rod, :staff]
   @testfile Path.join("priv", "category.yaml")
-  @testiter 20
 
   describe "Roll35Core.Data.Category.load_data/0" do
     setup do
@@ -54,7 +55,7 @@ defmodule Roll35Core.Data.CategoryTest do
     test "Returns valid items of a random rank.", context do
       agent = context.server
 
-      Enum.each(1..@testiter, fn _ ->
+      Enum.each(TestHarness.iter(), fn _ ->
         item = Category.random(agent)
 
         assert is_atom(item)
@@ -73,7 +74,7 @@ defmodule Roll35Core.Data.CategoryTest do
     test "Returns valid minor items.", context do
       agent = context.server
 
-      Enum.each(1..@testiter, fn _ ->
+      Enum.each(TestHarness.iter(), fn _ ->
         item = Category.random(agent, :minor)
 
         assert is_atom(item)
@@ -84,7 +85,7 @@ defmodule Roll35Core.Data.CategoryTest do
     test "Returns valid medium items.", context do
       agent = context.server
 
-      Enum.each(1..@testiter, fn _ ->
+      Enum.each(TestHarness.iter(), fn _ ->
         item = Category.random(agent, :medium)
 
         assert is_atom(item)
@@ -95,7 +96,7 @@ defmodule Roll35Core.Data.CategoryTest do
     test "Returns valid major items.", context do
       agent = context.server
 
-      Enum.each(1..@testiter, fn _ ->
+      Enum.each(TestHarness.iter(), fn _ ->
         item = Category.random(agent, :major)
 
         assert is_atom(item)

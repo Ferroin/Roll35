@@ -4,6 +4,8 @@ defmodule Roll35Core.Data.RankedAgentTest do
 
   alias Roll35Core.Data.RankedAgent
 
+  alias Roll35Core.TestHarness
+
   @testdata """
   ---
   minor:
@@ -39,7 +41,6 @@ defmodule Roll35Core.Data.RankedAgentTest do
   @all_items @minor_items ++ @medium_items ++ @major_items
   @testfile "ranked_agent_test.yaml"
   @testpath Path.join(Application.app_dir(:roll35_core), @testfile)
-  @testiter 20
 
   setup_all do
     on_exit(fn -> File.rm!(@testpath) end)
@@ -111,7 +112,7 @@ defmodule Roll35Core.Data.RankedAgentTest do
     test "Returns valid items of a random rank.", context do
       agent = context.server
 
-      Enum.each(1..@testiter, fn _ ->
+      Enum.each(TestHarness.iter(), fn _ ->
         item = RankedAgent.random(agent)
 
         assert is_map(item)
@@ -132,7 +133,7 @@ defmodule Roll35Core.Data.RankedAgentTest do
     test "Returns valid minor items.", context do
       agent = context.server
 
-      Enum.each(1..@testiter, fn _ ->
+      Enum.each(TestHarness.iter(), fn _ ->
         item = RankedAgent.random(agent, :minor)
 
         assert is_map(item)
@@ -145,7 +146,7 @@ defmodule Roll35Core.Data.RankedAgentTest do
     test "Returns valid medium items.", context do
       agent = context.server
 
-      Enum.each(1..@testiter, fn _ ->
+      Enum.each(TestHarness.iter(), fn _ ->
         item = RankedAgent.random(agent, :medium)
 
         assert is_map(item)
@@ -158,7 +159,7 @@ defmodule Roll35Core.Data.RankedAgentTest do
     test "Returns valid major items.", context do
       agent = context.server
 
-      Enum.each(1..@testiter, fn _ ->
+      Enum.each(TestHarness.iter(), fn _ ->
         item = RankedAgent.random(agent, :major)
 
         assert is_map(item)
@@ -179,7 +180,7 @@ defmodule Roll35Core.Data.RankedAgentTest do
     test "Returns valid minor least items.", context do
       agent = context.server
 
-      Enum.each(1..@testiter, fn _ ->
+      Enum.each(TestHarness.iter(), fn _ ->
         item = RankedAgent.random(agent, :minor, :least)
 
         assert is_map(item)
@@ -192,7 +193,7 @@ defmodule Roll35Core.Data.RankedAgentTest do
     test "Returns valid minor lesser items.", context do
       agent = context.server
 
-      Enum.each(1..@testiter, fn _ ->
+      Enum.each(TestHarness.iter(), fn _ ->
         item = RankedAgent.random(agent, :minor, :lesser)
 
         assert is_map(item)
@@ -205,7 +206,7 @@ defmodule Roll35Core.Data.RankedAgentTest do
     test "Returns valid minor greater items.", context do
       agent = context.server
 
-      Enum.each(1..@testiter, fn _ ->
+      Enum.each(TestHarness.iter(), fn _ ->
         item = RankedAgent.random(agent, :minor, :greater)
 
         assert is_map(item)
@@ -218,7 +219,7 @@ defmodule Roll35Core.Data.RankedAgentTest do
     test "Returns valid medium lesser items.", context do
       agent = context.server
 
-      Enum.each(1..@testiter, fn _ ->
+      Enum.each(TestHarness.iter(), fn _ ->
         item = RankedAgent.random(agent, :medium, :lesser)
 
         assert is_map(item)
@@ -231,7 +232,7 @@ defmodule Roll35Core.Data.RankedAgentTest do
     test "Returns valid medium greater items.", context do
       agent = context.server
 
-      Enum.each(1..@testiter, fn _ ->
+      Enum.each(TestHarness.iter(), fn _ ->
         item = RankedAgent.random(agent, :medium, :greater)
 
         assert is_map(item)
@@ -244,7 +245,7 @@ defmodule Roll35Core.Data.RankedAgentTest do
     test "Returns valid major lesser items.", context do
       agent = context.server
 
-      Enum.each(1..@testiter, fn _ ->
+      Enum.each(TestHarness.iter(), fn _ ->
         item = RankedAgent.random(agent, :major, :lesser)
 
         assert is_map(item)
@@ -257,7 +258,7 @@ defmodule Roll35Core.Data.RankedAgentTest do
     test "Returns valid major greater items.", context do
       agent = context.server
 
-      Enum.each(1..@testiter, fn _ ->
+      Enum.each(TestHarness.iter(), fn _ ->
         item = RankedAgent.random(agent, :major, :greater)
 
         assert is_map(item)

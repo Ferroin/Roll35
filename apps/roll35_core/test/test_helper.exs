@@ -5,6 +5,9 @@ ExUnit.start()
 defmodule Roll35Core.TestHarness do
   @moduledoc false
 
+  @spec iter :: pos_integer()
+  def iter, do: 1..20
+
   @spec map_has_weighted_random_keys(map()) :: bool()
   def map_has_weighted_random_keys(map) do
     MapSet.equal?(MapSet.new(Map.keys(map)), MapSet.new([:weight, :value]))
@@ -27,6 +30,8 @@ defmodule Roll35Core.TestHarness.BattleGear do
   use ExUnit.CaseTemplate
 
   alias Roll35Core.Types
+
+  alias Roll35Core.TestHarness
 
   @spec check_specific_item(map()) :: nil
   def check_specific_item(item) do
@@ -314,11 +319,11 @@ defmodule Roll35Core.TestHarness.BattleGear do
     assert Enum.all?(tags, &is_atom/1)
   end
 
-  @spec live_get_base_test(module(), map(), pos_integer()) :: nil
-  def live_get_base_test(module, ctx, iter) do
+  @spec live_get_base_test(module(), map()) :: nil
+  def live_get_base_test(module, ctx) do
     agent = ctx.server
 
-    Enum.each(1..iter, fn _ ->
+    Enum.each(TestHarness.iter(), fn _ ->
       base1 = apply(module, :random_base, [agent])
 
       {:ok, base2} = apply(module, :get_base, [agent, base1.name])
@@ -327,11 +332,11 @@ defmodule Roll35Core.TestHarness.BattleGear do
     end)
   end
 
-  @spec live_random_base_test(module(), map(), pos_integer()) :: nil
-  def live_random_base_test(module, ctx, iter) do
+  @spec live_random_base_test(module(), map()) :: nil
+  def live_random_base_test(module, ctx) do
     agent = ctx.server
 
-    Enum.each(1..iter, fn _ ->
+    Enum.each(TestHarness.iter(), fn _ ->
       item = apply(module, :random_base, [agent])
 
       assert is_map(item)
@@ -340,16 +345,16 @@ defmodule Roll35Core.TestHarness.BattleGear do
       assert String.valid?(item.name)
 
       assert Map.has_key?(item, :cost)
-      assert is_integer(item.cost)
+      assert is_integer(item.cost) or is_float(item.cost)
     end)
   end
 
-  @spec live_random_base_tags_test(module(), map(), pos_integer(), [atom()]) :: nil
-  def live_random_base_tags_test(module, ctx, iter, types) do
+  @spec live_random_base_tags_test(module(), map(), [atom()]) :: nil
+  def live_random_base_tags_test(module, ctx, types) do
     agent = ctx.server
     tags = apply(module, :tags, [agent]) ++ types
 
-    Enum.each(1..iter, fn _ ->
+    Enum.each(TestHarness.iter(), fn _ ->
       tag = Enum.random(tags)
 
       item = apply(module, :random_base, [agent, [tag]])
@@ -358,11 +363,11 @@ defmodule Roll35Core.TestHarness.BattleGear do
     end)
   end
 
-  @spec live_random_enchantment_test(module(), map(), pos_integer(), [atom()], Range.t()) :: nil
-  def live_random_enchantment_test(module, ctx, iter, types, enchant_range) do
+  @spec live_random_enchantment_test(module(), map(), [atom()], Range.t()) :: nil
+  def live_random_enchantment_test(module, ctx, types, enchant_range) do
     agent = ctx.server
 
-    Enum.each(1..iter, fn _ ->
+    Enum.each(TestHarness.iter(), fn _ ->
       type = Enum.random(types)
       bonus = Enum.random(enchant_range)
       item = apply(module, :random_enchantment, [agent, type, bonus])
@@ -379,11 +384,11 @@ defmodule Roll35Core.TestHarness.BattleGear do
     end)
   end
 
-  @spec live_random_test(module(), map(), pos_integer(), Range.t()) :: nil
-  def live_random_test(module, ctx, iter, enchant_range) do
+  @spec live_random_test(module(), map(), Range.t()) :: nil
+  def live_random_test(module, ctx, enchant_range) do
     agent = ctx.server
 
-    Enum.each(1..iter, fn _ ->
+    Enum.each(TestHarness.iter(), fn _ ->
       rank = Enum.random(Types.ranks())
       subrank = Enum.random(Types.subranks())
       item = apply(module, :random, [agent, rank, subrank])
@@ -410,11 +415,11 @@ defmodule Roll35Core.TestHarness.BattleGear do
     end)
   end
 
-  @spec live_random_nonspecific_test(module(), map(), pos_integer()) :: nil
-  def live_random_nonspecific_test(module, ctx, iter) do
+  @spec live_random_nonspecific_test(module(), map()) :: nil
+  def live_random_nonspecific_test(module, ctx) do
     agent = ctx.server
 
-    Enum.each(1..iter, fn _ ->
+    Enum.each(TestHarness.iter(), fn _ ->
       rank = Enum.random(Types.ranks())
       subrank = Enum.random(Types.subranks())
       item = apply(module, :random, [agent, rank, subrank, [no_specific: true]])

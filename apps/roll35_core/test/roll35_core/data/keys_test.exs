@@ -4,8 +4,9 @@ defmodule Roll35Core.Data.KeysTest do
 
   alias Roll35Core.Data.Keys
 
+  alias Roll35Core.TestHarness
+
   @testfile Path.join("priv", "keys.yaml")
-  @testiter 20
 
   @spec check_key_entry(term()) :: none()
   defp check_key_entry(item) do
@@ -125,7 +126,7 @@ defmodule Roll35Core.Data.KeysTest do
 
       grouped_keys = Keys.get_keys(agent, :grouped) ++ Keys.get_keys(agent, :grouped_proportional)
 
-      Enum.each(1..@testiter, fn _ ->
+      Enum.each(TestHarness.iter(), fn _ ->
         key = Enum.random(grouped_keys)
 
         {:ok, subkeys} = Keys.get_subkeys(agent, key)
@@ -148,7 +149,7 @@ defmodule Roll35Core.Data.KeysTest do
 
       keys = Keys.get_keys(agent, :flat) ++ Keys.get_keys(agent, :flat_proportional)
 
-      Enum.each(1..@testiter, fn _ ->
+      Enum.each(TestHarness.iter(), fn _ ->
         result = Keys.random(agent, key: Enum.random(keys))
 
         assert String.valid?(result)
@@ -160,7 +161,7 @@ defmodule Roll35Core.Data.KeysTest do
 
       keys = Keys.get_keys(agent, :grouped) ++ Keys.get_keys(agent, :grouped_proportional)
 
-      Enum.each(1..@testiter, fn _ ->
+      Enum.each(TestHarness.iter(), fn _ ->
         key = Enum.random(keys)
         {:ok, subkeys} = Keys.get_subkeys(agent, key)
 

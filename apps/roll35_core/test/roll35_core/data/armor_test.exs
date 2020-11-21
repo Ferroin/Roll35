@@ -11,7 +11,6 @@ defmodule Roll35Core.Data.ArmorTest do
   require TestHarness
 
   @testfile Path.join("priv", "armor.yaml")
-  @testiter 20
 
   @enchant_range 1..5
   @item_types [:armor, :shield]
@@ -90,7 +89,7 @@ defmodule Roll35Core.Data.ArmorTest do
     end
 
     test "Properly returns a map based on the passed string.", context do
-      BattleGear.live_get_base_test(Armor, context, @testiter)
+      BattleGear.live_get_base_test(Armor, context)
     end
   end
 
@@ -102,11 +101,11 @@ defmodule Roll35Core.Data.ArmorTest do
     end
 
     test "Returns a valid item.", context do
-      BattleGear.live_random_base_test(Armor, context, @testiter)
+      BattleGear.live_random_base_test(Armor, context)
     end
 
     test "Returns correct items for given tags.", context do
-      BattleGear.live_random_base_tags_test(Armor, context, @testiter, @item_types)
+      BattleGear.live_random_base_tags_test(Armor, context, @item_types)
     end
   end
 
@@ -121,7 +120,6 @@ defmodule Roll35Core.Data.ArmorTest do
       BattleGear.live_random_enchantment_test(
         Armor,
         context,
-        @testiter,
         @item_types,
         @enchant_range
       )
@@ -136,11 +134,11 @@ defmodule Roll35Core.Data.ArmorTest do
     end
 
     test "Returns correctly formatted items.", context do
-      BattleGear.live_random_test(Armor, context, @testiter, @enchant_range)
+      BattleGear.live_random_test(Armor, context, @enchant_range)
     end
 
     test "Does not return specific items when told not to.", context do
-      BattleGear.live_random_nonspecific_test(Armor, context, @testiter)
+      BattleGear.live_random_nonspecific_test(Armor, context)
     end
   end
 
@@ -154,7 +152,7 @@ defmodule Roll35Core.Data.ArmorTest do
     test "Returns items correctly.", context do
       agent = context.server
 
-      Enum.each(1..@testiter, fn _ ->
+      Enum.each(TestHarness.iter(), fn _ ->
         type = Enum.random(@item_types)
         rank = Enum.random(Types.ranks())
         subrank = Enum.random(Types.subranks())
