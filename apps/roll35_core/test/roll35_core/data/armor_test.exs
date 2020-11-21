@@ -3,17 +3,22 @@ defmodule Roll35Core.Data.ArmorTest do
   use Roll35Core.TestHarness.BattleGear, async: true
 
   alias Roll35Core.Data.Armor
+  alias Roll35Core.Types
 
   alias Roll35Core.TestHarness
   alias Roll35Core.TestHarness.BattleGear
 
   require TestHarness
 
+  @testfile Path.join("priv", "armor.yaml")
+  @testiter 20
+
+  @enchant_range 1..5
   @item_types [:armor, :shield]
 
   describe "Roll35Core.Data.Armor.load_data/1" do
     setup do
-      data = Armor.load_data(Path.join("priv", "armor.yaml"))
+      data = Armor.load_data(@testfile)
 
       {:ok, [data: data]}
     end
@@ -39,7 +44,7 @@ defmodule Roll35Core.Data.ArmorTest do
     end
 
     test "Enchantment map has the correct format.", context do
-      BattleGear.check_enchantments("Armor", context, @item_types, 1..5)
+      BattleGear.check_enchantments("Armor", context, @item_types, @enchant_range)
     end
 
     test "Specific map has the correct format.", context do
@@ -62,6 +67,101 @@ defmodule Roll35Core.Data.ArmorTest do
         end)
       end)
       |> Enum.to_list()
+    end
+  end
+
+  describe "Roll35Core.Data.Armor.tags/1" do
+    setup do
+      {:ok, server} = start_supervised({Armor, {nil, @testfile}})
+
+      %{server: server}
+    end
+
+    test "Properly returns a list of valid tags.", context do
+      BattleGear.live_tags_test(Armor, context)
+    end
+  end
+
+  describe "Roll35Core.Data.Armor.get_base/2" do
+    setup do
+      {:ok, server} = start_supervised({Armor, {nil, @testfile}})
+
+      %{server: server}
+    end
+
+    test "Properly returns a map based on the passed string.", context do
+      BattleGear.live_get_base_test(Armor, context, @testiter)
+    end
+  end
+
+  describe "Roll35Core.Data.Armor.random_base/2" do
+    setup do
+      {:ok, server} = start_supervised({Armor, {nil, @testfile}})
+
+      %{server: server}
+    end
+
+    test "Returns a valid item.", context do
+      BattleGear.live_random_base_test(Armor, context, @testiter)
+    end
+
+    test "Returns correct items for given tags.", context do
+      BattleGear.live_random_base_tags_test(Armor, context, @testiter, @item_types)
+    end
+  end
+
+  describe "Roll35Core.Data.Armor.random_enchantment/5" do
+    setup do
+      {:ok, server} = start_supervised({Armor, {nil, @testfile}})
+
+      %{server: server}
+    end
+
+    test "Returns correctly formatted enchantments.", context do
+      BattleGear.live_random_enchantment_test(
+        Armor,
+        context,
+        @testiter,
+        @item_types,
+        @enchant_range
+      )
+    end
+  end
+
+  describe "Roll35Core.Data.Armor.random/4" do
+    setup do
+      {:ok, server} = start_supervised({Armor, {nil, @testfile}})
+
+      %{server: server}
+    end
+
+    test "Returns correctly formatted items.", context do
+      BattleGear.live_random_test(Armor, context, @testiter, @enchant_range)
+    end
+
+    test "Does not return specific items when told not to.", context do
+      BattleGear.live_random_nonspecific_test(Armor, context, @testiter)
+    end
+  end
+
+  describe "Roll35Core.Data.Armor.random_specific/4" do
+    setup do
+      {:ok, server} = start_supervised({Armor, {nil, @testfile}})
+
+      %{server: server}
+    end
+
+    test "Returns items correctly.", context do
+      agent = context.server
+
+      Enum.each(1..@testiter, fn _ ->
+        type = Enum.random(@item_types)
+        rank = Enum.random(Types.ranks())
+        subrank = Enum.random(Types.subranks())
+        item = Armor.random_specific(agent, type, rank, subrank)
+
+        BattleGear.check_specific_item(item)
+      end)
     end
   end
 end
