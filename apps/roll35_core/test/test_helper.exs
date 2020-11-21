@@ -6,7 +6,7 @@ defmodule Roll35Core.TestHarness do
   @moduledoc false
 
   @spec iter :: pos_integer()
-  def iter, do: 1..10000
+  def iter, do: 1..10_000
 
   @spec map_has_weighted_random_keys(map()) :: bool()
   def map_has_weighted_random_keys(map) do
