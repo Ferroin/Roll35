@@ -128,7 +128,7 @@
     mesmerist: 2
     psychic: 2
     spiritualist: 2
-  descriptor: emotionUM, mind_affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Absurdity
   school: illusion
@@ -540,7 +540,7 @@
     shaman: 5
     witch: 5
     wizard: 6
-  descriptor: curseUM
+  descriptor: curse
   domains: {}
   name: Alaznist's Jinx
   school: evocation
@@ -573,7 +573,7 @@
 - classes:
     cleric: 2
     inquisitor: 2
-  descriptor: see text
+  descriptor: see_text
   domains:
     chaos: 2
     demodand: 2
@@ -1144,7 +1144,7 @@
     psychic: 5
     witch: 5
     wizard: 5
-  descriptor: emotionUM, mind_affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Apathy
   school: enchantment
@@ -1568,7 +1568,7 @@
     occultist: 2
     psychic: 2
     wizard: 2
-  descriptor: emotionUM, mind_affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Assumed Likeness
   school: illusion
@@ -1631,7 +1631,7 @@
 - classes:
     magus: 5
     wizard: 5
-  descriptor: see text
+  descriptor: see_text
   domains: {}
   name: Augmenting Wall
   school: evocation
@@ -1841,7 +1841,7 @@
     summoner: 6
     witch: 6
     wizard: 6
-  descriptor: shadowUM
+  descriptor: shadow
   domains: {}
   name: Baleful Shadow Transmutation
   school: illusion
@@ -1949,7 +1949,7 @@
     occultist: 1
     shaman: 1
     summoner: 1
-  descriptor: emotionUM, fear, mind_affecting
+  descriptor: emotion, fear, mind_affecting
   domains: {}
   name: Barbed Chains
   school: conjuration
@@ -2187,7 +2187,7 @@
     shaman: 6
     spiritualist: 5
     witch: 6
-  descriptor: emotionUM, fear, mind_affecting
+  descriptor: emotion, fear, mind_affecting
   domains: {}
   name: Besmara's Grasping Depths
   school: necromancy
@@ -3279,21 +3279,21 @@
   subschool: ''
 - classes:
     inquisitor: 1
-  descriptor: curseUM
+  descriptor: curse
   domains: {}
   name: Brand Of Conformity
   school: transmutation
   subschool: ''
 - classes:
     inquisitor: 2
-  descriptor: curseUM
+  descriptor: curse
   domains: {}
   name: Brand Of Hobbling
   school: transmutation
   subschool: ''
 - classes:
     inquisitor: 4
-  descriptor: curseUM
+  descriptor: curse
   domains: {}
   name: Brand Of Tracking
   school: transmutation
@@ -4662,7 +4662,7 @@
 - classes:
     cleric: 3
     inquisitor: 3
-  descriptor: see text
+  descriptor: see_text
   domains: {}
   name: Communal Align Weapon
   school: transmutation
@@ -5172,7 +5172,7 @@
     spiritualist: 5
     witch: 4
     wizard: 5
-  descriptor: curseUM
+  descriptor: curse
   domains: {}
   name: Conditional Curse
   school: necromancy
@@ -5442,7 +5442,7 @@
     cleric: 3
     magus: 2
     paladin: 2
-  descriptor: curseUM
+  descriptor: curse
   domains: {}
   name: Contest Of Skill
   school: transmutation
@@ -5478,7 +5478,7 @@
 - classes:
     shaman: 4
     wizard: 4
-  descriptor: poisonUM
+  descriptor: poison
   domains: {}
   name: Contingent Venom
   school: necromancy
@@ -5644,7 +5644,7 @@
     antipaladin: 2
     inquisitor: 2
     paladin: 2
-  descriptor: chaotic, evil, good, or lawful
+  descriptor: chaotic, evil, good, lawful
   domains: {}
   name: Corruption Resistance
   school: abjuration
@@ -5744,7 +5744,7 @@
     spiritualist: 2
     witch: 2
     wizard: 2
-  descriptor: emotionUM, fear, mind_affecting
+  descriptor: emotion, fear, mind_affecting
   domains: {}
   name: Crafter's Nightmare
   school: necromancy
@@ -6143,7 +6143,7 @@
     shaman: 9
     witch: 9
     wizard: 9
-  descriptor: curseUM, darkness
+  descriptor: curse, darkness
   domains: {}
   name: Curse Of Fell Seasons
   school: transmutation
@@ -6153,7 +6153,7 @@
     mesmerist: 2
     shaman: 2
     witch: 2
-  descriptor: curseUM
+  descriptor: curse
   domains: {}
   name: Curse Of Keeping
   school: enchantment
@@ -6163,7 +6163,7 @@
     druid: 8
     witch: 8
     wizard: 8
-  descriptor: curseUM, darkness
+  descriptor: curse, darkness
   domains: {}
   name: Curse Of Night
   school: evocation
@@ -6175,7 +6175,7 @@
     mesmerist: 4
     shaman: 6
     witch: 6
-  descriptor: curseUM, emotionUM, mind_affecting
+  descriptor: curse, emotion, mind_affecting
   domains: {}
   name: Curse Of The Outcast
   school: enchantment
@@ -6195,7 +6195,7 @@
     shaman: 4
     witch: 4
     wizard: 4
-  descriptor: curseUM, evil
+  descriptor: curse, evil
   domains: {}
   name: Curse Terrain
   school: necromancy
@@ -6226,7 +6226,7 @@
     cleric: 9
     witch: 9
     wizard: 9
-  descriptor: curse, evil; see text
+  descriptor: curse, evil, see_text
   domains: {}
   name: Cursed Earth
   school: necromancy
@@ -6278,7 +6278,7 @@
     occultist: 3
     psychic: 3
     wizard: 3
-  descriptor: poisonUM
+  descriptor: poison
   domains: {}
   name: Daggermark's Exchange
   school: transmutation
@@ -7416,7 +7416,7 @@
     bloodrager: 4
     magus: 4
     wizard: 4
-  descriptor: acid, cold, electricity, or fire
+  descriptor: acid, cold, electricity, fire
   domains: {}
   name: Detonate
   school: evocation
@@ -7992,7 +7992,7 @@
   subschool: ''
 - classes:
     oracle: 8
-  descriptor: chaotic, evil, good, or lawful
+  descriptor: chaotic, evil, good, lawful
   domains: {}
   name: Divine Vessel
   school: transmutation
@@ -8110,7 +8110,7 @@
     alchemist: 3
     bloodrager: 3
     wizard: 3
-  descriptor: acid, cold, electricity, or fire
+  descriptor: acid, cold, electricity, fire
   domains:
     dragon: 3
   name: Draconic Reservoir
@@ -8138,7 +8138,7 @@
     alchemist: 4
     bloodrager: 4
     wizard: 4
-  descriptor: acid, cold, electricity, or fire
+  descriptor: acid, cold, electricity, fire
   domains:
     dragon: 4
   name: Dragon's Breath
@@ -8161,7 +8161,7 @@
     druid: 3
     ranger: 3
     witch: 3
-  descriptor: poisonUM
+  descriptor: poison
   domains: {}
   name: Drain Poison
   school: transmutation
@@ -8179,7 +8179,7 @@
     mesmerist: 3
     psychic: 4
     wizard: 4
-  descriptor: emotionUM, fear, mind_affecting
+  descriptor: emotion, fear, mind_affecting
   domains: {}
   name: Dreadscape
   school: illusion
@@ -8629,7 +8629,7 @@
     bloodrager: 3
     magus: 3
     wizard: 3
-  descriptor: acid, cold, electricity, or fire
+  descriptor: acid, cold, electricity, fire
   domains: {}
   name: Elemental Aura
   school: evocation
@@ -8677,7 +8677,7 @@
 - classes:
     druid: 7
     wizard: 7
-  descriptor: see text
+  descriptor: see_text
   domains: {}
   name: Elemental Bombardment
   school: conjuration
@@ -8688,7 +8688,7 @@
     magus: 4
     ranger: 4
     wizard: 4
-  descriptor: see text
+  descriptor: see_text
   domains: {}
   name: Elemental Mastery
   school: transmutation
@@ -8699,7 +8699,7 @@
     druid: 2
     mesmerist: 3
     wizard: 2
-  descriptor: air, earth, fire, or water
+  descriptor: air, earth, fire, water
   domains: {}
   name: Elemental Speech
   school: divination
@@ -8708,7 +8708,7 @@
     druid: 9
     shaman: 9
     witch: 9
-  descriptor: see text
+  descriptor: see_text
   domains:
     air: 9
     earth: 9
@@ -8722,7 +8722,7 @@
     bloodrager: 2
     magus: 2
     wizard: 2
-  descriptor: acid, cold, electricity, or fire
+  descriptor: acid, cold, electricity, fire
   domains: {}
   name: Elemental Touch
   school: evocation
@@ -8899,7 +8899,7 @@
   subschool: ''
 - classes:
     wizard: 4
-  descriptor: acid, cold, electricity, or fire; see below
+  descriptor: acid, cold, electricity, fire, see_below
   domains: {}
   name: Energy Hack
   school: transmutation
@@ -9966,7 +9966,7 @@
     occultist: 4
     summoner: 4
     wizard: 4
-  descriptor: fire or cold
+  descriptor: fire, cold
   domains:
     fire: 5
     sun: 4
@@ -10364,7 +10364,7 @@
     psychic: 5
     witch: 3
     wizard: 5
-  descriptor: curseUM
+  descriptor: curse
   domains: {}
   name: Flexile Curse
   school: transmutation
@@ -10474,7 +10474,7 @@
 - classes:
     inquisitor: 2
     occultist: 3
-  descriptor: chaotic, evil, good, or lawful
+  descriptor: chaotic, evil, good, lawful
   domains: {}
   name: Follow Aura
   school: divination
@@ -10885,7 +10885,7 @@
     shaman: 4
     witch: 4
     wizard: 4
-  descriptor: cold, emotionUM, fear, mind_affecting
+  descriptor: cold, emotion, fear, mind_affecting
   domains: {}
   name: Frigid Souls
   school: necromancy
@@ -11052,7 +11052,7 @@
     summoner: 2
     witch: 2
     wizard: 2
-  descriptor: poisonUM
+  descriptor: poison
   domains: {}
   name: Garden Of Peril
   school: conjuration
@@ -11096,7 +11096,7 @@
     trade: 9
   name: Gate
   school: conjuration
-  subschool: creation or calling
+  subschool: creation, calling
 - classes:
     bard: 6
     cleric: 6
@@ -11201,7 +11201,7 @@
     occultist: 3
     spiritualist: 4
     witch: 4
-  descriptor: shadowUM
+  descriptor: shadow
   domains: {}
   name: Ghost Brand
   school: transmutation
@@ -11303,7 +11303,7 @@
   descriptor: ''
   domains: {}
   name: Giant Form II
-  school: Transmutation
+  school: transmutation
   subschool: polymorph
 - classes:
     bard: 3
@@ -11877,7 +11877,7 @@
     shaman: 6
     witch: 6
     wizard: 6
-  descriptor: curseUM, evil
+  descriptor: curse, evil
   domains: {}
   name: Greater Curse Terrain
   school: necromancy
@@ -12361,7 +12361,7 @@
     cleric: 8
     psychic: 8
     shaman: 8
-  descriptor: see text for lesser planar ally
+  descriptor: see_text
   domains:
     tactics: 8
   name: Greater Planar Ally
@@ -12371,7 +12371,7 @@
     psychic: 8
     summoner: 6
     wizard: 8
-  descriptor: see text for lesser planar binding
+  descriptor: see_text
   domains:
     void: 8
   name: Greater Planar Binding
@@ -12493,7 +12493,7 @@
     psychic: 7
     witch: 7
     wizard: 7
-  descriptor: emotionUM, mind_affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Greater Seeds Of Influence
   school: enchantment
@@ -12510,7 +12510,7 @@
     mesmerist: 6
     psychic: 6
     wizard: 6
-  descriptor: shadowUM
+  descriptor: shadow
   domains: {}
   name: Greater Shadow Enchantment
   school: illusion
@@ -12527,7 +12527,7 @@
     shaman: 9
     witch: 9
     wizard: 9
-  descriptor: shadowUM
+  descriptor: shadow
   domains: {}
   name: Greater Shadow Transmutation
   school: illusion
@@ -12710,7 +12710,7 @@
     summoner: 6
     witch: 7
     wizard: 7
-  descriptor: death, emotionUM, fear, mind_affecting
+  descriptor: death, emotion, fear, mind_affecting
   domains: {}
   name: Grim Stalker
   school: necromancy
@@ -12751,7 +12751,7 @@
 - classes:
     cleric: 4
     paladin: 4
-  descriptor: see text
+  descriptor: see_text
   domains: {}
   name: Guardian Of Faith
   school: abjuration
@@ -13011,7 +13011,7 @@
     spiritualist: 4
     witch: 5
     wizard: 6
-  descriptor: curseUM
+  descriptor: curse
   domains: {}
   name: Hasten Judgment
   school: necromancy
@@ -13199,7 +13199,7 @@
     mesmerist: 2
     psychic: 2
     wizard: 2
-  descriptor: emotionUM, mind_affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Heckle
   school: enchantment
@@ -13252,7 +13252,7 @@
     bloodrager: 4
     witch: 4
     wizard: 4
-  descriptor: acid, electricity, or fire
+  descriptor: acid, electricity, fire
   domains: {}
   name: Hellmouth Lash
   school: transmutation
@@ -13766,7 +13766,7 @@
     spiritualist: 3
     witch: 3
     wizard: 3
-  descriptor: emotionUM, fear, mind_affecting
+  descriptor: emotion, fear, mind_affecting
   domains: {}
   name: Horrifying Visage
   school: necromancy
@@ -14252,7 +14252,7 @@
     magus: 2
     shaman: 2
     wizard: 2
-  descriptor: see text
+  descriptor: see_text
   domains: {}
   name: Imbue With Elemental Might
   school: evocation
@@ -14327,7 +14327,7 @@
 - classes:
     mesmerist: 3
     psychic: 3
-  descriptor: emotionUM, mind_affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Implanted Projection
   school: enchantment
@@ -14421,7 +14421,7 @@
     cleric: 3
     summoner: 3
     wizard: 3
-  descriptor: lawful; see text
+  descriptor: lawful, see_text
   domains: {}
   name: Infernal Challenger
   school: conjuration
@@ -14943,7 +14943,7 @@
     paladin: 4
     ranger: 4
     witch: 6
-  descriptor: see text
+  descriptor: see_text
   domains: {}
   name: Invoke Deity
   school: transmutation
@@ -15051,7 +15051,7 @@
     spiritualist: 4
     witch: 3
     wizard: 4
-  descriptor: curseUM
+  descriptor: curse
   domains: {}
   name: Irregular Size
   school: transmutation
@@ -15099,7 +15099,7 @@
     shaman: 1
     witch: 1
     wizard: 1
-  descriptor: curseUM
+  descriptor: curse
   domains: {}
   name: Itching Curse
   school: necromancy
@@ -15146,7 +15146,7 @@
     shaman: 3
     spiritualist: 2
     witch: 3
-  descriptor: emotionUM, mind_affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Jealous Rage
   school: enchantment
@@ -15258,7 +15258,7 @@
     occultist: 2
     witch: 2
     wizard: 3
-  descriptor: curseUM
+  descriptor: curse
   domains: {}
   name: Kalistocrat's Nightmare
   school: transmutation
@@ -15660,7 +15660,7 @@
     shaman: 2
     witch: 2
     wizard: 2
-  descriptor: curseUM, evil
+  descriptor: curse, evil
   domains: {}
   name: Lesser Curse Terrain
   school: necromancy
@@ -15749,7 +15749,7 @@
     medium: 3
     psychic: 4
     shaman: 4
-  descriptor: see text
+  descriptor: see_text
   domains: {}
   name: Lesser Planar Ally
   school: conjuration
@@ -15760,7 +15760,7 @@
     psychic: 5
     summoner: 5
     wizard: 5
-  descriptor: see text
+  descriptor: see_text
   domains:
     rune: 5
     void: 4
@@ -15915,7 +15915,7 @@
     mesmerist: 6
     psychic: 8
     wizard: 8
-  descriptor: curseUM, mind_affecting
+  descriptor: curse, mind_affecting
   domains: {}
   name: Life Of Crime
   school: enchantment
@@ -16126,7 +16126,7 @@
   descriptor: ''
   domains: {}
   name: Lissalan Snake Sigil
-  school: see text
+  school: see_text
   subschool: ''
 - classes:
     antipaladin: 2
@@ -16430,7 +16430,7 @@
     psychic: 7
     witch: 6
     wizard: 7
-  descriptor: curseUM, mind_affecting
+  descriptor: curse, mind_affecting
   domains: {}
   name: Lost Legacy
   school: enchantment
@@ -17001,7 +17001,7 @@
 - classes:
     mesmerist: 6
     psychic: 8
-  descriptor: emotionUM, fear, mind_affecting
+  descriptor: emotion, fear, mind_affecting
   domains: {}
   name: Mantle Of Doubt
   school: illusion
@@ -17051,7 +17051,7 @@
     inquisitor: 2
     witch: 2
     wizard: 2
-  descriptor: curseUM
+  descriptor: curse
   domains: {}
   name: Mark Of Blood
   school: transmutation
@@ -17769,7 +17769,7 @@
     shaman: 5
     witch: 5
     wizard: 5
-  descriptor: curseUM
+  descriptor: curse
   domains: {}
   name: Mass Sun's Disdain
   school: transmutation
@@ -17786,7 +17786,7 @@
     cleric: 8
     witch: 8
     wizard: 8
-  descriptor: shadowUM
+  descriptor: shadow
   domains: {}
   name: Mass Umbral Infusion
   school: necromancy
@@ -18425,7 +18425,7 @@
     summoner: 4
     witch: 4
     wizard: 4
-  descriptor: emotionUM, fear, mind_affecting
+  descriptor: emotion, fear, mind_affecting
   domains: {}
   name: Mischievous Shadow
   school: necromancy
@@ -18715,7 +18715,7 @@
     summoner: 1
     witch: 1
     wizard: 1
-  descriptor: see text
+  descriptor: see_text
   domains: {}
   name: Murderous Crow
   school: conjuration
@@ -18966,7 +18966,7 @@
     spiritualist: 2
     witch: 1
     wizard: 1
-  descriptor: curseUM
+  descriptor: curse
   domains: {}
   name: Night Blindness
   school: necromancy
@@ -18988,7 +18988,7 @@
     psychic: 6
     witch: 6
     wizard: 6
-  descriptor: emotionUM, evil, mind_affecting
+  descriptor: emotion, evil, mind_affecting
   domains: {}
   name: Night Terrors
   school: illusion
@@ -19271,7 +19271,7 @@
     psychic: 2
     witch: 3
     wizard: 3
-  descriptor: curseUM
+  descriptor: curse
   domains: {}
   name: Open Book
   school: divination
@@ -19710,7 +19710,7 @@
     occultist: 3
     witch: 3
     wizard: 3
-  descriptor: shadowUM
+  descriptor: shadow
   domains: {}
   name: Penumbral Disguise
   school: conjuration
@@ -19844,7 +19844,7 @@
     psychic: 5
     witch: 5
     wizard: 5
-  descriptor: emotionUM, mind_affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Pessimism
   school: enchantment
@@ -20039,7 +20039,7 @@
     psychic: 6
     witch: 6
     wizard: 6
-  descriptor: emotionUM, fear, mind_affecting
+  descriptor: emotion, fear, mind_affecting
   domains: {}
   name: Phobia
   school: enchantment
@@ -20200,7 +20200,7 @@
     cleric: 6
     psychic: 6
     shaman: 6
-  descriptor: see text for lesser planar ally
+  descriptor: see_text
   domains:
     agathion: 6
     archon: 6
@@ -20214,7 +20214,7 @@
     psychic: 6
     summoner: 6
     wizard: 6
-  descriptor: see text for lesser planar binding
+  descriptor: see_text
   domains:
     aeon: 6
     daemon: 6
@@ -20286,7 +20286,7 @@
     cleric: 5
     inquisitor: 4
     paladin: 4
-  descriptor: mind_affecting, see text
+  descriptor: mind_affecting, see_text
   domains: {}
   name: Planeslayer's Call
   school: enchantment
@@ -20405,7 +20405,7 @@
     cleric: 7
     druid: 6
     witch: 7
-  descriptor: poisonUM
+  descriptor: poison
   domains: {}
   name: Poison Breath
   school: evocation
@@ -20428,7 +20428,7 @@
     occultist: 4
     shaman: 4
     witch: 5
-  descriptor: poisonUM, ruse
+  descriptor: poison, ruse
   domains: {}
   name: Poisonous Balm
   school: conjuration
@@ -20583,7 +20583,7 @@
     spiritualist: 5
     witch: 7
     wizard: 7
-  descriptor: curseUM, mind_affecting
+  descriptor: curse, mind_affecting
   domains: {}
   name: Pox Of Rumors
   school: enchantment
@@ -20905,7 +20905,7 @@
     cleric: 2
     inquisitor: 2
     paladin: 2
-  descriptor: see text
+  descriptor: see_text
   domains: {}
   name: Protection From Outsiders
   school: abjuration
@@ -21051,7 +21051,7 @@
     spiritualist: 2
     witch: 2
     wizard: 3
-  descriptor: emotionUM, mind_affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Psychic Leech
   school: enchantment
@@ -21080,7 +21080,7 @@
   subschool: ''
 - classes:
     psychic: 2
-  descriptor: emotionUM, mind_affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Psychonaut Manifestation
   school: enchantment
@@ -21174,7 +21174,7 @@
     bard: 2
     witch: 3
     wizard: 3
-  descriptor: curseUM, mind_affecting
+  descriptor: curse, mind_affecting
   domains: {}
   name: Puzzle Box
   school: enchantment
@@ -22008,7 +22008,7 @@
     druid: 5
     inquisitor: 4
     paladin: 4
-  descriptor: curse, see text
+  descriptor: curse, see_text
   domains: {}
   name: Reprobation
   school: transmutation
@@ -22274,7 +22274,7 @@
     occultist: 3
     spiritualist: 3
     witch: 4
-  descriptor: curseUM
+  descriptor: curse
   domains: {}
   name: Retributive Reparations
   school: necromancy
@@ -22484,7 +22484,7 @@
     spiritualist: 3
     witch: 4
     wizard: 4
-  descriptor: painUM
+  descriptor: pain
   domains: {}
   name: Rigor Mortis
   school: transmutation
@@ -22607,7 +22607,7 @@
     inquisitor: 6
     occultist: 6
     witch: 8
-  descriptor: curseUM, disease
+  descriptor: curse, disease
   domains: {}
   name: Rotting Alliance
   school: necromancy
@@ -22658,7 +22658,7 @@
     inquisitor: 4
     witch: 5
     wizard: 5
-  descriptor: curseUM
+  descriptor: curse
   domains: {}
   name: Rune Of Ruin
   school: transmutation
@@ -23198,7 +23198,7 @@
 - classes:
     bard: 2
     wizard: 2
-  descriptor: shadowUM
+  descriptor: shadow
   domains: {}
   name: Searching Shadows
   school: illusion
@@ -23362,7 +23362,7 @@
     psychic: 4
     witch: 4
     wizard: 4
-  descriptor: emotionUM, mind_affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Seeds Of Influence
   school: enchantment
@@ -23718,7 +23718,7 @@
     mesmerist: 3
     psychic: 3
     wizard: 3
-  descriptor: shadowUM
+  descriptor: shadow
   domains: {}
   name: Shadow Enchantment
   school: illusion
@@ -23729,7 +23729,7 @@
     shaman: 5
     spiritualist: 5
     wizard: 6
-  descriptor: shadowUM
+  descriptor: shadow
   domains: {}
   name: Shadow Endurance
   school: illusion
@@ -23800,7 +23800,7 @@
     summoner: 6
     witch: 6
     wizard: 6
-  descriptor: shadowUM
+  descriptor: shadow
   domains: {}
   name: Shadow Transmutation
   school: illusion
@@ -23871,7 +23871,7 @@
     spiritualist: 4
     witch: 4
     wizard: 4
-  descriptor: shadowUM
+  descriptor: shadow
   domains: {}
   name: Shadowform
   school: illusion
@@ -24511,7 +24511,7 @@
     shaman: 1
     witch: 1
     wizard: 1
-  descriptor: emotionUM, fear, mind_affecting
+  descriptor: emotion, fear, mind_affecting
   domains: {}
   name: Skin Tag
   school: necromancy
@@ -24561,7 +24561,7 @@
     paladin: 2
     witch: 3
     wizard: 3
-  descriptor: emotionUM, mind_affecting
+  descriptor: emotion, mind_affecting
   domains: {}
   name: Slave To Sin
   school: enchantment
@@ -25226,7 +25226,7 @@
     psychic: 3
     shaman: 4
     witch: 3
-  descriptor: curseUM
+  descriptor: curse
   domains: {}
   name: Spellcurse
   school: necromancy
@@ -25448,7 +25448,7 @@
     ranger: 3
     shaman: 2
     witch: 2
-  descriptor: poisonUM
+  descriptor: poison
   domains: {}
   name: Spore Burst
   school: conjuration
@@ -25524,7 +25524,7 @@
     psychic: 3
     witch: 3
     wizard: 3
-  descriptor: emotionUM, fear, mind_affecting
+  descriptor: emotion, fear, mind_affecting
   domains: {}
   name: Stage Fright
   school: enchantment
@@ -26105,7 +26105,7 @@
   subschool: summoning
 - classes:
     druid: 9
-  descriptor: see text
+  descriptor: see_text
   domains: {}
   name: Summon Elemental Steed
   school: conjuration
@@ -26152,21 +26152,21 @@
   subschool: summoning
 - classes:
     druid: 6
-  descriptor: see text
+  descriptor: see_text
   domains: {}
   name: Summon Giant Ally I
   school: conjuration
   subschool: summoning
 - classes:
     druid: 7
-  descriptor: see text
+  descriptor: see_text
   domains: {}
   name: Summon Giant Ally II
   school: conjuration
   subschool: summoning
 - classes:
     druid: 8
-  descriptor: see text
+  descriptor: see_text
   domains: {}
   name: Summon Giant Ally III
   school: conjuration
@@ -26278,7 +26278,7 @@
     summoner: 1
     witch: 1
     wizard: 1
-  descriptor: see text
+  descriptor: see_text
   domains: {}
   name: Summon Monster I
   school: conjuration
@@ -26411,7 +26411,7 @@
 - classes:
     druid: 3
     ranger: 3
-  descriptor: see text
+  descriptor: see_text
   domains: {}
   name: Summon Nature's Ally III
   school: conjuration
@@ -26419,7 +26419,7 @@
 - classes:
     druid: 4
     ranger: 4
-  descriptor: see text
+  descriptor: see_text
   domains:
     animal: 4
     saurian: 4
@@ -26428,28 +26428,28 @@
   subschool: summoning
 - classes:
     druid: 9
-  descriptor: see text
+  descriptor: see_text
   domains: {}
   name: Summon Nature's Ally IX
   school: conjuration
   subschool: summoning
 - classes:
     druid: 5
-  descriptor: see text
+  descriptor: see_text
   domains: {}
   name: Summon Nature's Ally V
   school: conjuration
   subschool: summoning
 - classes:
     druid: 6
-  descriptor: see text
+  descriptor: see_text
   domains: {}
   name: Summon Nature's Ally VI
   school: conjuration
   subschool: summoning
 - classes:
     druid: 7
-  descriptor: see text
+  descriptor: see_text
   domains:
     saurian: 7
   name: Summon Nature's Ally VII
@@ -26457,7 +26457,7 @@
   subschool: summoning
 - classes:
     druid: 8
-  descriptor: see text
+  descriptor: see_text
   domains:
     animal: 8
   name: Summon Nature's Ally VIII
@@ -26542,7 +26542,7 @@
     shaman: 2
     witch: 2
     wizard: 2
-  descriptor: curseUM
+  descriptor: curse
   domains: {}
   name: Sun's Disdain
   school: transmutation
@@ -26643,7 +26643,7 @@
     shaman: 8
     witch: 8
     wizard: 8
-  descriptor: curseUM, evil
+  descriptor: curse, evil
   domains: {}
   name: Supreme Curse Terrain
   school: necromancy
@@ -26762,7 +26762,7 @@
     shaman: 4
     summoner: 4
     wizard: 4
-  descriptor: poisonUM
+  descriptor: poison
   domains: {}
   name: Sword To Snake
   school: transmutation
@@ -27553,7 +27553,7 @@
     psychic: 4
     shaman: 4
     witch: 4
-  descriptor: emotionUM, fear
+  descriptor: emotion, fear
   domains: {}
   name: They Know
   school: enchantment
@@ -28062,7 +28062,7 @@
     shaman: 3
     witch: 3
     wizard: 3
-  descriptor: poisonUM
+  descriptor: poison
   domains: {}
   name: Toxic Rupture
   school: necromancy
@@ -28541,7 +28541,7 @@
     shaman: 4
     witch: 4
     wizard: 4
-  descriptor: shadowUM
+  descriptor: shadow
   domains: {}
   name: Umbral Infusion
   school: necromancy
@@ -28945,7 +28945,7 @@
     shaman: 2
     witch: 2
     wizard: 2
-  descriptor: emotionUM, fear, mind_affecting
+  descriptor: emotion, fear, mind_affecting
   domains: {}
   name: Unsettling Presence
   school: necromancy
@@ -29038,7 +29038,7 @@
     antipaladin: 2
     cleric: 2
     inquisitor: 2
-  descriptor: emotionUM, evil, fear, mind_affecting
+  descriptor: emotion, evil, fear, mind_affecting
   domains: {}
   name: Urgathoa's Beacon
   school: necromancy
@@ -29172,7 +29172,7 @@
     shaman: 2
     summoner: 2
     witch: 2
-  descriptor: poisonUM
+  descriptor: poison
   domains: {}
   name: Venomous Bite
   school: transmutation
@@ -29375,7 +29375,7 @@
     mesmerist: 2
     occultist: 2
     witch: 2
-  descriptor: curseUM
+  descriptor: curse
   domains: {}
   name: Violent Accident
   school: transmutation
@@ -30486,7 +30486,7 @@
   subschool: ''
 - classes:
     cleric: 4
-  descriptor: see text
+  descriptor: see_text
   domains: {}
   name: Wrathful Weapon
   school: transmutation
