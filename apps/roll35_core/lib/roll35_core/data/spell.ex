@@ -142,9 +142,7 @@ defmodule Roll35Core.Data.Spell do
           spellpage_divine_cls: "NULL",
           spellpage_divine_fixed: false
         },
-        fn class, acc ->
-          cls = String.to_existing_atom(class)
-
+        fn cls, acc ->
           ilevel =
             cond do
               cls in Map.keys(entry.classes) ->
@@ -277,7 +275,7 @@ defmodule Roll35Core.Data.Spell do
           :ok | {:error, term()}
   def prepare_spell_db(spell_db, spelldata, spelltstamp, classdata, clasststamp) do
     classes = Map.keys(classdata)
-    columns = [:minimum, :spellpage_arcane, :spellpage_divine | classes]
+    columns = classes ++ [:minimum, :spellpage_arcane, :spellpage_divine]
 
     Logger.debug("Initializing spell database.")
 
@@ -300,15 +298,12 @@ defmodule Roll35Core.Data.Spell do
       spelldata
       |> Stream.chunk_every(50)
       |> Enum.map(fn item ->
-        {classdata, item}
+        {classdata, classes, item}
       end)
       |> Enum.with_index()
       |> Task.async_stream(
-        fn {{classdata, item}, index} ->
-          {:ok, [%{data: columns}]} =
-            DB.query(spell_db, "SELECT data FROM info WHERE id='classes';")
-
-          rev_columns = columns |> String.split(" ", trim: true) |> Enum.reverse()
+        fn {{classdata, columns, item}, index} ->
+          rev_columns = Enum.reverse(columns)
 
           {tags, sql} =
             Enum.reduce(item, {MapSet.new(), ""}, fn entry, {tags, cmd} ->
@@ -493,46 +488,99 @@ defmodule Roll35Core.Data.Spell do
     GenServer.call(server, {:get_spell, name}, 15_000)
   end
 
-  defp get_spells(server, level, cls) when level != nil do
+  defp select_spell(server, nil, cls, nil) do
     {:ok, results} =
       GenServer.call(
         server,
-        {:query, "SELECT * FROM spells WHERE #{cls} = #{level};", []},
+        {
+          :query,
+          """
+          SELECT *
+          FROM spells
+          WHERE #{cls} IS NOT NULL
+          ORDER BY random()
+          LIMIT 1;
+          """,
+          []
+        },
         15_000
       )
 
     results
   end
 
-  defp get_spells(server, level, cls) when level == nil do
+  defp select_spell(server, level, cls, nil) do
     {:ok, results} =
       GenServer.call(
         server,
-        {:query, "SELECT * FROM spells WHERE #{cls} IS NOT NULL;", []},
+        {
+          :query,
+          """
+          SELECT *
+          FROM spells
+          WHERE #{cls} = #{level}
+          ORDER BY random()
+          LIMIT 1;
+          """,
+          []
+        },
         15_000
       )
 
     results
   end
 
-  defp get_tagged(server, tag) when tag != nil do
+  defp select_spell(server, nil, cls, tag) do
     {:ok, results} =
       GenServer.call(
         server,
-        {:query, "SELECT name FROM tagmap WHERE tags MATCH '#{tag}';", []},
+        {
+          :query,
+          """
+          SELECT *
+          FROM spells
+          WHERE #{cls} IS NOT NULL
+          AND name IN (
+            SELECT name
+            FROM tagmap
+            WHERE tags MATCH '#{tag}'
+          )
+          ORDER BY random()
+          LIMIT 1;
+          """,
+          []
+        },
         15_000
       )
 
-    Enum.map(results, fn item -> item.name end)
+    results
   end
 
-  defp get_tagged(_server, tag) when tag == nil, do: nil
+  defp select_spell(server, level, cls, tag) do
+    {:ok, results} =
+      GenServer.call(
+        server,
+        {
+          :query,
+          """
+          SELECT *
+          FROM spells
+          WHERE #{cls} = #{level}
+          AND name IN (
+            SELECT name
+            FROM tagmap
+            WHERE tags MATCH '#{tag}'
+          )
+          ORDER BY random()
+          LIMIT 1;
+          """,
+          []
+        },
+        15_000
+      )
 
-  defp filter_tagged(base, tagged) when tagged != nil do
-    Enum.filter(base, fn item -> item.name in tagged end)
+    results
   end
-
-  defp filter_tagged(base, tagged) when tagged == nil, do: base
 
   @doc """
   Select a random spell.
@@ -590,10 +638,7 @@ defmodule Roll35Core.Data.Spell do
 
     valid_classes = Enum.map(valid_cls_result, &Atom.to_string/1)
 
-    {:ok, [%{data: valid_col_result}]} =
-      GenServer.call(server, {:query, "SELECT data FROM info WHERE id='columns';", []}, 5_000)
-
-    valid_columns = String.split(valid_col_result, " ")
+    valid_columns = ["spellpage_arcane", "spellpage_divine", "minimum" | valid_classes]
 
     class =
       cond do
@@ -629,27 +674,23 @@ defmodule Roll35Core.Data.Spell do
         {:error, "Invalid spell level specified."}
 
       true ->
-        base_list = get_spells(server, level, class)
-        tag_filter = get_tagged(server, tag)
-        possible = filter_tagged(base_list, tag_filter)
+        case select_spell(server, level, class, tag) do
+          [spell] ->
+            cls =
+              case class do
+                "minimum" -> String.to_existing_atom(spell.minimum_cls)
+                "spellpage_arcane" -> String.to_existing_atom(spell.spellpage_arcane_cls)
+                "spellpage_divine" -> String.to_existing_atom(spell.spellpage_divine_cls)
+                _ -> String.to_existing_atom(class)
+              end
 
-        if Enum.empty?(possible) do
-          {:error, "No spells found for the requested parameters."}
-        else
-          spell = Util.random(possible)
+            {:ok, clsinfo} = GenServer.call(server, {:get_class, cls}, 5_000)
+            caster_level = Enum.at(clsinfo.levels, spell[cls])
 
-          cls =
-            case class do
-              "minimum" -> String.to_existing_atom(spell.minimum_cls)
-              "spellpage_arcane" -> String.to_existing_atom(spell.spellpage_arcane_cls)
-              "spellpage_divine" -> String.to_existing_atom(spell.spellpage_divine_cls)
-              _ -> String.to_existing_atom(class)
-            end
+            {:ok, "#{spell.name} (#{Atom.to_string(cls)} CL #{caster_level})"}
 
-          {:ok, clsinfo} = GenServer.call(server, {:get_class, cls}, 5_000)
-          caster_level = Enum.at(clsinfo.levels, spell[cls])
-
-          {:ok, "#{spell.name} (#{Atom.to_string(cls)} CL #{caster_level})"}
+          [] ->
+            {:error, "No spells found for the requested parameters."}
         end
     end
   end
