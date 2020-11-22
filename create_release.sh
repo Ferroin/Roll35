@@ -34,12 +34,12 @@ if mix git_hooks.run pre-push ; then
 
     ex -s -c "%s/version: ${project_vsn},/version: \"${REPLY}\",/" -c "wq" mix.exs
 
-    git commit -a -m "Version ${REPLY} release."
+    git commit --no-verify -a -m "Version ${REPLY} release."
 
     git tag v${REPLY}
 
-    git push origin v${REPLY}
-    git push origin main
+    git push --no-verify origin v${REPLY}
+    git push --no-verify origin main
 else
     echo "Git pre-push hook failures must be corrected before producing a release."
     exit 1
