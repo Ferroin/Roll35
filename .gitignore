@@ -1,4 +1,4 @@
-# The directory Mix will write compiled artifacts to.
+G The directory Mix will write compiled artifacts to.
 /_build/
 
 # If you run "mix test --cover", coverage assets end up here.
@@ -24,5 +24,7 @@ erl_crash.dump
 
 # Temporary files for e.g. tests
 /tmp
+**/tmp/
+
 .*.swp
 *~

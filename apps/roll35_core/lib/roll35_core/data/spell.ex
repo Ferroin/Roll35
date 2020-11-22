@@ -47,7 +47,23 @@ defmodule Roll35Core.Data.Spell do
 
     spelltstamp = File.stat!(spellpath, time: :posix).mtime
     clasststamp = File.stat!(classpath, time: :posix).mtime
-    classdata = classpath |> YamlElixir.read_from_file!() |> Util.atomize_map()
+
+    classdata =
+      classpath
+      |> YamlElixir.read_from_file!()
+      |> Util.atomize_map()
+      |> Enum.map(fn {key, value} ->
+        {
+          key,
+          value
+          |> Map.replace(:copy, value |> Map.get(:copy, "nil") |> String.to_existing_atom())
+          |> Map.replace(
+            :merge,
+            value |> Map.get(:merge, []) |> Enum.map(&String.to_existing_atom/1)
+          )
+        }
+      end)
+      |> Map.new()
 
     try do
       {:ok, [%{data: rev}]} = DB.query(spell_db, "SELECT data FROM info WHERE id='rev';")
@@ -129,7 +145,7 @@ defmodule Roll35Core.Data.Spell do
         fn class, acc ->
           cls = String.to_existing_atom(class)
 
-          level =
+          ilevel =
             cond do
               cls in Map.keys(entry.classes) ->
                 entry.classes[cls]
@@ -150,7 +166,7 @@ defmodule Roll35Core.Data.Spell do
                     "NULL"
 
                   1 ->
-                    entry.classes[classdata[cls].merge[0]]
+                    entry.classes[Enum.at(classdata[cls].merge, 0)]
 
                   _ ->
                     valid
@@ -165,10 +181,11 @@ defmodule Roll35Core.Data.Spell do
 
           level =
             cond do
-              level != "NULL" and Map.get(entry, :max_level, @max_spell_level) < level ->
+              ilevel != "NULL" and ilevel >= length(classdata[cls].levels) and
+                  (:copy in Map.keys(classdata[cls]) or :merge in Map.keys(classdata[cls])) ->
                 "NULL"
 
-              level != "NULL" and level >= length(classdata[cls].levels) ->
+              ilevel != "NULL" and ilevel >= length(classdata[cls].levels) ->
                 Logger.warning(
                   "#{entry.name} has invalid spell level for class #{cls}, ignoring."
                 )
@@ -176,7 +193,7 @@ defmodule Roll35Core.Data.Spell do
                 "NULL"
 
               true ->
-                level
+                ilevel
             end
 
           {minimum, minimum_cls} = eval_minimum(level, cls, acc.minimum, acc.minimum_cls)
@@ -223,30 +240,37 @@ defmodule Roll35Core.Data.Spell do
         end
       )
 
-    """
-    INSERT INTO spells (
-                         name,
-                         #{Enum.join(classes, ", ")},
-                         minimum,
-                         spellpage_arcane,
-                         spellpage_divine,
-                         minimum_cls,
-                         spellpage_arcane_cls,
-                         spellpage_divine_cls
-                       ) VALUES (
-                         '#{sql_escape(entry.name)}',
-                         #{Enum.join(result.levels, ", ")},
-                         #{result.minimum},
-                         #{result.spellpage_arcane},
-                         #{result.spellpage_divine},
-                         '#{result.minimum_cls}',
-                         '#{result.spellpage_arcane_cls}',
-                         '#{result.spellpage_divine_cls}'
-                       );
-    INSERT INTO tagmap (name, tags) VALUES ('#{sql_escape(entry.name)}', '#{entry.school} #{
-      entry.subschool
-    } #{entry.descriptor}');
-    """
+    {
+      """
+      INSERT INTO spells (
+                          name,
+                          #{Enum.join(classes, ", ")},
+                          minimum,
+                          spellpage_arcane,
+                          spellpage_divine,
+                          minimum_cls,
+                          spellpage_arcane_cls,
+                          spellpage_divine_cls
+                        ) VALUES (
+                          '#{sql_escape(entry.name)}',
+                          #{Enum.join(result.levels, ", ")},
+                          #{result.minimum},
+                          #{result.spellpage_arcane},
+                          #{result.spellpage_divine},
+                          '#{result.minimum_cls}',
+                          '#{result.spellpage_arcane_cls}',
+                          '#{result.spellpage_divine_cls}'
+                        );
+      INSERT INTO tagmap (name, tags) VALUES ('#{sql_escape(entry.name)}', '#{entry.school} #{
+        entry.subschool
+      } #{entry.descriptor}');
+      """,
+      [
+        entry.school,
+        entry.subschool
+        | String.split(entry.descriptor, ", ")
+      ]
+    }
   end
 
   @spec prepare_spell_db(GenServer.server(), list(), integer(), map(), integer()) ::
@@ -272,7 +296,7 @@ defmodule Roll35Core.Data.Spell do
       VACUUM;
       """)
 
-    _ =
+    tags =
       spelldata
       |> Stream.chunk_every(50)
       |> Enum.map(fn item ->
@@ -286,28 +310,34 @@ defmodule Roll35Core.Data.Spell do
 
           rev_columns = columns |> String.split(" ", trim: true) |> Enum.reverse()
 
-          sql =
-            Enum.reduce(item, "", fn entry, acc ->
-              cmd = process_spell(entry, rev_columns, classdata, classes)
-              "#{acc}\n#{cmd}"
+          {tags, sql} =
+            Enum.reduce(item, {MapSet.new(), ""}, fn entry, {tags, cmd} ->
+              {new_cmd, item_tags} = process_spell(entry, rev_columns, classdata, classes)
+
+              new_tags = MapSet.union(tags, MapSet.new(item_tags))
+
+              {new_tags, "#{cmd}\n#{new_cmd}"}
             end)
 
           Logger.debug("Writing chunk #{index} to spell database.")
 
           DB.exec(spell_db, sql)
 
-          []
+          tags
         end,
         max_concurrency: min(System.schedulers_online(), 8),
         ordered: false,
         timeout: 60_000
       )
-      |> Enum.to_list()
+      |> Stream.map(fn {:ok, i} -> i end)
+      |> Enum.reduce(MapSet.new(), &MapSet.union/2)
+      |> MapSet.to_list()
 
     Logger.debug("Finalizing spell database.")
 
     :ok =
       DB.exec(spell_db, """
+        INSERT INTO info (id, data) VALUES ('tags', '#{Enum.join(tags, ", ")}');
         INSERT INTO info (id, data) VALUES ('rev', '#{@schema_rev}');
         INSERT INTO info (id, data) VALUES ('spell_mtime', '#{spelltstamp}');
         INSERT INTO info (id, data) VALUES ('class_mtime', '#{clasststamp}');
@@ -340,6 +370,11 @@ defmodule Roll35Core.Data.Spell do
   end
 
   @impl GenServer
+  def handle_call(:ready, _from, state) do
+    {:reply, :ready, state}
+  end
+
+  @impl GenServer
   def handle_call({:query, sql, bind}, _from, state) do
     {:reply, DB.query(state.db, sql, bind), state}
   end
@@ -358,6 +393,70 @@ defmodule Roll35Core.Data.Spell do
     end
   end
 
+  @impl GenServer
+  def handle_call(:get_tags, _from, state) do
+    {:ok, [%{data: tags}]} = DB.query(state.db, "SELECT data FROM info WHERE id='tags';")
+
+    {:reply, {:ok, String.split(tags, ", ", trim: true)}, state}
+  end
+
+  @impl GenServer
+  def handle_call({:get_spell, name}, _from, state) do
+    escaped = sql_escape(name)
+
+    case DB.query(state.db, "SELECT * FROM spells WHERE name='#{escaped}';") do
+      {:ok, [spell]} ->
+        {:ok, [%{tags: dbtags}]} =
+          DB.query(state.db, "SELECT tags FROM tagmap WHERE name='#{escaped}';")
+
+        tags =
+          dbtags
+          |> String.split()
+          |> Enum.map(fn i ->
+            String.replace(i, ",", "")
+          end)
+
+        {
+          :reply,
+          {
+            :ok,
+            spell
+            |> Enum.reduce(%{}, fn
+              {_, ""}, acc ->
+                acc
+
+              {key, _}, acc
+              when key in [:minimum_cls, :spellpage_arcane_cls, :spellpage_divine_cls] ->
+                acc
+
+              {key, value}, acc ->
+                Map.put(acc, key, value)
+            end)
+            |> Map.new()
+            |> Map.put(:tags, tags)
+          },
+          state
+        }
+
+      {:ok, []} ->
+        {:reply, {:error, "No such spell."}, state}
+
+      result ->
+        {:reply, {:error, result}, state}
+    end
+  end
+
+  @doc """
+  Wait until the server is ready.
+
+  This waits for up to `timeout` miliseconds and returns either `:ready`
+  if the server is ready or causes the caller to exit if it is not ready.
+  """
+  @spec ready?(GenServer.server(), timeout()) :: :ready
+  def ready?(server, timeout \\ 30_000) do
+    GenServer.call(server, :ready, timeout)
+  end
+
   @doc """
   Get a list of known class identifiers.
   """
@@ -366,6 +465,32 @@ defmodule Roll35Core.Data.Spell do
     {:ok, ret} = GenServer.call(server, :get_classes, 15_000)
 
     ret
+  end
+
+  @doc """
+  Get a list of known tags.
+  """
+  @spec get_tags(GenServer.server()) :: [String.t(), ...]
+  def get_tags(server) do
+    {:ok, ret} = GenServer.call(server, :get_tags, 15_000)
+
+    ret
+  end
+
+  @doc """
+  Get info about a specific class.
+  """
+  @spec get_class(GenServer.server(), atom()) :: map()
+  def get_class(server, class) do
+    GenServer.call(server, {:get_class, class}, 15_000)
+  end
+
+  @doc """
+  Get info about a spell by spell name.
+  """
+  @spec get_spell(GenServer.server(), String.t()) :: map()
+  def get_spell(server, name) do
+    GenServer.call(server, {:get_spell, name}, 15_000)
   end
 
   defp get_spells(server, level, cls) when level != nil do
@@ -446,7 +571,7 @@ defmodule Roll35Core.Data.Spell do
   of the database. Searches that only look for a tag are especially slow.
   """
   @spec random(GenServer.server(), keyword()) :: {:ok, term()} | {:error, term()}
-  def random(server, options) do
+  def random(server, options \\ [class: :minimum]) do
     level = Keyword.get(options, :level)
 
     opt_class =

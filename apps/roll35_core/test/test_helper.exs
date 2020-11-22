@@ -8,6 +8,9 @@ defmodule Roll35Core.TestHarness do
   @spec iter :: pos_integer()
   def iter, do: 1..10_000
 
+  @spec iter_slow :: pos_integer()
+  def iter_slow, do: 1..200
+
   @spec map_has_weighted_random_keys(map()) :: bool()
   def map_has_weighted_random_keys(map) do
     MapSet.equal?(MapSet.new(Map.keys(map)), MapSet.new([:weight, :value]))
