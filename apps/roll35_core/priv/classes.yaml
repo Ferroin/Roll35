@@ -130,6 +130,7 @@ vampire_hunter:
   levels: *third_offset_caster_levels
 warpriest:
   type: divine
+  copy: cleric
   levels: *half_caster_levels
 witch:
   type: arcane
