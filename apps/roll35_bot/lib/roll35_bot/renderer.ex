@@ -15,13 +15,16 @@ defmodule Roll35Bot.Renderer do
   This takes the item name and runs it through two passes of
   `EEx.eval_string/3` to produce the final item name.
   """
-  @spec render(String.t()) :: String.t()
+  @spec render(String.t()) :: {:ok, String.t()}
   def render(name) do
     Logger.debug("Rendering \"#{name}\".")
 
-    name
-    |> EEx.eval_string(key: &Keys.random/1, compound_key: &Keys.random/2)
-    |> EEx.eval_string(key: &Keys.random/1, compound_key: &Keys.random/2)
+    {
+      :ok,
+      name
+      |> EEx.eval_string(key: &Keys.random/1)
+      |> EEx.eval_string(key: &Keys.random/1)
+    }
   end
 
   @doc """
@@ -30,7 +33,7 @@ defmodule Roll35Bot.Renderer do
   This works similarly to `render/1`, but handles rolling for a random
   spell and then passing that into the first template evaluation.
   """
-  @spec render(String.t(), map()) :: String.t()
+  @spec render(String.t(), map()) :: {:ok | :error, String.t()}
   def render(name, spell) do
     Logger.debug("Rendering \"#{name}\" with spell #{inspect(spell)}.")
 
@@ -41,14 +44,18 @@ defmodule Roll35Bot.Renderer do
            tag: Map.get(spell, :tag, nil)
          ) do
       {:ok, item_spell} ->
-        name
-        |> EEx.eval_string(spell: item_spell, key: &Keys.random/1, compound_key: &Keys.random/2)
-        |> EEx.eval_string(key: &Keys.random/1, compound_key: &Keys.random/2)
+        {
+          :ok,
+          name
+          |> EEx.eval_string(spell: item_spell, key: &Keys.random/1)
+          |> EEx.eval_string(key: &Keys.random/1)
+        }
 
       {:error, msg} ->
         Logger.error("Unable to generate spell for #{inspect(spell)}, call returned #{msg}.")
 
-        "An internal error occurred while formatting the item: \"#{msg}\"\nSee the bot logs for more information."
+        {:error,
+         "An internal error occurred while formatting the item: \"#{msg}\"\nSee the bot logs for more information."}
     end
   end
 
@@ -70,10 +77,16 @@ defmodule Roll35Bot.Renderer do
         render(name)
       end
 
-    if Map.has_key?(item, :cost) do
-      "#{rendered} (cost: #{item.cost}gp)"
-    else
-      "#{rendered}"
+    case rendered do
+      {:ok, msg} ->
+        if Map.has_key?(item, :cost) do
+          "#{msg} (cost: #{item.cost}gp)"
+        else
+          msg
+        end
+
+      {:error, msg} ->
+        msg
     end
   end
 end
