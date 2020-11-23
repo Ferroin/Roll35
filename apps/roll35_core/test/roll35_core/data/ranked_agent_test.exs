@@ -104,7 +104,7 @@ defmodule Roll35Core.Data.RankedAgentTest do
 
   describe "Roll35Core.Data.RankedAgent.random/1" do
     setup do
-      {:ok, server} = start_supervised({RankedAgent, {nil, @testfile}})
+      {:ok, server} = start_supervised({RankedAgent, [name: nil, datapath: @testfile]})
 
       %{server: server}
     end
@@ -125,7 +125,7 @@ defmodule Roll35Core.Data.RankedAgentTest do
 
   describe "Roll35Core.Data.RankedAgent.random/2" do
     setup do
-      {:ok, server} = start_supervised({RankedAgent, {nil, @testfile}})
+      {:ok, server} = start_supervised({RankedAgent, [name: nil, datapath: @testfile]})
 
       %{server: server}
     end
@@ -172,7 +172,7 @@ defmodule Roll35Core.Data.RankedAgentTest do
 
   describe "Roll35Core.Data.RankedAgent.random/3" do
     setup do
-      {:ok, server} = start_supervised({RankedAgent, {nil, @testfile}})
+      {:ok, server} = start_supervised({RankedAgent, [name: nil, datapath: @testfile]})
 
       %{server: server}
     end
