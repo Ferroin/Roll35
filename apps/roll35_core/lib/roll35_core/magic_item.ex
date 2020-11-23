@@ -78,7 +78,7 @@ defmodule Roll35Core.MagicItem do
 
       item ->
         if Map.has_key?(item, :reroll) do
-          reroll(item.reroll)
+          reroll(Enum.map(item.reroll, &String.to_existing_atom/1))
         else
           {:ok, item}
         end
@@ -169,7 +169,8 @@ defmodule Roll35Core.MagicItem do
   @doc """
   Dispatch a reroll based on a reroll path.
 
-  This is mostly a helper function to keep the `roll/1` function tidy.
+  This is mostly a helper function to keep the `roll/1` function tidy
+  and is only public so that it can be explicitly tested.
   """
   @spec reroll(list()) :: {:ok, Types.item()} | {:error, term()}
   def reroll(path) do
@@ -177,7 +178,7 @@ defmodule Roll35Core.MagicItem do
 
     case path do
       [category, extra, rank, subrank] ->
-        roll(rank, subrank, category, extra)
+        roll(rank, subrank, category, slot: extra)
 
       [category, rank, subrank] ->
         roll(rank, subrank, category)
@@ -248,7 +249,7 @@ defmodule Roll35Core.MagicItem do
   def roll(rank, subrank, category, base: base) when category in [:armor, :weapon] do
     Logger.debug("Rolling magic item with parameters #{inspect({rank, subrank, category})}.")
 
-    pattern = call(category, :random, [rank, subrank, no_specific: true])
+    pattern = call(category, :random, [rank, subrank, [no_specific: true]])
 
     item =
       case call(category, :get_base, [base]) do

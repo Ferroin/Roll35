@@ -1,5 +1,7 @@
 Logger.configure(level: :warn)
 
+Application.load(:roll35_core)
+
 ExUnit.start()
 
 defmodule Roll35Core.TestHarness do

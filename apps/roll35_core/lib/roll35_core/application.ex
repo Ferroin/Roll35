@@ -39,7 +39,7 @@ defmodule Roll35Core.Application do
        ]},
       {Roll35Core.Data.Category,
        [
-         name: name(:caegory),
+         name: name(:category),
          datapath: Path.join("priv", "category.yaml")
        ]},
       {Roll35Core.Data.Keys,
