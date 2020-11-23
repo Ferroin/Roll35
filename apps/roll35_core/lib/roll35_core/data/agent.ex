@@ -42,8 +42,8 @@ defmodule Roll35Core.Data.Agent do
         result
       end
 
-      @spec start_link({atom(), Path.t()}) :: GenServer.on_start()
-      def start_link({name, datapath}) do
+      @spec start_link(name: GenServer.server(), datapath: Path.t()) :: GenServer.on_start()
+      def start_link(name: name, datapath: datapath) do
         Logger.info("Starting #{__MODULE__}.")
 
         GenServer.start_link(__MODULE__, datapath, name: name)

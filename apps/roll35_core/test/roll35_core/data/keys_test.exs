@@ -80,7 +80,7 @@ defmodule Roll35Core.Data.KeysTest do
 
   describe "Roll35Core.Data.Keys.get_keys/2" do
     setup do
-      {:ok, server} = start_supervised({Keys, {nil, @testfile}})
+      {:ok, server} = start_supervised({Keys, [name: nil, datapath: @testfile]})
 
       %{server: server}
     end
@@ -116,7 +116,7 @@ defmodule Roll35Core.Data.KeysTest do
 
   describe "Roll35Core.Data.Keys.get_subkeys/2" do
     setup do
-      {:ok, server} = start_supervised({Keys, {nil, @testfile}})
+      {:ok, server} = start_supervised({Keys, [name: nil, datapath: @testfile]})
 
       %{server: server}
     end
@@ -139,7 +139,7 @@ defmodule Roll35Core.Data.KeysTest do
 
   describe "Roll35Core.Data.Keys.random/2" do
     setup do
-      {:ok, server} = start_supervised({Keys, {nil, @testfile}})
+      {:ok, server} = start_supervised({Keys, [name: nil, datapath: @testfile]})
 
       %{server: server}
     end

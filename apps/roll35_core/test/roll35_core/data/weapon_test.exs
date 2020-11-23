@@ -63,7 +63,7 @@ defmodule Roll35Core.Data.WeaponTest do
 
   describe "Roll35Core.Data.Weapon.tags/1" do
     setup do
-      {:ok, server} = start_supervised({Weapon, {nil, @testfile}})
+      {:ok, server} = start_supervised({Weapon, [name: nil, datapath: @testfile]})
 
       %{server: server}
     end
@@ -75,7 +75,7 @@ defmodule Roll35Core.Data.WeaponTest do
 
   describe "Roll35Core.Data.Weapon.get_base/2" do
     setup do
-      {:ok, server} = start_supervised({Weapon, {nil, @testfile}})
+      {:ok, server} = start_supervised({Weapon, [name: nil, datapath: @testfile]})
 
       %{server: server}
     end
@@ -87,7 +87,7 @@ defmodule Roll35Core.Data.WeaponTest do
 
   describe "Roll35Core.Data.Weapon.random_base/2" do
     setup do
-      {:ok, server} = start_supervised({Weapon, {nil, @testfile}})
+      {:ok, server} = start_supervised({Weapon, [name: nil, datapath: @testfile]})
 
       %{server: server}
     end
@@ -103,7 +103,7 @@ defmodule Roll35Core.Data.WeaponTest do
 
   describe "Roll35Core.Data.Weapon.random_enchantment/5" do
     setup do
-      {:ok, server} = start_supervised({Weapon, {nil, @testfile}})
+      {:ok, server} = start_supervised({Weapon, [name: nil, datapath: @testfile]})
 
       %{server: server}
     end
@@ -120,7 +120,7 @@ defmodule Roll35Core.Data.WeaponTest do
 
   describe "Roll35Core.Data.Weapon.random/4" do
     setup do
-      {:ok, server} = start_supervised({Weapon, {nil, @testfile}})
+      {:ok, server} = start_supervised({Weapon, [name: nil, datapath: @testfile]})
 
       %{server: server}
     end
@@ -136,7 +136,7 @@ defmodule Roll35Core.Data.WeaponTest do
 
   describe "Roll35Core.Data.Weapon.random_specific/4" do
     setup do
-      {:ok, server} = start_supervised({Weapon, {nil, @testfile}})
+      {:ok, server} = start_supervised({Weapon, [name: nil, datapath: @testfile]})
 
       %{server: server}
     end

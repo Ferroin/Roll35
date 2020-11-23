@@ -71,7 +71,7 @@ defmodule Roll35Core.Data.ArmorTest do
 
   describe "Roll35Core.Data.Armor.tags/1" do
     setup do
-      {:ok, server} = start_supervised({Armor, {nil, @testfile}})
+      {:ok, server} = start_supervised({Armor, [name: nil, datapath: @testfile]})
 
       %{server: server}
     end
@@ -83,7 +83,7 @@ defmodule Roll35Core.Data.ArmorTest do
 
   describe "Roll35Core.Data.Armor.get_base/2" do
     setup do
-      {:ok, server} = start_supervised({Armor, {nil, @testfile}})
+      {:ok, server} = start_supervised({Armor, [name: nil, datapath: @testfile]})
 
       %{server: server}
     end
@@ -95,7 +95,7 @@ defmodule Roll35Core.Data.ArmorTest do
 
   describe "Roll35Core.Data.Armor.random_base/2" do
     setup do
-      {:ok, server} = start_supervised({Armor, {nil, @testfile}})
+      {:ok, server} = start_supervised({Armor, [name: nil, datapath: @testfile]})
 
       %{server: server}
     end
@@ -111,7 +111,7 @@ defmodule Roll35Core.Data.ArmorTest do
 
   describe "Roll35Core.Data.Armor.random_enchantment/5" do
     setup do
-      {:ok, server} = start_supervised({Armor, {nil, @testfile}})
+      {:ok, server} = start_supervised({Armor, [name: nil, datapath: @testfile]})
 
       %{server: server}
     end
@@ -128,7 +128,7 @@ defmodule Roll35Core.Data.ArmorTest do
 
   describe "Roll35Core.Data.Armor.random/4" do
     setup do
-      {:ok, server} = start_supervised({Armor, {nil, @testfile}})
+      {:ok, server} = start_supervised({Armor, [name: nil, datapath: @testfile]})
 
       %{server: server}
     end
@@ -144,7 +144,7 @@ defmodule Roll35Core.Data.ArmorTest do
 
   describe "Roll35Core.Data.Armor.random_specific/4" do
     setup do
-      {:ok, server} = start_supervised({Armor, {nil, @testfile}})
+      {:ok, server} = start_supervised({Armor, [name: nil, datapath: @testfile]})
 
       %{server: server}
     end

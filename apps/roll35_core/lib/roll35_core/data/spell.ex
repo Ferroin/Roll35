@@ -344,17 +344,23 @@ defmodule Roll35Core.Data.Spell do
     :ok
   end
 
-  @spec start_link({GenServer.server(), Path.t(), Path.t()}) :: GenServer.on_start()
-  def start_link({name, spellpath, classpath}) do
+  @spec start_link(
+          name: GenServer.server(),
+          spellpath: Path.t(),
+          classpath: Path.t(),
+          dbpath: Path.t()
+        ) :: GenServer.on_start()
+  def start_link(params) do
+    [{:name, name} | initargs] = params
+
     Logger.info("Starting #{__MODULE__}.")
 
-    GenServer.start_link(__MODULE__, {spellpath, classpath}, name: name)
+    GenServer.start_link(__MODULE__, initargs, name: name)
   end
 
   @impl GenServer
-  def init({spellpath, classpath}) do
-    {:ok, pid} =
-      DB.start_link(Path.join(Application.fetch_env!(:roll35_core, :db_path), "spells.sqlite3"))
+  def init(spellpath: spellpath, classpath: classpath, dbpath: dbpath) do
+    {:ok, pid} = DB.start_link(Path.join(dbpath, "spells.sqlite3"))
 
     {:ok, %{db: pid, spellpath: spellpath, classpath: classpath}, {:continue, :init}}
   end

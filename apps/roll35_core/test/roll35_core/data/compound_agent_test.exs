@@ -69,7 +69,7 @@ defmodule Roll35Core.Data.CompoundAgentTest do
 
   describe "Roll35Core.Data.CompoundAgent.random/1" do
     setup do
-      {:ok, server} = start_supervised({CompoundAgent, {nil, @testfile}})
+      {:ok, server} = start_supervised({CompoundAgent, [name: nil, datapath: @testfile]})
 
       %{server: server}
     end
@@ -90,7 +90,7 @@ defmodule Roll35Core.Data.CompoundAgentTest do
 
   describe "Roll35Core.Data.CompoundAgent.random/2" do
     setup do
-      {:ok, server} = start_supervised({CompoundAgent, {nil, @testfile}})
+      {:ok, server} = start_supervised({CompoundAgent, [name: nil, datapath: @testfile]})
 
       %{server: server}
     end

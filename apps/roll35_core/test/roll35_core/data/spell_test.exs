@@ -1,6 +1,6 @@
 defmodule Roll35Core.Data.SpellTest do
   @moduledoc false
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   alias Roll35Core.Data.Spell
 
@@ -18,9 +18,10 @@ defmodule Roll35Core.Data.SpellTest do
   setup context do
     db_path = context.tmp_dir
 
-    Application.put_env(:roll35_core, :db_path, db_path)
-
-    {:ok, server} = start_supervised({Spell, {nil, @spelldata, @classdata}})
+    {:ok, server} =
+      start_supervised(
+        {Spell, [name: nil, spellpath: @spelldata, classpath: @classdata, dbpath: db_path]}
+      )
 
     Spell.ready?(server)
 

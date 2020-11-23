@@ -47,7 +47,7 @@ defmodule Roll35Core.Data.CategoryTest do
 
   describe "Roll35Core.Data.Category.random/1" do
     setup do
-      {:ok, server} = start_supervised({Category, {nil, @testfile}})
+      {:ok, server} = start_supervised({Category, [name: nil, datapath: @testfile]})
 
       %{server: server}
     end
@@ -66,7 +66,7 @@ defmodule Roll35Core.Data.CategoryTest do
 
   describe "Roll35Core.Data.Category.random/2" do
     setup do
-      {:ok, server} = start_supervised({Category, {nil, @testfile}})
+      {:ok, server} = start_supervised({Category, [name: nil, datapath: @testfile]})
 
       %{server: server}
     end

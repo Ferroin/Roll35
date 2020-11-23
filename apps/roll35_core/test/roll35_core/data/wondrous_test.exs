@@ -37,7 +37,7 @@ defmodule Roll35Core.Data.WondrousTest do
 
   describe "Roll35Core.Data.Wondrous.random/1" do
     setup do
-      {:ok, server} = start_supervised({Wondrous, {nil, @testfile}})
+      {:ok, server} = start_supervised({Wondrous, [name: nil, datapath: @testfile]})
 
       %{server: server}
     end
