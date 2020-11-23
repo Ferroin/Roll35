@@ -3,6 +3,7 @@ defmodule Roll35Bot.Commands.Help do
   Command to fetch help and usage information.
   """
 
+  use Roll35Bot.Command
   use Alchemy.Cogs
 
   require Logger
@@ -21,74 +22,63 @@ defmodule Roll35Bot.Commands.Help do
   end
 
   Cogs.def help do
-    %Alchemy.Message{
-      author: %Alchemy.User{
-        username: user,
-        discriminator: tag
-      }
-    } = message
-
-    cmdlist = get_cmd_list()
-
-    Logger.info("Recieved help command from #{user}##{tag}.")
-
-    Cogs.say("""
-    General command syntax:
-
-    `/roll35 <command> [options]`
-
-    Available commands:
-
-    #{cmdlist}
-
-    For more info on a command, use `/roll35 help <command>`.
-
-    Note that invalid commands will be ignored instead of returning an error.
-    """)
+    Roll35Bot.Command.run_cmd(__MODULE__, nil, message, &Cogs.say/1)
   end
 
   Cogs.def help(command) do
-    %Alchemy.Message{
-      author: %Alchemy.User{
-        username: user,
-        discriminator: tag
-      }
-    } = message
+    Roll35Bot.Command.run_cmd(__MODULE__, command, message, &Cogs.say/1)
+  end
 
-    Logger.info("Recieved help #{command} command from #{user}##{tag}.")
+  @impl Roll35Bot.Command
+  def cmd(nil, _) do
+    cmdlist = get_cmd_list()
 
+    {:ok,
+     """
+     General command syntax:
+
+     `/roll35 <command> [options]`
+
+     Available commands:
+
+     #{cmdlist}
+
+     For more info on a command, use `/roll35 help <command>`.
+
+     Note that invalid commands will be ignored instead of returning an error.
+     """}
+  end
+
+  def cmd([command], _) do
     cmdinfo = Cogs.all_commands()
 
     if command in Map.keys(cmdinfo) do
-      Cogs.say(cmdhelp(cmdinfo[command]))
+      {:ok, cmdhelp(cmdinfo[command])}
     else
-      Cogs.say("""
-      Error: ‘#{command}’ is not a recognized command.
+      {:error,
+       """
+       ‘#{command}’ is not a recognized command.
 
-      Run `/roll35 help` to see a list of known commands.
-      """)
+       Run `/roll35 help` to see a list of available commands.
+       """}
     end
   end
 
-  @doc """
-  Return a short description for this command.
-  """
-  @spec short_desc :: String.t()
-  def short_desc, do: "Get help about a specific command."
+  @impl Roll35Bot.Command
+  def short_desc, do: "Get help with using the bot."
 
-  @doc """
-  Return help text for this command.
-  """
-  @spec help :: String.t()
-  def help do
+  @impl Roll35Bot.Command
+  def extra_help do
     """
-    Usage:
-
-    `/roll35 help [<command>]`
-
     When run with no parameters, print general help regarding the bot and a list of commands.
 
     When run with the name of a command, print out more specific help for that command.
     """
   end
+
+  @impl Roll35Bot.Command
+  def param_names, do: "[<command>]"
+
+  @impl Roll35Bot.Command
+  def sample_params, do: "help"
 end
