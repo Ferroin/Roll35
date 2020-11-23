@@ -3,33 +3,32 @@ defmodule Roll35Bot.Commands.Armor do
   A command to roll random mundane armor.
   """
 
-  @behaviour Roll35Bot.Command
-
+  use Roll35Bot.Command
   use Alchemy.Cogs
 
   alias Roll35Bot.Renderer
   alias Roll35Core.Data.Armor
 
+  @armor_server {:via, Registry, {Roll35Core.Registry, :armor}}
+
   Cogs.set_parser(:armor, &List.wrap/1)
 
   Cogs.def armor(options) do
     Roll35Bot.Command.run_cmd(
-      "armor",
-      options,
-      [strict: []],
-      message,
       __MODULE__,
+      options,
+      message,
       &Cogs.say/1
     )
   end
 
   @impl Roll35Bot.Command
   def cmd(args, _) do
-    _ = Armor.tags({:via, Registry, {Roll35Core.Registry, :armor}})
+    _ = Armor.tags(@armor_server)
 
     tags = Enum.map(args, &String.to_existing_atom/1)
 
-    if item = Armor.random_base({:via, Registry, {Roll35Core.Registry, :armor}}, tags) do
+    if item = Armor.random_base(@armor_server, tags) do
       {:ok, Renderer.format(item)}
     else
       {:error, "No items matching specified tags (#{Enum.map(tags, &Atom.to_string/1)})."}
@@ -40,19 +39,19 @@ defmodule Roll35Bot.Commands.Armor do
   def short_desc, do: "Roll random armor and shield items."
 
   @impl Roll35Bot.Command
-  def help do
+  def extra_help do
     """
-    Usage:
-
-    `/roll35 armor [tags]`
-
-    Roll a random mundane armor or shield item.
-
-    The optional `tags` parameter is a space-separated list of tags used to filter the full list of armor and shields before selecting one randomly. For example, one can select a random item of light armor with:
-
-    `/roll35 armor light armor`
+    The optional `tags` parameter is a space-separated list of tags used to filter the full list of armor and shields before selecting one randomly.
 
     The exact order of tags is not significant.
     """
+  end
+
+  @impl Roll35Bot.Command
+  def param_names, do: "[<tags>]"
+
+  @impl Roll35Bot.Command
+  def sample_params do
+    Enum.random(Armor.tags(@armor_server))
   end
 end

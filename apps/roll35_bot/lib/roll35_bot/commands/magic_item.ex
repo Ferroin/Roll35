@@ -3,35 +3,24 @@ defmodule Roll35Bot.Commands.MagicItem do
   Command to roll rando magic items.
   """
 
-  @behaviour Roll35Bot.Command
-
+  use Roll35Bot.Command
   use Alchemy.Cogs
 
   alias Roll35Bot.Renderer
+  alias Roll35Core.Data.Armor
   alias Roll35Core.Data.Spell
+  alias Roll35Core.Data.Weapon
   alias Roll35Core.MagicItem
   alias Roll35Core.Types
+
+  @armor_server {:via, Registry, {Roll35Core.Registry, :armor}}
+  @spell_server {:via, Registry, {Roll35Core.Registry, :spell}}
+  @weapon_server {:via, Registry, {Roll35Core.Registry, :weapon}}
 
   Cogs.set_parser(:magicitem, &List.wrap/1)
 
   Cogs.def magicitem(options) do
-    Roll35Bot.Command.run_cmd(
-      "magicitem",
-      options,
-      [
-        strict: [
-          base: :string,
-          class: :string,
-          rank: :string,
-          slot: :string,
-          subrank: :string,
-          type: :string
-        ]
-      ],
-      message,
-      __MODULE__,
-      &Cogs.say/1
-    )
+    Roll35Bot.Command.run_cmd(__MODULE__, options, message, &Cogs.say/1)
   end
 
   defp arg_to_atom(arg) do
@@ -120,7 +109,7 @@ defmodule Roll35Bot.Commands.MagicItem do
   end
 
   defp get_params(opts) do
-    spell_classes = Spell.get_classes({:via, Registry, {Roll35Core.Registry, :spell}})
+    spell_classes = Spell.get_classes(@spell_server)
 
     params =
       Enum.reduce_while(
@@ -233,24 +222,42 @@ defmodule Roll35Bot.Commands.MagicItem do
   def short_desc, do: "Roll random magic items."
 
   @impl Roll35Bot.Command
-  def help do
+  def extra_help do
     """
-    Usage:
-
-    `/roll35 magicitem [--rank minor|medium|major] [--subrank least|lesser|greater] [--type armor|weapon|potion|ring|rod|scroll|staff|wand|wondrous] [--slot belt|body|chest|eyes|feet|hands|head|headband|neck|shoulders|wrists|slotless] [--class <class>] [--base <base>]`
-
-    Roll a random magic item of the specified type. Exact order of parameters is not relevant.
-
-    `--base`: Specifies a base item to use when rolling a magic weapon or magic armor. This is matched case insensitively, but the item name must be quoted if it contains spaces.
-    `--class`: Specifies a spellcasting class to use for rolling wands and scrolls. Class names must be in lowercase with any spaces replaced with `_`. If specified, `--type` must also be specified and must be either `wand` or `scroll`.
-    `--rank`: Specifies the item’s rank (minor/medium/major)
-    `--slot`: Specifies the slot for a wondrous item. Rolled randomly if left unspecified. If passed without specifying a `--type`, the type is assumed to be `wondrous`.
-    `--subrank`: Specifies the item’s sub-rank (least/lesser/greater)
-    `--type`: Specifies the type of magic item. Rolled randomly if left unspecified.
-
-    At least one of `--rank`, `--type` or `--slot` must be specified.
-
-    If a parameter is specified more than once, the last instance specified gets used.
+    At least one of `--rank`, `--type` or `--slot` must be specified. If a parameter is specified more than once, the last instance specified gets used. The exact order of the parameters is otherwise irrelevant.
     """
+  end
+
+  @impl Roll35Bot.Command
+  def options do
+    [
+      {:base, :string,
+       fn type ->
+         case type do
+           :armor -> Armor.random_base(@armor_server)
+           :weapon -> Weapon.random_base(@weapon_server)
+         end
+       end, "Specify a base item to use when rolling random magic armor or weapons."},
+      {:class, :string, fn _ -> Spell.get_classes(@spell_server) end,
+       "Specify a class to use when rolling spells for scrolls and wands. Valid classes are: #{
+         @spell_server |> Spell.get_classes() |> Enum.map(&Atom.to_string/1) |> Enum.join(", ")
+       })."},
+      {:rank, :string, &Types.ranks/0,
+       "Specify the rank of the item to roll. Will be rolled randomly if left unspecified. Valid ranks are: #{
+         Types.ranks() |> Enum.map(&Atom.to_string/1) |> Enum.join(", ")
+       }."},
+      {:slot, :string, &Types.slots/0,
+       "Specify the slot for wondrous items. Will be rolled randomly if left unspecified. Valid slots are: #{
+         Types.slots() |> Enum.map(&Atom.to_string/1) |> Enum.join(", ")
+       }."},
+      {:subrank, :string, &Types.subranks/0,
+       "Specify the sub-rank of the item to roll. Will be rolled randomly if left unspecified. Valid subranks are: #{
+         Types.full_subranks() |> Enum.map(&Atom.to_string/1) |> Enum.join(", ")
+       }."},
+      {:type, :string, &Types.categories/0,
+       "Specify the type of the item to roll. Will be rolled randomly if left unspecified. Valid types are: #{
+         Types.categories() |> Enum.map(&Atom.to_string/1) |> Enum.join(", ")
+       }."}
+    ]
   end
 end
