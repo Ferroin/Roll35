@@ -4,7 +4,7 @@ defmodule Roll35.MixProject do
   def project do
     [
       apps_path: "apps",
-      version: "2.1.4",
+      version: "2.1.5",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       name: "Roll35",

@@ -4,7 +4,7 @@ defmodule Roll35Bot.MixProject do
   def project do
     [
       app: :roll35_bot,
-      version: "4.1.1",
+      version: "4.1.2",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
