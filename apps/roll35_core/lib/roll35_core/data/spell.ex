@@ -632,29 +632,34 @@ defmodule Roll35Core.Data.Spell do
       options
       |> Keyword.get(:class, :minimum)
       |> (fn
-            item when is_atom(item) -> Atom.to_string(item)
-            item -> item
+            item when is_atom(item) ->
+              item
+
+            item ->
+              try do
+                String.to_existing_atom(item)
+              rescue
+                _ -> false
+              end
           end).()
 
     tag = Keyword.get(options, :tag)
 
     Logger.debug("Rolling random spell with parameters #{inspect({level, opt_class, tag})}.")
 
-    {:ok, valid_cls_result} = GenServer.call(server, :get_classes, 5_000)
+    {:ok, valid_classes} = GenServer.call(server, :get_classes, 5_000)
 
-    valid_classes = Enum.map(valid_cls_result, &Atom.to_string/1)
-
-    valid_columns = ["spellpage_arcane", "spellpage_divine", "minimum" | valid_classes]
+    valid_columns = [:spellpage_arcane, :spellpage_divine, :minimum | valid_classes]
 
     class =
       cond do
-        opt_class == "spellpage" ->
-          Util.random(["spellpage_arcane", "spellpage_divine"])
+        opt_class == :spellpage ->
+          Util.random([:spellpage_arcane, :spellpage_divine])
 
-        opt_class == "random" and level == nil ->
+        opt_class == :random and level == nil ->
           Util.random(valid_classes)
 
-        opt_class == "random" and level != nil ->
+        opt_class == :random and level != nil ->
           valid_classes
           |> Enum.filter(fn item ->
             {:ok, clsinfo} = GenServer.call(server, {:get_class, String.to_existing_atom(item)})
@@ -662,8 +667,8 @@ defmodule Roll35Core.Data.Spell do
           end)
           |> Util.random()
 
-        opt_class == "nil" ->
-          "minimum"
+        opt_class == nil ->
+          :minimum
 
         opt_class in valid_columns ->
           opt_class
@@ -684,10 +689,10 @@ defmodule Roll35Core.Data.Spell do
           [spell] ->
             cls =
               case class do
-                "minimum" -> String.to_existing_atom(spell.minimum_cls)
-                "spellpage_arcane" -> String.to_existing_atom(spell.spellpage_arcane_cls)
-                "spellpage_divine" -> String.to_existing_atom(spell.spellpage_divine_cls)
-                _ -> String.to_existing_atom(class)
+                :minimum -> String.to_existing_atom(spell.minimum_cls)
+                :spellpage_arcane -> String.to_existing_atom(spell.spellpage_arcane_cls)
+                :spellpage_divine -> String.to_existing_atom(spell.spellpage_divine_cls)
+                _ -> class
               end
 
             {:ok, clsinfo} = GenServer.call(server, {:get_class, cls}, 5_000)
