@@ -116,9 +116,7 @@ defmodule Roll35Bot.Command do
     argspec = get_opt_data(module)
 
     Logger.info(
-      "Recieved #{apply(module, name, [])} command with parameters #{inspect(options)} from #{
-        user
-      }##{tag}."
+      "Recieved #{name} command with parameters #{inspect(options)} from #{user}##{tag}."
     )
 
     try do
