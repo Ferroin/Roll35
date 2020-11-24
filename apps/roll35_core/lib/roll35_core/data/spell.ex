@@ -662,7 +662,7 @@ defmodule Roll35Core.Data.Spell do
         opt_class == :random and level != nil ->
           valid_classes
           |> Enum.filter(fn item ->
-            {:ok, clsinfo} = GenServer.call(server, {:get_class, String.to_existing_atom(item)})
+            {:ok, clsinfo} = GenServer.call(server, {:get_class, item})
             length(clsinfo.levels) > level
           end)
           |> Util.random()

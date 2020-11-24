@@ -23,10 +23,14 @@ defmodule Roll35Bot.Commands.MagicItem do
     Roll35Bot.Command.run_cmd(__MODULE__, options, message, &Cogs.say/1)
   end
 
-  defp arg_to_atom(arg) do
+  defp arg_to_atom(arg) when is_atom(arg), do: arg
+
+  defp arg_to_atom(arg) when is_binary(arg) do
     arg
     |> String.downcase()
     |> String.to_existing_atom()
+  rescue
+    _ -> nil
   end
 
   defp check_arg(:type, value, acc, _classes) do
