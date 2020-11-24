@@ -52,6 +52,9 @@ defmodule Roll35Bot.Commands.Weapon do
 
   @impl Roll35Bot.Command
   def sample_params do
-    Enum.random(Weapon.tags(@weapon_server))
+    @weapon_server
+    |> Weapon.tags()
+    |> Enum.random()
+    |> Atom.to_string()
   end
 end

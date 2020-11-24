@@ -290,7 +290,7 @@ enchantments:
       - {weight:  9, name: 'Ramming', limit: {only: [light, heavy]}}
     2:
       - {weight: 15, name: 'Rallying', cost: 5000}
-      - {weight: 15, name: 'Wyrmbreath (<%= key.(key: :element) %>)', cost: 5000}
+      - {weight: 15, name: 'Wyrmbreath (<%= key.(key: :elemental) %>)', cost: 5000}
       - {weight: 20, name: 'Animated', limit: {not: [tower]}}
       - {weight: 17, name: 'Arrow Deflection'}
       - {weight: 15, name: 'Merging', limit: {only: [light, heavy]}}

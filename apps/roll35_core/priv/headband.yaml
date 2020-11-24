@@ -37,7 +37,7 @@ major:
   lesser:
     - {weight:  9, cost:  30000, name: 'Soulbound Eye'}
     - {weight: 10, cost:  32000, name: 'Winter Wolf Headband'}
-    - {weight: 39, cost:  36000, name: 'Headband of <%= key.(key: :mental_headband) %> +6'}
+    - {weight: 39, cost:  36000, name: 'Headband of <%= key.(key: :stat_headband) %> +6'}
     - {weight:  8, cost:  39000, name: 'Shifter’s Headband +6 (<%= key.(key: :mental_stat) %>)'}
     - {weight: 15, cost:  40000, name: 'Headband of Mental Prowess +4 (<%= key.(key: :mental_prowess) %>)'}
     - {weight:  9, cost:  40000, name: 'Headband of Seduction'}

@@ -31,7 +31,7 @@ school:
 physical_might:
   type: flat
   data: ['STR, DEX', 'STR, CON', 'DEX, CON']
-mental_score:
+mental_stat:
   type: flat
   data: ['INT', 'WIS', 'CHA']
 mental_prowess:

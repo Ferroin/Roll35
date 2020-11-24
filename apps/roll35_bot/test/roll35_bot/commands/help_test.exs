@@ -7,7 +7,11 @@ defmodule Roll35Bot.Commands.HelpTest do
     assert String.valid?(Help.short_desc())
   end
 
-  test "Help text is a valid string." do
-    assert String.valid?(Help.help())
+  test "Extra help is a valid string." do
+    assert String.valid?(Help.extra_help())
+  end
+
+  test "Paramter names are a valid string." do
+    assert String.valid?(Help.param_names())
   end
 end
