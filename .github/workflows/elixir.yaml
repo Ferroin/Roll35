@@ -18,7 +18,7 @@ jobs:
         with:
           elixir-version: 1.11.x
           otp-version: 23.1.x
-      - uses: actions/cache@v2
+      - uses: actions/cache@v2.1.4
         id: cache
         with:
           path: deps
@@ -52,7 +52,7 @@ jobs:
         with:
           elixir-version: 1.11.x
           otp-version: 23.1.x
-      - uses: actions/cache@v2
+      - uses: actions/cache@v2.1.4
         id: cache
         with:
           path: deps
@@ -76,7 +76,7 @@ jobs:
         with:
           elixir-version: 1.11.x
           otp-version: 23.1.x
-      - uses: actions/cache@v2
+      - uses: actions/cache@v2.1.4
         id: cache
         with:
           path: deps
@@ -89,7 +89,7 @@ jobs:
             ${{ runner.os }}-mix-
       - run: mix deps.get
         if: steps.cache.outputs.cache-hit != true
-      - uses: actions/cache@v2
+      - uses: actions/cache@v2.1.4
         with:
           path: _build/**/*.plt
           key: >-
