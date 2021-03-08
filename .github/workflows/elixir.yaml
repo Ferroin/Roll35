@@ -17,7 +17,7 @@ jobs:
         id: setup
         with:
           elixir-version: 1.11.x
-          otp-version: 23.1.x
+          otp-version: 23.2.x
       - uses: actions/cache@v2.1.4
         id: cache
         with:
@@ -40,7 +40,7 @@ jobs:
       - uses: erlef/setup-elixir@v1
         with:
           elixir-version: 1.11.x
-          otp-version: 23.1.x
+          otp-version: 23.2.x
       - run: mix format --check-formatted
   test-suite:
     name: Test Suite
@@ -51,7 +51,7 @@ jobs:
         id: setup
         with:
           elixir-version: 1.11.x
-          otp-version: 23.1.x
+          otp-version: 23.2.x
       - uses: actions/cache@v2.1.4
         id: cache
         with:
@@ -75,7 +75,7 @@ jobs:
         id: setup
         with:
           elixir-version: 1.11.x
-          otp-version: 23.1.x
+          otp-version: 23.2.x
       - uses: actions/cache@v2.1.4
         id: cache
         with:
