@@ -23,6 +23,10 @@ defmodule Roll35Bot.Commands.MagicItem do
     Roll35Bot.Command.run_cmd(__MODULE__, options, message, &Cogs.say/1)
   end
 
+  Cogs.def mi(options) do
+    Roll35Bot.Command.run_cmd(__MODULE__, options, message, &Cogs.say/1)
+  end
+
   defp arg_to_atom(arg) when is_atom(arg), do: arg
 
   defp arg_to_atom(arg) when is_binary(arg) do
@@ -228,6 +232,8 @@ defmodule Roll35Bot.Commands.MagicItem do
   @impl Roll35Bot.Command
   def extra_help do
     """
+    Aliases: `/roll35 mi`.
+
     At least one of `--rank`, `--type` or `--slot` must be specified. If a parameter is specified more than once, the last instance specified gets used. The exact order of the parameters is otherwise irrelevant.
     """
   end

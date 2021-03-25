@@ -22,6 +22,15 @@ defmodule Roll35Bot.Commands.Weapon do
     )
   end
 
+  Cogs.def we(options) do
+    Roll35Bot.Command.run_cmd(
+      __MODULE__,
+      options,
+      message,
+      &Cogs.say/1
+    )
+  end
+
   @impl Roll35Bot.Command
   def cmd(args, _) do
     _ = Weapon.tags(@weapon_server)
@@ -41,6 +50,8 @@ defmodule Roll35Bot.Commands.Weapon do
   @impl Roll35Bot.Command
   def extra_help do
     """
+    Aliases: `/roll35 we`
+
     The optional `tags` parameter is a space-separated list of tags used to filter the full list of weapons before selecting one randomly.
 
     The exact order of tags is not significant.
