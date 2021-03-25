@@ -16,6 +16,10 @@ defmodule Roll35Bot.Commands.Spell do
     Roll35Bot.Command.run_cmd(__MODULE__, options, message, &Cogs.say/1)
   end
 
+  Cogs.def sp(options) do
+    Roll35Bot.Command.run_cmd(__MODULE__, options, message, &Cogs.say/1)
+  end
+
   @impl Roll35Bot.Command
   def cmd(args, options) do
     if args == [] do
@@ -29,7 +33,11 @@ defmodule Roll35Bot.Commands.Spell do
   def short_desc, do: "Roll random spells, optionally limited by level, class, or tag."
 
   @impl Roll35Bot.Command
-  def extra_help, do: ""
+  def extra_help do
+    """
+    Aliases: `/roll35 sp`
+    """
+  end
 
   @impl Roll35Bot.Command
   def options do
