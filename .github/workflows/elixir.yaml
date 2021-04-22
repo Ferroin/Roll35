@@ -13,11 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: erlef/setup-elixir@v1
+      - uses: erlef/setup-beam@v1
         id: setup
         with:
           elixir-version: 1.11.x
-          otp-version: 23.2.x
+          otp-version: 23.3.x
       - uses: actions/cache@v2.1.5
         id: cache
         with:
@@ -37,21 +37,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: erlef/setup-elixir@v1
+      - uses: erlef/setup-beam@v1
         with:
           elixir-version: 1.11.x
-          otp-version: 23.2.x
+          otp-version: 23.3.x
       - run: mix format --check-formatted
   test-suite:
     name: Test Suite
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: erlef/setup-elixir@v1
+      - uses: erlef/setup-beam@v1
         id: setup
         with:
           elixir-version: 1.11.x
-          otp-version: 23.2.x
+          otp-version: 23.3.x
       - uses: actions/cache@v2.1.5
         id: cache
         with:
@@ -71,11 +71,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: erlef/setup-elixir@v1
+      - uses: erlef/setup-beam@v1
         id: setup
         with:
           elixir-version: 1.11.x
-          otp-version: 23.2.x
+          otp-version: 23.3.x
       - uses: actions/cache@v2.1.5
         id: cache
         with:
