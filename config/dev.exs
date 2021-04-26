@@ -5,18 +5,18 @@ config :git_hooks,
   hooks: [
     pre_commit: [
       tasks: [
-        "mix format --check-formatted",
-        "mix compile --force",
-        "mix credo --format oneline"
+        {:mix_task, :format, ["--check-formatted"]},
+        {:mix_task, :compile, ["--force"]},
+        {:mix_task, :credo, ["--format", "oneline"]}
       ]
     ],
     pre_push: [
       tasks: [
-        "mix format --check-formatted",
-        "mix compile --force",
-        "mix credo --strict --format oneline",
-        "mix dialyzer",
-        "mix test"
+        {:mix_task, :format, ["--check-formatted"]},
+        {:mix_task, :compile, ["--force"]},
+        {:mix_task, :credo, ["--strict", "--format", "oneline"]},
+        {:mix_task, :dialyzer},
+        {:mix_task, :test}
       ]
     ]
   ]
