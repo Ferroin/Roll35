@@ -34,7 +34,7 @@ defmodule Roll35Core.MixProject do
       {:ex_doc, "~> 0.24.1", only: :dev, runtime: false},
       {:git_hooks, "~> 0.6.2", only: :dev, runtime: false},
       {:sqlitex, "~> 1.7"},
-      {:yaml_elixir, "~> 2.5"}
+      {:yaml_elixir, "~> 2.6"}
     ]
   end
 
