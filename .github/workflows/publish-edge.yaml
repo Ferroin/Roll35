@@ -6,6 +6,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: publish-edge-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   publish:
     name: Publish
@@ -22,9 +26,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - uses: softprops/turnstyle@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/cache@v2.1.7
         with:
           path: /tmp/.buildx-cache

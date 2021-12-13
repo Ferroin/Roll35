@@ -5,6 +5,10 @@ on:
   pull_request:
     branch: main
 
+concurrency:
+  group: docker-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   credo:
     name: Credo

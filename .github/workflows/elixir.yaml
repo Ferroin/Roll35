@@ -7,6 +7,10 @@ on:
   pull_request:
     branches: main
 
+concurrency:
+  group: elixir-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   compile-check:
     name: Compile
