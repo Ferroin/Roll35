@@ -61,9 +61,7 @@ defmodule Roll35Core.TestHarness.BattleGear do
 
     assert MapSet.new(Map.keys(ctx.data)) ==
              MapSet.new([:base, :specific, :enchantments, :tags | Types.ranks()]),
-           "#{prefix} data does not contain the correct set of keys (#{
-             inspect(Map.keys(ctx.data))
-           })."
+           "#{prefix} data does not contain the correct set of keys (#{inspect(Map.keys(ctx.data))})."
 
     assert is_list(ctx.data.base), "#{prefix} base item data is not a list."
 
@@ -191,9 +189,7 @@ defmodule Roll35Core.TestHarness.BattleGear do
   def check_enchantments(prefix, ctx, types, range) do
     assert MapSet.new(Map.keys(ctx.data.enchantments)) ==
              MapSet.new(types),
-           "#{prefix} enchantment map does not have correct keys (#{
-             inspect(Map.keys(ctx.data.enchantments))
-           })."
+           "#{prefix} enchantment map does not have correct keys (#{inspect(Map.keys(ctx.data.enchantments))})."
 
     ctx.data.enchantments
     |> Task.async_stream(fn {key, map1} ->
@@ -221,9 +217,7 @@ defmodule Roll35Core.TestHarness.BattleGear do
                    MapSet.new(Map.keys(item.value)),
                    MapSet.new([:name, :cost, :limit, :exclude, :remove, :add])
                  ),
-                 "#{prefix} value map does not have the correct keys (#{
-                   inspect(Map.keys(item.value))
-                 })."
+                 "#{prefix} value map does not have the correct keys (#{inspect(Map.keys(item.value))})."
 
           assert Map.has_key?(item.value, :name), "#{prefix} value map is missing name key."
           assert String.valid?(item.value.name), "#{prefix} value map name key is not a string."
@@ -256,9 +250,7 @@ defmodule Roll35Core.TestHarness.BattleGear do
                      MapSet.new([:only]),
                      MapSet.new([:not])
                    ],
-                   "#{prefix} value map limit map has an invalid set of keys (#{
-                     inspect(Map.keys(item.value.limit))
-                   })."
+                   "#{prefix} value map limit map has an invalid set of keys (#{inspect(Map.keys(item.value.limit))})."
 
             if Map.has_key?(item.value.limit, :only) do
               assert Enum.all?(item.value.limit.only, &is_atom/1),
@@ -318,7 +310,7 @@ defmodule Roll35Core.TestHarness.BattleGear do
   def live_tags_test(module, ctx) do
     agent = ctx.server
 
-    tags = apply(module, :tags, [agent])
+    tags = module.tags(agent)
 
     assert is_list(tags)
     assert Enum.all?(tags, &is_atom/1)
@@ -329,9 +321,9 @@ defmodule Roll35Core.TestHarness.BattleGear do
     agent = ctx.server
 
     Enum.each(TestHarness.iter(), fn _ ->
-      base1 = apply(module, :random_base, [agent])
+      base1 = module.random_base(agent)
 
-      {:ok, base2} = apply(module, :get_base, [agent, base1.name])
+      {:ok, base2} = module.get_base(agent, base1.name)
 
       assert base1 == base2
     end)
@@ -342,7 +334,7 @@ defmodule Roll35Core.TestHarness.BattleGear do
     agent = ctx.server
 
     Enum.each(TestHarness.iter(), fn _ ->
-      item = apply(module, :random_base, [agent])
+      item = module.random_base(agent)
 
       assert is_map(item)
 
@@ -357,12 +349,12 @@ defmodule Roll35Core.TestHarness.BattleGear do
   @spec live_random_base_tags_test(module(), map(), [atom()]) :: nil
   def live_random_base_tags_test(module, ctx, types) do
     agent = ctx.server
-    tags = apply(module, :tags, [agent]) ++ types
+    tags = module.tags(agent) ++ types
 
     Enum.each(TestHarness.iter(), fn _ ->
       tag = Enum.random(tags)
 
-      item = apply(module, :random_base, [agent, [tag]])
+      item = module.random_base(agent, [tag])
 
       assert tag == item.type or tag in item.tags
     end)
@@ -375,7 +367,7 @@ defmodule Roll35Core.TestHarness.BattleGear do
     Enum.each(TestHarness.iter(), fn _ ->
       type = Enum.random(types)
       bonus = Enum.random(enchant_range)
-      item = apply(module, :random_enchantment, [agent, type, bonus])
+      item = module.random_enchantment(agent, type, bonus)
 
       assert is_map(item)
 
@@ -396,7 +388,7 @@ defmodule Roll35Core.TestHarness.BattleGear do
     Enum.each(TestHarness.iter(), fn _ ->
       rank = Enum.random(Types.ranks())
       subrank = Enum.random(Types.subranks())
-      item = apply(module, :random, [agent, rank, subrank])
+      item = module.random(agent, rank, subrank)
 
       if Map.has_key?(item, :specific) do
         assert MapSet.equal?(MapSet.new(Map.keys(item)), MapSet.new([:specific]))
@@ -427,7 +419,7 @@ defmodule Roll35Core.TestHarness.BattleGear do
     Enum.each(TestHarness.iter(), fn _ ->
       rank = Enum.random(Types.ranks())
       subrank = Enum.random(Types.subranks())
-      item = apply(module, :random, [agent, rank, subrank, [no_specific: true]])
+      item = module.random(agent, rank, subrank, no_specific: true)
 
       assert is_map(item)
       refute Map.has_key?(item, :specific)

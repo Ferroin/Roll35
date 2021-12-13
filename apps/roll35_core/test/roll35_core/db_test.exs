@@ -33,7 +33,7 @@ defmodule Roll35Core.DBTest do
 
     assert :ok = DB.exec(db, "DROP TABLE exec_test;")
 
-    assert {"Error: no such table: exec_test\n", 1} =
+    assert {"Error: in prepare, no such table: exec_test (1)\n", 1} =
              sqlite_cmd("SELECT * FROM exec_test WHERE id='0';")
   end
 

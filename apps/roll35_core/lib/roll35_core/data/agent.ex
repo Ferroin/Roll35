@@ -90,9 +90,7 @@ defmodule Roll35Core.Data.Agent do
   @spec random_ranked(GenServer.server(), Types.rank(), Types.full_subrank()) :: Types.item()
   def random_ranked(agent, rank, subrank) do
     Logger.debug(
-      "Getting random item with rank #{inspect(rank)} and subrank #{inspect(subrank)} from #{
-        __MODULE__
-      }."
+      "Getting random item with rank #{inspect(rank)} and subrank #{inspect(subrank)} from #{__MODULE__}."
     )
 
     data = get(agent, & &1)
@@ -207,9 +205,7 @@ defmodule Roll35Core.Data.Agent do
         {:error, "No matching items found."}
       else
         {:error,
-         "\"#{name}\" is not a recognized item, did you possibly mean one of: \"#{
-           Enum.join(possible, "\", \"")
-         }\"?"}
+         "\"#{name}\" is not a recognized item, did you possibly mean one of: \"#{Enum.join(possible, "\", \"")}\"?"}
       end
     else
       {:ok, result}
@@ -257,9 +253,7 @@ defmodule Roll35Core.Data.Agent do
         ) :: %{atom() => term()} | nil
   def random_enchantment(agent, type, bonus, enchants \\ [], limit \\ []) do
     Logger.debug(
-      "Getting random enchantment of type #{inspect(type)} and level #{inspect(bonus)} excluding #{
-        inspect(enchants)
-      } and limited by #{inspect(limit)} from #{__MODULE__}."
+      "Getting random enchantment of type #{inspect(type)} and level #{inspect(bonus)} excluding #{inspect(enchants)} and limited by #{inspect(limit)} from #{__MODULE__}."
     )
 
     data = get(agent, fn data -> data.enchantments[type][bonus] end)
@@ -301,9 +295,7 @@ defmodule Roll35Core.Data.Agent do
   def random_pattern(agent, rank, subrank, no_specific: true)
       when Types.is_rank(rank) and Types.is_subrank(subrank) do
     Logger.info(
-      "Getting random item of rank #{inspect(rank)} and subrank #{inspect(subrank)} from #{
-        __MODULE__
-      }, ignoring specific rolls."
+      "Getting random item of rank #{inspect(rank)} and subrank #{inspect(subrank)} from #{__MODULE__}, ignoring specific rolls."
     )
 
     data = get(agent, fn data -> data[rank][subrank] end)
@@ -316,9 +308,7 @@ defmodule Roll35Core.Data.Agent do
   def random_pattern(agent, rank, subrank, _)
       when Types.is_rank(rank) and Types.is_subrank(subrank) do
     Logger.info(
-      "Getting random item of rank #{inspect(rank)} and subrank #{inspect(subrank)} from #{
-        __MODULE__
-      }."
+      "Getting random item of rank #{inspect(rank)} and subrank #{inspect(subrank)} from #{__MODULE__}."
     )
 
     data = get(agent, fn data -> data[rank][subrank] end)

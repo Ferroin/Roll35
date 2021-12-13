@@ -11,6 +11,30 @@ defmodule Roll35Core.Data.Keys do
 
   @default_server {:via, Registry, {Roll35Core.Registry, :keys}}
 
+  defp process_proportional_lists(item) do
+    case item.type do
+      :flat_proportional ->
+        Map.update!(item, :data, fn data ->
+          Enum.map(data, &Util.atomize_map/1)
+        end)
+
+      :grouped_proportional ->
+        Map.update!(item, :data, fn data ->
+          data
+          |> Enum.map(fn {key, value} ->
+            {
+              key,
+              Enum.map(value, &Util.atomize_map/1)
+            }
+          end)
+          |> Map.new()
+        end)
+
+      _ ->
+        item
+    end
+  end
+
   @impl Roll35Core.Data.Agent
   def process_data(data) do
     data
@@ -21,29 +45,7 @@ defmodule Roll35Core.Data.Keys do
         value
         # credo:disable-for-next-line Credo.Check.Warning.UnsafeToAtom
         |> Map.update!(:type, &String.to_atom/1)
-        |> (fn item ->
-              case item.type do
-                :flat_proportional ->
-                  Map.update!(item, :data, fn data ->
-                    Enum.map(data, &Util.atomize_map/1)
-                  end)
-
-                :grouped_proportional ->
-                  Map.update!(item, :data, fn data ->
-                    data
-                    |> Enum.map(fn {key, value} ->
-                      {
-                        key,
-                        Enum.map(value, &Util.atomize_map/1)
-                      }
-                    end)
-                    |> Map.new()
-                  end)
-
-                _ ->
-                  item
-              end
-            end).()
+        |> process_proportional_lists()
       }
     end)
     |> Map.new()

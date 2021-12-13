@@ -18,7 +18,7 @@ defmodule Roll35Bot.Command do
 
       @spec help :: String.t()
       def help do
-        name = apply(__MODULE__, :name, [])
+        name = __MODULE__.name()
 
         {cmdstring, optionstring} =
           if Enum.empty?(options()) do
@@ -73,7 +73,7 @@ defmodule Roll35Bot.Command do
   @spec get_opt_data(module()) :: OptionParser.options()
   def get_opt_data(module) do
     if Kernel.function_exported?(module, :options, 0) do
-      [strict: Enum.map(apply(module, :options, []), fn {name, type, _, _} -> {name, type} end)]
+      [strict: Enum.map(module.options(), fn {name, type, _, _} -> {name, type} end)]
     else
       [strict: []]
     end
@@ -102,6 +102,7 @@ defmodule Roll35Bot.Command do
   @doc """
   Contains all the boilerplate code for defining the command.
   """
+  # credo:disable-for-next-line Credo.Check.Warning.SpecWithStruct
   @spec run_cmd(module, term(), %Alchemy.Message{}, term()) :: nil
   def run_cmd(module, options, message, reply) do
     %Alchemy.Message{
@@ -111,7 +112,7 @@ defmodule Roll35Bot.Command do
       }
     } = message
 
-    name = apply(module, :name, [])
+    name = module.name()
 
     argspec = get_opt_data(module)
 
@@ -122,7 +123,7 @@ defmodule Roll35Bot.Command do
     try do
       case parse(options, argspec) do
         {:ok, {args, options}} ->
-          case apply(module, :cmd, [args, options]) do
+          case module.cmd(args, options) do
             {:ok, msg} ->
               reply.(msg)
 

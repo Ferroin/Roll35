@@ -8,14 +8,14 @@ defmodule Roll35Bot.Commands.Help do
 
   require Logger
 
-  defp cmdhelp({module, _, _}), do: apply(module, :help, [])
-  defp cmdhelp({module, _, _, _}), do: apply(module, :help, [])
+  defp cmdhelp({module, _, _}), do: module.help()
+  defp cmdhelp({module, _, _, _}), do: module.help()
 
   defp get_cmd_list do
     Cogs.all_commands()
     |> Enum.map(fn
-      {name, {mod, _, _}} -> "* `#{name}`: #{apply(mod, :short_desc, [])}"
-      {name, {mod, _, _, _}} -> "* `#{name}`: #{apply(mod, :short_desc, [])}"
+      {name, {mod, _, _}} -> "* `#{name}`: #{mod.short_desc()}"
+      {name, {mod, _, _, _}} -> "* `#{name}`: #{mod.short_desc()}"
     end)
     |> Enum.sort()
     |> Enum.join("\n")

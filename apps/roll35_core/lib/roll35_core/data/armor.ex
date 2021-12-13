@@ -57,9 +57,7 @@ defmodule Roll35Core.Data.Armor do
   def random_specific(agent, type, rank, subrank)
       when type in @item_types and Types.is_rank(rank) and Types.is_subrank(subrank) do
     Logger.debug(
-      "Getting random specific item of type #{inspect(type)} with rank #{inspect(rank)} and subrank #{
-        inspect(subrank)
-      } from #{__MODULE__}."
+      "Getting random specific item of type #{inspect(type)} with rank #{inspect(rank)} and subrank #{inspect(subrank)} from #{__MODULE__}."
     )
 
     data = Roll35Core.Data.Agent.get(agent, fn data -> data.specific[type][rank][subrank] end)

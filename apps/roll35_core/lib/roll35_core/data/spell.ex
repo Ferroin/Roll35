@@ -35,6 +35,14 @@ defmodule Roll35Core.Data.Spell do
               )
   @max_spell_level 9
 
+  defp safe_class_name(name) when is_atom(name), do: name
+
+  defp safe_class_name(name) do
+    String.to_existing_atom(name)
+  rescue
+    _ -> false
+  end
+
   @spec sql_escape(String.t()) :: String.t()
   defp sql_escape(string) do
     String.replace(string, "'", "''")
@@ -259,9 +267,7 @@ defmodule Roll35Core.Data.Spell do
                           '#{result.spellpage_arcane_cls}',
                           '#{result.spellpage_divine_cls}'
                         );
-      INSERT INTO tagmap (name, tags) VALUES ('#{sql_escape(entry.name)}', '#{entry.school} #{
-        entry.subschool
-      } #{entry.descriptor}');
+      INSERT INTO tagmap (name, tags) VALUES ('#{sql_escape(entry.name)}', '#{entry.school} #{entry.subschool} #{entry.descriptor}');
       """,
       [
         entry.school,
@@ -631,17 +637,7 @@ defmodule Roll35Core.Data.Spell do
     opt_class =
       options
       |> Keyword.get(:class, :minimum)
-      |> (fn
-            item when is_atom(item) ->
-              item
-
-            item ->
-              try do
-                String.to_existing_atom(item)
-              rescue
-                _ -> false
-              end
-          end).()
+      |> safe_class_name()
 
     tag = Keyword.get(options, :tag)
 
@@ -681,7 +677,7 @@ defmodule Roll35Core.Data.Spell do
       class == nil ->
         {:error, "Invalid class identifier specified."}
 
-      level != nil and not (level in 0..@max_spell_level) ->
+      level != nil and level not in 0..@max_spell_level ->
         {:error, "Invalid spell level specified."}
 
       true ->

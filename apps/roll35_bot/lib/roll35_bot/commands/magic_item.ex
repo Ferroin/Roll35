@@ -44,11 +44,7 @@ defmodule Roll35Bot.Commands.MagicItem do
       {:cont, Map.put(acc, :category, vatom)}
     else
       {:halt,
-       "Invalid value for type. Valid types are: #{
-         Types.categories()
-         |> Enum.map(&Atom.to_string/1)
-         |> Enum.join(", ")
-       }"}
+       "Invalid value for type. Valid types are: #{Enum.map_join(Types.categories(), " ", &Atom.to_string/1)}"}
     end
   end
 
@@ -59,11 +55,7 @@ defmodule Roll35Bot.Commands.MagicItem do
       {:cont, Map.put(acc, :rank, vatom)}
     else
       {:halt,
-       "Invalid value for item rank. Valid ranks are: #{
-         Types.ranks()
-         |> Enum.map(&Atom.to_string/1)
-         |> Enum.join(", ")
-       }"}
+       "Invalid value for item rank. Valid ranks are: #{Enum.map_join(Types.ranks(), ", ", &Atom.to_string/1)}"}
     end
   end
 
@@ -74,11 +66,7 @@ defmodule Roll35Bot.Commands.MagicItem do
       {:cont, Map.put(acc, :subrank, vatom)}
     else
       {:halt,
-       "Invalid value for item subrank. Valid subranks are: #{
-         Types.full_subranks()
-         |> Enum.map(&Atom.to_string/1)
-         |> Enum.join(", ")
-       }"}
+       "Invalid value for item subrank. Valid subranks are: #{Enum.map_join(Types.full_subranks(), ", ", &Atom.to_string/1)}"}
     end
   end
 
@@ -89,11 +77,7 @@ defmodule Roll35Bot.Commands.MagicItem do
       {:cont, Map.put(acc, :slot, vatom)}
     else
       {:halt,
-       "Invalid value for item slot. Valid slots are: #{
-         Types.slots()
-         |> Enum.map(&Atom.to_string/1)
-         |> Enum.join(", ")
-       }"}
+       "Invalid value for item slot. Valid slots are: #{Enum.map_join(Types.slots(), ", ", &Atom.to_string/1)}"}
     end
   end
 
@@ -104,16 +88,51 @@ defmodule Roll35Bot.Commands.MagicItem do
       {:cont, Map.put(acc, :class, vatom)}
     else
       {:halt,
-       "Invalid value for caster class. Valid classes are: #{
-         classes
-         |> Enum.map(&Atom.to_string/1)
-         |> Enum.join(", ")
-       }"}
+       "Invalid value for caster class. Valid classes are: #{Enum.map_join(classes, ", ", &Atom.to_string/1)}"}
     end
   end
 
   defp check_arg(:base, value, acc, _classes) do
     {:cont, Map.put(acc, :base, value)}
+  end
+
+  defp fix_nil_category(map) do
+    if map.slot != nil and map.category == nil do
+      Map.put(map, :category, :wondrous)
+    else
+      map
+    end
+  end
+
+  defp fix_nil_rank(map) do
+    cond do
+      map.rank == nil and map.category in [:rod, :staff] ->
+        Map.put(map, :rank, Enum.random(Types.limited_ranks()))
+
+      map.rank == nil ->
+        Map.put(map, :rank, Enum.random(Types.ranks()))
+
+      true ->
+        map
+    end
+  end
+
+  defp fix_nil_subrank(map) do
+    case map.subrank do
+      nil -> Map.put(map, :subrank, Enum.random(Types.subranks()))
+      _ -> map
+    end
+  end
+
+  defp params_to_tuple(map) do
+    {
+      map.base,
+      map.category,
+      map.class,
+      map.rank,
+      map.slot,
+      map.subrank
+    }
   end
 
   defp get_params(opts) do
@@ -140,41 +159,10 @@ defmodule Roll35Bot.Commands.MagicItem do
     else
       {:ok,
        params
-       |> (fn map ->
-             if map.slot != nil and map.category == nil do
-               Map.put(map, :category, :wondrous)
-             else
-               map
-             end
-           end).()
-       |> (fn map ->
-             cond do
-               map.rank == nil and map.category in [:rod, :staff] ->
-                 Map.put(map, :rank, Enum.random(Types.limited_ranks()))
-
-               map.rank == nil ->
-                 Map.put(map, :rank, Enum.random(Types.ranks()))
-
-               true ->
-                 map
-             end
-           end).()
-       |> (fn map ->
-             case map.subrank do
-               nil -> Map.put(map, :subrank, Enum.random(Types.subranks()))
-               _ -> map
-             end
-           end).()
-       |> (fn map ->
-             {
-               map.base,
-               map.category,
-               map.class,
-               map.rank,
-               map.slot,
-               map.subrank
-             }
-           end).()}
+       |> fix_nil_category()
+       |> fix_nil_rank()
+       |> fix_nil_subrank()
+       |> params_to_tuple()}
     end
   end
 
@@ -249,25 +237,15 @@ defmodule Roll35Bot.Commands.MagicItem do
          end
        end, "Specify a base item to use when rolling random magic armor or weapons."},
       {:class, :string, fn _ -> Spell.get_classes(@spell_server) end,
-       "Specify a class to use when rolling spells for scrolls and wands. Valid classes are: #{
-         @spell_server |> Spell.get_classes() |> Enum.map(&Atom.to_string/1) |> Enum.join(", ")
-       })."},
+       "Specify a class to use when rolling spells for scrolls and wands. Valid classes are: #{@spell_server |> Spell.get_classes() |> Enum.map_join(", ", &Atom.to_string/1)}."},
       {:rank, :string, &Types.ranks/0,
-       "Specify the rank of the item to roll. Will be rolled randomly if left unspecified. Valid ranks are: #{
-         Types.ranks() |> Enum.map(&Atom.to_string/1) |> Enum.join(", ")
-       }."},
+       "Specify the rank of the item to roll. Will be rolled randomly if left unspecified. Valid ranks are: #{Enum.map_join(Types.ranks(), ", ", &Atom.to_string/1)}."},
       {:slot, :string, &Types.slots/0,
-       "Specify the slot for wondrous items. Will be rolled randomly if left unspecified. Valid slots are: #{
-         Types.slots() |> Enum.map(&Atom.to_string/1) |> Enum.join(", ")
-       }."},
+       "Specify the slot for wondrous items. Will be rolled randomly if left unspecified. Valid slots are: #{Enum.map_join(Types.slots(), ", ", &Atom.to_string/1)}."},
       {:subrank, :string, &Types.subranks/0,
-       "Specify the sub-rank of the item to roll. Will be rolled randomly if left unspecified. Valid subranks are: #{
-         Types.full_subranks() |> Enum.map(&Atom.to_string/1) |> Enum.join(", ")
-       }."},
+       "Specify the sub-rank of the item to roll. Will be rolled randomly if left unspecified. Valid subranks are: #{Enum.map_join(Types.full_subranks(), ", ", &Atom.to_string/1)}."},
       {:type, :string, &Types.categories/0,
-       "Specify the type of the item to roll. Will be rolled randomly if left unspecified. Valid types are: #{
-         Types.categories() |> Enum.map(&Atom.to_string/1) |> Enum.join(", ")
-       }."}
+       "Specify the type of the item to roll. Will be rolled randomly if left unspecified. Valid types are: #{Enum.map_join(Types.categories(), ", ", &Atom.to_string/1)}."}
     ]
   end
 end

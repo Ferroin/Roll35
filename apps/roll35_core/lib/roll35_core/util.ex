@@ -5,6 +5,11 @@ defmodule Roll35Core.Util do
 
   alias Roll35Core.Types
 
+  defp make_weighted_entry(entry) do
+    {_, value} = Map.split(entry, [:weight])
+    %{weight: entry.weight, value: value}
+  end
+
   @doc """
   Roll a random item from a list.
 
@@ -136,10 +141,7 @@ defmodule Roll35Core.Util do
         Enum.map(map[subrank], fn entry ->
           entry
           |> atomize_map()
-          |> (fn entry ->
-                {_, value} = Map.split(entry, [:weight])
-                %{weight: entry.weight, value: value}
-              end).()
+          |> make_weighted_entry()
         end)
 
       {subrank, value}

@@ -47,9 +47,7 @@ defmodule Roll35Core.Data.WeaponTest do
     test "Specific map has the correct format.", context do
       assert TestHarness.map_has_rank_keys(context.data.specific)
 
-      "Weapon specific item map does not have correct keys (#{
-        inspect(Map.keys(context.data.specific))
-      })."
+      "Weapon specific item map does not have correct keys (#{inspect(Map.keys(context.data.specific))})."
 
       context.data.specific
       |> Task.async_stream(fn {rank, map} ->

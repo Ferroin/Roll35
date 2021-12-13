@@ -48,9 +48,7 @@ defmodule Roll35Core.Data.ArmorTest do
 
     test "Specific map has the correct format.", context do
       assert MapSet.new(Map.keys(context.data.specific)) == MapSet.new(@item_types),
-             "Armor specific item map does not have correct keys (#{
-               inspect(Map.keys(context.data.specific))
-             })."
+             "Armor specific item map does not have correct keys (#{inspect(Map.keys(context.data.specific))})."
 
       context.data.specific
       |> Task.async_stream(fn {key, map1} ->

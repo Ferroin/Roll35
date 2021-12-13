@@ -57,7 +57,7 @@ defmodule Roll35Bot.TestHarness do
 
   @spec valid_command(module()) :: nil
   def valid_command(module) do
-    assert {:ok, msg} = apply(module, :cmd, [[], []])
+    assert {:ok, msg} = module.cmd([], [])
 
     assert String.valid?(msg)
   end
@@ -65,9 +65,9 @@ defmodule Roll35Bot.TestHarness do
   @spec valid_parameters(module()) :: nil
   def valid_parameters(module) do
     Enum.each(iter_slow(), fn _ ->
-      param = apply(module, :sample_params, [])
+      param = module.sample_params()
 
-      assert {:ok, msg} = apply(module, :cmd, [[param], []])
+      assert {:ok, msg} = module.cmd([param], [])
 
       assert String.valid?(msg)
     end)
@@ -75,14 +75,14 @@ defmodule Roll35Bot.TestHarness do
 
   @spec invalid_parameters(module(), String.t()) :: nil
   def invalid_parameters(module, params) do
-    assert {:error, msg} = apply(module, :cmd, [params, []])
+    assert {:error, msg} = module.cmd(params, [])
 
     assert String.valid?(msg)
   end
 
   @spec valid_option(module(), atom()) :: nil
   def valid_option(module, option) do
-    opts = apply(module, :options, [])
+    opts = module.options()
 
     valid_opts =
       Enum.reduce_while(opts, nil, fn {name, _, fun, _}, _ ->
@@ -100,7 +100,7 @@ defmodule Roll35Bot.TestHarness do
     Enum.each(iter_slow(), fn _ ->
       value = Enum.random(valid_opts)
 
-      assert {:ok, msg} = apply(module, :cmd, [[], [{option, value}]])
+      assert {:ok, msg} = module.cmd([], [{option, value}])
 
       assert String.valid?(msg)
     end)
@@ -108,19 +108,19 @@ defmodule Roll35Bot.TestHarness do
 
   @spec invalid_option(module(), atom(), String.t()) :: nil
   def invalid_option(module, option, value) do
-    assert {:error, msg} = apply(module, :cmd, [[], [{option, value}]])
+    assert {:error, msg} = module.cmd([], [{option, value}])
 
     assert String.valid?(msg)
   end
 
   @spec permute_options(module(), [[atom()]], Regex.t(), keyword()) :: nil
   def permute_options(module, required, errors \\ ~r/a^/, extra \\ []) do
-    opts = apply(module, :options, [])
+    opts = module.options()
 
     Enum.each(iter_slow(), fn _ ->
       options = random_options(opts, required, extra)
 
-      assert {ret, msg} = apply(module, :cmd, [[], options])
+      assert {ret, msg} = module.cmd([], options)
 
       case ret do
         :ok ->

@@ -94,6 +94,22 @@ defmodule Roll35Core.MagicItem do
     end
   end
 
+  defp add_enchant_tags(tags, enchantment) do
+    if Map.has_key?(enchantment, :add) do
+      MapSet.union(tags, MapSet.new(enchantment.add))
+    else
+      tags
+    end
+  end
+
+  defp remove_enchant_tags(tags, enchantment) do
+    if Map.has_key?(enchantment, :remove) do
+      MapSet.difference(tags, MapSet.new(enchantment.remove))
+    else
+      tags
+    end
+  end
+
   @doc """
   Assemble a magic weapon or armor item.
   """
@@ -127,20 +143,8 @@ defmodule Roll35Core.MagicItem do
 
             new_tags =
               tags
-              |> (fn item ->
-                    if Map.has_key?(enchantment, :add) do
-                      MapSet.union(tags, MapSet.new(enchantment.add))
-                    else
-                      item
-                    end
-                  end).()
-              |> (fn item ->
-                    if Map.has_key?(enchantment, :remove) do
-                      MapSet.difference(tags, MapSet.new(enchantment.remove))
-                    else
-                      item
-                    end
-                  end).()
+              |> add_enchant_tags(enchantment)
+              |> remove_enchant_tags(enchantment)
 
             cost = Util.squared(bonus + item.bonus) * cost_mult + extra
 
@@ -159,8 +163,7 @@ defmodule Roll35Core.MagicItem do
       true ->
         {:ok,
          %{
-           name:
-             "+#{item.bonus} #{enchants |> Enum.map(& &1.name) |> Enum.join(" ")} #{base.name}",
+           name: "+#{item.bonus} #{Enum.map_join(enchants, " ", & &1.name)} #{base.name}",
            cost: cost
          }}
     end
@@ -201,9 +204,7 @@ defmodule Roll35Core.MagicItem do
 
   def roll(:minor, :least, :wondrous, slot: :slotless) do
     Logger.debug(
-      "Rolling magic item with parameters #{
-        inspect({:least, :minor, :wondrous, {:slot, :slotless}})
-      }."
+      "Rolling magic item with parameters #{inspect({:least, :minor, :wondrous, {:slot, :slotless}})}."
     )
 
     finalize_roll(call(:slotless, :random, [:minor, :least]))

@@ -64,9 +64,7 @@ defmodule Roll35Core.MagicItemTest do
         {status2, item2} = MagicItem.roll(rank, subrank, category)
 
         assert status1 == status2,
-               "Status mismatch for #{inspect({category, rank, subrank})}, got {#{
-                 inspect(status1)
-               }, #{inspect(item1)}} and {#{inspect(status2)}, #{inspect(item2)}}."
+               "Status mismatch for #{inspect({category, rank, subrank})}, got {#{inspect(status1)}, #{inspect(item1)}} and {#{inspect(status2)}, #{inspect(item2)}}."
       end)
     end
 
@@ -80,9 +78,7 @@ defmodule Roll35Core.MagicItemTest do
         {status2, item2} = MagicItem.roll(rank, subrank, :wondrous, slot: slot)
 
         assert status1 == status2,
-               "Status mismatch for #{inspect({rank, subrank, slot})}, got {#{inspect(status1)}, #{
-                 inspect(item1)
-               }} and {#{inspect(status2)}, #{inspect(item2)}}."
+               "Status mismatch for #{inspect({rank, subrank, slot})}, got {#{inspect(status1)}, #{inspect(item1)}} and {#{inspect(status2)}, #{inspect(item2)}}."
       end)
     end
   end
