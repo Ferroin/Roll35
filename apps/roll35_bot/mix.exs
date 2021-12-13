@@ -26,7 +26,7 @@ defmodule Roll35Bot.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:alchemy, "~> 0.6.6", hex: :discord_alchemy},
+      {:alchemy, "~> 0.7.0", hex: :discord_alchemy},
       {:credo, "~> 1.6.1", only: :dev, runtime: false},
       {:credo_contrib, "~> 0.2.0", only: :dev, runtime: false},
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},

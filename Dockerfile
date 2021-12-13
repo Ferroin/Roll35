@@ -1,4 +1,4 @@
-FROM elixir:1.11.3-alpine AS builder
+FROM elixir:1.13.0-alpine AS builder
 
 RUN apk add --no-cache alpine-sdk
 
@@ -23,9 +23,9 @@ COPY apps /build/apps
 
 RUN MIX_ENV=prod mix release roll35_docker
 
-FROM alpine:3.13 as runtime
+FROM alpine:3.15 as runtime
 
-RUN apk add --no-cache ncurses-libs
+RUN apk add --no-cache ncurses-libs libgcc libstdc++
 
 ENV LOG_LEVEL="notice"
 ENV DATA_PATH="/data"
