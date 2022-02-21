@@ -31,7 +31,7 @@ defmodule Roll35Bot.MixProject do
       {:credo_contrib, "~> 0.2.0", only: :dev, runtime: false},
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},
       {:ex_doc, "~> 0.28.0", only: :dev, runtime: false},
-      {:git_hooks, "~> 0.6.2", only: :dev, runtime: false},
+      {:git_hooks, "~> 0.7.1", only: :dev, runtime: false},
       {:roll35_core, in_umbrella: true}
     ]
   end
