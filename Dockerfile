@@ -1,4 +1,4 @@
-FROM elixir:1.13.1-alpine AS builder
+FROM elixir:1.13.3-alpine AS builder
 
 RUN apk add --no-cache alpine-sdk
 
