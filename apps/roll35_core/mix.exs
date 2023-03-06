@@ -31,7 +31,7 @@ defmodule Roll35Core.MixProject do
       {:credo, "~> 1.6.1", only: :dev, runtime: false},
       {:credo_contrib, "~> 0.2.0", only: :dev, runtime: false},
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},
-      {:ex_doc, "~> 0.28.0", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.29.2", only: :dev, runtime: false},
       {:git_hooks, "~> 0.7.2", only: :dev, runtime: false},
       {:sqlitex, "~> 1.7"},
       {:yaml_elixir, "~> 2.6"}
