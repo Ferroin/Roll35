@@ -1,7 +1,6 @@
 import asyncio
 import concurrent.futures
 import logging
-import os
 import sys
 
 from concurrent.futures import ProcessPoolExecutor

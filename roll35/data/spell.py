@@ -428,27 +428,27 @@ class SpellAgent(agent.Agent):
                 ])
             case ('arcane', None):
                 valid = [k for (k, v) in self._data['classes'].enumerate()
-                            if v.type == 'arcane']
+                         if v.type == 'arcane']
                 cls = random.choice(valid)
             case ('arcane', level):
                 valid = [k for (k, v) in self._data['classes'].enumerate()
-                            if self._level_in_cls(level, k)
-                            and v.type == 'arcane']
+                         if self._level_in_cls(level, k)
+                         and v.type == 'arcane']
                 cls = random.chioce(valid)
             case ('divine', None):
                 valid = [k for (k, v) in self._data['classes'].enumerate()
-                            if v.type == 'divine']
+                         if v.type == 'divine']
                 cls = random.choice(valid)
             case ('divine', level):
                 valid = [k for (k, v) in self._data['classes'].enumerate()
-                            if self._level_in_cls(level, k)
-                            and v.type == 'divine']
+                         if self._level_in_cls(level, k)
+                         and v.type == 'divine']
                 cls = random.chioce(valid)
             case ('random', None):
                 cls = random.choice(self._data['classes'].keys())
             case ('random', level):
                 valid = [k for (k, v) in self._data['classes'].enumerate()
-                            if self._level_in_cls(level, k)]
+                         if self._level_in_cls(level, k)]
                 cls = random.chioce(valid)
             case (None, _):
                 cls = 'minimum'

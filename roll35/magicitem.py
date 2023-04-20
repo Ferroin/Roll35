@@ -1,7 +1,6 @@
 '''Cog for handling magic items.'''
 
 import asyncio
-import argparse
 import logging
 import random
 
