@@ -2,8 +2,7 @@
 name: Docker
 
 on:
-  pull_request:
-    branch: main
+  pull_request: null
 
 concurrency:
   group: docker-${{ github.ref }}
