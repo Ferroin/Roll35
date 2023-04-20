@@ -2,11 +2,10 @@
 name: ReviewDog
 
 on:
-  pull_request:
-    branch: main
+  pull_request: null
 
 concurrency:
-  group: docker-${{ github.ref }}
+  group: review-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
