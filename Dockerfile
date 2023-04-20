@@ -1,40 +1,19 @@
-FROM elixir:1.13.1-alpine AS builder
+FROM python:3.10-alpine AS builder
 
-RUN apk add --no-cache alpine-sdk
+RUN apk update && \
+    apk add --no-cache alpine-sdk && \
+    pip install virtualenv
 
-RUN mix local.hex --force
+COPY / /app
 
-RUN mix local.rebar --force
+WORKDIR /app
 
-RUN mkdir -p /build /app /build/apps/roll35_core /build/apps/roll35_bot
+RUN virtualenv /app/venv
 
-COPY mix.exs mix.lock /build/
-COPY apps/roll35_bot/mix.exs /build/apps/roll35_bot/
-COPY apps/roll35_core/mix.exs /build/apps/roll35_core/
-COPY config /build/config
+RUN . /app/venv/bin/activate && pip install -r /app/requirements.txt
 
-WORKDIR /build
+FROM python:3.10-alpine AS runtime
 
-RUN mix deps.get --only prod
-
-RUN MIX_ENV=prod mix deps.compile --skip-local-deps
-
-COPY apps /build/apps
-
-RUN MIX_ENV=prod mix release roll35_docker
-
-FROM alpine:3.15 as runtime
-
-RUN apk add --no-cache ncurses-libs libgcc libstdc++
-
-ENV LOG_LEVEL="notice"
-ENV DATA_PATH="/data"
-
-VOLUME [ "/data" ]
-
-COPY ./healthcheck.sh /healthcheck.sh
 COPY --from=builder /app /app
 
-CMD [ "/app/bin/roll35_docker", "start" ]
-
-HEALTHCHECK --interval=60s --timeout=10s --retries=3 CMD [ "/healthcheck.sh" ]
+CMD [ "/app/run.sh" ]

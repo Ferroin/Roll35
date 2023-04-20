@@ -5,6 +5,7 @@ related games.
 
 ## Features
 
+* Shows itself as typing while processing commands.
 * Roll for random magic items in a single command. This automatically
   handles most of the sequential rolls required to produce an exact
   magic item.
@@ -43,9 +44,9 @@ related games.
 
 ## Using the Bot
 
-All bot commands start with the prefix `/roll35`.
+All bot commands start with the prefix `/r35`.
 
-You can see interactive help by running `/roll35 help`
+You can see interactive help by running `/r35 help`
 
 Note that if a command is mistyped, the bot will currently simply not
 respond instead of responding with an error. We plan to fix this for
@@ -71,21 +72,7 @@ The following environment variables are used by the image:
   produce. Valid values (in descending order of severity) are:
   `emergency`, `alert`, `critical`, `error`, `warning`, `notice`,
   `info`, `debuga`. It is not recommended to set this any higher than
-  `error`. Note that debug logging will log the commands the bot recieves,
-  including the user ID of the users who sent them. The default level is
-  `notice`.
-* `DATA_PATH`: Specifies a custom path to use for persistent data. This
-  defaults to `/data`, which is inherently configured as a volume (see below).
-
-In addition to the above, the container by default creats a single
-volume at `/data` inside the container to store persitent data. This
-can be overridden when starting the container if so desired. Currently
-it only stores the spell database that gets generated at startup, but
-it will likely be used for other things in the future.
-
-Note that Roll35 needs _at minimum_ 128M of RAM to operate reliably. If
-you expect particularly active usage or have it joined to a lot of
-servers, it will need more than this.
+  `error`.
 
 ## Data Sets
 
@@ -127,23 +114,13 @@ few manual fixes to the dataset (mostly correcting tags).
 
 ## Versions
 
-The bot code and core code are versioned separately, and the overall
-project has it’s own version as well.
-
-The bot and core code both use standard semantic versioning rules. The
-major version increases any time a breaking API change is made, the
-minor version increases any time a new feature is added, and the patch
-number changes any time a bug fix, optimization, or other non-feature
-change is made.
-
-The overall version of the project also uses semantic versioning, but
-it only increases the major and minor versions for **user visible**
-changes. In other words, a change that only alters the API between
-the bot and core code without resulting in any user-visible changes
-will translate to a patch release at the project level, not a major
-relese. Additionally, some non-breaking changes at the project level
-may result in a major release at the project level simply because they
-are so impactful that they warrant a major release.
+The project uses semantic versioning, but it only increases the major
+and minor versions for **user visible** changes. In other words, a change
+that only alters the internal API without resulting in any user-visible
+changes will translate to a patch release at the project level, not a
+major relese. Additionally, some non-breaking changes at the project
+level may result in a major release at the project level simply because
+they are so impactful that they warrant a major release.
 
 #### Why are there no published images for versions prior to 1.2.0?
 
