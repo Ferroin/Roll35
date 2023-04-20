@@ -58,22 +58,18 @@ major:
     - {weight:  4, specific: [shield, major, greater]}
     - {weight: 16, specific: [armor, major, greater]}
 base:
-  # Certain armors that are only rarely used or very unlikely to be
-  # found as magic items are commented out below so that they aren't
-  # included in normal item generation. They can be re-enabled by
-  # removing the '# ' at the beginning of the entry.
   - {cost:    3, type:  armor, tags: [light, cloth], name: 'Haramaki'}
   - {cost:    5, type:  armor, tags: [light, cloth], name: 'Padded Armor'}
-  # - {cost:  100, type:  armor, tags: [light, cloth], name: 'Quilted Cloth Armor'}
+  - {cost:  100, type:  armor, tags: [light, cloth], name: 'Quilted Cloth Armor'}
   - {cost:    1, type:  armor, tags: [light, cloth], name: 'Reinforced Tunic'}
-  # - {cost:   30, type:  armor, tags: [light, cloth], name: 'Silken Ceremonial Armor'}
+  - {cost:   30, type:  armor, tags: [light, cloth], name: 'Silken Ceremonial Armor'}
   - {cost:   15, type:  armor, tags: [light, leather], name: 'Lamellar Cuirass'}
   - {cost:   10, type:  armor, tags: [light, leather], name: 'Leather Armor'}
   - {cost:   50, type:  armor, tags: [light, leather], name: 'Rosewood Armor'}
-  # - {cost:   30, type:  armor, tags: [light, leather], name: 'Hellknight Leather Armor'}
+  - {cost:   30, type:  armor, tags: [light, leather], name: 'Hellknight Leather Armor'}
   - {cost:   20, type:  armor, tags: [light, leather], name: 'Hide Shirt'}
   - {cost:  500, type:  armor, tags: [light, cloth], name: 'Leaf Armor'}
-  # - {cost:   25, type:  armor, tags: [light, cloth], name: 'Parade Armor'}
+  - {cost:   25, type:  armor, tags: [light, cloth], name: 'Parade Armor'}
   - {cost:  850, type:  armor, tags: [light, cloth], name: 'Spider-silk Bodysuit'}
   - {cost:   25, type:  armor, tags: [light, leather], name: 'Studded Leather'}
   - {cost:   20, type:  armor, tags: [light, wood], name: 'Wooden Armor'}
@@ -119,7 +115,7 @@ base:
   - {cost:   53, type: shield, tags: [light, wood], name: 'Quickdraw Light Wooden Shield'}
   - {cost:   20, type: shield, tags: [heavy, metal], name: 'Heavy Steel Shield'}
   - {cost:    7, type: shield, tags: [heavy, wood], name: 'Heavy Wooden Shield'}
-  # - {cost:   30, type: shield, tags: [tower, metal], name: 'Tower Shield'}
+  - {cost:   30, type: shield, tags: [tower, metal], name: 'Tower Shield'}
   - {cost:   50, type: shield, tags: [heavy, metal], name: 'Steel Snarlshield'}
   - {cost:   37, type: shield, tags: [heavy, wood], name: 'Wooden Snarlshield'}
   - {cost:   50, type: shield, tags: [light, metal], name: 'Dwarven War-Shield'}

@@ -101,11 +101,6 @@ tables. In particular:
   proper relative proportions), and if there are duplicate values we
   adjust accordingly. All such cases are documented in comments in the
   files in `apps/roll35_core/priv`.
-* There are a number of weapons and armors that are only rarely used
-  or are logically unlikely to be encountered 'in the wild'. These are
-  included in the dataset, but are not enabled by default (so they will
-  not appear in rolled items). They can be manually enabled by editing
-  the relevant files under `apps/roll35_core/priv`.
 
 Spell data is pulled from the spell database on
 [D20PFSRD](https://www.d20pfsrd), converted to the required format

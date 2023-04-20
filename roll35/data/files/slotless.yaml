@@ -18,7 +18,7 @@ minor:
     - {weight:  3, cost:    250, name: 'Elixir of Tumbling'}
     - {weight:  3, cost:    250, name: 'Elixir of Vision'}
     - {weight:  2, cost:    250, name: 'Nihgtdrops'}
-    # - {weight:  1, cost:    250, name: 'Oil of Silence'}
+    - {weight:  1, cost:    250, name: 'Oil of Silence'}
     - {weight:  3, cost:    250, name: 'Silversheen'}
     - {weight:  1, cost:    250, name: 'Traveler’s Anytool'}
     - {weight:  2, cost:    300, name: 'Bottle of Messages'}
@@ -78,7 +78,7 @@ minor:
     - {weight:  1, cost:   1800, name: 'Scabbard of Vigor'}
     - {weight:  1, cost:   2000, name: 'Agile Alpenstock'}
     - {weight:  1, cost:   2000, name: 'Clamor Box'}
-    # - {weight:  1, cost:   2000, name: 'Dry Load Powder Horn'}
+    - {weight:  1, cost:   2000, name: 'Dry Load Powder Horn'}
     - {weight:  1, cost:   2000, name: 'Goblin Fire Drum'}
     - {weight:  2, cost:   2000, name: 'Handy Haversack'}
     - {weight:  2, cost:   2000, name: 'Horn of Fog'}
@@ -111,7 +111,7 @@ minor:
     - {weight:  1, cost:   4000, name: 'Boro Bead (2nd)'}
     - {weight:  1, cost:   4000, name: 'Cautionary Creance'}
     - {weight:  1, cost:   4000, name: 'Escape Ladder'}
-    # - {weight:  1, cost:   4000, name: 'Far-Reaching Sight'}
+    - {weight:  1, cost:   4000, name: 'Far-Reaching Sight'}
     - {weight:  2, cost:   4000, name: 'Ioun Stone (Clear Spindle)'}
     - {weight:  1, cost:   4000, name: 'Marvellous Pigments'}
     - {weight:  8, cost:   4000, name: 'Page of Spell Knowledge (<%= spell %>)', spell: {level: 2, cls: spellpage}}
@@ -205,7 +205,7 @@ medium:
     - {weight:  1, cost:  10000, name: 'Eye of the Void'}
     - {weight:  1, cost:  10000, name: 'Figurine of Wondrous Power (Bronze Griffin)'}
     - {weight:  1, cost:  10000, name: 'Figurine of Wondrous Power (Ebony Fly'}
-    # - {weight:  1, cost:  10000, name: 'Figurine of Wondrous Power (Slate Spider)'}
+    - {weight:  1, cost:  10000, name: 'Figurine of Wondrous Power (Slate Spider)'}
     - {weight:  1, cost:  10000, name: 'Hourglass of Last Chances'}
     - {weight:  2, cost:  10000, name: 'Ioun Stone (Dark Blue Rhomboid)'}
     - {weight:  1, cost:  10000, name: 'Ki Mat'}
