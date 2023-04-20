@@ -7,7 +7,7 @@ on:
       - "v[0-9]+.[0-9]+.[0-9]+*"
 
 concurrency:
-  group: docker-${{ github.ref }}
+  group: publish-release-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -29,22 +29,8 @@ jobs:
       - uses: softprops/turnstyle@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/cache@v3
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{
-            hashFiles(format('{0}{1}', github.workspace, '/mix.exs')) }}-${{
-            hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}-${{
-            hashfiles(format('{0}{1}', github.workspace, '/Dockerfile')) }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
       - uses: docker/build-push-action@v4
         with:
           push: true
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           tags: ${{ steps.tag_detection.outputs.tag }}
-          cache-from: type=local,src=/tmp/.buildx-cache,mode=max
-          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
-      - run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache{-new,}

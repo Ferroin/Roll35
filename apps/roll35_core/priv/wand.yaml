@@ -1,6 +1,0 @@
----
-- {minor:  5, medium:  0, major:  0, name: 'Wand of <%= spell %>', spell: {level: 0}}
-- {minor: 55, medium:  0, major:  0, name: 'Wand of <%= spell %>', spell: {level: 1}}
-- {minor: 40, medium: 60, major:  0, name: 'Wand of <%= spell %>', spell: {level: 2}}
-- {minor:  0, medium: 40, major: 60, name: 'Wand of <%= spell %>', spell: {level: 3}}
-- {minor:  0, medium:  0, major: 40, name: 'Wand of <%= spell %>', spell: {level: 4}}

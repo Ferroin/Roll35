@@ -1,0 +1,316 @@
+---
+minor:
+  lesser:
+    - {weight: 80, bonus: 1, enchants: []}
+    - {weight:  4, specific: [shield, minor, lesser]}
+    - {weight: 16, specific: [armor, minor, lesser]}
+  greater:
+    - {weight: 26, bonus: 1, enchants: []}
+    - {weight: 27, bonus: 2, enchants: []}
+    - {weight: 27, bonus: 1, enchants: [1]}
+    - {weight:  4, specific: [shield, minor, greater]}
+    - {weight: 16, specific: [armor, minor, greater]}
+medium:
+  lesser:
+    - {weight: 10, bonus: 1, enchants: []}
+    - {weight: 10, bonus: 2, enchants: []}
+    - {weight: 12, bonus: 3, enchants: []}
+    - {weight: 12, bonus: 1, enchants: [1]}
+    - {weight: 12, bonus: 1, enchants: [1, 1]}
+    - {weight: 12, bonus: 1, enchants: [2]}
+    - {weight: 12, bonus: 2, enchants: [1]}
+    - {weight:  4, specific: [shield, medium, lesser]}
+    - {weight: 16, specific: [armor, medium, lesser]}
+  greater:
+    - {weight: 10, bonus: 2, enchants: []}
+    - {weight: 12, bonus: 3, enchants: []}
+    - {weight: 10, bonus: 1, enchants: [1]}
+    - {weight: 12, bonus: 1, enchants: [2]}
+    - {weight: 12, bonus: 2, enchants: [1]}
+    - {weight: 12, bonus: 2, enchants: [2]}
+    - {weight: 12, bonus: 3, enchants: [1]}
+    - {weight:  4, specific: [shield, medium, greater]}
+    - {weight: 16, specific: [armor, medium, greater]}
+major:
+  lesser:
+    - {weight: 10, bonus: 3, enchants: []}
+    - {weight: 12, bonus: 4, enchants: []}
+    - {weight: 10, bonus: 1, enchants: [2]}
+    - {weight: 12, bonus: 1, enchants: [3]}
+    - {weight: 12, bonus: 2, enchants: [2]}
+    - {weight: 12, bonus: 3, enchants: [1]}
+    - {weight: 12, bonus: 4, enchants: [1]}
+    - {weight:  4, specific: [shield, major, lesser]}
+    - {weight: 16, specific: [armor, major, lesser]}
+  greater:
+    - {weight: 10, bonus: 4, enchants: []}
+    - {weight: 10, bonus: 5, enchants: []}
+    - {weight: 10, bonus: 4, enchants: [1]}
+    - {weight:  8, bonus: 4, enchants: [2]}
+    - {weight:  8, bonus: 4, enchants: [3]}
+    - {weight:  5, bonus: 4, enchants: [4]}
+    - {weight:  8, bonus: 5, enchants: [1]}
+    - {weight:  8, bonus: 5, enchants: [2]}
+    - {weight:  4, bonus: 5, enchants: [3]}
+    - {weight:  3, bonus: 5, enchants: [2, 2]}
+    - {weight:  3, bonus: 5, enchants: [4]}
+    - {weight:  3, bonus: 5, enchants: [5]}
+    - {weight:  4, specific: [shield, major, greater]}
+    - {weight: 16, specific: [armor, major, greater]}
+base:
+  # Certain armors that are only rarely used or very unlikely to be
+  # found as magic items are commented out below so that they aren't
+  # included in normal item generation. They can be re-enabled by
+  # removing the '# ' at the beginning of the entry.
+  - {cost:    3, type:  armor, tags: [light, cloth], name: 'Haramaki'}
+  - {cost:    5, type:  armor, tags: [light, cloth], name: 'Padded Armor'}
+  # - {cost:  100, type:  armor, tags: [light, cloth], name: 'Quilted Cloth Armor'}
+  - {cost:    1, type:  armor, tags: [light, cloth], name: 'Reinforced Tunic'}
+  # - {cost:   30, type:  armor, tags: [light, cloth], name: 'Silken Ceremonial Armor'}
+  - {cost:   15, type:  armor, tags: [light, leather], name: 'Lamellar Cuirass'}
+  - {cost:   10, type:  armor, tags: [light, leather], name: 'Leather Armor'}
+  - {cost:   50, type:  armor, tags: [light, leather], name: 'Rosewood Armor'}
+  # - {cost:   30, type:  armor, tags: [light, leather], name: 'Hellknight Leather Armor'}
+  - {cost:   20, type:  armor, tags: [light, leather], name: 'Hide Shirt'}
+  - {cost:  500, type:  armor, tags: [light, cloth], name: 'Leaf Armor'}
+  # - {cost:   25, type:  armor, tags: [light, cloth], name: 'Parade Armor'}
+  - {cost:  850, type:  armor, tags: [light, cloth], name: 'Spider-silk Bodysuit'}
+  - {cost:   25, type:  armor, tags: [light, leather], name: 'Studded Leather'}
+  - {cost:   20, type:  armor, tags: [light, wood], name: 'Wooden Armor'}
+  - {cost:  100, type:  armor, tags: [light, metal], name: 'Chain Shirt'}
+  - {cost:   60, type:  armor, tags: [light, leather], name: 'Lamellar Leather Armor'}
+  - {cost:   50, type:  armor, tags: [medium, metal], name: 'Armored Coat'}
+  - {cost:   75, type:  armor, tags: [medium, metal], name: 'Chain Coat'}
+  - {cost:   15, type:  armor, tags: [medium, leather], name: 'Hide Armor'}
+  - {cost:   80, type:  armor, tags: [medium, metal], name: 'Ice Coat'}
+  - {cost:  200, type:  armor, tags: [medium, metal], name: 'Do-Maru'}
+  - {cost:  250, type:  armor, tags: [medium, metal], name: 'Kikko'}
+  - {cost:  100, type:  armor, tags: [medium, horn], name: 'Lamellar Horn Armor'}
+  - {cost:   50, type:  armor, tags: [medium, metal], name: 'Scale Mail'}
+  - {cost:  200, type:  armor, tags: [medium, metal], name: 'Breastplate'}
+  - {cost:  400, type:  armor, tags: [medium, metal], name: 'Agile Breastplate'}
+  - {cost:  150, type:  armor, tags: [medium, metal], name: 'Chainmail'}
+  - {cost:  125, type:  armor, tags: [medium, metal], name: 'Four Mirror Armor'}
+  - {cost:  150, type:  armor, tags: [medium, metal], name: 'Lamellar Steel Armor'}
+  - {cost:  250, type:  armor, tags: [medium, metal], name: 'Mountain Pattern Armor'}
+  - {cost:  250, type:  armor, tags: [heavy, metal], name: 'Banded Mail'}
+  - {cost: 1200, type:  armor, tags: [heavy, metal], name: 'Field Plate'}
+  - {cost:  350, type:  armor, tags: [heavy, metal], name: 'Kusari Gusoku'}
+  - {cost:  200, type:  armor, tags: [heavy, metal], name: 'Lamellar Iron Armor'}
+  - {cost:  200, type:  armor, tags: [heavy, metal], name: 'Splint Mail'}
+  - {cost: 1000, type:  armor, tags: [heavy, metal], name: 'Tatami-do'}
+  - {cost: 2100, type:  armor, tags: [heavy, metal], name: 'Fortress Plate'}
+  - {cost:  600, type:  armor, tags: [heavy, metal], name: 'Half-Plate'}
+  - {cost:  850, type:  armor, tags: [heavy, metal], name: 'Agile Half-Plate'}
+  - {cost:  850, type:  armor, tags: [heavy, metal], name: 'Hell Knight Half-Plate'}
+  - {cost:  500, type:  armor, tags: [heavy, metal], name: 'Lamellar Stone Armor'}
+  - {cost: 1700, type:  armor, tags: [heavy, metal], name: 'O-Yoroi'}
+  - {cost: 1500, type:  armor, tags: [heavy, metal], name: 'Full Plate'}
+  - {cost: 1500, type:  armor, tags: [heavy, metal], name: 'Gray Maiden Plate'}
+  - {cost: 2000, type:  armor, tags: [heavy, metal], name: 'Hell Knight Plate'}
+  - {cost: 1800, type:  armor, tags: [heavy, metal], name: 'Stoneplate'}
+  - {cost:    5, type: shield, tags: [buckler, metal], name: 'Buckler'}
+  - {cost:   12, type: shield, tags: [light, wood], name: 'Klar'}
+  - {cost:   30, type: shield, tags: [light, leather], name: 'Leather Madu'}
+  - {cost:   40, type: shield, tags: [light, metal], name: 'Steel Madu'}
+  - {cost:    9, type: shield, tags: [light, metal], name: 'Light Steel Shield'}
+  - {cost:   59, type: shield, tags: [light, metal], name: 'Quickdraw Light Steel Shield'}
+  - {cost:    3, type: shield, tags: [light, wood], name: 'Light Wooden Shield'}
+  - {cost:   53, type: shield, tags: [light, wood], name: 'Quickdraw Light Wooden Shield'}
+  - {cost:   20, type: shield, tags: [heavy, metal], name: 'Heavy Steel Shield'}
+  - {cost:    7, type: shield, tags: [heavy, wood], name: 'Heavy Wooden Shield'}
+  # - {cost:   30, type: shield, tags: [tower, metal], name: 'Tower Shield'}
+  - {cost:   50, type: shield, tags: [heavy, metal], name: 'Steel Snarlshield'}
+  - {cost:   37, type: shield, tags: [heavy, wood], name: 'Wooden Snarlshield'}
+  - {cost:   50, type: shield, tags: [light, metal], name: 'Dwarven War-Shield'}
+specific:
+  armor:
+    minor:
+      lesser:
+        - {weight: 50, cost:   1000, name: 'Mithral Shirt'}
+        - {weight: 50, cost: varies, name: 'Masterwork (or special material) armor or shield'}
+      greater:
+        # Weights set to 1/1/1 instead of 33/33/34 as the obvious intent is a 1/3 chance.
+        - {weight:  1, cost:   2250, name: 'Mistmail'}
+        - {weight:  1, cost:   2565, name: 'Otyugh Hide'}
+        - {weight:  1, cost:   3300, name: 'Drigonhide Plate'}
+    medium:
+      lesser:
+        # Weights set to 1/1/1 instead of 33/33/34 as the obvious intent is a 1/3 chance.
+        - {weight:  1, cost:   5150, name: 'Elven Chain'}
+        - {weight:  1, cost:   5165, name: 'Rhino Hide'}
+        - {weight:  1, cost:   8910, name: 'Morlock Hide'}
+      greater:
+        - {weight: 15, cost:  10200, name: 'Adamantine Breastplate'}
+        - {weight: 10, cost:  10300, name: 'Soothsayer’s Rainment'}
+        - {weight: 13, cost:  10650, name: 'Equestrian Plate'}
+        - {weight: 12, cost:  11160, name: 'Enchanted Eelskin'}
+        - {weight: 12, cost:  12160, name: 'Boneless Leather'}
+        - {weight: 10, cost:  12405, name: 'Murderer’s Blackcloth'}
+        - {weight: 14, cost:  12650, name: 'Folding Plate'}
+        - {weight: 14, cost:  15200, name: 'Breastplate of Vanishing'}
+    major:
+      lesser:
+        - {weight: 13, cost:  16175, name: 'Armor of Insults'}
+        - {weight: 16, cost:  16500, name: 'Dwarven Plate'}
+        - {weight: 16, cost:  18900, name: 'Banded Mail of Luck'}
+        - {weight: 13, cost:  18910, name: 'Catskin Leather'}
+        - {weight: 13, cost:  22400, name: 'Celestial Armor'}
+        - {weight: 13, cost:  23850, name: 'Buccaneer’s Breastplate'}
+        - {weight: 16, cost:  24650, name: 'Plate Armor of the Deep'}
+      greater:
+        - {weight: 10, cost:  25400, name: 'Breastplate of Command'}
+        - {weight:  4, cost:  25400, name: 'Forsaken Banded Mail'}
+        - {weight: 10, cost:  26500, name: 'Mithral Full Plate of Speed'}
+        - {weight:  4, cost:  29350, name: 'Warden of the Woods'}
+        - {weight:  4, cost:  32350, name: 'Scarab Breastplate'}
+        - {weight:  6, cost:  39165, name: 'Giant Hide Armor (Ogre)'}
+        - {weight:  4, cost:  44215, name: 'Hamatula Hide'}
+        - {weight:  6, cost:  46665, name: 'Giant Hide Armor (Hill Giant)'}
+        - {weight:  4, cost:  52260, name: 'Demon Armor'}
+        - {weight:  6, cost:  54165, name: 'Giant Hide Armor ({{ keys.random("giant_armor3") }})'}
+        - {weight:  6, cost:  59165, name: 'Giant Hide Armor (Troll)'}
+        - {weight:  6, cost:  61300, name: 'Mail of Malevolence'}
+        - {weight:  6, cost:  69165, name: 'Giant Hide Armor (Cloud Giant)'}
+        - {weight:  6, cost:  76665, name: 'Giant Hide Armor (Storm Giant)'}
+        - {weight:  6, cost:  81250, name: 'Daystar Half Plate'}
+        - {weight:  8, cost: 137650, name: 'Invincible Armor'}
+        - {weight:  4, cost: 160650, name: 'Prismatic Plate'}
+  shield:
+    minor:
+      lesser:
+        - {weight: 20, cost:    120, name: 'Living Steel Heavy Shield'}
+        - {weight: 25, cost:    203, name: 'Darkwood Buckler'}
+        - {weight: 25, cost:    257, name: 'Darkwood Shield'}
+        - {weight: 30, cost:   1020, name: 'Mithral Heavy Shield'}
+      greater:
+        - {weight: 30, cost:   2159, name: 'Zombie Skin Shield'}
+        - {weight: 45, cost:   3153, name: 'Caster’s Shield'}
+        - {weight: 25, cost:   4655, name: 'Burglar’s Buckler'}
+    medium:
+      lesser:
+        - {weight: 35, cost:   5580, name: 'Spined Shield'}
+        - {weight: 15, cost:   7170, name: 'Dragonslayer’s Shield'}
+        - {weight: 15, cost:   8170, name: 'Collapsible Tower'}
+        - {weight: 35, cost:   9170, name: 'Lion’s Shield'}
+      greater:
+        - {weight: 20, cost:  10153, name: 'Greater Caster’s Shield'}
+        - {weight: 20, cost:  13170, name: 'Celestial Shield'}
+        - {weight: 20, cost:  14170, name: 'Maelstrom Shield'}
+        - {weight: 20, cost:  14170, name: 'Volcanic Shield'}
+        - {weight: 20, cost:  15170, name: 'Tempest Shield'}
+    major:
+      lesser:
+        - {weight: 20, cost:  16180, name: 'Battlement Shield'}
+        - {weight: 20, cost:  17257, name: 'Winged Shield'}
+        - {weight: 20, cost:  19170, name: 'Avalanche Shield'}
+        - {weight: 20, cost:  19180, name: 'Fortress Shield'}
+        - {weight: 20, cost:  20170, name: 'Wyrmslayer’s Shield'}
+      greater:
+        - {weight: 20, cost:  25180, name: 'Spell Ward Tower Shield'}
+        - {weight: 15, cost:  36155, name: 'Quick Block Buckler'}
+        - {weight: 15, cost:  36170, name: 'Belligerent Shield'}
+        - {weight: 15, cost:  46030, name: 'Force Tower'}
+        - {weight: 20, cost:  50170, name: 'Absorbing Shield'}
+        - {weight: 15, cost:  52620, name: 'Elysian Shield'}
+enchantments:
+  armor:
+    1:
+      - {weight:  6, name: 'Benevolent', cost: 2000}
+      - {weight:  6, name: 'Poison Resistant', cost: 2250}
+      - {weight:  6, name: 'Balanced'}
+      - {weight:  6, name: 'Bitter'}
+      - {weight:  6, name: 'Bolstering', limit: {only: [medium, heavy]}}
+      - {weight:  7, name: 'Champion'}
+      - {weight:  6, name: 'Dastard'}
+      - {weight:  7, name: 'Deathless'}
+      - {weight:  6, name: '{{ keys.random("bane") }} Defiant'}
+      - {weight:  7, name: 'Light Fortification', exclude: ['Moderate Fortification', 'Heavy Fortification']}
+      - {weight:  6, name: 'Grinding'}
+      - {weight:  6, name: 'Impervious'}
+      - {weight:  6, name: 'Mirrored', limit: {only: [metal]}}
+      - {weight:  7, name: 'Spell-Storing'}
+      - {weight:  6, name: 'Staunching'}
+      - {weight:  6, name: 'Warding'}
+    2:
+      - {weight: 12, name: 'Glamered', cost: 2700}
+      - {weight: 12, name: 'Jousting', cost: 3750}
+      - {weight: 14, name: 'Shadow', cost: 3750, exclude: ['Improved Shadow', 'Greater Shadow']}
+      - {weight: 14, name: 'Slick', cost: 3750, exclude: ['Adhesive', 'Improved Slick', 'Greater Slick']}
+      - {weight: 12, name: 'Expiditious', cost: 4000}
+      - {weight: 12, name: 'Creeping', cost: 5000}
+      - {weight: 12, name: 'Rllying', cost: 5000}
+      - {weight: 12, name: 'Spell Resistance (13)', exclude: ['Spell Resistance (15)', 'Spell Resistance (17)', 'Spell Resistance (19)']}
+    3:
+      - {weight:  8, name: 'Adhesive', cost: 7000, exclude: ['Slick', 'Improved Slick', 'Greater Slick']}
+      - {weight:  7, name: 'Brawling', limit: {only: [light]}}
+      - {weight:  7, name: 'Hosteling', cost: 7500}
+      - {weight:  9, name: 'Radiant', cost: 7500}
+      - {weight:  9, name: 'Delving', cost: 10000}
+      - {weight:  8, name: 'Putrid', cost: 10000}
+      - {weight:  9, name: 'Moderate Fortification', exclude: ['Light Fortification', 'Heavy Fortification']}
+      - {weight:  9, name: 'Ghost Touch'}
+      - {weight:  9, name: 'Invulnerability'}
+      - {weight:  9, name: 'Spell Resistance (15)', exclude: ['Spell Resistance (13)', 'Spell Resistance (17)', 'Spell Resistance (19)']}
+      - {weight:  8, name: 'Titanic'}
+      - {weight:  8, name: 'Wild'}
+    4:
+      - {weight: 16, name: 'Harmonizing', cost: 15000}
+      - {weight: 17, name: 'Improved Shadow', cost: 15000, exclude: ['Shadow', 'Greater Shadow']}
+      - {weight: 17, name: 'Improved Slick', cost: 15000, exclude: ['Adhesive', 'Slick', 'Greater Slick']}
+      - {weight: 17, name: '{{ keys.random("energy") }} Resistance', cost: 18000, exclude: ['Improved {{ keys.random("energy") }} Resistance', 'Greater {{ keys.random("energy") }} Resistance']}
+      - {weight: 16, name: 'Martyring', cost: 18000, exclude: ['Light Fortification', 'Moderate Fortification', 'Heavy Fortification']}
+      - {weight: 17, name: 'Spell Resistance (17)', exclude: ['Spell Resistance (13)', 'Spell Resistance (15)', 'Spell Resistance (19)']}
+    5:
+      - {weight:  8, name: 'Righteous', cost: 27000, exclude: ['Unrighteous']}
+      - {weight:  7, name: 'Unbound', cost: 27000, exclude: ['Vigilant']}
+      - {weight:  8, name: 'Unrighteous', cost: 27000, exclude: ['Righteous']}
+      - {weight:  7, name: 'Vigilant', cost: 27000, exclude: ['Unbound']}
+      - {weight:  7, name: 'Determination', cost: 30000}
+      - {weight:  8, name: 'Greater Shadow', cost: 33750, exclude: ['Shadow', 'Improved Shadow']}
+      - {weight:  8, name: 'Greater Slick', cost: 33750, exclude: ['Adhesive', 'Slick', 'Improved Slick']}
+      - {weight:  8, name: 'Improved {{ keys.random("energy") }} Resistance', cost: 42000, exclude: ['{{ keys.random("energy") }} Resistance', 'Greater {{ keys.random("energy") }} Resistance']}
+      - {weight:  8, name: 'Etherealness', cost: 49000}
+      - {weight:  7, name: 'Undead Controlling', cost: 49000}
+      - {weight:  8, name: 'Greater {{ keys.random("energy") }} Resistance', cost: 66000, exclude: ['{{ keys.random("energy") }} Resistance', 'Improved {{ keys.random("energy") }} Resistance']}
+      - {weight:  8, name: 'Heavy Fortification', exclude: ['Light Fortification', 'Moderate Fortification']}
+      - {weight:  8, name: 'Spell Resistance (19)', exclude: ['Spell Resistance (13)', 'Spell Resistance (15)', 'Spell Resistance (17)']}
+  shield:
+    1:
+      - {weight: 10, name: 'Poison Resistant', cost: 2250}
+      - {weight:  9, name: 'Arrow Catching'}
+      - {weight:  9, name: 'Bashing'}
+      - {weight:  9, name: 'Blinding'}
+      - {weight:  9, name: 'Clangorous'}
+      - {weight:  9, name: '{{ keys.random("bane") }} Defiant'}
+      - {weight:  9, name: 'Light Fortification', exclude: ['Moderate Fortification', 'Heavy Fortification']}
+      - {weight:  9, name: 'Grinding'}
+      - {weight:  9, name: 'Impervious'}
+      - {weight:  9, name: 'Mirrored', limit: {only: [metal]}}
+      - {weight:  9, name: 'Ramming', limit: {only: [light, heavy]}}
+    2:
+      - {weight: 15, name: 'Rallying', cost: 5000}
+      - {weight: 15, name: 'Wyrmbreath ({{ keys.random("elemental") }})', cost: 5000}
+      - {weight: 20, name: 'Animated', limit: {not: [tower]}}
+      - {weight: 17, name: 'Arrow Deflection'}
+      - {weight: 15, name: 'Merging', limit: {only: [light, heavy]}}
+      - {weight: 18, name: 'Spell Resistance (13)', exclude: ['Spell Resistance (15)', 'Spell Resistance (17)', 'Spell Resistance (19)']}
+    3:
+      - {weight: 15, name: 'Hosteling', cost: 7500}
+      - {weight: 17, name: 'Radiant', cost: 7500}
+      - {weight: 17, name: 'Moderate Fortification', exclude: ['Light Fortification', 'Heavy Fortification']}
+      - {weight: 17, name: 'Ghost Touch'}
+      - {weight: 17, name: 'Spell Resistance (15)', exclude: ['Spell Resistance (13)', 'Spell Resistance (17)', 'Spell Resistance (19)']}
+      - {weight: 15, name: 'Wild'}
+      # The SRD table is missing entries covering 99 and 100.
+    4:
+      - {weight: 50, name: '{{ keys.random("energy") }} Resistance', cost: 18000, exclude: ['Improved {{ keys.random("energy") }} Resistance', 'Greater {{ keys.random("energy") }} Resistance']}
+      - {weight: 50, name: 'Spell Resistance (17)', exclude: ['Spell Resistance (13)', 'Spell Resistance (15)', 'Spell Resistance (19)']}
+    5:
+      - {weight: 11, name: 'Determination', cost: 30000}
+      - {weight: 16, name: 'Improved {{ keys.random("energy") }} Resistance', cost: 42000, exclude: ['{{ keys.random("energy") }} Resistance', 'Greater {{ keys.random("energy") }} Resistance']}
+      - {weight: 11, name: 'Undead Controlling', cost: 49000}
+      - {weight: 17, name: 'Greater {{ keys.random("energy") }} Resistance', cost: 66000, exclude: ['{{ keys.random("energy") }} Resistance', 'Improved {{ keys.random("energy") }} Resistance']}
+      - {weight: 15, name: 'Heavy Fortification', exclude: ['Light Fortification', 'Moderate Fortification']}
+      - {weight: 15, name: 'Reflecting'}
+      - {weight: 15, name: 'Spell Resistance (19)', exclude: ['Spell Resistance (13)', 'Spell Resistance (15)', 'Spell Resistance (17)']}

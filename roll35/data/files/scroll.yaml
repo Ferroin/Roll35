@@ -1,0 +1,11 @@
+---
+- {minor:  5, medium:  0, major:  0, name: 'Scroll of {{ spell }}', spell: {level: 0, cls: random}}
+- {minor: 45, medium:  0, major:  0, name: 'Scroll of {{ spell }}', spell: {level: 1, cls: random}}
+- {minor: 45, medium:  5, major:  0, name: 'Scroll of {{ spell }}', spell: {level: 2, cls: random}}
+- {minor:  5, medium: 60, major:  0, name: 'Scroll of {{ spell }}', spell: {level: 3, cls: random}}
+- {minor:  0, medium: 30, major:  5, name: 'Scroll of {{ spell }}', spell: {level: 4, cls: random}}
+- {minor:  0, medium:  5, major: 45, name: 'Scroll of {{ spell }}', spell: {level: 5, cls: random}}
+- {minor:  0, medium:  0, major: 20, name: 'Scroll of {{ spell }}', spell: {level: 6, cls: random}}
+- {minor:  0, medium:  0, major: 15, name: 'Scroll of {{ spell }}', spell: {level: 7, cls: random}}
+- {minor:  0, medium:  0, major: 10, name: 'Scroll of {{ spell }}', spell: {level: 8, cls: random}}
+- {minor:  0, medium:  0, major:  5, name: 'Scroll of {{ spell }}', spell: {level: 9, cls: random}}

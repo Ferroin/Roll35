@@ -1,0 +1,76 @@
+---
+medium:
+  lesser:
+    - {weight: 10, cost:   7200, name: 'Staff of Blessed Relief'}
+    - {weight: 10, cost:   8000, name: 'Staff of Minor Arcana'}
+    - {weight: 10, cost:   8800, name: 'Staff of Tricks'}
+    - {weight: 15, cost:   9600, name: 'Staff of the Scout'}
+    - {weight: 10, cost:  14400, name: 'Staff of Eidolons'}
+    - {weight: 12, cost:  14800, name: 'Staff of Acompaniment'}
+    - {weight: 17, cost:  16000, name: 'Staff of Understanding'}
+    - {weight: 16, cost:  17600, name: 'Staff of Charming'}
+  greater:
+    - {weight: 11, cost:  18950, name: 'Staff of Fire'}
+    - {weight: 10, cost:  19200, name: 'Staff of Courage'}
+    - {weight:  8, cost:  20000, name: 'Staff of Belittling'}
+    - {weight:  9, cost:  20800, name: 'Staff of Feast and Famine'}
+    - {weight: 11, cost:  20800, name: 'Staff of Rigor'}
+    - {weight: 11, cost:  22800, name: 'Staff of Swarming Insects'}
+    - {weight:  8, cost:  23000, name: 'Staff of Authority'}
+    - {weight: 13, cost:  23200, name: 'Staff of Radiance'}
+    - {weight: 11, cost:  26150, name: 'Staff of Size Alteration'}
+    - {weight:  8, cost:  27000, name: 'Staff of Journeys'}
+major:
+  lesser:
+    - {weight:  4, cost:  28600, name: 'Staff of Acid'}
+    - {weight:  4, cost:  28800, name: 'Staff of Shrieking'}
+    - {weight:  3, cost:  29600, name: 'Chaotic Staff'}
+    - {weight:  3, cost:  29600, name: 'Holy Staff'}
+    - {weight:  3, cost:  29600, name: 'Lawful Staff'}
+    - {weight:  4, cost:  29600, name: 'Staff of Healing'}
+    - {weight:  3, cost:  29600, name: 'Unholy Staff'}
+    - {weight:  4, cost:  30000, name: 'Staff of the Master (Necromancy)'}
+    - {weight:  4, cost:  30200, name: 'Staff of Spiders'}
+    - {weight:  4, cost:  31900, name: 'Staff of Electricity'}
+    - {weight:  3, cost:  32000, name: 'Heretic’s Bane'}
+    - {weight:  3, cost:  32000, name: 'Musical Staff'}
+    - {weight:  4, cost:  32800, name: 'Staff of Souls'}
+    - {weight:  4, cost:  34200, name: 'Staff of Toxins'}
+    - {weight:  4, cost:  36800, name: 'Staff of Stealth'}
+    - {weight:  4, cost:  37310, name: 'Staff of the Avenger'}
+    - {weight:  4, cost:  37600, name: 'Staff of Aspects'}
+    - {weight:  4, cost:  39600, name: 'Staff of Speaking'}
+    - {weight:  4, cost:  41400, name: 'Staff of Frost'}
+    - {weight:  4, cost:  41600, name: 'Staff of Bolstering'}
+    - {weight:  4, cost:  43500, name: 'Staff of Curses'}
+    - {weight:  7, cost:  47000, name: 'Staff of Dark Flame'}
+    - {weight:  4, cost:  47200, name: 'Staff of Cackling Wrath'}
+    - {weight:  4, cost:  48800, name: 'Staff of Performance'}
+    - {weight:  4, cost:  49800, name: 'Animate Staff'}
+    - {weight:  3, cost:  51000, name: 'Staff of Revelations'}
+  greater:
+    - {weight:  4, cost:  51500, name: 'Staff of Illumination'}
+    - {weight:  3, cost:  51600, name: 'Staff of Obstacles'}
+    - {weight:  3, cost:  54000, name: 'Staff of Heaven and Earth'}
+    - {weight:  4, cost:  54400, name: 'Staff of Travel'}
+    - {weight:  3, cost:  55866, name: 'Staff of Hoarding'}
+    - {weight:  3, cost:  56925, name: 'Staff of Traps'}
+    - {weight:  3, cost:  57200, name: 'Staff of Many Rays'}
+    - {weight:  3, cost:  58000, name: 'Staff of Mithral Might'}
+    - {weight:  3, cost:  62000, name: 'Staff of Defense'}
+    - {weight:  3, cost:  63960, name: 'Staff of the Planes'}
+    - {weight:  3, cost:  69300, name: 'Staff of Hungry Shadows'}
+    - {weight:  3, cost:  81000, name: '{{ keys.random("dragon", ":chromatic") }} Dragon Staff'}
+    - {weight:  3, cost:  81766, name: 'Staff of Slumber'}
+    # Each staff of a school of magic listed separately in official tables,
+    # shortened here because all are equally likely
+    - {weight: 40, cost:  82000, name: 'Staff of {{ keys.random("school") }}'}
+    - {weight:  2, cost:  84066, name: 'Staff of Weather'}
+    - {weight:  3, cost:  85800, name: 'Staff of Earth and Stone'}
+    - {weight:  2, cost:  86666, name: 'Staff of Vision'}
+    - {weight:  3, cost: 100400, name: 'Staff of the Woodlands'}
+    - {weight:  3, cost: 109400, name: 'Staff of Life'}
+    - {weight:  1, cost: 180200, name: 'Staff of One Hundred Hands'}
+    - {weight:  3, cost: 206900, name: 'Staff of Passage'}
+    - {weight:  1, cost: 220000, name: 'Staff of the Hierophant'}
+    - {weight:  1, cost: 235000, name: 'Staff of Power'}

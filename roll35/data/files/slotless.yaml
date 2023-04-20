@@ -1,0 +1,344 @@
+---
+minor:
+  least:
+    - {weight:  1, cost:     50, name: 'Feather Token (Anchor)'}
+    - {weight:  1, cost:     50, name: 'Universal Solvent'}
+    - {weight:  2, cost:     75, name: 'Ioun Torch'}
+    - {weight:  1, cost:    100, name: 'Stubborn Nail'}
+    - {weight:  1, cost:    100, name: 'War Paint of the Horrible Visage'}
+    - {weight:  1, cost:    150, name: 'Elixir of Love'}
+    - {weight:  1, cost:    150, name: 'Ungent of Timelessness'}
+    - {weight:  1, cost:    200, name: 'Feather Token (Fan)'}
+    - {weight:  1, cost:    200, name: 'Formula Alembic'}
+    - {weight:  1, cost:    200, name: 'Hybridization Funnel'}
+    - {weight:  1, cost:    200, name: 'Soul Soap'}
+    - {weight:  1, cost:    250, name: 'Dust of Tracelessness'}
+    - {weight:  3, cost:    250, name: 'Elixir of Hiding'}
+    - {weight:  3, cost:    250, name: 'Elixir of Swimming'}
+    - {weight:  3, cost:    250, name: 'Elixir of Tumbling'}
+    - {weight:  3, cost:    250, name: 'Elixir of Vision'}
+    - {weight:  2, cost:    250, name: 'Nihgtdrops'}
+    # - {weight:  1, cost:    250, name: 'Oil of Silence'}
+    - {weight:  3, cost:    250, name: 'Silversheen'}
+    - {weight:  1, cost:    250, name: 'Traveler’s Anytool'}
+    - {weight:  2, cost:    300, name: 'Bottle of Messages'}
+    - {weight:  2, cost:    300, name: 'Feather Token (Bird)'}
+    - {weight:  1, cost:    300, name: 'Origami Swarm'}
+    - {weight:  1, cost:    400, name: 'Alluring Golden Apple'}
+    - {weight:  1, cost:    400, name: 'Feather Token (Tree)'}
+    - {weight:  1, cost:    400, name: 'Key of Lock Jamming'}
+    - {weight:  2, cost:    450, name: 'Feather Token (Swam Boat)'}
+    - {weight:  1, cost:    500, name: 'Animated Portrait'}
+    - {weight:  1, cost:    500, name: 'Bottled Misfortune'}
+    - {weight:  2, cost:    500, name: 'Elixir of Truth'}
+    - {weight:  2, cost:    500, name: 'Feather Token (Whip)'}
+    - {weight:  3, cost:    500, name: 'Scabbard of Honing'}
+    - {weight:  2, cost:    550, name: 'Seer’s Tea'}
+    - {weight:  4, cost:    600, name: 'Abjurant Salt'}
+    - {weight:  4, cost:    600, name: 'Arrow Magnet'}
+    - {weight:  2, cost:    600, name: 'Dust of Darkness'}
+    - {weight:  6, cost:    720, name: 'Campfiree Bead'}
+    - {weight:  3, cost:    750, name: 'Archon’s Torch'}
+    - {weight:  3, cost:    750, name: 'Lesser Book of Extended Summoning ({{ keys.random("alignment") }})'}
+    - {weight:  4, cost:    750, name: 'Iron Rope'}
+    - {weight:  4, cost:    750, name: 'Snapleaf'}
+    - {weight:  3, cost:    800, name: 'Bottled Yeti Fur'}
+    - {weight:  3, cost:    800, name: 'Defoliant Polish'}
+    - {weight:  3, cost:    800, name: 'Dust of Emulation'}
+    - {weight:  5, cost:    800, name: 'Steadfast Gut Stone'}
+    - {weight:  3, cost:    800, name: 'Dust of Dryness'}
+  lesser:
+    - {weight:  3, reroll: [wondrous, slotless, minor, least]}
+    - {weight:  1, cost:   1000, name: 'Anatomy Doll'}
+    - {weight:  1, cost:   1000, name: 'Bead of Newt Prevention'}
+    - {weight:  1, cost:   1000, name: 'Beast-Bond Brand'}
+    - {weight:  1, cost:   1000, name: 'Bookplate of Recall'}
+    - {weight:  2, cost:   1000, name: 'Boro Bead (1st)'}
+    - {weight:  1, cost:   1000, name: 'Concealing Pocket'}
+    - {weight:  1, cost:   1000, name: 'Dowsing Syrup'}
+    - {weight:  1, cost:   1000, name: 'Incense of Transcendence'}
+    - {weight:  2, cost:   1000, name: 'Page of Spell Knowledge (<%= spell %>)', spell: {level: 1, cls: spellpage}}
+    - {weight:  3, cost:   1000, name: 'Pearl of Power (1st)'}
+    - {weight:  1, cost:   1000, name: 'Preserving Flask (1st)'}
+    - {weight:  2, cost:   1000, name: 'Pyxes of Redirected Focus'}
+    - {weight:  2, cost:   1000, name: 'Salve of Slipperyness'}
+    - {weight:  1, cost:   1000, name: 'Wasp Nest of Swarming'}
+    - {weight:  3, cost:   1100, name: 'Elixir of Fire Breath'}
+    - {weight:  1, cost:   1100, name: 'Grave Salt'}
+    - {weight:  2, cost:   1150, name: 'Pipes of the Sewers'}
+    - {weight:  2, cost:   1200, name: 'Dust of Illusion'}
+    - {weight:  2, cost:   1200, name: 'Goblin Skull Bomb'}
+    - {weight:  3, cost:   1400, name: 'Elixir of Dragon Breath ({{ keys.random("dragon", "any") }})'}
+    - {weight:  1, cost:   1500, name: 'Bookmark of Deception'}
+    - {weight:  1, cost:   1500, name: 'Bottle of Wind'}
+    - {weight:  1, cost:   1600, name: 'Dust of Acid Consumption'}
+    - {weight:  2, cost:   1800, name: 'Dust of Appearance'}
+    - {weight:  2, cost:   1800, name: 'Efficient Quiver'}
+    - {weight:  1, cost:   1800, name: 'Pipes of Sounding'}
+    - {weight:  1, cost:   1800, name: 'Scabbard of Vigor'}
+    - {weight:  1, cost:   2000, name: 'Agile Alpenstock'}
+    - {weight:  1, cost:   2000, name: 'Clamor Box'}
+    # - {weight:  1, cost:   2000, name: 'Dry Load Powder Horn'}
+    - {weight:  1, cost:   2000, name: 'Goblin Fire Drum'}
+    - {weight:  2, cost:   2000, name: 'Handy Haversack'}
+    - {weight:  2, cost:   2000, name: 'Horn of Fog'}
+    - {weight:  1, cost:   2000, name: 'Iron Spike of Safe Passage'}
+    - {weight:  1, cost:   2200, name: 'Knight’s Pennon of Honor'}
+    - {weight:  4, cost:   2200, name: 'Volatile Vaporizer (1st)'}
+    - {weight:  3, cost:   2250, name: 'Elemental Gem ({{ keys.random("elemental_plane") }})'}
+    - {weight:  2, cost:   2250, name: 'Flying Ointment'}
+    - {weight:  1, cost:   2400, name: 'Soverign Glue'}
+    - {weight:  1, cost:   2500, name: 'Apple of Eternal Sleep'}
+    - {weight:  2, cost:   2500, name: 'Bag of Holding (Type I)'}
+    - {weight:  1, cost:   2500, name: 'Candle of Truth'}
+    - {weight:  1, cost:   2500, name: 'Hexing Doll'}
+    - {weight:  2, cost:   2700, name: 'Stone of Alarm'}
+    - {weight:  1, cost:   2750, name: 'Standard Book of Extended Summoning ({{ keys.random("alignment") }})'}
+    - {weight:  4, cost:   3000, name: 'Bead of Force'}
+    - {weight:  1, cost:   3000, name: 'Cauldron of Brewing'}
+    - {weight:  2, cost:   3000, name: 'Chime of Opening'}
+    - {weight:  1, cost:   3000, name: 'Philter of Love'}
+    - {weight:  5, cost:   3000, name: 'Rope of Climbing'}
+    - {weight:  2, cost:   3000, name: 'Volatile Vaporizer (2nd)'}
+    - {weight:  1, cost:   3300, name: 'Shroud of Disintegration'}
+    - {weight:  3, cost:   3400, name: 'Gray Bag of Tricks'}
+    - {weight:  3, cost:   3500, name: 'Dust of Disappearance'}
+    - {weight:  1, cost:   3600, name: 'Dust of Weighty Burdens'}
+    - {weight:  1, cost:   3600, name: 'Noble’s Vigilant Pillbox'}
+    - {weight:  2, cost:   3800, name: 'Figurine of Wondrous Power (Silver Raven)'}
+    - {weight:  1, cost:   3800, name: 'Volatile Vaporizer (3rd)'}
+  greater:
+    - {weight:  1, cost:   4000, name: 'Boro Bead (2nd)'}
+    - {weight:  1, cost:   4000, name: 'Cautionary Creance'}
+    - {weight:  1, cost:   4000, name: 'Escape Ladder'}
+    # - {weight:  1, cost:   4000, name: 'Far-Reaching Sight'}
+    - {weight:  2, cost:   4000, name: 'Ioun Stone (Clear Spindle)'}
+    - {weight:  1, cost:   4000, name: 'Marvellous Pigments'}
+    - {weight:  8, cost:   4000, name: 'Page of Spell Knowledge (<%= spell %>)', spell: {level: 2, cls: spellpage}}
+    - {weight: 10, cost:   4000, name: 'Pearl of Power (2nd)'}
+    - {weight:  1, cost:   4000, name: 'Preserving Flask (2nd)'}
+    - {weight:  1, cost:   4000, name: 'Restorative Ointment'}
+    - {weight:  3, cost:   4000, name: 'Stone Salve'}
+    - {weight:  1, cost:   4400, name: 'Wind Caller Compass'}
+    - {weight:  1, cost:   4500, name: 'Greater Goblin Fire Drum'}
+    - {weight:  1, cost:   4500, name: 'Knight’s Pennon of Battle'}
+    - {weight:  1, cost:   4500, name: 'Knight’s Pennon of Parley'}
+    - {weight:  1, cost:   4500, name: 'Void Dust'}
+    - {weight:  1, cost:   4900, name: 'Incense of Meditation'}
+    - {weight:  1, cost:   5000, name: 'Admixture Vial'}
+    - {weight: 14, cost:   5000, name: 'Bag of Holding (type II)'}
+    - {weight:  1, cost:   5000, name: 'Bone Razor'}
+    - {weight:  1, cost:   5000, name: 'Horn of the Huntmaster'}
+    - {weight:  1, cost:   5000, name: 'Insistent Doorknocker'}
+    - {weight:  2, cost:   5000, name: 'Ioun Stone (Dusty Rose Prism)'}
+    - {weight:  1, cost:   5000, name: 'Mallet of Building'}
+    - {weight:  1, cost:   5000, name: 'Polymorphic Pouch'}
+    - {weight:  1, cost:   5000, name: 'Scabbard of Stanching'}
+    - {weight:  1, cost:   5000, name: 'School of Eyes'}
+    - {weight:  1, cost:   5000, name: 'Sheath of Bladestealth'}
+    - {weight:  1, cost:   5000, name: 'Stone of Alliance'}
+    - {weight:  1, cost:   5000, name: 'Summoning Shackle'}
+    - {weight:  1, cost:   5400, name: 'Eversmoking Bottle'}
+    - {weight:  1, cost:   5400, name: 'Sustaining Spoon'}
+    - {weight:  1, cost:   5500, name: 'Wind Fan'}
+    - {weight:  1, cost:   5800, name: 'Grim Lantern'}
+    - {weight:  1, cost:   6000, name: 'Coin of the Untrodden Road'}
+    - {weight:  1, cost:   6000, name: 'Horn of Battle Clarity'}
+    - {weight:  1, cost:   6000, name: 'Life Link Badge'}
+    - {weight:  1, cost:   6000, name: 'Martyr’s Tear'}
+    - {weight:  1, cost:   6000, name: 'Pipes of Haunting'}
+    - {weight:  1, cost:   6000, name: 'Rope of Knots'}
+    - {weight:  1, cost:   6000, name: 'Singing Bell of Striking'}
+    - {weight:  1, cost:   6000, name: 'Stone Familiar'}
+    - {weight:  1, cost:   6126, name: 'Greater Book of Extended Summoning ({{ keys.random("alignment") }})'}
+    - {weight:  1, cost:   6400, name: 'Dragonbone Diviniation Sticks'}
+    # Horn of goodness/evil is listed as two slots in the official
+    # table, but it’s range overlaps with the Naga-Scale Bindi. Cutting
+    # it to one in this table to have the correct number of entries.
+    - {weight:  1, cost:   6500, name: 'Horn of Goodness/Evil'}
+    - {weight:  1, cost:   6600, name: 'Naga-Scale Bindi ({{ keys.random("naga") }})'}
+    - {weight:  1, cost:   7000, name: 'Bottle of Shadows'}
+    - {weight:  1, cost:   7000, name: 'Cape of Bravado'}
+    - {weight:  2, cost:   7000, name: 'Instant Bridge'}
+    - {weight:  1, cost:   7000, name: 'Mirror of Guarding Reflections'}
+    - {weight:  1, cost:   7200, name: 'Folding Boat'}
+    - {weight:  2, cost:   7250, name: 'Bottle of Air'}
+    - {weight:  7, cost:   7400, name: 'Bag of Holding (type III)'}
+    - {weight:  1, cost:   7500, name: 'Balm of Impish Grace'}
+    - {weight:  1, cost:   7500, name: 'Candle of Clean Air'}
+    - {weight:  1, cost:   7500, name: 'Harp of Charming'}
+    - {weight:  3, cost:   7500, name: 'Manual of War'}
+medium:
+  lesser:
+    - {weight:  1, cost:   8000, name: 'Chalice of Poison Weeping'}
+    - {weight:  1, cost:   8000, name: 'Exorcist’s Aspergillum'}
+    - {weight:  1, cost:   8000, name: 'Golem Manual (Flesh)'}
+    - {weight:  1, cost:   8000, name: 'Harp of Shattering'}
+    - {weight:  1, cost:   8000, name: 'Insignia of Valor'}
+    - {weight:  1, cost:   8000, name: 'Ioun Stone (Deep Red Sphere)'}
+    - {weight:  1, cost:   8000, name: 'Ioun Stone (Iridescent Blue Sphere)'}
+    - {weight:  1, cost:   8000, name: 'Ioun Stone (Pale Blue Rhomboid)'}
+    - {weight:  1, cost:   8000, name: 'Ioun Stone (Pink and Green Sphere)'}
+    - {weight:  1, cost:   8000, name: 'Ioun Stone (Pink Rhomboid)'}
+    - {weight:  1, cost:   8000, name: 'Ioun Stone (Scarlet and Blue Sphere)'}
+    - {weight:  1, cost:   8000, name: 'Needles of Fleshgraving'}
+    - {weight:  1, cost:   8000, name: 'Restless Lockpicks'}
+    - {weight:  1, cost:   8000, name: 'Werewhistle'}
+    - {weight:  2, cost:   8100, name: 'Deck of Illusions'}
+    - {weight:  1, cost:   8400, name: 'Candle of Invocation'}
+    - {weight:  2, cost:   8500, name: 'Rust Bag of Tricks'}
+    - {weight:  1, cost:   9000, name: 'Boro Bead (3rd)'}
+    - {weight:  1, cost:   9000, name: 'Decanter of Endless Water'}
+    - {weight:  1, cost:   9000, name: 'Loathsome Mirror'}
+    - {weight:  3, cost:   9000, name: 'Page of Spell Knowledge (<%= spell %>)', spell: {level: 3, cls: spellpage}}
+    - {weight:  6, cost:   9000, name: 'Pearl of Power (3rd)'}
+    - {weight:  1, cost:   9000, name: 'Preserving Flask (3rd)'}
+    - {weight:  1, cost:   9100, name: 'Figurine of Wondrous Power (Serpentine Owl)'}
+    - {weight:  1, cost:   9600, name: 'Lesser Strand of Prayer Beads'}
+    - {weight:  4, cost:  10000, name: 'Bag of Holding (type IV)'}
+    - {weight:  1, cost:  10000, name: 'Boundary Chalk'}
+    - {weight:  1, cost:  10000, name: 'Chime of Resounding Silence'}
+    - {weight:  1, cost:  10000, name: 'Construct Channel Brick'}
+    - {weight:  1, cost:  10000, name: 'Doomharp'}
+    - {weight:  1, cost:  10000, name: 'Drum of Advance and Retreat'}
+    - {weight:  1, cost:  10000, name: 'Embalming Thread'}
+    - {weight:  1, cost:  10000, name: 'Eye of the Void'}
+    - {weight:  1, cost:  10000, name: 'Figurine of Wondrous Power (Bronze Griffin)'}
+    - {weight:  1, cost:  10000, name: 'Figurine of Wondrous Power (Ebony Fly'}
+    # - {weight:  1, cost:  10000, name: 'Figurine of Wondrous Power (Slate Spider)'}
+    - {weight:  1, cost:  10000, name: 'Hourglass of Last Chances'}
+    - {weight:  2, cost:  10000, name: 'Ioun Stone (Dark Blue Rhomboid)'}
+    - {weight:  1, cost:  10000, name: 'Ki Mat'}
+    - {weight:  1, cost:  10000, name: 'Lord’s Banner of Swiftness'}
+    - {weight:  1, cost:  10000, name: 'Malleable Symbol'}
+    - {weight:  1, cost:  10000, name: 'Migrus Locker'}
+    - {weight:  1, cost:  10000, name: 'Ornament of Healing Light'}
+    - {weight:  1, cost:  10000, name: 'Prayer Wheel of Ethical Strength'}
+    - {weight:  1, cost:  10000, name: 'Stone Horse (Courser)'}
+    - {weight:  1, cost:  10000, name: 'Summon Slave Crystal'}
+    - {weight:  1, cost:  10000, name: 'Treasurer’s Seal'}
+    - {weight:  1, cost:  12000, name: 'Black Soul Shard'}
+    - {weight:  1, cost:  12000, name: 'Golem Manual (Clay)'}
+    - {weight:  1, cost:  12000, name: 'Horsemaster’s Saddle'}
+    - {weight:  1, cost:  12000, name: 'Pipes of Dissolution'}
+    - {weight:  1, cost:  12000, name: 'Pipes of Pain'}
+    - {weight:  1, cost:  12000, name: 'Seeker’s Sight'}
+    - {weight:  1, cost:  12500, name: 'Blessed Book'}
+    - {weight:  1, cost:  12500, name: 'Waters of Transfiguration'}
+    - {weight:  1, cost:  13000, name: 'Gem of Brightness'}
+    - {weight:  1, cost:  13000, name: 'Harp of the Contagion'}
+    - {weight:  1, cost:  13000, name: 'Lyre of Building'}
+    - {weight:  1, cost:  14000, name: 'Void Pennant'}
+    - {weight:  1, cost:  14800, name: 'Stone Horse (Destrier)'}
+    - {weight:  1, cost:  15000, name: 'Book of the Loremaster'}
+    - {weight:  1, cost:  15000, name: 'Cauldron of Plenty'}
+    - {weight:  1, cost:  15000, name: 'Horn of Judgement'}
+    - {weight:  1, cost:  15000, name: 'Horn of the Tritons'}
+    - {weight:  1, cost:  15300, name: 'Pearl of the Sirines'}
+    - {weight:  1, cost:  15500, name: 'Figurine of Wondrous Power (Onyx Dog)'}
+    - {weight:  2, cost:  16000, name: 'Tan Bag of Tricks'}
+    - {weight:  1, cost:  16000, name: 'Boro Bead (4th)'}
+    - {weight:  1, cost:  16000, name: 'Page of Spell Knowledge (<%= spell %>)', spell: {level: 4, cls: spellpage}}
+    - {weight:  4, cost:  16000, name: 'Pearl of Power (4th)'}
+    - {weight:  1, cost:  16000, name: 'Preserving Flask (4th)'}
+    - {weight:  3, cost:  16000, name: 'Scabbard of Keen Edges'}
+    - {weight:  2, cost:  16500, name: 'Figurine of Wondrous Power (Golden Lions)'}
+    - {weight:  2, cost:  16800, name: 'Chime of Interruption'}
+    - {weight:  4, cost:  17000, name: 'Broom of Flying'}
+    - {weight:  1, cost:  17000, name: 'Figurine of Wondrous Power (Marble Elephant)'}
+  greater:
+    - {weight:  4, cost:  18000, name: 'Ioun Stone (Iridescent Spindle)'}
+    - {weight:  1, cost:  18000, name: 'Orb of Foul Abbadon'}
+    - {weight:  4, cost:  20000, name: 'Carpet of Flying (5ft by 5 ft)'}
+    - {weight:  1, cost:  20000, name: 'Horn of Antagonism'}
+    - {weight:  4, cost:  20000, name: 'Horn of Blasting'}
+    - {weight:  4, cost:  20000, name: 'Ioun Stone (Pale Lavender Elipsoid)'}
+    - {weight:  4, cost:  20000, name: 'Ioun Stone (Pearly White Spindle'}
+    - {weight:  3, cost:  20000, name: 'Master’s Perfect Golden Bell'}
+    - {weight:  3, cost:  20000, name: 'Necromancer’s Athame'}
+    - {weight:  4, cost:  20000, name: 'Portable Hole'}
+    - {weight:  4, cost:  20000, name: 'Stone of Luck'}
+    - {weight:  2, cost:  21000, name: 'Figurine of Wondrous Power (Ivory Goats)'}
+    - {weight:  3, cost:  21000, name: 'Rope of Entanglement'}
+    - {weight:  2, cost:  22000, name: 'Golem Manual (Stone)'}
+    - {weight:  1, cost:  22000, name: 'Orb of Golden Heaven'}
+    - {weight:  2, cost:  23348, name: 'Mattock of the Titans'}
+    - {weight:  3, cost:  24000, name: 'Drinking Horn of Bottomless Valor'}
+    - {weight:  3, cost:  25000, name: 'Boro Bead (5th)'}
+    - {weight:  2, cost:  25000, name: 'Chaos Emerald'}
+    - {weight:  4, cost:  25000, name: 'Page of Spell Knowledge (<%= spell %>)', spell: {level: 5, cls: spellpage}}
+    - {weight:  6, cost:  25000, name: 'Pearl of Power (5th)'}
+    - {weight:  3, cost:  25000, name: 'Preserving Flask (5th)'}
+    - {weight:  2, cost:  25305, name: 'Maul of the titans'}
+    - {weight:  4, cost:  26000, name: 'Iron Bands of Binding'}
+    - {weight:  3, cost:  27000, name: 'Cube of Frost Resistance'}
+    - {weight: 24, cost:  27500, name: '{{ keys.random("stat_book") }} +1'}
+major:
+  lesser:
+    - {weight:  4, cost:  28500, name: 'Figurine of Wondrous Power (Obsidian Steed)'}
+    - {weight:  3, cost:  30000, name: 'Cauldron of the Dead'}
+    - {weight:  4, cost:  30000, name: 'Drums of Panic'}
+    - {weight:  4, cost:  30000, name: 'Ioun Stone (Orange Prism)'}
+    - {weight:  4, cost:  30000, name: 'Ioun Stone (Pale Green Prism)'}
+    - {weight:  4, cost:  30000, name: 'Lantern of Revealing'}
+    - {weight:  4, cost:  30000, name: 'Racing Broom of Flying'}
+    - {weight:  4, cost:  33000, name: 'Cauldron of Ressurection'}
+    - {weight:  5, cost:  35000, name: 'Carpet of Flying (5ft by 10ft)'}
+    - {weight:  2, cost:  35000, name: 'Golem Manual (Iron)'}
+    - {weight:  2, cost:  36000, name: 'Boro Bead (6th)'}
+    - {weight:  4, cost:  36000, name: 'Ioun Stone (Vibrant Purple Prism)'}
+    - {weight:  4, cost:  36000, name: 'Orb of utter Chaos'}
+    - {weight:  2, cost:  36000, name: 'Page of Spell Knowledge (<%= spell %>)', spell: {level: 6, cls: spellpage}}
+    - {weight:  8, cost:  36000, name: 'Pearl of Power (6th)'}
+    - {weight:  2, cost:  36000, name: 'Preserving Flask (6th)'}
+    - {weight:  4, cost:  40000, name: 'Cauldron of Flying'}
+    - {weight:  2, cost:  40000, name: 'Enmity Fetish'}
+    - {weight:  3, cost:  40000, name: 'Ioun Stone (Lavendar and Green Elipsoid)'}
+    - {weight:  4, cost:  40000, name: 'Ring Gates'}
+    - {weight:  4, cost:  42000, name: 'Cauldron of Seeing'}
+    - {weight:  4, cost:  42000, name: 'Crystal Ball'}
+    - {weight:  2, cost:  44000, name: 'Golem Manual (Stone Guardian)'}
+    - {weight:  4, cost:  45000, name: 'Drums of Haste'}
+    - {weight:  4, cost:  45800, name: 'Standard Strand of Prayer Beads'}
+    - {weight:  3, cost:  48000, name: 'Orb of Storms'}
+    - {weight:  2, cost:  49000, name: 'Page of Spell Knowledge (<%= spell %>)', spell: {level: 7, cls: spellpage}}
+    - {weight:  4, cost:  49000, name: 'Pearl of Power (7th)'}
+  greater:
+    - {weight:  3, cost:  50000, name: 'Crystal Ball with _See Invisibility_'}
+    - {weight:  2, cost:  50000, name: 'Horn of Valhalla'}
+    - {weight:  3, cost:  51000, name: 'Crystal Ball with _Detect Thoughts_'}
+    - {weight:  1, cost:  52000, name: 'Last Leaves of the Autumn Dryad'}
+    - {weight:  2, cost:  52000, name: 'Instant Fortress'}
+    - {weight: 24, cost:  55000, name: '{{ keys.random("stat_book") }} +2'}
+    - {weight:  1, cost:  56000, name: 'Lord’s Banner of Terror'}
+    - {weight:  1, cost:  60000, name: 'Carpet of Flying (10ft by 10ft)'}
+    - {weight:  2, cost:  60000, name: 'Darkskull'}
+    - {weight:  1, cost:  60000, name: 'Orb of Pure Law'}
+    - {weight:  1, cost:  62000, name: 'Cube of Force'}
+    - {weight:  2, cost:  64000, name: 'Pageof Spell Knowledge (<%= spell %>)', spell: {level: 8, cls: spellpage}}
+    - {weight:  6, cost:  64000, name: 'Pearl of Power (8th)'}
+    - {weight:  1, cost:  70000, name: 'Crystal Ball with _Telepathy_'}
+    - {weight:  1, cost:  70000, name: 'Greater Horn of Blasting'}
+    - {weight:  3, cost:  70000, name: 'Pearl of Power (two spells)'}
+    - {weight:  1, cost:  75000, name: 'Gem of Seeing'}
+    - {weight:  1, cost:  75000, name: 'Lord’s Banner of Victory'}
+    - {weight:  1, cost:  80000, name: 'Crystal Ball with _True Seeing_'}
+    - {weight:  2, cost:  81000, name: 'Page of Spell Knowledge (<%= spell %>)', spell: {level: 9, cls: spellpage}}
+    - {weight:  3, cost:  81000, name: 'Pearl of Power (9th)'}
+    - {weight:  1, cost:  82000, name: 'Well of Many Worlds'}
+    - {weight: 12, cost:  82500, name: '{{ keys.random("stat_book") }} +3'}
+    - {weight:  1, cost:  90000, name: 'Apparatus of the Crab'}
+    - {weight:  1, cost:  90000, name: 'Bowl of Conjuring Water Elementals'}
+    - {weight:  1, cost:  90000, name: 'Braier of Conjuring Fire Elementals'}
+    - {weight:  1, cost:  90000, name: 'Censer of Conjuring Air Elementals'}
+    - {weight:  1, cost:  90000, name: 'Stone of Conjuring Earth Elementals'}
+    - {weight:  1, cost:  92000, name: 'Mirror of Opposition'}
+    - {weight:  1, cost:  95800, name: 'Greater Strand of Prayer Beads'}
+    - {weight:  1, cost: 100000, name: 'Lord’s Banner of Crusades'}
+    - {weight:  6, cost: 110000, name: '{{ keys.random("stat_book") }} +4'}
+    - {weight:  6, cost: 137500, name: '{{ keys.random("stat_book") }} +5'}
+    - {weight:  1, cost: 145000, name: 'Efreeti Bottle'}
+    - {weight:  1, cost: 164000, name: 'Cubic Gate'}
+    - {weight:  1, cost: 170000, name: 'Iron Flask'}
+    - {weight:  1, cost: 175000, name: 'Mirror of Mental Prowess'}
+    - {weight:  1, cost: 200000, name: 'Mirror of Life Trapping'}
