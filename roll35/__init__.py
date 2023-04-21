@@ -9,7 +9,7 @@ import nextcord
 
 from nextcord.ext import commands
 
-from .common import prepare_cog, PREFIX
+from .common import prepare_cog
 
 from .core import Core
 from .spell import Spell
@@ -62,7 +62,14 @@ def main(token):
     intents = nextcord.Intents.default()
     intents.message_content = True
 
-    bot = Bot(command_prefix=PREFIX + ' ', intents=intents)
+    bot = Bot(
+        case_insensitive=True,
+        command_prefix=[
+            '/r35 ',
+            '/R35 ',
+        ],
+        intents=intents,
+    )
     renderer = Renderer(POOL, bot)
 
     @bot.event

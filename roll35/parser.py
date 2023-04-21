@@ -48,7 +48,7 @@ class Parser:
             match lexer.get_token():
                 case lexer.eof:
                     return (True, ret)
-                case token if token in self._rindex:
+                case token if token.casefold() in self._rindex:
                     key = self._rindex[token]
                     value = lexer.get_token()
                     schema = self._schema[key]
@@ -58,10 +58,10 @@ class Parser:
 
                     if 'type' in schema:
                         try:
-                            ret[key] = schema['type'](value)
+                            ret[key] = schema['type'](value.casefold())
                         except Exception:
                             return (False, f'Failed to parse `{ value }` as value for `{ token }`.')
                     else:
-                        ret[key] = value
+                        ret[key] = value.casefold()
                 case token:
                     return (False, f'Unrecognized token `{ token }`.')
