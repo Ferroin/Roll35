@@ -9,8 +9,6 @@ from pathlib import Path
 
 from ruamel.yaml import YAML
 
-PREFIX = '/r35'
-
 DATA_ROOT = Path(__file__).parent / 'data' / 'files'
 
 yaml = YAML(typ='safe')
