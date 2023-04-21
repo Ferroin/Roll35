@@ -9,7 +9,7 @@ import nextcord
 
 from nextcord.ext import commands
 
-from .common import prepare_cog
+from .common import prepare_cog, did_you_mean
 
 from .core import Core
 from .spell import Spell
@@ -68,7 +68,19 @@ async def register_cogs(bot, renderer):
 class Bot(commands.Bot):
     async def on_command_error(self, ctx, exception):
         if isinstance(exception, commands.errors.CommandNotFound):
-            return await ctx.send(f'{ exception.command_name } is not a recognized command.')
+            loop = asyncio.get_running_loop()
+
+            match await loop.run_in_executor(
+                POOL,
+                did_you_mean,
+                [x.name for x in self.walk_commands()],
+                exception.command_name,
+                True,
+            ):
+                case (True, msg):
+                    return await ctx.send(f'{ exception.command_name } is not a recognized command. { msg }')
+                case (False, _):
+                    return await ctx.send(f'{ exception.command_name } is not a recognized command.')
 
         await super().on_command_error(ctx, exception)
 
