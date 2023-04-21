@@ -29,6 +29,22 @@ COGS = [
 
 POOL = ProcessPoolExecutor()
 
+DESCRIPTION = '''Roll items and spells for first-edition Pathfinder.
+
+Note that currently we do not support:
+
+- Rolling random materials for magic armor and weapons.
+- Rolling stored spells for items capable of storing spells.
+- Rolling for whether an item is intelligent or not.
+- Rolling for whether magic items have special markings or not.
+- Rolling skills for items that provide skill ranks.
+
+This bot is capable of responding to direct messages, though you will
+still need to use the command prefix.
+
+Supported commands, grouped by category:
+'''
+
 logger = logging.getLogger(__name__)
 
 
@@ -68,7 +84,9 @@ def main(token):
             '/r35 ',
             '/R35 ',
         ],
+        description=DESCRIPTION,
         intents=intents,
+        strip_after_prefix=True,
     )
     renderer = Renderer(POOL, bot)
 
