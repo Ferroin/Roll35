@@ -1,6 +1,7 @@
 '''Common functions used throughout the module.'''
 
 import itertools
+import logging
 import random
 import unicodedata
 
@@ -13,6 +14,7 @@ from ruamel.yaml import YAML
 DATA_ROOT = Path(__file__).parent / 'data' / 'files'
 
 yaml = YAML(typ='safe')
+logger = logging.getLogger(__name__)
 
 
 async def prepare_cog(cog):
@@ -104,7 +106,9 @@ def did_you_mean(items, name, flat_items=False):
     if not flat_items:
         items = [x['name'] for x in items]
 
-    for item, idx in enumerate(norm_string(x) for x in items):
+    logger.debug(f'Evaluating possible typos for { name } in { items }')
+
+    for idx, item in enumerate(norm_string(x) for x in items):
         if item.startswith(name):
             possible.append((items[idx], 1.2))
         elif item.endswith(name):
@@ -118,13 +122,12 @@ def did_you_mean(items, name, flat_items=False):
 
     if possible:
         possible = sorted(possible, key=lambda x: x[1], reverse=True)
-        possible = itertools.takewhile(lambda x: x < 5, possible)
+        possible = [x[0] for x in possible][0:5]
         possible = ', '.join(possible)
 
         return (
             True,
-            f'"{ name }" is not a recognized item, ' +
-            f'did you possibly mean one of: { possible }'
+            f'Did you possibly mean one of: { possible }'
         )
     else:
         return (False, 'No matching items found.')

@@ -180,7 +180,10 @@ class Agent:
                     [items, norm_name],
                 ):
                     case (True, msg):
-                        return (False, msg)
+                        return (
+                            False,
+                            f'{ name } is not a recognized item.\n { msg }'
+                        )
                     case (False, msg):
                         return (False, msg)
             case item:
