@@ -1,0 +1,55 @@
+---
+# Configuration for the pr-labeler workflow.
+
+area/bot:
+  - any:
+      - '*.py'
+      - '**/*.py'
+    all:
+      - '!convert_spells_csv.py'
+      - '!roll35/common.py'
+      - '!roll35/data/**/*.py'
+      - '!roll35/data/*.py'
+      - '!roll35/parser.py'
+      - '!roll35/renderer.py'
+      - '!scripts/*'
+      - '!scripts/**/*'
+
+area/common:
+  - roll35/common.py
+
+area/data-handling:
+  - roll35/data/*.py
+  - roll35/data/**/*.py
+
+area/parser:
+  - roll35/parser.py
+
+area/renderer:
+  - roll35/renderer.py
+
+dataset:
+  - roll35/data/files/*
+  - roll35/data/files/**/*
+
+documentation:
+  - LICENSE
+  - README.md
+
+infra:
+  - .gigignore
+  - .gitmodules
+  - .github/labeler.yml
+  - .github/labels.yml
+
+infra/ci:
+  - scripts/check-labels.py
+  - .flake8
+  - .github/dependabot.yml
+  - .github/workflows/**
+  - .mdl-style.rb
+  - .yamllint.yml
+
+infra/packaging:
+  - Dockerfile
+  - requirements.txt

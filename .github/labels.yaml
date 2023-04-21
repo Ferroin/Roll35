@@ -1,0 +1,112 @@
+# Configuration of GitHub labels
+
+# Default labels
+#
+# These are derived from the standard set of default labels provided by GitHub, albeit with custom descriptions
+# in many cases.
+- name: bug
+  description: Something isn’t working
+  color: d73a4a
+- name: documentation
+  description: Improvements or additions to documentation
+  color: 0075ca
+- name: duplicate
+  description: This issue or pull request already exists
+  color: cfd3d7
+- name: enhancement
+  description: New feature or request
+  color: a2eeef
+- name: good first issue
+  description: Good for newcomers
+  color: 7057ff
+- name: help wanted
+  description: Extra attention is needed
+  color: '008672'
+- name: invalid
+  description: This issue is in some way invalid
+  color: e4e669
+- name: question
+  description: A question about femtoRE, but not nescesarily a bug
+  color: d876e3
+- name: wontfix
+  description: This will not be worked on
+  color: ffffff
+
+# Extra categorical labels
+#
+# Additional labels that describe issues or PRs
+
+- name: upstream bug
+  description: A bug resulting from an upstream issue
+  color: d93f0b
+- name: expected behavior
+  description: A bug report about intentional behavior
+  color: c2e0c6
+
+# CI labels
+#
+# These explcitly trigger specific CI jobs on PRs.
+
+- name: ci/actionlint
+  description: Force running Actionlint against labelled PRs, even if it would not normally run.
+  color: &ci 50340e
+- name: ci/flake8
+  description: Force running flake8 against labelled PRs, even if it would not normally run.
+  color: *ci
+- name: ci/languagetool
+  description: Force running languagetool against labeled PRs, even if it would not normally run.
+  color: *ci
+- name: ci/markdownlint
+  description: Force running markdownlint against labeled PRs, even if it would not normally run.
+  color: *ci
+- name: ci/shellcheck
+  description: Force running shellcheck against labelled PRs, even if it would not normally be run.
+  color: *ci
+- name: ci/yamllint
+  description: Force running yamllint against labelled PRs, even if it would not normally be run.
+  color: *ci
+
+# Area labels
+#
+# These labels identify specific areas of the code.
+- name: area/bot
+  description: Issues and PRs involving the bot itself.
+  color: &area afa4d5
+- name: area/common
+  description: Issues and PRs involving our utility functions.
+  color: *area
+- name: area/data-handling
+  description: Issues and PRs involving the data handling code.
+  color: *area
+- name: area/parser
+  description: Issues and PRs involving the command argument parser.
+  color: *area
+- name: area/renderer
+  description: Issues and PRs involving the item renderer.
+  color: *area
+
+- name: infra
+  description: Issues and PRs involving our infrastructure that have no more specific label.
+  color: &infra f1f6b2
+- name: infra/ci
+  description: Issues and PRs involving our CI infrastructure
+  color: *infra
+- name: infra/packaging
+  description: Issues and PRs involving our packaging code and dependencies.
+  color: *infra
+- name: infra/deps
+  description: Issues and PRs relating to dependencies.
+  color: *infra
+- name: infra/deps/python
+  description: Issues and PRs relating to Python dependencies.
+  color: *infra
+- name: infra/deps/github-actions
+  description: Issues and PRs relating to Github Actions dependencies.
+  color: *infra
+- name: infra/deps/docker
+  description: Issues and PRs relating to Docker dependencies.
+  color: *infra
+
+- name: dataset
+  description: Issues and PRs about our bundled data set.
+  color: &dataset 2c731b
