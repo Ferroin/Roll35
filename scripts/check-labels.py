@@ -182,19 +182,19 @@ def check_dependabot_labels(labels, dependabot_config):
 
 
 try:
-    LABELS_CONFIG = YAML.load(SRC_DIR / '.github' / 'labels.yaml')
+    LABELS_CONFIG = YAML.load(SRC_DIR / '.github' / 'labels.yml')
 except (YAMLError, IOError, OSError):
     print('!!! Failed to load labels configuration file.')
     sys.exit(1)
 
 try:
-    LABELER_CONFIG = YAML.load(SRC_DIR / '.github' / 'labeler.yaml')
+    LABELER_CONFIG = YAML.load(SRC_DIR / '.github' / 'labeler.yml')
 except (YAMLError, IOError, OSError):
     print('!!! Failed to load labeler configuration file.')
     sys.exit(1)
 
 try:
-    DEPENDABOT_CONFIG = YAML.load(SRC_DIR / '.github' / 'dependabot.yaml')
+    DEPENDABOT_CONFIG = YAML.load(SRC_DIR / '.github' / 'dependabot.yml')
 except (YAMLError, IOError, OSError):
     print('!!! Failed to load labeler configuration file.')
     sys.exit(1)

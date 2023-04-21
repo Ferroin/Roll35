@@ -6,8 +6,8 @@ on:
     branches:
       - main
     paths:
-      - .github/labels.yaml
-      - .github/workflows/label-sync.yaml
+      - .github/labels.yml
+      - .github/workflows/label-sync.yml
 
 concurrency:
   group: label-sync-${{ github.ref }}
