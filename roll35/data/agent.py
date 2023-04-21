@@ -5,14 +5,11 @@
    code to work with that data. '''
 
 import asyncio
-import itertools
 import logging
 import random
 
-from jaro import jaro_winkler_metric as jwm
-
 from . import types
-from ..common import norm_string, rnd
+from ..common import norm_string, rnd, did_you_mean
 
 logger = logging.getLogger(__name__)
 
@@ -115,50 +112,6 @@ class Agent:
         self._pool = pool
         self.logger = logger
 
-    @staticmethod
-    def _find_possible(items, name):
-        '''Construct a message when an item is not found.
-
-           This searches for items that fit one of four criteria:
-
-           1. Items whose name starts with the specified name.
-           2. Items whose name ends with the specified name.
-           3. Items whose name contains the specified name.
-           4. Items whose name is at least 80% similar to the specified name.
-
-           The similarity check uses the Jaro-Winkler metric.
-
-           The five highest ranking items are listed as possibilites
-           if any are found, with prefix and suffix matches outranking
-           substring matches, and substring matches outranking similar
-           names.'''
-        possible = []
-
-        for item, idx in enumerate(norm_string(x['name']) for x in items):
-            if item.startswith(name):
-                possible.append((items[idx], 1.2))
-            elif item.endswith(name):
-                possible.append((items[idx], 1.2))
-            elif name in item:
-                possible.append((items[idx], 1.1))
-            else:
-                jaro = jwm(item, name)
-                if jaro >= 0.8:
-                    possible.append((items[idx], jaro))
-
-        if possible:
-            possible = sorted(possible, key=lambda x: x[1], reverse=True)
-            possible = itertools.takewhile(lambda x: x < 5, possible)
-            possible = ', '.join(possible)
-
-            return (
-                False,
-                f'"{ name }" is not a recognized item, ' +
-                f'did you possibly mean one of: { possible }'
-            )
-        else:
-            return (False, 'No matching items found.')
-
     def _valid_rank(self, rank):
         return rank in self._data
 
@@ -222,10 +175,14 @@ class Agent:
 
         match next((x for x in items if norm_string(x['name']) == norm_name), None):
             case None:
-                return await self._process_aync(
-                    self._find_possible,
-                    [items, norm_name]
-                )
+                match await self._process_async(
+                    did_you_mean,
+                    [items, norm_name],
+                ):
+                    case (True, msg):
+                        return (False, msg)
+                    case (False, msg):
+                        return (False, msg)
             case item:
                 return (True, item)
 

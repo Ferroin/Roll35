@@ -7,6 +7,7 @@ import unicodedata
 from functools import lru_cache
 from pathlib import Path
 
+from jaro import jaro_winkler_metric as jwm
 from ruamel.yaml import YAML
 
 DATA_ROOT = Path(__file__).parent / 'data' / 'files'
@@ -80,3 +81,50 @@ def flatten(items):
     for i in items:
         for j in i:
             yield j
+
+
+def did_you_mean(items, name, flat_items=False):
+    '''Construct a message when an item is not found.
+
+       This searches for items that fit one of four criteria:
+
+       1. Items whose name starts with the specified name.
+       2. Items whose name ends with the specified name.
+       3. Items whose name contains the specified name.
+       4. Items whose name is at least 80% similar to the specified name.
+
+       The similarity check uses the Jaro-Winkler metric.
+
+       The five highest ranking items are listed as possibilites
+       if any are found, with prefix and suffix matches outranking
+       substring matches, and substring matches outranking similar
+       names.'''
+    possible = []
+
+    if not flat_items:
+        items = [x['name'] for x in items]
+
+    for item, idx in enumerate(norm_string(x) for x in items):
+        if item.startswith(name):
+            possible.append((items[idx], 1.2))
+        elif item.endswith(name):
+            possible.append((items[idx], 1.2))
+        elif name in item:
+            possible.append((items[idx], 1.1))
+        else:
+            jaro = jwm(item, name)
+            if jaro >= 0.8:
+                possible.append((items[idx], jaro))
+
+    if possible:
+        possible = sorted(possible, key=lambda x: x[1], reverse=True)
+        possible = itertools.takewhile(lambda x: x < 5, possible)
+        possible = ', '.join(possible)
+
+        return (
+            True,
+            f'"{ name }" is not a recognized item, ' +
+            f'did you possibly mean one of: { possible }'
+        )
+    else:
+        return (False, 'No matching items found.')
