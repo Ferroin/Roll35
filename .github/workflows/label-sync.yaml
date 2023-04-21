@@ -1,4 +1,6 @@
+---
 name: Sync Labels
+
 on:
   push:
     branches:
@@ -6,9 +8,11 @@ on:
     paths:
       - .github/labels.yml
       - .github/workflows/label-sync.yml
+
 concurrency:
   group: label-sync-${{ github.ref }}
   cancel-in-progress: true
+
 jobs:
   sync-labels:
     runs-on: ubuntu-latest
