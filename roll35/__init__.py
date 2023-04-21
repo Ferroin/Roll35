@@ -66,7 +66,13 @@ async def register_cogs(bot, renderer):
 
 
 class Bot(commands.Bot):
-    async def on_error(event_method, *args, **kwargs):
+    async def on_command_error(self, ctx, exception):
+        if isinstance(exception, commands.errors.CommandNotFound):
+            return await ctx.send(f'{ exception.command_name } is not a recognized command.')
+
+        await super().on_command_error(ctx, exception)
+
+    async def on_error(self, event_method, *args, **kwargs):
         match sys.exc_info():
             case (concurrent.futures.BrokenExecutor, _, _):
                 raise
