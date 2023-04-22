@@ -1,4 +1,4 @@
-FROM python:3.11-alpine AS builder
+FROM alpine:3.17 AS builder
 
 ARG VERSION=dev
 
@@ -22,13 +22,20 @@ COPY /scripts/version-check.sh /app/scripts/version-check.sh
 
 RUN . /app/venv/bin/activate && /app/scripts/version-check.sh ${VERSION}
 
-FROM python:3.11-alpine AS runtime
+FROM alpine:3.17 AS runtime
 
 ARG VERSION=dev
 
-COPY --from=builder /app /app
+RUN mkdir -p /app
+
 COPY /*.md /app
 COPY /scripts/run.sh /app/scripts/run.sh
+
+RUN apk update && \
+    apk add --no-cache libffi \
+                       python3
+
+COPY --from=builder /app /app
 
 CMD [ "/app/scripts/run.sh" ]
 
