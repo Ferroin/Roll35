@@ -1,5 +1,5 @@
 ---
-name: ReviewDog
+name: Review
 
 on:
   pull_request: null

@@ -5,39 +5,33 @@ related games.
 
 ## Features
 
-* Shows itself as typing while processing commands.
-* Roll for random magic items in a single command. This automatically
+- Shows itself as typing while processing commands.
+- Roll for random magic items in a single command. This automatically
   handles most of the sequential rolls required to produce an exact
   magic item.
-* Automatically roll random spells for scrolls, potions, and wands.
-* Roll random spells, optionally for a specific level, class, or category.
-* Roll random mundane weapons and armor.
-* Roll specific base weapons or armor as magic items.
-* Roll wands or scrolls for a specific class.
+- Automatically roll random spells for scrolls, potions, and wands.
+- Roll random spells, optionally for a specific level, class, or category.
+- Roll random mundane weapons and armor.
+- Roll specific base weapons or armor as magic items.
+- Roll wands or scrolls for a specific class.
 
 ## Planned Features
 
-* Automatically roll random spells present in items that store spells.
-* Automatically roll for intelligence/special markings on magic items.
-* Roll for random weather conditions.
-* Roll against arbitrary data tables.
-* Respond with embeds containing relevent information about the rolled
+- Automatically roll random spells present in items that store spells.
+- Automatically roll for intelligence/special markings on magic items.
+- Roll for random weather conditions.
+- Roll for magic item availability in settlements.
+- Respond with embeds containing relevent information about the rolled
   item, including hyperlinks to relevant reference material.
-* Roll dice by themselves.
-* Fetch data on specific items directly without rolling for them randomly.
-* The ability to enable and disable specific items at runtime (with
-  per-server/user config).
-* Support for custom command prefixes (with per-server/user config).
-* Support for server permissions (with per-server config).
-* Support for joining to specific channels only (with per-server config).
+- Fetch data on specific items directly without rolling for them randomly.
 
 ## Limitations
 
-* No support for special materials for magic weapons and armor. This is
+- No support for special materials for magic weapons and armor. This is
   actually _really_ complicated because of the limitations on how different
   materials can be used for specific items. I would like to support it,
   but it's likely to take a long time.
-* No support for rolling associated skills on headband items that boost
+- No support for rolling associated skills on headband items that boost
   INT. This is intentionally left to the GM to determine, as in many cases
   which skills are picked are not truly random. May be added at some
   point in the future once per-server configuration support is added.
@@ -64,15 +58,19 @@ built from the official repo with the standard data set are available on
 
 The following environment variables are used by the image:
 
-* `DISCORD_TOKEN`: Specifies the Discord bot account token to use
+- `DISCORD_TOKEN`: Specifies the Discord bot account token to use
   to connect to Discord. See the excellent [guide provided by
   `discord.py`](https://discordpy.readthedocs.io/en/latest/discord.html)
   for info on how to create a bot account and invite it to your server.
-* `LOG_LEVEL`: Specifies the minimum severity level of log messages to
+- `LOG_LEVEL`: Specifies the minimum severity level of log messages to
   produce. Valid values (in descending order of severity) are:
   `emergency`, `alert`, `critical`, `error`, `warning`, `notice`,
   `info`, `debuga`. It is not recommended to set this any higher than
   `error`.
+
+If you just want to run the bot locally to test it though, you can do
+so using the `scripts/run.sh` script. It utilizes the exact same
+environment variables that the Docker image does.
 
 ## Data Sets
 

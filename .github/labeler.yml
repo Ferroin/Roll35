@@ -28,6 +28,10 @@ area/parser:
 area/renderer:
   - roll35/renderer.py
 
+area/scripts:
+  - scripts/*
+  - scripts/**/*
+
 dataset:
   - roll35/data/files/*
   - roll35/data/files/**/*
