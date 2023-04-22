@@ -26,7 +26,7 @@ FROM python:3.11-alpine AS runtime
 
 ARG VERSION=dev
 
-COPY --from=builder /app/roll35 /app/roll35
+COPY --from=builder /app /app
 COPY /*.md /app
 COPY /scripts/run.sh /app/scripts/run.sh
 
