@@ -19,4 +19,4 @@ FROM python:3.11-alpine AS runtime
 
 COPY --from=builder /app /app
 
-CMD [ "/app/run.sh" ]
+CMD [ "/app/scripts/run.sh" ]
