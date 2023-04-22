@@ -1,3 +1,6 @@
+# Copyright (c) 2023 Austin S. Hemmelgarn
+# SPDX-License-Identifier: MITNFA
+
 '''Cog for handling spells.'''
 
 import logging

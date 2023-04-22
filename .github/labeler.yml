@@ -33,7 +33,7 @@ dataset:
   - roll35/data/files/**/*
 
 documentation:
-  - LICENSE
+  - LICENSE.md
   - README.md
 
 infra:

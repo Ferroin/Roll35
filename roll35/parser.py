@@ -1,3 +1,6 @@
+# Copyright (c) 2023 Austin S. Hemmelgarn
+# SPDX-License-Identifier: MITNFA
+
 '''Provides basic command parameter parsing functionality.'''
 
 import logging

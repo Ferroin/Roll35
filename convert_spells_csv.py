@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+#
+# Copyright (c) 2020 Austin S. Hemmelgarn
+# SPDX-License-Identifier: MITNFA
 
 import csv
 

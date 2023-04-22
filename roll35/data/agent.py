@@ -1,3 +1,6 @@
+# Copyright (c) 2023 Austin S. Hemmelgarn
+# SPDX-License-Identifier: MITNFA
+
 '''Functions and classes for accessing item data.
 
    Data agents are used to encapsulate the data processed from our data
