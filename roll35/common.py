@@ -13,6 +13,8 @@ from ruamel.yaml import YAML
 
 DATA_ROOT = Path(__file__).parent / 'data' / 'files'
 
+VERSION = (3, 0, 0)
+
 yaml = YAML(typ='safe')
 logger = logging.getLogger(__name__)
 

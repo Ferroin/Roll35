@@ -9,7 +9,7 @@ import nextcord
 
 from nextcord.ext import commands
 
-from .common import prepare_cog, did_you_mean
+from .common import VERSION, prepare_cog, did_you_mean
 
 from .core import Core
 from .spell import Spell
@@ -29,7 +29,7 @@ COGS = [
 
 POOL = ProcessPoolExecutor()
 
-DESCRIPTION = '''Roll items and spells for first-edition Pathfinder.
+BOT_HELP = '''Roll items and spells for first-edition Pathfinder.
 
 Note that currently we do not support:
 
@@ -44,6 +44,8 @@ still need to use the command prefix.
 
 Supported commands, grouped by category:
 '''
+
+__version__ = f'{ VERSION[0] }.{ VERSION[1] }.{ VERSION[2] }'
 
 logger = logging.getLogger(__name__)
 
@@ -102,7 +104,7 @@ def main(token):
             '/r35 ',
             '/R35 ',
         ],
-        description=DESCRIPTION,
+        description=BOT_HELP,
         intents=intents,
         strip_after_prefix=True,
     )
