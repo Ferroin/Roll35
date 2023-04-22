@@ -85,6 +85,9 @@
 - name: area/renderer
   description: Issues and PRs involving the item renderer.
   color: *area
+- name: area/scripts
+  description: Issues and PRs involving our developer support scripts.
+  color: *area
 
 - name: infra
   description: Issues and PRs involving our infrastructure that have no more specific label.
