@@ -28,4 +28,4 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           build-args: VERSION=edge
-          tags: ahferroin7/roll35:edge
+          tags: ahferroin7/roll35:edge,ahferroin7/roll35:latest

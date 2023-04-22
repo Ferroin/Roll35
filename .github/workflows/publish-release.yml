@@ -20,7 +20,7 @@ jobs:
       - id: tags
         run: |
           version="$(git describe --tags | cut -f 1 -d '-')"
-          echo "tags=ahferroin7/roll35:latest,$(scripts/gen-docker-tags.py '${version}' ahferroin7/roll35)" >> "${GITHUB_OUTPUT}"
+          echo "tags=ahferroin7/roll35:latest,ahferroin7/roll35:stable,$(scripts/gen-docker-tags.py '${version}' ahferroin7/roll35)" >> "${GITHUB_OUTPUT}"
           echo "version=${version}" >> "${GITHUB_OUTPUT}"
       - uses: docker/setup-qemu-action@v2
       - uses: docker/setup-buildx-action@v2
@@ -35,5 +35,5 @@ jobs:
         with:
           push: true
           platforms: linux/amd64,linux/arm64
-          build-args: VERSION=${{ steps.tags.outputs.tag }}
-          tags: ${{ steps.tags.outputs.tag }}
+          build-args: VERSION=${{ steps.tags.outputs.version }}
+          tags: ${{ steps.tags.outputs.tags }}
