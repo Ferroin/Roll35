@@ -5,7 +5,7 @@
 
 SCRIPT_DIR="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd -P)"
 
-if [ ! -f "${SCRIPT_DIR}/venv/bin/activate" ]; then
+if [ ! -f "${SCRIPT_DIR}/../venv/bin/activate" ]; then
     echo "ERROR: Could not find virtual environment to use."
 fi
 
