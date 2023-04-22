@@ -1,13 +1,17 @@
 Code is licensed under the MIT License with an additional clause requiring
 updated attributions for modified versions.
 
+Some files under the scripts directory are instead under different
+licenses. All such files contain the full license text of the relevant
+licenses.
+
 Data is licensed under the Open Gaming License version 1.0a
 
 ----
 
 Modified MIT License
 
-Copyright (c) 2020 Austin S. Hemmelgarn
+Copyright (c) 2020-2023 Austin S. Hemmelgarn
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

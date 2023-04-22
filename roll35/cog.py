@@ -1,3 +1,6 @@
+# Copyright (c) 2023 Austin S. Hemmelgarn
+# SPDX-License-Identifier: MITNFA
+
 '''Base class for all of our cogs.'''
 
 import logging

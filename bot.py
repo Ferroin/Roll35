@@ -1,4 +1,7 @@
 #!python
+#
+# Copyright (c) 2023 Austin S. Hemmelgarn
+# SPDX-License-Identifier: MITNFA
 
 import logging
 import logging.config
