@@ -9,7 +9,9 @@ if [ ! -f "${SCRIPT_DIR}/venv/bin/activate" ]; then
     echo "ERROR: Could not find virtual environment to use."
 fi
 
-# shellcheck disable=SC1090,SC1091
-. "${SCRIPT_DIR}/venv/bin/activate"
+cd "${SCRIPT_DIR}/" || exit 1
 
-exec python "${SCRIPT_DIR}/bot.py"
+# shellcheck disable=SC1090,SC1091
+. "${SCRIPT_DIR}/venv/bin/activate" || exit 1
+
+exec python -m roll35
