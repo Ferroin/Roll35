@@ -5,6 +5,7 @@ agents:
   - {name: body, type: ranked}
   - {name: category, type: category}
   - {name: chest, type: ranked}
+  - {name: classes, type: classes}
   - {name: eyes, type: ranked}
   - {name: feet, type: ranked}
   - {name: hand, type: ranked}

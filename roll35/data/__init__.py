@@ -10,6 +10,7 @@ from pathlib import Path
 from ..common import yaml
 
 from .category import CategoryAgent
+from .classes import ClassesAgent
 from .compound import CompoundAgent
 from .ordnance import OrdnanceAgent
 from .ranked import RankedAgent
@@ -20,6 +21,7 @@ DATA_ROOT = Path(__file__).parent / 'files'
 
 agents = {
     'category': CategoryAgent,
+    'classes': ClassesAgent,
     'compound': CompoundAgent,
     'ordnance': OrdnanceAgent,
     'ranked': RankedAgent,

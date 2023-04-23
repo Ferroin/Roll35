@@ -101,7 +101,7 @@ class Spell(Cog):
     @commands.command()
     async def classes(self, ctx):
         '''List known classes for spells.'''
-        match await self.ds['spell'].classes():
+        match await self.ds['classes'].classes():
             case False:
                 await ctx.send(NOT_READY)
             case []:

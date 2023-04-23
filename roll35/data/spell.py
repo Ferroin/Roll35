@@ -17,8 +17,6 @@ from . import agent
 from ..common import check_ready, chunk, flatten, DATA_ROOT, yaml
 
 MAX_SPELL_LEVEL = 9
-MAX_CONCURRENT_DB_REQS = 8
-DB_CONN_LINGER = 60
 
 logger = logging.getLogger(__name__)
 
@@ -168,14 +166,13 @@ def process_spell_chunk(items):
 
 
 class SpellAgent(agent.Agent):
-    def __init__(self, dataset, pool, name='spells', db_path=(Path.cwd() / 'spells.db'), logger=logger):
-        self._cls_path = DATA_ROOT / 'classes.yaml'
-        self._spell_path = DATA_ROOT / 'spells.yaml'
+    def __init__(self, dataset, pool, name='spell', db_path=(Path.cwd() / 'spells.db'), logger=logger):
+        self._spell_path = DATA_ROOT / f'{ name }.yaml'
         self._db_path = db_path
         super().__init__(dataset, pool, name, logger)
 
     def _level_in_cls(self, level, cls):
-        levels = self._data['classes'][cls]['levels']
+        levels = self._ds['classes'].get_class(cls)['levels']
 
         if level is None:
             return True
@@ -184,184 +181,104 @@ class SpellAgent(agent.Agent):
 
     async def load_data(self):
         if not self._ready.is_set():
-            self.logger.info('Loading class data.')
-            with open(self._cls_path) as f:
-                self._data['classes'] = yaml.load(f)
+            self.logger.info('Fetching class data.')
 
-            self.logger.info('Finished loading class data.')
+            classes = await self._ds['classes'].W_classdata()
 
-            self.logger.info('Checking timestamps for spell DB.')
             async with aiosqlite.connect(self._db_path) as db:
                 db.row_factory = aiosqlite.Row
 
-                table = await db.execute_fetchall(
-                    "SELECT name FROM sqlite_master WHERE type='table' AND name='info' COLLATE NOCASE"
+                self.logger.info(f'Initializing spell DB at { self._db_path }')
+
+                loop = asyncio.get_running_loop()
+
+                await db.executescript(f'''
+                    DROP TABLE IF EXISTS spells;
+                    DROP TABLE IF EXISTS tagmap;
+                    CREATE TABLE spells(name TEXT,
+                                        { " INTEGER, ".join(classes) } INTEGER,
+                                        minimum INTEGER,
+                                        spellpage_arcane INTEGER,
+                                        spellpage_divine INTEGER,
+                                        minimum_cls TEXT,
+                                        spellpage_arcane_cls TEXT,
+                                        spellpage_divine_cls TEXT);
+                    CREATE VIRTUAL TABLE tagmap USING fts4(name, tags);
+                    PRAGMA journal_mode='WAL';
+                    PRAGMA synchronous='NORMAL';
+                    VACUUM;
+                ''')
+
+                self.logger.info('Reading spell data.')
+
+                with open(self._spell_path) as f:
+                    spells = yaml.load(f)
+
+                self.logger.info('Processing spells to add to DB.')
+
+                spells = zip(spells, repeat(classes, len(spells)))
+
+                coros = []
+
+                for spell_chunk in chunk(spells, 100):
+                    coros.append(loop.run_in_executor(
+                        self._pool,
+                        process_spell_chunk,
+                        spell_chunk
+                    ))
+
+                spells = list(flatten(await asyncio.gather(*coros)))
+
+                spell_params = map(lambda x: x[0], spells)
+                tag_params = map(
+                    lambda x: {
+                        'name': x[0]['name'],
+                        'tags': ' '.join(filter(lambda x: x, list(x[1])))
+                    },
+                    spells
                 )
 
-                if table:
-                    class_mtime = await db.execute_fetchall(
-                        "SELECT data FROM info WHERE id='class_mtime';"
-                    )
+                self.logger.info('Adding spells to spell table.')
 
-                    if class_mtime:
-                        class_mtime = int(class_mtime[0]['data'].split('.')[0])
-                    else:
-                        class_mtime = 0
+                cls_params = ', '.join(map(lambda x: f':{ x }', classes))
 
-                    spell_mtime = await db.execute_fetchall(
-                        "SELECT data FROM info WHERE id='spell_mtime';"
-                    )
+                await db.executemany(f'''
+                    INSERT INTO spells VALUES (
+                        :name,
+                        { cls_params },
+                        :minimum,
+                        :spellpage_arcane,
+                        :spellpage_divine,
+                        :minimum_cls,
+                        :spellpage_arcane_cls,
+                        :spellpage_divine_cls
+                    );
+                ''', spell_params)
 
-                    if spell_mtime:
-                        spell_mtime = int(spell_mtime[0]['data'].split('.')[0])
-                    else:
-                        spell_mtime = 0
+                self.logger.info('Adding spells to tag map table.')
 
-                    mod_mtime = await db.execute_fetchall(
-                        "SELECT data FROM info WHERE id='mod_mtime';"
-                    )
+                await db.executemany('''
+                    INSERT INTO tagmap VALUES (
+                        :name,
+                        :tags
+                    );
+                ''', tag_params)
 
-                    if mod_mtime:
-                        mod_mtime = int(mod_mtime[0]['data'].split('.')[0])
-                    else:
-                        mod_mtime = 0
-                else:
-                    class_mtime = 0
-                    spell_mtime = 0
-                    mod_mtime = 0
+                self.logger.info('Storing tag list.')
 
-                if any([
-                    class_mtime < self._cls_path.stat().st_mtime,
-                    spell_mtime < self._spell_path.stat().st_mtime,
-                    mod_mtime < Path(__file__).stat().st_mtime,
-                ]):
-                    await self._prepare_spell_db(db, {
-                        'spell_mtime': self._spell_path.stat().st_mtime,
-                        'class_mtime': self._cls_path.stat().st_mtime,
-                        'mod_mtime': Path(__file__).stat().st_mtime,
-                    })
+                self._data['tags'] = ' '.join(filter(lambda x: x, set.union(*map(lambda x: x[1], spells))))
 
-                self.logger.info('Caching tag list.')
-                tags = await db.execute_fetchall(
-                    "SELECT data FROM info WHERE id='tags';"
-                )
+                self.logger.info('Optimizing DB.')
 
-                self._data['tags'] = tags[0]['data'].split(' ')
+                await db.executescript('''
+                    PRAGMA optimize;
+                ''')
+
+                self.logger.info('Finished initializing spell DB.')
 
             self._ready.set()
 
         return True
-
-    async def _prepare_spell_db(self, db, times):
-        self.logger.info(f'Initializing spell DB at { self._db_path }')
-
-        loop = asyncio.get_running_loop()
-
-        classes = self._data['classes'].keys()
-
-        await db.executescript(f'''
-            DROP TABLE IF EXISTS spells;
-            DROP TABLE IF EXISTS tagmap;
-            DROP TABLE IF EXISTS info;
-            CREATE TABLE spells(name TEXT,
-                                { " INTEGER, ".join(classes) } INTEGER,
-                                minimum INTEGER,
-                                spellpage_arcane INTEGER,
-                                spellpage_divine INTEGER,
-                                minimum_cls TEXT,
-                                spellpage_arcane_cls TEXT,
-                                spellpage_divine_cls TEXT);
-            CREATE VIRTUAL TABLE tagmap USING fts4(name, tags);
-            CREATE TABLE info(id TEXT, data TEXT);
-            PRAGMA journal_mode='WAL';
-            PRAGMA synchronous='NORMAL';
-            VACUUM;
-        ''')
-
-        with open(self._spell_path) as f:
-            spells = yaml.load(f)
-
-        spells = zip(spells, repeat(self._data['classes'], len(spells)))
-
-        self.logger.info('Processing spells to add to DB.')
-
-        coros = []
-
-        for spell_chunk in chunk(spells, 100):
-            coros.append(loop.run_in_executor(
-                self._pool,
-                process_spell_chunk,
-                spell_chunk
-            ))
-
-        spells = list(flatten(await asyncio.gather(*coros)))
-
-        spell_params = map(lambda x: x[0], spells)
-        tag_params = map(
-            lambda x: {
-                'name': x[0]['name'],
-                'tags': ' '.join(filter(lambda x: x, list(x[1])))
-            },
-            spells
-        )
-
-        self.logger.info('Adding spells to spell table.')
-
-        cls_params = ', '.join(map(lambda x: f':{ x }', classes))
-
-        await db.executemany(f'''
-            INSERT INTO spells VALUES (
-                :name,
-                { cls_params },
-                :minimum,
-                :spellpage_arcane,
-                :spellpage_divine,
-                :minimum_cls,
-                :spellpage_arcane_cls,
-                :spellpage_divine_cls
-            );
-        ''', spell_params)
-
-        self.logger.info('Adding spells to tag map table.')
-
-        await db.executemany('''
-            INSERT INTO tagmap VALUES (
-                :name,
-                :tags
-            );
-        ''', tag_params)
-
-        self.logger.info('Storing tag list.')
-
-        tags = ' '.join(filter(lambda x: x, set.union(*map(lambda x: x[1], spells))))
-
-        await db.execute('''
-            INSERT INTO info VALUES (
-                "tags",
-                ?
-            );
-        ''', [tags])
-
-        self.logger.info('Storing source data timestamps.')
-
-        await db.executescript(f'''
-            INSERT INTO info VALUES ('spell_mtime', '{ times["spell_mtime"] }');
-            INSERT INTO info VALUES ('class_mtime', '{ times["class_mtime"] }');
-            INSERT INTO info VALUES ('mod_mtime', '{ times["mod_mtime"] }');
-            PRAGMA optimize;
-        ''')
-
-        self.logger.info('Finished initializing spell DB.')
-
-        return True
-
-    @check_ready
-    async def classes(self):
-        return list(self._data['classes'].keys())
-
-    @check_ready
-    async def get_class(self, cls):
-        return self._data['classes'][cls]
 
     @check_ready
     async def get_spell(self, name):
@@ -402,7 +319,13 @@ class SpellAgent(agent.Agent):
 
     @check_ready
     async def random(self, level=None, cls=None, tag=None):
-        valid_classes = set(self._data['classes'].keys()) | {
+        match await self._ds['classes'].classdata():
+            case False:
+                return (False, 'Failed to fetch class data.')
+            case ret:
+                classes = ret
+
+        valid_classes = set(classes.keys()) | {
             'minimum',
             'spellpage_arcane',
             'spellpage_divine',
@@ -422,27 +345,27 @@ class SpellAgent(agent.Agent):
                     'spellpage_divine',
                 ])
             case ('arcane', None):
-                valid = [k for (k, v) in self._data['classes'].enumerate()
+                valid = [k for (k, v) in classes.enumerate()
                          if v.type == 'arcane']
                 cls = random.choice(valid)
             case ('arcane', level):
-                valid = [k for (k, v) in self._data['classes'].enumerate()
+                valid = [k for (k, v) in classes.enumerate()
                          if self._level_in_cls(level, k)
                          and v.type == 'arcane']
                 cls = random.chioce(valid)
             case ('divine', None):
-                valid = [k for (k, v) in self._data['classes'].enumerate()
+                valid = [k for (k, v) in classes.enumerate()
                          if v.type == 'divine']
                 cls = random.choice(valid)
             case ('divine', level):
-                valid = [k for (k, v) in self._data['classes'].enumerate()
+                valid = [k for (k, v) in classes.enumerate()
                          if self._level_in_cls(level, k)
                          and v.type == 'divine']
                 cls = random.chioce(valid)
             case ('random', None):
-                cls = random.choice(self._data['classes'].keys())
+                cls = random.choice(classes.keys())
             case ('random', level):
-                valid = [k for (k, v) in self._data['classes'].enumerate()
+                valid = [k for (k, v) in classes.enumerate()
                          if self._level_in_cls(level, k)]
                 cls = random.chioce(valid)
             case (None, _):
@@ -536,7 +459,7 @@ class SpellAgent(agent.Agent):
         if level is None:
             level = spell[cls]
 
-        caster_level = self._data['classes'][cls]['levels'][level]
+        caster_level = classes[cls]['levels'][level]
 
         return (
             True,
