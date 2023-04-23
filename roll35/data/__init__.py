@@ -39,7 +39,7 @@ class DataSet:
         self.renderdata = structure['renderdata']
 
         for item in structure['agents']:
-            self._agents[item['name']] = agents[item['type']](pool, item['name'])
+            self._agents[item['name']] = agents[item['type']](self, pool, item['name'])
 
     def __getitem__(self, key):
         return self._agents[key]

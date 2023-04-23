@@ -106,7 +106,8 @@ def generate_tags_entry(items):
 
 class Agent:
     '''Abstract base class for data agents.'''
-    def __init__(self, pool, name, logger=logger):
+    def __init__(self, dataset, pool, name, logger=logger):
+        self._ds = dataset
         self._data = dict()
         self._ready = asyncio.Event()
         self._pool = pool
