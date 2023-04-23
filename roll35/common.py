@@ -17,7 +17,7 @@ from ruamel.yaml import YAML
 
 DATA_ROOT = Path(__file__).parent / 'data' / 'files'
 
-VERSION = (3, 0, 2)
+VERSION = (3, 1, 0)
 
 READINESS_TIMEOUT = 5.0
 
