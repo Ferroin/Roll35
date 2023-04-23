@@ -12,8 +12,8 @@ logger = logging.getLogger(__name__)
 
 
 class WondrousAgent(agent.Agent):
-    def __init__(self, pool, name='wondrous', logger=logger):
-        super().__init__(pool, name, logger)
+    def __init__(self, dataset, pool, name='wondrous', logger=logger):
+        super().__init__(dataset, pool, name, logger)
 
     @staticmethod
     def _loader(_):

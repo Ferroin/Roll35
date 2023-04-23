@@ -168,11 +168,11 @@ def process_spell_chunk(items):
 
 
 class SpellAgent(agent.Agent):
-    def __init__(self, pool, name='spells', db_path=(Path.cwd() / 'spells.db'), logger=logger):
+    def __init__(self, dataset, pool, name='spells', db_path=(Path.cwd() / 'spells.db'), logger=logger):
         self._cls_path = DATA_ROOT / 'classes.yaml'
         self._spell_path = DATA_ROOT / 'spells.yaml'
         self._db_path = db_path
-        super().__init__(pool, name, logger)
+        super().__init__(dataset, pool, name, logger)
 
     def _level_in_cls(self, level, cls):
         levels = self._data['classes'][cls]['levels']
