@@ -14,7 +14,7 @@ from pathlib import Path
 import aiosqlite
 
 from . import agent
-from ..common import chunk, flatten, DATA_ROOT, yaml
+from ..common import check_ready, chunk, flatten, DATA_ROOT, yaml
 
 MAX_SPELL_LEVEL = 9
 MAX_CONCURRENT_DB_REQS = 8
@@ -183,71 +183,72 @@ class SpellAgent(agent.Agent):
         return len(levels) > level and levels[level]
 
     async def load_data(self):
-        self.logger.info('Loading class data.')
-        with open(self._cls_path) as f:
-            self._data['classes'] = yaml.load(f)
+        if not self._ready.is_set():
+            self.logger.info('Loading class data.')
+            with open(self._cls_path) as f:
+                self._data['classes'] = yaml.load(f)
 
-        self.logger.info('Finished loading class data.')
+            self.logger.info('Finished loading class data.')
 
-        self.logger.info('Checking timestamps for spell DB.')
-        async with aiosqlite.connect(self._db_path) as db:
-            db.row_factory = aiosqlite.Row
+            self.logger.info('Checking timestamps for spell DB.')
+            async with aiosqlite.connect(self._db_path) as db:
+                db.row_factory = aiosqlite.Row
 
-            table = await db.execute_fetchall(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name='info' COLLATE NOCASE"
-            )
-
-            if table:
-                class_mtime = await db.execute_fetchall(
-                    "SELECT data FROM info WHERE id='class_mtime';"
+                table = await db.execute_fetchall(
+                    "SELECT name FROM sqlite_master WHERE type='table' AND name='info' COLLATE NOCASE"
                 )
 
-                if class_mtime:
-                    class_mtime = int(class_mtime[0]['data'].split('.')[0])
+                if table:
+                    class_mtime = await db.execute_fetchall(
+                        "SELECT data FROM info WHERE id='class_mtime';"
+                    )
+
+                    if class_mtime:
+                        class_mtime = int(class_mtime[0]['data'].split('.')[0])
+                    else:
+                        class_mtime = 0
+
+                    spell_mtime = await db.execute_fetchall(
+                        "SELECT data FROM info WHERE id='spell_mtime';"
+                    )
+
+                    if spell_mtime:
+                        spell_mtime = int(spell_mtime[0]['data'].split('.')[0])
+                    else:
+                        spell_mtime = 0
+
+                    mod_mtime = await db.execute_fetchall(
+                        "SELECT data FROM info WHERE id='mod_mtime';"
+                    )
+
+                    if mod_mtime:
+                        mod_mtime = int(mod_mtime[0]['data'].split('.')[0])
+                    else:
+                        mod_mtime = 0
                 else:
                     class_mtime = 0
-
-                spell_mtime = await db.execute_fetchall(
-                    "SELECT data FROM info WHERE id='spell_mtime';"
-                )
-
-                if spell_mtime:
-                    spell_mtime = int(spell_mtime[0]['data'].split('.')[0])
-                else:
                     spell_mtime = 0
+                    mod_mtime = 0
 
-                mod_mtime = await db.execute_fetchall(
-                    "SELECT data FROM info WHERE id='mod_mtime';"
+                if any([
+                    class_mtime < self._cls_path.stat().st_mtime,
+                    spell_mtime < self._spell_path.stat().st_mtime,
+                    mod_mtime < Path(__file__).stat().st_mtime,
+                ]):
+                    await self._prepare_spell_db(db, {
+                        'spell_mtime': self._spell_path.stat().st_mtime,
+                        'class_mtime': self._cls_path.stat().st_mtime,
+                        'mod_mtime': Path(__file__).stat().st_mtime,
+                    })
+
+                self.logger.info('Caching tag list.')
+                tags = await db.execute_fetchall(
+                    "SELECT data FROM info WHERE id='tags';"
                 )
 
-                if mod_mtime:
-                    mod_mtime = int(mod_mtime[0]['data'].split('.')[0])
-                else:
-                    mod_mtime = 0
-            else:
-                class_mtime = 0
-                spell_mtime = 0
-                mod_mtime = 0
+                self._data['tags'] = tags[0]['data'].split(' ')
 
-            if any([
-                class_mtime < self._cls_path.stat().st_mtime,
-                spell_mtime < self._spell_path.stat().st_mtime,
-                mod_mtime < Path(__file__).stat().st_mtime,
-            ]):
-                await self._prepare_spell_db(db, {
-                    'spell_mtime': self._spell_path.stat().st_mtime,
-                    'class_mtime': self._cls_path.stat().st_mtime,
-                    'mod_mtime': Path(__file__).stat().st_mtime,
-                })
-
-            self.logger.info('Caching tag list.')
-            tags = await db.execute_fetchall(
-                "SELECT data FROM info WHERE id='tags';"
-            )
-
-            self._data['tags'] = tags[0]['data'].split(' ')
-
-        self._ready = True
+            self._ready.set()
 
         return True
 
@@ -354,61 +355,53 @@ class SpellAgent(agent.Agent):
 
         return True
 
+    @check_ready
     async def classes(self):
-        if self._ready:
-            return list(self._data['classes'].keys())
-        else:
-            return False
+        return list(self._data['classes'].keys())
 
+    @check_ready
     async def get_class(self, cls):
-        if self._ready:
-            return self._data['classes'][cls]
-        else:
-            return False
+        return self._data['classes'][cls]
 
+    @check_ready
     async def get_spell(self, name):
-        if self._ready:
-            async with aiosqlite.connect(self._db_path) as db:
-                db.row_factory = aiosqlite.Row
+        async with aiosqlite.connect(self._db_path) as db:
+            db.row_factory = aiosqlite.Row
 
-                spellrow = await db.execute_fetchall('''
-                    SELECT *
-                    FROM spells
-                    WHERE name = ':name';
-                ''', {'name': name})
+            spellrow = await db.execute_fetchall('''
+                SELECT *
+                FROM spells
+                WHERE name = ':name';
+            ''', {'name': name})
 
-                if not spellrow:
-                    return None
-                else:
-                    spellrow = spellrow[0]
-
-                tagsrow = await db.execute_fetchall('''
-                    SELECT *
-                    FROM tagmap
-                    WHERE name = ':name';
-                ''', {'name': name})
-
-            if not tagsrow:
-                tagsrow = {'data': ''}
+            if not spellrow:
+                return None
             else:
-                tagsrow = tagsrow[0]
+                spellrow = spellrow[0]
 
-            tags = tagsrow['data'].split(' ')
-            spell = {
-                'tags': tags
-            }
+            tagsrow = await db.execute_fetchall('''
+                SELECT *
+                FROM tagmap
+                WHERE name = ':name';
+            ''', {'name': name})
 
-            for k in spellrow.keys():
-                spell[k] = spellrow[k]
-
-            return spell
+        if not tagsrow:
+            tagsrow = {'data': ''}
         else:
-            return False
+            tagsrow = tagsrow[0]
 
+        tags = tagsrow['data'].split(' ')
+        spell = {
+            'tags': tags
+        }
+
+        for k in spellrow.keys():
+            spell[k] = spellrow[k]
+
+        return spell
+
+    @check_ready
     async def random(self, level=None, cls=None, tag=None):
-        if not self._ready:
-            return False
-
         valid_classes = set(self._data['classes'].keys()) | {
             'minimum',
             'spellpage_arcane',
