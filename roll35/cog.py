@@ -11,19 +11,14 @@ logger = logging.getLogger(__name__)
 
 
 class Cog(commands.Cog):
-    def __init__(self, bot, renderer, logger=logger):
+    def __init__(self, bot, dataset, renderer, logger=logger):
         self.bot = bot
+        self.ds = dataset
         self.renderer = renderer
         self.logger = logger
 
     async def render(self, item):
         return await self.renderer.render(item)
-
-    async def load_agent_data(self):
-        if hasattr(self, 'agent'):
-            await self.agent.load_data()
-        else:
-            pass
 
     async def cog_before_invoke(self, ctx):
         await ctx.trigger_typing()

@@ -12,9 +12,8 @@ logger = logging.getLogger(__name__)
 
 
 class CategoryAgent(agent.Agent):
-    def __init__(self, pool, logger=logger):
-        self.name = 'category'
-        super().__init__(pool, logger)
+    def __init__(self, pool, name, logger=logger):
+        super().__init__(pool, name, logger)
 
     @staticmethod
     def _loader(name):

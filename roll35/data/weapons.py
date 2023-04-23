@@ -12,9 +12,8 @@ logger = logging.getLogger(__name__)
 
 
 class WeaponAgent(agent.Agent):
-    def __init__(self, pool, logger=logger):
-        self.name = 'weapon'
-        super().__init__(pool, logger)
+    def __init__(self, pool, name='weapon', logger=logger):
+        super().__init__(pool, name, logger)
 
     @staticmethod
     def _loader(_):

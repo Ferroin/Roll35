@@ -105,14 +105,12 @@ def generate_tags_entry(items):
 
 
 class Agent:
-    '''Base class for data agents.
-
-       Specific agents should subclass this instead of instantiating
-       it directly.'''
-    def __init__(self, pool, logger=logger):
+    '''Abstract base class for data agents.'''
+    def __init__(self, pool, name, logger=logger):
         self._data = dict()
         self._ready = False
         self._pool = pool
+        self.name = name
         self.logger = logger
 
     def _valid_rank(self, rank):

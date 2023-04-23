@@ -7,7 +7,6 @@ import logging
 
 from nextcord.ext import commands
 
-from .data.armor import ArmorAgent
 from .cog import Cog
 
 NOT_READY = 'Armor data is not yet available, please try again later.'
@@ -16,10 +15,8 @@ logger = logging.getLogger(__name__)
 
 
 class Armor(Cog):
-    def __init__(self, bot, pool, renderer, logger=logger):
-        self.agent = ArmorAgent(pool)
-
-        super().__init__(bot, renderer, logger)
+    def __init__(self, bot, ds, renderer, logger=logger):
+        super().__init__(bot, ds, renderer, logger)
 
     @commands.command()
     async def armor(self, ctx, *tags):
@@ -28,7 +25,7 @@ class Armor(Cog):
            Optionally takes a space-separated list of tags to limit what
            armor items can be returned. To list recognized tags, run
            `/r35 armortags`.'''
-        match await self.agent.random_base(tags):
+        match await self.ds['armor'].random_base(tags):
             case False:
                 await ctx.send(NOT_READY)
             case None:
@@ -43,7 +40,7 @@ class Armor(Cog):
     @commands.command()
     async def armortags(self, ctx):
         '''List known armor tags.'''
-        match await self.agent.tags():
+        match await self.ds['armor'].tags():
             case False:
                 await ctx.send(NOT_READY)
             case []:

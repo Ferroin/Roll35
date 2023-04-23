@@ -8,7 +8,8 @@ import logging
 
 import jinja2
 
-from .common import DATA_ROOT, expand_weighted_list, yaml, rnd
+from .common import expand_weighted_list, yaml, rnd
+from .data import DATA_ROOT
 
 logger = logging.getLogger(__name__)
 

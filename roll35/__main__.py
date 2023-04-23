@@ -18,6 +18,7 @@ from nextcord.ext import commands
 
 from .common import prepare_cog, did_you_mean
 from .renderer import Renderer
+from .data import DataSet
 from . import COGS, BOT_HELP
 
 TOKEN = os.environ['DISCORD_TOKEN']
@@ -55,23 +56,6 @@ logging.config.dictConfig({
 logging.basicConfig(level=logging.INFO)
 
 logger = logging.getLogger('roll35')
-
-
-async def register_cogs(bot, renderer):
-    '''Register all defined cogs on the specified bot.'''
-    loaders = [
-        renderer.load_data(),
-    ]
-
-    for entry in COGS:
-        if not bot.get_cog(entry.qualified_name):
-            logger.info(f'Loading Cog: { entry }')
-            cog = entry(bot, POOL, renderer)
-            loaders.append(prepare_cog(cog))
-            bot.add_cog(cog)
-
-    if loaders:
-        await asyncio.gather(*loaders)
 
 
 class Bot(commands.Bot):
@@ -115,6 +99,7 @@ def main(token):
         intents=intents,
         strip_after_prefix=True,
     )
+    ds = DataSet(POOL)
     renderer = Renderer(POOL, bot)
 
     @bot.event
@@ -123,7 +108,12 @@ def main(token):
 
     @bot.event
     async def on_connect():
-        await register_cogs(bot, renderer)
+        await ds.load_data()
+        await renderer.load_data()
+
+    for entry in COGS:
+        cog = entry(bot, ds, renderer)
+        bot.add_cog(cog)
 
     logger.info(f'Starting bot with token: { token }')
     bot.run(token)
