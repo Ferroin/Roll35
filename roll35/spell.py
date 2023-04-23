@@ -5,12 +5,9 @@
 
 import logging
 
-from pathlib import Path
-
 from nextcord.ext import commands
 
 from .cog import Cog
-from .data.spell import SpellAgent
 from .parser import Parser
 
 NOT_READY = 'Spell data is not yet available, please try again later.'
@@ -43,11 +40,8 @@ logger = logging.getLogger(__name__)
 
 
 class Spell(Cog):
-    def __init__(self, bot, pool, renderer, logger=logger):
-        db_path = Path.cwd() / 'spells.db'
-        self.agent = SpellAgent(pool, db_path)
-
-        super().__init__(bot, renderer, logger)
+    def __init__(self, bot, ds, renderer, logger=logger):
+        super().__init__(bot, ds, renderer, logger)
 
     @commands.command()
     async def spell(self, ctx, *args):
@@ -74,7 +68,7 @@ class Spell(Cog):
 
         await ctx.trigger_typing()
 
-        match await self.agent.random(
+        match await self.ds['spell'].random(
             level=args['level'],
             cls=args['cls'],
             tag=args['tag'],
@@ -93,7 +87,7 @@ class Spell(Cog):
     @commands.command()
     async def spelltags(self, ctx):
         '''List known spell tags.'''
-        match await self.agent.tags():
+        match await self.ds['spell'].tags():
             case False:
                 await ctx.send(NOT_READY)
             case []:
@@ -107,7 +101,7 @@ class Spell(Cog):
     @commands.command()
     async def classes(self, ctx):
         '''List known classes for spells.'''
-        match await self.agent.classes():
+        match await self.ds['spell'].classes():
             case False:
                 await ctx.send(NOT_READY)
             case []:

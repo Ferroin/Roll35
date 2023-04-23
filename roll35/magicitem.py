@@ -10,11 +10,7 @@ import random
 from nextcord.ext import commands
 
 from .cog import Cog
-from .data.category import CategoryAgent
-from .data.compound import CompoundAgent
-from .data.ranked import RankedAgent
 from .data.types import RANK
-from .data.wondrous import WondrousAgent
 from .parser import Parser
 
 NOT_READY = 'Magic item data is not yet available, please try again later.'
@@ -95,24 +91,8 @@ def get_bonus_costs(category, base):
 
 
 class MagicItem(Cog):
-    def __init__(self, bot, pool, renderer, logger=logger):
-        self.agents = {
-            'category': CategoryAgent(pool),
-            'wondrous': WondrousAgent(pool),
-        }
-
-        for agent in RANKED_AGENTS:
-            self.agents[agent] = RankedAgent(pool, agent)
-
-        for agent in COMPOUND_AGENTS:
-            self.agents[agent] = CompoundAgent(pool, agent)
-
-        self.agents['wondrous'].early_load()
-
-        for slot in self.agents['wondrous'].sslots():
-            self.agents[slot] = RankedAgent(pool, slot)
-
-        super().__init__(bot, renderer, logger)
+    def __init__(self, bot, ds, renderer, logger=logger):
+        super().__init__(bot, ds, renderer, logger)
 
     async def _reroll(self, path):
         '''Reroll a magic item using the specified parameters.'''
@@ -216,27 +196,27 @@ class MagicItem(Cog):
 
         self.logger.debug(f'Rolling magic item with parameters { kwargs }.')
 
-        slots = await self.agents['wondrous'].slots()
+        slots = await self.ds['wondrous'].slots()
 
         if not slots:
             return await self._finalize_roll((False, NOT_READY))
 
         match kwargs:
             case {'rank': 'minor', 'subrank': 'least', 'category': 'wondrous', 'slot': 'slotless'}:
-                item = await self.agents['slotless'].random('minor', 'least')
+                item = await self.ds['slotless'].random('minor', 'least')
             case {'subrank': 'least'}:
                 item = (False, 'Only slotless wondrous items have a least subrank.')
             case {'rank': rank, 'subrank': subrank, 'category': 'wondrous', 'slot': slot} if slot in slots:
-                item = await self.agents[slot].random(rank, subrank)
+                item = await self.ds[slot].random(rank, subrank)
             case {'rank': rank, 'subrank': subrank, 'slot': slot} if slot in slots:
-                item = await self.agents[slot].random(rank, subrank)
+                item = await self.ds[slot].random(rank, subrank)
             case {'rank': rank, 'subrank': subrank, 'category': 'wondrous'}:
-                slot = await self.agents['wondrous'].random()
-                item = await self.agents[slot].random(rank, subrank)
+                slot = await self.ds['wondrous'].random()
+                item = await self.ds[slot].random(rank, subrank)
             case {'rank': 'minor', 'category': ('rod' | 'staff') as category}:
                 item = (False, f'{ category } items do not have a minor rank.')
             case {'rank': rank, 'subrank': subrank, 'category': ('armor' | 'weapon') as category, 'base': None}:
-                agent = self.bot.get_cog(category.capitalize()).agent
+                agent = self.ds[category]
                 match await agent.random_pattern(rank, subrank, allow_specific=True):
                     case {'specific': specific}:
                         item = await agent.random_specific(*specific)
@@ -251,7 +231,7 @@ class MagicItem(Cog):
                                     agent, base_item, pattern, masterwork, bonus_cost
                                 )
             case {'rank': rank, 'subrank': subrank, 'category': ('armor' | 'weapon') as category, 'base': base}:
-                agent = self.bot.get_cog(category.capitalize()).agent
+                agent = self.ds[category]
                 pattern = await agent.random_pattern(rank, subrank, allow_specific=False)
 
                 match await agent.get_base(base):
@@ -266,7 +246,7 @@ class MagicItem(Cog):
                             agent, base_item, pattern, masterwork, bonus_cost
                         )
             case {'rank': rank, 'subrank': subrank, 'category': ('wand' | 'scroll') as category, 'cls': cls}:
-                spell_agent = self.bot.get_cog('Spell').agent
+                spell_agent = self.ds['spell']
                 classes = await spell_agent.classes()
 
                 if not classes:
@@ -276,7 +256,7 @@ class MagicItem(Cog):
                         cls = random.choice(classes)
 
                     if cls in classes:
-                        item = await self.agents[category].random(rank)
+                        item = await self.ds[category].random(rank)
 
                         if not item:
                             item = (False, NOT_READY)
@@ -287,9 +267,9 @@ class MagicItem(Cog):
             case {'rank': _, 'subrank': subrank, 'category': category} if category in COMPOUND_AGENTS and subrank is None:
                 item = (False, f'Invalid parmeters specified, { category } does not take a subrank.')
             case {'rank': rank, 'category': category} if category in COMPOUND_AGENTS:
-                item = await self.agents[category].random(rank)
+                item = await self.ds[category].random(rank)
             case {'rank': rank, 'subrank': subrank, 'category': category} if category in RANKED_AGENTS:
-                item = await self.agents[category].random(rank, subrank)
+                item = await self.ds[category].random(rank, subrank)
             case {'rank': _, 'subrank': _, 'category': None, 'base': base} if base is not None:
                 item = (False, 'Invalid parmeters specified, specifying a base item is only valid if you specify a category of armor or weapon.')
             case {'rank': _, 'subrank': _, 'category': None, 'cls': cls} if cls is not None:
@@ -302,7 +282,7 @@ class MagicItem(Cog):
                 if rank is None:
                     rank = random.choice(RANK)
 
-                category = await self.agents['category'].random(rank)
+                category = await self.ds['category'].random(rank)
 
                 return await self.roll(
                     rank=rank,
@@ -316,14 +296,6 @@ class MagicItem(Cog):
             item = (False, NOT_READY)
 
         return await self._finalize_roll(item)
-
-    async def load_agent_data(self):
-        coros = []
-
-        for agent in self.agents:
-            coros.append(self.agents[agent].load_data())
-
-        await asyncio.gather(*coros)
 
     @commands.command()
     async def magicitem(self, ctx, *args):

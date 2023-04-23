@@ -1,0 +1,26 @@
+---
+agents:
+  - {name: spell, type: spell}
+  - {name: armor, type: armor}
+  - {name: belt, type: ranked}
+  - {name: body, type: ranked}
+  - {name: category, type: category}
+  - {name: chest, type: ranked}
+  - {name: eyes, type: ranked}
+  - {name: feet, type: ranked}
+  - {name: hand, type: ranked}
+  - {name: headband, type: ranked}
+  - {name: head, type: ranked}
+  - {name: neck, type: ranked}
+  - {name: potion, type: compound}
+  - {name: ring, type: ranked}
+  - {name: rod, type: ranked}
+  - {name: scroll, type: compound}
+  - {name: shoulders, type: ranked}
+  - {name: slotless, type: ranked}
+  - {name: staff, type: ranked}
+  - {name: wand, type: compound}
+  - {name: weapon, type: weapon}
+  - {name: wondrous, type: wondrous}
+  - {name: wrists, type: ranked}
+renderdata: keys

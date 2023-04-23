@@ -13,8 +13,7 @@ logger = logging.getLogger(__name__)
 
 class RankedAgent(agent.Agent):
     def __init__(self, pool, name, logger=logger):
-        self.name = name
-        super().__init__(pool, logger)
+        super().__init__(pool, name, logger)
 
     @staticmethod
     def _loader(name):
