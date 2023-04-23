@@ -22,13 +22,9 @@ from .data import DataSet
 from . import COGS, BOT_HELP
 
 TOKEN = os.environ['DISCORD_TOKEN']
+LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO')
 
 POOL = ProcessPoolExecutor()
-
-if 'LOG_LEVEL' in os.environ:
-    LOG_LEVEL = os.environ['LOG_LEVEL']
-else:
-    LOG_LEVEL = 'INFO'
 
 logging.config.dictConfig({
     'version': 1,
