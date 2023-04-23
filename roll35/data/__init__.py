@@ -52,7 +52,7 @@ class DataSet:
             loaders = []
 
             for agent in self._agents.values():
-                loaders.append(agent.load_data())
+                loaders.append(asyncio.create_task(agent.load_data()))
 
             await asyncio.gather(*loaders)
 

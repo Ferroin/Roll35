@@ -104,8 +104,10 @@ def main(token):
 
     @bot.event
     async def on_connect():
-        await ds.load_data()
-        await renderer.load_data()
+        await asyncio.gather(
+            ds.load_data(),
+            asyncio.create_task(renderer.load_data()),
+        )
 
     for entry in COGS:
         cog = entry(bot, ds, renderer)
