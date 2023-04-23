@@ -25,7 +25,7 @@ class Weapon(Cog):
            Optionally takes a space-separated list of tags to limit what
            weapon items can be returned. To list recognized tags, run
            `/r35 weapontags`'''
-        match await self.ds['spell'].random_base(tags):
+        match await self.ds['weapon'].random_base(tags):
             case False:
                 await ctx.send(NOT_READY)
             case None:
@@ -40,7 +40,7 @@ class Weapon(Cog):
     @commands.command()
     async def weapontags(self, ctx):
         '''List known weapon tags.'''
-        match await self.ds['spell'].tags():
+        match await self.ds['weapon'].tags():
             case False:
                 await ctx.send(NOT_READY)
             case []:
