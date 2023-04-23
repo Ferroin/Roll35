@@ -12,16 +12,9 @@ import logging
 import random
 
 from . import types
-from ..common import check_ready, norm_string, rnd, did_you_mean
+from ..common import check_ready, norm_string, rnd, did_you_mean, make_weighted_entry
 
 logger = logging.getLogger(__name__)
-
-
-def _make_weighted_entry(entry):
-    return {
-        'weight': entry['weight'],
-        'value': {k: entry[k] for k in entry if k != 'weight'}
-    }
 
 
 def process_compound_itemlist(items):
@@ -46,53 +39,43 @@ def process_compound_itemlist(items):
     return ret
 
 
-def process_ranked_itemlist(items):
+def process_ranked_itemlist(items, xform=lambda x: x):
     '''Process ranked list of weighted values.
 
        This takes a dict of ranks to dicts of subranks to lists of dicts
        of weighted items, and processes them into the format used by
        our weighted random selection in various data agent modules.'''
-    ret = dict()
+    ret = types.R35Map()
     ranks = types.RANK
 
     if types.RANK[0] not in items:
         ranks = types.LIMITED_RANK
 
     for rank in ranks:
-        ret[rank] = process_subranked_itemlist(items[rank])
+        ret[rank] = process_subranked_itemlist(items[rank], xform)
 
     return ret
 
 
-def process_subranked_itemlist(items):
+def process_subranked_itemlist(items, xform=lambda x: x):
     '''Process a subranked list of weighted values.
 
        This takes a dict of subranks to lists of dicts of weighted items
        and processes them into the format used by our weighted random
        selection in various data agent modules.'''
-    ret = dict()
+    ret = types.R35Map()
     subranks = types.SUBRANK
 
     if types.SLOTLESS_SUBRANK[0] in items:
         subranks = types.SLOTLESS_SUBRANK
 
     for rank in subranks:
-        ret[rank] = list(map(_make_weighted_entry, items[rank]))
-
-    return ret
-
-
-def process_enchantment_table(items):
-    '''Process an armor or weapon enchantment table.'''
-    ret = dict()
-
-    for group in items:
-        groupdata = dict()
-
-        for value in items[group]:
-            groupdata[value] = map(_make_weighted_entry, items[group][value])
-
-        ret[group] = groupdata
+        ret[rank] = types.R35List(
+            map(
+                lambda x: make_weighted_entry(xform(x)),
+                items[rank]
+            )
+        )
 
     return ret
 
