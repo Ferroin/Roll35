@@ -58,6 +58,21 @@ def expand_weighted_list(items):
     return ret
 
 
+def make_weighted_entry(entry):
+    ret = {
+        'weight': entry['weight'],
+        'value': {k: entry[k] for k in entry if k != 'weight'}
+    }
+
+    if 'cost' in entry:
+        ret['cost'] = entry['cost']
+
+    if 'costrange' in entry:
+        ret['costrange'] = entry['costrange']
+
+    return ret
+
+
 def rnd(items):
     '''Select a random item from a list of items.
 
