@@ -5,8 +5,9 @@
 
 import csv
 
-import yaml
+from ruamel.yaml import YAML
 
+yaml = YAML(typ='safe')
 data = list()
 
 SAVE_KEYS = [
