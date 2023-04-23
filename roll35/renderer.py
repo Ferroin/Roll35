@@ -56,7 +56,7 @@ class RenderData:
 
 class Renderer:
     '''Encapsulates the state required for rendering items.'''
-    def __init__(self, pool, bot, logger=logger):
+    def __init__(self, pool, dataset, logger=logger):
         self.env = jinja2.Environment(
             loader=jinja2.FunctionLoader(lambda x: None),
             autoescape=False,
@@ -66,13 +66,13 @@ class Renderer:
         self._data = None
         self._pool = pool
         self._ready = False
-        self._bot = bot
+        self._ds = dataset
 
         self.logger = logger
 
     @staticmethod
-    def _loader():
-        with open(DATA_ROOT / 'keys.yaml') as f:
+    def _loader(name):
+        with open(DATA_ROOT / f'{ name }.yaml') as f:
             return RenderData(yaml.load(f))
 
     async def load_data(self):
@@ -81,7 +81,7 @@ class Renderer:
             loop = asyncio.get_running_loop()
 
             self.logger.info('Loading renderer data.')
-            self._data = await loop.run_in_executor(self._pool, self._loader)
+            self._data = await loop.run_in_executor(self._pool, self._loader, self._ds.renderdata)
             self.logger.info('Finished loading renderer data.')
 
             self._ready = True
@@ -90,8 +90,7 @@ class Renderer:
 
     async def get_spell(self, item):
         '''Get a random spell for the given item.'''
-        spell_agent = self._bot.get_cog('Spell').agent
-        match await spell_agent.random(**item['spell']):
+        match await self._ds['spell'].random(**item['spell']):
             case (True, spell):
                 return (True, spell)
             case (False, msg):

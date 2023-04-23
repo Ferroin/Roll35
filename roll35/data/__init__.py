@@ -38,7 +38,7 @@ class DataSet:
         with open(DATA_ROOT / 'structure.yaml') as f:
             structure = yaml.load(f)
 
-        self.renderdata = 'keys'
+        self.renderdata = structure['renderdata']
 
         for item in structure['agents']:
             self._agents[item['name']] = agents[item['type']](pool, item['name'])
