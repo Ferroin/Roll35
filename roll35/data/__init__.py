@@ -9,23 +9,21 @@ from pathlib import Path
 
 from ..common import yaml
 
-from .armor import ArmorAgent
 from .category import CategoryAgent
 from .compound import CompoundAgent
+from .ordnance import OrdnanceAgent
 from .ranked import RankedAgent
 from .spell import SpellAgent
-from .weapons import WeaponAgent
 from .wondrous import WondrousAgent
 
 DATA_ROOT = Path(__file__).parent / 'files'
 
 agents = {
-    'armor': ArmorAgent,
     'category': CategoryAgent,
     'compound': CompoundAgent,
+    'ordnance': OrdnanceAgent,
     'ranked': RankedAgent,
     'spell': SpellAgent,
-    'weapon': WeaponAgent,
     'wondrous': WondrousAgent,
 }
 

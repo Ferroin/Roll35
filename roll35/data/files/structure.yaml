@@ -1,7 +1,6 @@
 ---
 agents:
-  - {name: spell, type: spell}
-  - {name: armor, type: armor}
+  - {name: armor, type: ordnance}
   - {name: belt, type: ranked}
   - {name: body, type: ranked}
   - {name: category, type: category}
@@ -18,9 +17,10 @@ agents:
   - {name: scroll, type: compound}
   - {name: shoulders, type: ranked}
   - {name: slotless, type: ranked}
+  - {name: spell, type: spell}
   - {name: staff, type: ranked}
   - {name: wand, type: compound}
-  - {name: weapon, type: weapon}
+  - {name: weapon, type: ordnance}
   - {name: wondrous, type: wondrous}
   - {name: wrists, type: ranked}
 renderdata: keys
