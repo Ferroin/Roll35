@@ -100,7 +100,7 @@ def main(token):
         strip_after_prefix=True,
     )
     ds = DataSet(POOL)
-    renderer = Renderer(POOL, bot)
+    renderer = Renderer(POOL, ds)
 
     @bot.event
     async def on_ready():
