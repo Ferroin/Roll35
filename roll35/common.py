@@ -3,6 +3,7 @@
 
 '''Common functions used throughout the module.'''
 
+import asyncio
 import itertools
 import logging
 import random
@@ -17,6 +18,8 @@ from ruamel.yaml import YAML
 DATA_ROOT = Path(__file__).parent / 'data' / 'files'
 
 VERSION = (3, 0, 0)
+
+READINESS_TIMEOUT = 5.0
 
 yaml = YAML(typ='safe')
 logger = logging.getLogger(__name__)
@@ -136,3 +139,26 @@ def did_you_mean(items, name, flat_items=False):
         )
     else:
         return (False, 'No matching items found.')
+
+
+def check_ready(func, ret=False):
+    '''Decorate an async method to wait for it’s instance to be ready.
+
+       This expects the instance to have an asyncio.Event() object under
+       the _ready property that will be set when the instance is ready
+       for methods with this decorator to run.
+
+       The decorated method will wait up to
+       `roll35.common.READINESS_TIMEOUT` seconds for the event to
+       be set before running the method. If it times out while waiting,
+       it will log a warning and return the value of `ret`.'''
+    async def f(self, *args, **kwargs):
+        try:
+            await asyncio.wait_for(await self._ready.wait(), timeout=READINESS_TIMEOUT)
+        except asyncio.TimeoutError:
+            self.logger.warning('Timed out waiting for data to be ready.')
+            return ret
+
+        return func(self, *args, **kwargs)
+
+    return f

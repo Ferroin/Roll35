@@ -12,7 +12,7 @@ import logging
 import random
 
 from . import types
-from ..common import norm_string, rnd, did_you_mean
+from ..common import check_ready, norm_string, rnd, did_you_mean
 
 logger = logging.getLogger(__name__)
 
@@ -108,7 +108,7 @@ class Agent:
     '''Abstract base class for data agents.'''
     def __init__(self, pool, name, logger=logger):
         self._data = dict()
-        self._ready = False
+        self._ready = asyncio.Event()
         self._pool = pool
         self.name = name
         self.logger = logger
@@ -125,19 +125,17 @@ class Agent:
 
     async def load_data(self):
         '''Load data for this agent.'''
-        if not self._ready:
+        if not self._ready.is_set():
             self.logger.info(f'Loading { self.name } data.')
             self._data = await self._process_async(self._loader, [self.name])
             self.logger.info(f'Finished loading { self.name } data.')
 
-            self._ready = True
+            self._ready.set()
 
         return True
 
+    @check_ready
     async def random_ranked(self, rank=None, subrank=None):
-        if not self._ready:
-            return False
-
         match (rank, subrank):
             case (None, None):
                 rank = rnd(self._data.keys())
@@ -153,10 +151,8 @@ class Agent:
 
         return rnd(self._data[rank][subrank])
 
+    @check_ready
     async def random_compound(self, rank=None):
-        if not self._ready:
-            return False
-
         match rank:
             case None:
                 rank = rnd(self._data.keys())
@@ -167,10 +163,8 @@ class Agent:
 
         return rnd(self._data[rank])
 
+    @check_ready
     async def get_base(self, name):
-        if not self._ready:
-            return False
-
         items = self._data['base']
         norm_name = norm_string(name)
 
@@ -190,10 +184,8 @@ class Agent:
             case item:
                 return (True, item)
 
+    @check_ready
     async def random_base(self, tags=[]):
-        if not self._ready:
-            return False
-
         items = self._data['base']
 
         match tags:
@@ -216,10 +208,8 @@ class Agent:
         else:
             return None
 
+    @check_ready
     async def random_enchant(self, group, bonus, enchants=[], tags=[]):
-        if not self._ready:
-            return False
-
         items = self._data['enchantments'][group][bonus]
 
         def _efilter(x):
@@ -243,10 +233,8 @@ class Agent:
             case [*opts]:
                 return random.choice(opts)['value']
 
+    @check_ready
     async def random_pattern(self, rank, subrank, allow_specific=True):
-        if not self._ready:
-            return False
-
         match rank:
             case None:
                 rank = random.choice(types.RANK)
@@ -268,10 +256,8 @@ class Agent:
                 items
             )))['value']
 
+    @check_ready
     async def random_specific(self, *args):
-        if not self._ready:
-            return False
-
         match args:
             case [_, _, _]:
                 group = args[0]
@@ -303,10 +289,9 @@ class Agent:
         else:
             return random.choice(items[rank][subrank])['value']
 
+    @check_ready
     async def tags(self):
-        if not self._ready:
-            return False
-        elif 'tags' in self._data:
+        if 'tags' in self._data:
             return list(self._data['tags'])
         else:
             return []

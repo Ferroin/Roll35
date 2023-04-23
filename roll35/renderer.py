@@ -8,7 +8,7 @@ import logging
 
 import jinja2
 
-from .common import expand_weighted_list, yaml, rnd
+from .common import check_ready, expand_weighted_list, yaml, rnd
 from .data import DATA_ROOT
 
 logger = logging.getLogger(__name__)
@@ -65,7 +65,7 @@ class Renderer:
 
         self._data = None
         self._pool = pool
-        self._ready = False
+        self._ready = asyncio.Event()
         self._ds = dataset
 
         self.logger = logger
@@ -77,14 +77,14 @@ class Renderer:
 
     async def load_data(self):
         '''Load required data.'''
-        if not self._ready:
+        if not self._ready.is_set():
             loop = asyncio.get_running_loop()
 
             self.logger.info('Loading renderer data.')
             self._data = await loop.run_in_executor(self._pool, self._loader, self._ds.renderdata)
             self.logger.info('Finished loading renderer data.')
 
-            self._ready = True
+            self._ready.set()
 
         return True
 
@@ -101,6 +101,7 @@ class Renderer:
                 logging.warning(f'Searching random spell failed, got: { ret }')
                 return (False, 'Unknown internal error.')
 
+    @check_ready((False, 'Unable to render item as renderer is not yet fully initilized.'))
     async def render(self, item):
         '''Render an item.
 
@@ -109,10 +110,6 @@ class Renderer:
 
            Returns either (True, x) where x is the rendered item, or
            (False, msg) where msg is an error message.'''
-        if not self._ready:
-            self.logger.warning('Asked to render item before data was loaded.')
-            return (False, 'Unable to render item as renderer is not yet fully initilized.')
-
         match item:
             case {'name': name, 'cost': cost}:
                 t = f'{ name } (cost: { cost } gp)'
