@@ -101,7 +101,6 @@ class Renderer:
                 logging.warning(f'Searching random spell failed, got: { ret }')
                 return (False, 'Unknown internal error.')
 
-    @check_ready((False, 'Unable to render item as renderer is not yet fully initilized.'))
     async def render(self, item):
         '''Render an item.
 
@@ -110,6 +109,14 @@ class Renderer:
 
            Returns either (True, x) where x is the rendered item, or
            (False, msg) where msg is an error message.'''
+        match await self._render(item):
+            case False:
+                return (False, 'Unable to render item as renderer is not yet fully initilized.')
+            case ret:
+                return ret
+
+    @check_ready
+    async def _render(self, item):
         match item:
             case {'name': name, 'cost': cost}:
                 t = f'{ name } (cost: { cost } gp)'

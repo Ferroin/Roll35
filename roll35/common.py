@@ -141,7 +141,7 @@ def did_you_mean(items, name, flat_items=False):
         return (False, 'No matching items found.')
 
 
-def check_ready(func, ret=False):
+def check_ready(func):
     '''Decorate an async method to wait for it’s instance to be ready.
 
        This expects the instance to have an asyncio.Event() object under
@@ -151,14 +151,14 @@ def check_ready(func, ret=False):
        The decorated method will wait up to
        `roll35.common.READINESS_TIMEOUT` seconds for the event to
        be set before running the method. If it times out while waiting,
-       it will log a warning and return the value of `ret`.'''
+       it will log a warning and return `False`.'''
     async def f(self, *args, **kwargs):
         try:
-            await asyncio.wait_for(await self._ready.wait(), timeout=READINESS_TIMEOUT)
+            await asyncio.wait_for(self._ready.wait(), timeout=READINESS_TIMEOUT)
         except asyncio.TimeoutError:
             self.logger.warning('Timed out waiting for data to be ready.')
-            return ret
+            return False
 
-        return func(self, *args, **kwargs)
+        return await func(self, *args, **kwargs)
 
     return f

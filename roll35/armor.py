@@ -31,7 +31,7 @@ class Armor(Cog):
             case None:
                 await ctx.send('No item found matching requested tags.')
             case item:
-                match await self.render(item):
+                match await self.renderer.render(item):
                     case (True, msg):
                         await ctx.send(msg)
                     case (False, msg):
