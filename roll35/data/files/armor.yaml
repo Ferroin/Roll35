@@ -1,4 +1,5 @@
 ---
+enchant_base_cost: 1000
 minor:
   lesser:
     - {weight: 80, bonus: 1, enchants: []}
