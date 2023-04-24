@@ -266,7 +266,7 @@ class MagicItem(Cog):
                             item['spell']['cls'] = cls
                     else:
                         item = (False, f'Unknown spellcasting class { cls }. For a list of known classes, use the `classes` command.')
-            case {'rank': _, 'subrank': subrank, 'category': category} if category in COMPOUND_AGENTS and subrank is None:
+            case {'rank': _, 'subrank': subrank, 'category': category} if category in COMPOUND_AGENTS and subrank is not None:
                 item = (False, f'Invalid parmeters specified, { category } does not take a subrank.')
             case {'rank': rank, 'category': category} if category in COMPOUND_AGENTS:
                 item = await self.ds[category].random(rank)
