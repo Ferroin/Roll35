@@ -147,8 +147,11 @@ class MagicItem(Cog):
                 case enchant:
                     enchants.append(enchant['name'])
 
-                    if 'cost' in enchant:
-                        extra_ecost += enchant['cost']
+                    if 'bonuscost' in enchant:
+                        extra_ecost += enchant['bonuscost']
+
+                    if 'bonus' in enchant:
+                        cbonus += enchant['bonus']
                     else:
                         cbonus += ebonus
 
