@@ -1,11 +1,11 @@
 ---
-- {minor:  5, medium:  0, major:  0, name: 'Scroll of {{ spell }}', spell: {level: 0, cls: random}}
-- {minor: 45, medium:  0, major:  0, name: 'Scroll of {{ spell }}', spell: {level: 1, cls: random}}
-- {minor: 45, medium:  5, major:  0, name: 'Scroll of {{ spell }}', spell: {level: 2, cls: random}}
-- {minor:  5, medium: 60, major:  0, name: 'Scroll of {{ spell }}', spell: {level: 3, cls: random}}
-- {minor:  0, medium: 30, major:  5, name: 'Scroll of {{ spell }}', spell: {level: 4, cls: random}}
-- {minor:  0, medium:  5, major: 45, name: 'Scroll of {{ spell }}', spell: {level: 5, cls: random}}
-- {minor:  0, medium:  0, major: 20, name: 'Scroll of {{ spell }}', spell: {level: 6, cls: random}}
-- {minor:  0, medium:  0, major: 15, name: 'Scroll of {{ spell }}', spell: {level: 7, cls: random}}
-- {minor:  0, medium:  0, major: 10, name: 'Scroll of {{ spell }}', spell: {level: 8, cls: random}}
-- {minor:  0, medium:  0, major:  5, name: 'Scroll of {{ spell }}', spell: {level: 9, cls: random}}
+- {minor:  5, medium:  0, major:  0, name: 'Scroll of {{ spell }}', spell: {level: 0, cls: random}, costmult:  12.5}
+- {minor: 45, medium:  0, major:  0, name: 'Scroll of {{ spell }}', spell: {level: 1, cls: random}, costmult:  25}
+- {minor: 45, medium:  5, major:  0, name: 'Scroll of {{ spell }}', spell: {level: 2, cls: random}, costmult:  50}
+- {minor:  5, medium: 60, major:  0, name: 'Scroll of {{ spell }}', spell: {level: 3, cls: random}, costmult:  75}
+- {minor:  0, medium: 30, major:  5, name: 'Scroll of {{ spell }}', spell: {level: 4, cls: random}, costmult: 100}
+- {minor:  0, medium:  5, major: 45, name: 'Scroll of {{ spell }}', spell: {level: 5, cls: random}, costmult: 125}
+- {minor:  0, medium:  0, major: 20, name: 'Scroll of {{ spell }}', spell: {level: 6, cls: random}, costmult: 150}
+- {minor:  0, medium:  0, major: 15, name: 'Scroll of {{ spell }}', spell: {level: 7, cls: random}, costmult: 175}
+- {minor:  0, medium:  0, major: 10, name: 'Scroll of {{ spell }}', spell: {level: 8, cls: random}, costmult: 200}
+- {minor:  0, medium:  0, major:  5, name: 'Scroll of {{ spell }}', spell: {level: 9, cls: random}, costmult: 225}
