@@ -15,12 +15,12 @@ agents:
   - {name: potion, type: compound}
   - {name: ring, type: ranked}
   - {name: rod, type: ranked}
-  - {name: scroll, type: compound}
+  - {name: scroll, type: compound-spell}
   - {name: shoulders, type: ranked}
   - {name: slotless, type: ranked}
   - {name: spell, type: spell}
   - {name: staff, type: ranked}
-  - {name: wand, type: compound}
+  - {name: wand, type: compound-spell}
   - {name: weapon, type: ordnance}
   - {name: wondrous, type: wondrous}
   - {name: wrists, type: ranked}

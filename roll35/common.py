@@ -58,17 +58,25 @@ def expand_weighted_list(items):
     return ret
 
 
-def make_weighted_entry(entry):
+def make_weighted_entry(entry, costmult_handler=lambda x: x):
     ret = {
         'weight': entry['weight'],
         'value': {k: entry[k] for k in entry if k != 'weight'}
     }
 
-    if 'cost' in entry:
-        ret['cost'] = entry['cost']
-
-    if 'costrange' in entry:
-        ret['costrange'] = entry['costrange']
+    match entry:
+        case {'cost': cost}:
+            ret['cost'] = cost
+        case {'costrange': [low, high]}:
+            ret['costrange'] = [low, high]
+        case {'costmult': _}:
+            match costmult_handler(entry):
+                case {'cost': cost}:
+                    ret['cost'] = cost
+                case {'costrange': [low, high]}:
+                    ret['costrange'] = [low, high]
+                case _:
+                    raise ValueError('Invalid entry returned by costmult function.')
 
     return ret
 
