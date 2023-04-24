@@ -11,7 +11,7 @@ from ..common import yaml
 
 from .category import CategoryAgent
 from .classes import ClassesAgent
-from .compound import CompoundAgent
+from .compound import CompoundAgent, CompoundSpellAgent
 from .ordnance import OrdnanceAgent
 from .ranked import RankedAgent
 from .spell import SpellAgent
@@ -23,6 +23,7 @@ agents = {
     'category': CategoryAgent,
     'classes': ClassesAgent,
     'compound': CompoundAgent,
+    'compound-spell': CompoundSpellAgent,
     'ordnance': OrdnanceAgent,
     'ranked': RankedAgent,
     'spell': SpellAgent,

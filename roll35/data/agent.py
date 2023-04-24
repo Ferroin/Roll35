@@ -17,24 +17,26 @@ from ..common import check_ready, norm_string, rnd, did_you_mean, make_weighted_
 logger = logging.getLogger(__name__)
 
 
-def process_compound_itemlist(items):
+def process_compound_itemlist(items, costmult_handler=lambda x: x):
     '''Process a compound list of weighted values.
 
        Each list entry must be a dict with keys coresponding to the
        possible values for `roll35.data.types.RANK` with each such key
        bearing a weight to use for the entry when rolling a random item
        of the corresponding rank.'''
-    ret = dict()
+    ret = types.R35Map()
 
     for rank in types.RANK:
-        ret[rank] = list()
+        ilist = types.R35List()
 
         for item in items:
             if item[rank]:
-                ret[rank].append({
+                ilist.append({
                     'weight': item[rank],
-                    'value': {k: v for (k, v) in item.items() if k not in types.RANK}
+                    'value': costmult_handler({k: v for k, v in item.items() if k != 'weight'})
                 })
+
+        ret[rank] = ilist
 
     return ret
 

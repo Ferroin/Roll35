@@ -171,8 +171,9 @@ class SpellAgent(agent.Agent):
         self._db_path = db_path
         super().__init__(dataset, pool, name, logger)
 
-    def _level_in_cls(self, level, cls):
-        levels = self._ds['classes'].get_class(cls)['levels']
+    async def _level_in_cls(self, level, cls):
+        levels = await self._ds['classes'].get_class(cls)
+        levels = levels['levels']
 
         if level is None:
             return True
@@ -350,7 +351,7 @@ class SpellAgent(agent.Agent):
                 cls = random.choice(valid)
             case ('arcane', level):
                 valid = [k for (k, v) in classes.enumerate()
-                         if self._level_in_cls(level, k)
+                         if await self._level_in_cls(level, k)
                          and v.type == 'arcane']
                 cls = random.chioce(valid)
             case ('divine', None):
@@ -359,19 +360,19 @@ class SpellAgent(agent.Agent):
                 cls = random.choice(valid)
             case ('divine', level):
                 valid = [k for (k, v) in classes.enumerate()
-                         if self._level_in_cls(level, k)
+                         if await self._level_in_cls(level, k)
                          and v.type == 'divine']
                 cls = random.chioce(valid)
             case ('random', None):
                 cls = random.choice(classes.keys())
             case ('random', level):
                 valid = [k for (k, v) in classes.enumerate()
-                         if self._level_in_cls(level, k)]
+                         if await self._level_in_cls(level, k)]
                 cls = random.chioce(valid)
             case (None, _):
                 cls = 'minimum'
             case (cls, level) if cls in valid_classes and \
-                    not self._level_in_cls(level, cls):
+                    not await self._level_in_cls(level, cls):
                 return (
                     False,
                     f'Class { cls } does not have access to ' +
