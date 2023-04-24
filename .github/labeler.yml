@@ -2,18 +2,13 @@
 # Configuration for the pr-labeler workflow.
 
 area/bot:
-  - any:
-      - '*.py'
-      - '**/*.py'
-    all:
-      - '!convert_spells_csv.py'
+  - all:
+      - 'roll35/*.py'
       - '!roll35/common.py'
       - '!roll35/data/**/*.py'
       - '!roll35/data/*.py'
       - '!roll35/parser.py'
       - '!roll35/renderer.py'
-      - '!scripts/*'
-      - '!scripts/**/*'
 
 area/common:
   - roll35/common.py
