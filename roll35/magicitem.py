@@ -246,8 +246,7 @@ class MagicItem(Cog):
                             agent, base_item, pattern, masterwork, bonus_cost
                         )
             case {'rank': rank, 'subrank': subrank, 'category': ('wand' | 'scroll') as category, 'cls': cls}:
-                spell_agent = self.ds['spell']
-                classes = await spell_agent.classes()
+                classes = await self.ds['classes'].classes()
 
                 if not classes:
                     item = (False, NOT_READY)
