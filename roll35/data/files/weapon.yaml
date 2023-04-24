@@ -514,8 +514,8 @@ specific:
 enchantments:
   melee:
     1:
-      - {weight:  1, name: 'Impervious', cost: 3000}
-      - {weight:  1, name: 'Glamered', cost: 4000}
+      - {weight:  1, name: 'Impervious', bonuscost: 3000}
+      - {weight:  1, name: 'Glamered', bonuscost: 4000}
       - {weight:  1, name: 'Allying'}
       - {weight:  5, name: '{{ keys.random("bane") }} Bane'}
       - {weight:  1, name: 'Benevolent'}
@@ -592,14 +592,14 @@ enchantments:
     4:
       - {weight: 40, name: 'Brilliant Energy'}
       - {weight: 40, name: 'Dancing'}
-      - {weight: 10, name: 'Vorpal', cost: 50000, limit: {only: [slashing]}}
-      - {weight:  5, name: 'Transformative', cost: 10000}
-      - {weight:  5, name: 'Dueling', cost: 14000}
+      - {weight: 10, name: 'Vorpal', bonus: 5, limit: {only: [slashing]}}
+      - {weight:  5, name: 'Transformative', bonuscost: 10000}
+      - {weight:  5, name: 'Dueling', bonuscost: 14000}
   ranged:
     1:
-      - {weight:  1, name: 'Adaptive', cost: 1000, limit: {only: [composite]}}
-      - {weight:  1, name: 'Impervious', cost: 3000 }
-      - {weight:  1, name: 'Glamered', cost: 4000}
+      - {weight:  1, name: 'Adaptive', bonuscost: 1000, limit: {only: [composite]}}
+      - {weight:  1, name: 'Impervious', bonuscost: 3000 }
+      - {weight:  1, name: 'Glamered', bonuscost: 4000}
       - {weight:  2, name: 'Allying'}
       - {weight:  9, name: '{{ keys.random("bane") }} Bane'}
       - {weight:  1, name: 'Called'}
@@ -636,18 +636,18 @@ enchantments:
       - {weight: 10, name: 'Shocking Burst', exclude: ['Shock']}
       - {weight:  4, name: 'Stalking'}
       - {weight: 10, name: 'Unholy', exclude: ['Holy']}
-    3: &ranged_enchant_3
+    3:
       - {weight: 25, name: 'Greater Lucky', exclude: ['Lucky'], limit: {only: [firearm]}}
       - {weight: 20, name: 'Greatre Reliable', exclude: ['Reliable'], limit: {only: [firearm]}}
       - {weight: 40, name: 'Speed'}
-      - {weight:  9, name: 'Brilliant Energy', cost: 32000}
-      - {weight:  2, name: 'Greater Designating', cost: 32000, exclude: ['Lesser Designating']}
-      - {weight:  2, name: 'Nimble Shot', cost: 32000}
-      - {weight:  2, name: 'Second Chance', cost: 32000, limit: {only: [bow]}}
-    4: *ranged_enchant_3
+    4:
+      - {weight:  9, name: 'Brilliant Energy'}
+      - {weight:  2, name: 'Greater Designating', exclude: ['Lesser Designating']}
+      - {weight:  2, name: 'Nimble Shot'}
+      - {weight:  2, name: 'Second Chance', limit: {only: [bow]}}
   ammo:
     1:
-      - {weight:  5, name: 'Dry Load', cost: 1500, limit: {only: [cartridge]}}
+      - {weight:  5, name: 'Dry Load', bonuscost: 1500, limit: {only: [cartridge]}}
       - {weight: 11, name: '{{ keys.random("bane") }} Bane'}
       - {weight:  1, name: 'Conductive'}
       - {weight: 11, name: 'Corrosive', exclude: ['Corrosive Burst']}
@@ -675,6 +675,6 @@ enchantments:
       - {weight: 10, name: 'Shocking Burst', exclude: ['Shock']}
       - {weight: 10, name: 'Unholy', exclude: ['Holy']}
     3: &ammo_enchant_3
-      - {weight:  2, name: 'Brilliant Energy', cost: 32000}
-      - {weight:  1, name: 'Greater Designating', cost: 32000, exclude: ['Lesser Designating']}
+      - {weight:  2, name: 'Brilliant Energy', bonus: 4}
+      - {weight:  1, name: 'Greater Designating', bonus: 4, exclude: ['Lesser Designating']}
     4: *ammo_enchant_3
