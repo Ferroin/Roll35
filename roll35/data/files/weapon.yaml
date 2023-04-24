@@ -598,7 +598,7 @@ enchantments:
   ranged:
     1:
       - {weight:  1, name: 'Adaptive', bonuscost: 1000, limit: {only: [composite]}}
-      - {weight:  1, name: 'Impervious', bonuscost: 3000 }
+      - {weight:  1, name: 'Impervious', bonuscost: 3000}
       - {weight:  1, name: 'Glamered', bonuscost: 4000}
       - {weight:  2, name: 'Allying'}
       - {weight:  9, name: '{{ keys.random("bane") }} Bane'}
