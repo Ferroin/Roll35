@@ -83,214 +83,6 @@ class MagicItem(Cog):
     def __init__(self, bot, ds, renderer, logger=logger):
         super().__init__(bot, ds, renderer, logger)
 
-    async def _reroll(self, path):
-        '''Reroll a magic item using the specified parameters.'''
-        match path:
-            case [category, slot, rank, subrank]:
-                return await self.roll(category=category, slot=slot, rank=rank, subrank=subrank)
-            case [category, rank, subrank]:
-                return await self.roll(category=category, rank=rank, subrank=subrank)
-            case _:
-                return (
-                    False,
-                    "Invalid reroll directive found while rolling for magic item."
-                )
-
-    async def _finalize_roll(self, item):
-        '''Handle rerolls and ensure item is the right format.'''
-        match item:
-            case (False, msg):
-                return (False, msg)
-            case (True, item):
-                return (True, item)
-            case {'reroll': reroll}:
-                return await self.reroll(reroll)
-            case _:
-                return (True, item)
-
-    async def _assemble_magic_item(self, agent, base_item, pattern, masterwork, bonus_cost, attempt=0):
-        '''Assemble a magic weapon or armor item.'''
-        self.logger.debug(f'Assembling magic item with parameters: { base_item }, { pattern }, { masterwork }, { bonus_cost }')
-
-        item_cost = base_item['cost'] + masterwork
-        item_cost += (pattern['bonus'] ** 2) * bonus_cost
-        group = base_item['type']
-        if 'tags' in base_item:
-            tags = set(base_item['tags'])
-        else:
-            tags = set()
-        cbonus = 0
-        extra_ecost = 0
-        enchants = []
-        failed = False
-
-        for ebonus in pattern['enchants']:
-            match await agent.random_enchant(group, ebonus, enchants, tags):
-                case False:
-                    failed = True
-                    await asyncio.sleep(1)
-                    break
-                case None:
-                    failed = True
-                    break
-                case enchant:
-                    enchants.append(enchant['name'])
-
-                    if 'bonuscost' in enchant:
-                        extra_ecost += enchant['bonuscost']
-
-                    if 'bonus' in enchant:
-                        cbonus += enchant['bonus']
-                    else:
-                        cbonus += ebonus
-
-                    if 'add' in enchant:
-                        tags = tags | set(enchant['add'])
-
-                    if 'remove' in enchant:
-                        tags = tags - set(enchant['remove'])
-
-        if failed:
-            if attempt >= 3:
-                return (False, "Too many failed attempts to select enchantments.")
-            else:
-                attempt += 1
-                self.logger.debug(
-                    'Failed to generate valid enchantments for magic item, retrying (attempt { attempt }).'
-                )
-                return await self._assemble_magic_item(
-                    agent, base_item, pattern, masterwork, bonus_cost,
-                    attempt=attempt
-                )
-        else:
-            item_cost += ((cbonus ** 2) * bonus_cost) + extra_ecost
-            etitle = ''.join(list(map(lambda x: f'{ x } ', enchants)))
-            return (
-                True,
-                {
-                    'name': f'+{ pattern["bonus"] } ' +
-                            f'{ etitle }{ base_item["name"] }',
-                    'cost': item_cost,
-                }
-            )
-
-    async def roll(self, rank=None, subrank=None, category=None,
-                   slot=None, base=None, cls=None):
-        '''Roll a magic item.'''
-        kwargs = {
-            'rank': rank,
-            'subrank': subrank,
-            'category': category,
-            'slot': slot,
-            'base': base,
-            'cls': cls,
-        }
-
-        self.logger.debug(f'Rolling magic item with parameters { kwargs }.')
-
-        slots = await self.ds['wondrous'].slots()
-
-        if not slots:
-            return await self._finalize_roll((False, NOT_READY))
-
-        match kwargs:
-            case {'rank': 'minor', 'subrank': 'least', 'category': 'wondrous', 'slot': 'slotless'}:
-                item = await self.ds['slotless'].random('minor', 'least')
-            case {'subrank': 'least'}:
-                item = (False, 'Only slotless wondrous items have a least subrank.')
-            case {'rank': rank, 'subrank': subrank, 'category': 'wondrous', 'slot': slot} if slot in slots:
-                item = await self.ds[slot].random(rank, subrank)
-            case {'rank': rank, 'subrank': subrank, 'slot': slot} if slot in slots:
-                item = await self.ds[slot].random(rank, subrank)
-            case {'rank': rank, 'subrank': subrank, 'category': 'wondrous'}:
-                slot = await self.ds['wondrous'].random()
-                item = await self.ds[slot].random(rank, subrank)
-            case {'rank': 'minor', 'category': ('rod' | 'staff') as category}:
-                item = (False, f'{ category } items do not have a minor rank.')
-            case {'rank': rank, 'subrank': subrank, 'category': ('armor' | 'weapon') as category, 'base': None}:
-                agent = self.ds[category]
-                match await agent.random_pattern(rank, subrank, allow_specific=True):
-                    case {'specific': specific}:
-                        item = await agent.random_specific(*specific)
-                    case pattern:
-                        match await agent.random_base():
-                            case False:
-                                item = (False, NOT_READY)
-                            case base_item:
-                                match await agent.get_bonus_costs(base_item):
-                                    case False:
-                                        item = (False, NOT_READY)
-                                    case (masterwork, bonus_cost):
-                                        item = await self._assemble_magic_item(
-                                            agent, base_item, pattern, masterwork, bonus_cost
-                                        )
-            case {'rank': rank, 'subrank': subrank, 'category': ('armor' | 'weapon') as category, 'base': base}:
-                agent = self.ds[category]
-                pattern = await agent.random_pattern(rank, subrank, allow_specific=False)
-
-                match await agent.get_base(base):
-                    case False:
-                        item = (False, NOT_READY)
-                    case (False, msg):
-                        item = (False, msg)
-                    case (True, base_item):
-                        match await agent.get_bonus_costs(base_item):
-                            case False:
-                                item = (False, NOT_READY)
-                            case (masterwork, bonus_cost):
-                                item = await self._assemble_magic_item(
-                                    agent, base_item, pattern, masterwork, bonus_cost
-                                )
-            case {'rank': rank, 'subrank': subrank, 'category': ('wand' | 'scroll') as category, 'cls': cls}:
-                classes = await self.ds['classes'].classes()
-
-                if not classes:
-                    item = (False, NOT_READY)
-                else:
-                    classes = set(classes) | self.ds['spell'].EXTRA_CLASS_NAMES
-                    if cls is None:
-                        cls = random.choice(list(classes))
-
-                    if cls in classes:
-                        item = await self.ds[category].random(rank, cls)
-
-                        if not item:
-                            item = (False, NOT_READY)
-                    else:
-                        item = (False, f'Unknown spellcasting class { cls }. For a list of known classes, use the `classes` command.')
-            case {'rank': _, 'subrank': subrank, 'category': category} if category in COMPOUND_AGENTS and subrank is not None:
-                item = (False, f'Invalid parmeters specified, { category } does not take a subrank.')
-            case {'rank': rank, 'category': category} if category in COMPOUND_AGENTS:
-                item = await self.ds[category].random(rank)
-            case {'rank': rank, 'subrank': subrank, 'category': category} if category in RANKED_AGENTS:
-                item = await self.ds[category].random(rank, subrank)
-            case {'rank': _, 'subrank': _, 'category': None, 'base': base} if base is not None:
-                item = (False, 'Invalid parmeters specified, specifying a base item is only valid if you specify a category of armor or weapon.')
-            case {'rank': _, 'subrank': _, 'category': None, 'cls': cls} if cls is not None:
-                item = (False, 'Invalid parmeters specified, specifying a class is only valid if you specify a category of scroll or wand.')
-            case {'rank': None, 'subrank': None, 'category': None}:
-                return await self.roll(rank=random.choice(RANK))
-            case {'rank': None, 'subrank': subrank, 'category': None}:
-                item = (False, 'Invalid parmeters specified, must specify a rank for the item.')
-            case {'rank': rank, 'subrank': subrank, 'category': None}:
-                if rank is None:
-                    rank = random.choice(RANK)
-
-                category = await self.ds['category'].random(rank)
-
-                return await self.roll(
-                    rank=rank,
-                    subrank=subrank,
-                    category=category,
-                )
-            case _:
-                item = (False, 'Invalid parmeters specified.')
-
-        if not item:
-            item = (False, NOT_READY)
-
-        return await self._finalize_roll(item)
-
     @commands.command()
     async def magicitem(self, ctx, *args):
         '''Roll a random magic item.
@@ -329,7 +121,7 @@ class MagicItem(Cog):
             case (True, a):
                 args = a
 
-        match await self.roll(**args):
+        match await roll(self.ds, **args):
             case (False, msg):
                 await ctx.send(msg)
             case (True, msg):
@@ -354,7 +146,7 @@ class MagicItem(Cog):
     @commands.command()
     async def slots(self, ctx):
         '''List known wondrous item slots.'''
-        match await self.agents['wondrous'].slots():
+        match await self.ds['wondrous'].slots():
             case False:
                 await ctx.send(NOT_READY)
             case []:
@@ -364,3 +156,214 @@ class MagicItem(Cog):
                     'The following wobndrous item slots are recognized: ' +
                     f'`{ "`, `".join(sorted(slots)) }`'
                 )
+
+
+async def _reroll(ds, path):
+    '''Reroll a magic item using the specified parameters.'''
+    match path:
+        case [category, slot, rank, subrank]:
+            return await roll(ds, category=category, slot=slot, rank=rank, subrank=subrank)
+        case [category, rank, subrank]:
+            return await roll(ds, category=category, rank=rank, subrank=subrank)
+        case _:
+            return (
+                False,
+                "Invalid reroll directive found while rolling for magic item."
+            )
+
+
+async def _finalize_roll(ds, item):
+    '''Handle rerolls and ensure item is the right format.'''
+    match item:
+        case (False, msg):
+            return (False, msg)
+        case (True, item):
+            return (True, item)
+        case {'reroll': reroll}:
+            return await _reroll(ds, reroll)
+        case _:
+            return (True, item)
+
+
+async def _assemble_magic_item(agent, base_item, pattern, masterwork, bonus_cost, attempt=0):
+    '''Assemble a magic weapon or armor item.'''
+    logger.debug(f'Assembling magic item with parameters: { base_item }, { pattern }, { masterwork }, { bonus_cost }')
+
+    item_cost = base_item['cost'] + masterwork
+    item_cost += (pattern['bonus'] ** 2) * bonus_cost
+    group = base_item['type']
+    if 'tags' in base_item:
+        tags = set(base_item['tags'])
+    else:
+        tags = set()
+    cbonus = 0
+    extra_ecost = 0
+    enchants = []
+    failed = False
+
+    for ebonus in pattern['enchants']:
+        match await agent.random_enchant(group, ebonus, enchants, tags):
+            case False:
+                failed = True
+                await asyncio.sleep(1)
+                break
+            case None:
+                failed = True
+                break
+            case enchant:
+                enchants.append(enchant['name'])
+
+                if 'bonuscost' in enchant:
+                    extra_ecost += enchant['bonuscost']
+
+                if 'bonus' in enchant:
+                    cbonus += enchant['bonus']
+                else:
+                    cbonus += ebonus
+
+                if 'add' in enchant:
+                    tags = tags | set(enchant['add'])
+
+                if 'remove' in enchant:
+                    tags = tags - set(enchant['remove'])
+
+    if failed:
+        if attempt >= 3:
+            return (False, "Too many failed attempts to select enchantments.")
+        else:
+            attempt += 1
+            logger.debug(
+                'Failed to generate valid enchantments for magic item, retrying (attempt { attempt }).'
+            )
+            return await _assemble_magic_item(
+                agent, base_item, pattern, masterwork, bonus_cost,
+                attempt=attempt
+            )
+    else:
+        item_cost += ((cbonus ** 2) * bonus_cost) + extra_ecost
+        etitle = ''.join(list(map(lambda x: f'{ x } ', enchants)))
+        return (
+            True,
+            {
+                'name': f'+{ pattern["bonus"] } ' +
+                        f'{ etitle }{ base_item["name"] }',
+                'cost': item_cost,
+            }
+        )
+
+
+async def roll(ds, rank=None, subrank=None, category=None,
+               slot=None, base=None, cls=None):
+    '''Roll a magic item.'''
+    kwargs = {
+        'rank': rank,
+        'subrank': subrank,
+        'category': category,
+        'slot': slot,
+        'base': base,
+        'cls': cls,
+    }
+
+    logger.debug(f'Rolling magic item with parameters { kwargs }.')
+
+    slots = await ds['wondrous'].slots()
+
+    if not slots:
+        return await _finalize_roll(ds, (False, NOT_READY))
+
+    match kwargs:
+        case {'rank': 'minor', 'subrank': 'least', 'category': 'wondrous', 'slot': 'slotless'}:
+            item = await ds['slotless'].random('minor', 'least')
+        case {'subrank': 'least'}:
+            item = (False, 'Only slotless wondrous items have a least subrank.')
+        case {'rank': rank, 'subrank': subrank, 'category': 'wondrous', 'slot': slot} if slot in slots:
+            item = await ds[slot].random(rank, subrank)
+        case {'rank': rank, 'subrank': subrank, 'slot': slot} if slot in slots:
+            item = await ds[slot].random(rank, subrank)
+        case {'rank': rank, 'subrank': subrank, 'category': 'wondrous'}:
+            slot = await ds['wondrous'].random()
+            item = await ds[slot].random(rank, subrank)
+        case {'rank': rank, 'subrank': subrank, 'category': ('armor' | 'weapon') as category, 'base': None}:
+            agent = ds[category]
+            match await agent.random_pattern(rank, subrank, allow_specific=True):
+                case {'specific': specific}:
+                    item = await agent.random_specific(*specific)
+                case pattern:
+                    match await agent.random_base():
+                        case False:
+                            item = (False, NOT_READY)
+                        case base_item:
+                            match await agent.get_bonus_costs(base_item):
+                                case False:
+                                    item = (False, NOT_READY)
+                                case (masterwork, bonus_cost):
+                                    item = await _assemble_magic_item(
+                                        agent, base_item, pattern, masterwork, bonus_cost
+                                    )
+        case {'rank': rank, 'subrank': subrank, 'category': ('armor' | 'weapon') as category, 'base': base}:
+            agent = ds[category]
+            pattern = await agent.random_pattern(rank, subrank, allow_specific=False)
+
+            match await agent.get_base(base):
+                case False:
+                    item = (False, NOT_READY)
+                case (False, msg):
+                    item = (False, msg)
+                case (True, base_item):
+                    match await agent.get_bonus_costs(base_item):
+                        case False:
+                            item = (False, NOT_READY)
+                        case (masterwork, bonus_cost):
+                            item = await _assemble_magic_item(
+                                agent, base_item, pattern, masterwork, bonus_cost
+                            )
+        case {'rank': rank, 'subrank': subrank, 'category': ('wand' | 'scroll') as category, 'cls': cls}:
+            classes = await ds['classes'].classes()
+
+            if not classes:
+                item = (False, NOT_READY)
+            else:
+                classes = set(classes) | ds['spell'].EXTRA_CLASS_NAMES
+                if cls is None:
+                    cls = random.choice(list(classes))
+
+                if cls in classes:
+                    item = await ds[category].random(rank, cls)
+
+                    if not item:
+                        item = (False, NOT_READY)
+                else:
+                    item = (False, f'Unknown spellcasting class { cls }. For a list of known classes, use the `classes` command.')
+        case {'rank': _, 'subrank': subrank, 'category': category} if category in COMPOUND_AGENTS and subrank is not None:
+            item = (False, f'Invalid parmeters specified, { category } does not take a subrank.')
+        case {'rank': rank, 'category': category} if category in COMPOUND_AGENTS:
+            item = await ds[category].random(rank)
+        case {'rank': rank, 'subrank': subrank, 'category': category} if category in RANKED_AGENTS:
+            item = await ds[category].random(rank, subrank)
+        case {'rank': _, 'subrank': _, 'category': None, 'base': base} if base is not None:
+            item = (False, 'Invalid parmeters specified, specifying a base item is only valid if you specify a category of armor or weapon.')
+        case {'rank': _, 'subrank': _, 'category': None, 'cls': cls} if cls is not None:
+            item = (False, 'Invalid parmeters specified, specifying a class is only valid if you specify a category of scroll or wand.')
+        case {'rank': None, 'subrank': None, 'category': None}:
+            return await roll(ds, rank=random.choice(RANK))
+        case {'rank': None, 'subrank': subrank, 'category': None}:
+            item = (False, 'Invalid parmeters specified, must specify a rank for the item.')
+        case {'rank': rank, 'subrank': subrank, 'category': None}:
+            if rank is None:
+                rank = random.choice(RANK)
+
+            category = await ds['category'].random(rank)
+
+            return await roll(
+                ds,
+                rank=rank,
+                subrank=subrank,
+                category=category,
+            )
+        case _:
+            item = (False, 'Invalid parmeters specified.')
+
+    if not item:
+        item = (False, NOT_READY)
+
+    return await _finalize_roll(ds, item)
