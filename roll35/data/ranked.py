@@ -24,5 +24,5 @@ class RankedAgent(agent.Agent):
 
         return ret
 
-    async def random(self, rank=None, subrank=None, mincost=0, maxcost=float('inf')):
-        return await super().random_ranked(rank, subrank, mincost, maxcost)
+    async def random(self, **kwargs):
+        return await super().random_ranked(**kwargs)

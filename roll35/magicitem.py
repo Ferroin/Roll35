@@ -14,6 +14,9 @@ from .data.types import RANK
 from .parser import Parser
 
 NOT_READY = 'Magic item data is not yet available, please try again later.'
+NO_ITEMS_IN_COST_RANGE = 'No items found in requested cost range.'
+
+MAX_REROLLS = 8
 
 ITEM_PARSER = Parser({
     'base': {
@@ -62,6 +65,22 @@ ITEM_PARSER = Parser({
             'sl',
         ]
     },
+    'mincost': {
+        'type': int,
+        'names': [
+            'minc',
+            'costmin',
+            'cmin',
+        ],
+    },
+    'maxcost': {
+        'type': int,
+        'names': [
+            'maxc',
+            'costmax',
+            'cmax',
+        ],
+    },
 })
 
 logger = logging.getLogger(__name__)
@@ -96,6 +115,8 @@ class MagicItem(Cog):
              `category armor` or `category weapon` is specified. See also
              the `/r35 armor` and `/r35 weapon` commands for generating
              random mundane armor and weapons.
+           - `mincost`: Specify a lower limit on the cost of the item.
+           - `maxcost`: Specify a upper limit on the cost of the item.
 
            Parameters which are not specified are generated randomly.'''
         match ITEM_PARSER.parse(' '.join(args)):
@@ -151,13 +172,13 @@ class MagicItem(Cog):
                 )
 
 
-async def _reroll(ds, path):
+async def _reroll(ds, attempt, path, mincost, maxcost):
     '''Reroll a magic item using the specified parameters.'''
     match path:
         case [category, slot, rank, subrank]:
-            return await roll(ds, category=category, slot=slot, rank=rank, subrank=subrank)
+            return await roll(ds, category=category, slot=slot, rank=rank, subrank=subrank, reroll=attempt+1, mincost=mincost, maxcost=maxcost)
         case [category, rank, subrank]:
-            return await roll(ds, category=category, rank=rank, subrank=subrank)
+            return await roll(ds, category=category, rank=rank, subrank=subrank, reroll=attempt+1, mincost=mincost, maxcost=maxcost)
         case _:
             return (
                 False,
@@ -165,15 +186,20 @@ async def _reroll(ds, path):
             )
 
 
-async def _finalize_roll(ds, item):
+async def _finalize_roll(ds, attempt, item, mincost, maxcost, args):
     '''Handle rerolls and ensure item is the right format.'''
     match item:
         case (False, msg):
             return (False, msg)
         case (True, item):
-            return (True, item)
+            if mincost is not None and item['cost'] < mincost:
+                return await roll(ds, attempt, **args)
+            elif maxcost is not None and item['cost'] > maxcost:
+                return await roll(ds, attempt, **args)
+            else:
+                return (True, item)
         case {'reroll': reroll}:
-            return await _reroll(ds, reroll)
+            return await _reroll(ds, attempt, reroll, mincost, maxcost)
         case _:
             return (True, item)
 
@@ -245,8 +271,18 @@ async def _assemble_magic_item(agent, base_item, pattern, masterwork, bonus_cost
         )
 
 
-async def roll(ds, rank=None, subrank=None, category=None,
-               slot=None, base=None, cls=None):
+async def roll(
+            ds,
+            rank=None,
+            subrank=None,
+            category=None,
+            slot=None,
+            base=None,
+            cls=None,
+            mincost=0,
+            maxcost=float('inf'),
+            attempt=0,
+          ):
     '''Roll a magic item.'''
     kwargs = {
         'rank': rank,
@@ -255,7 +291,12 @@ async def roll(ds, rank=None, subrank=None, category=None,
         'slot': slot,
         'base': base,
         'cls': cls,
+        'mincost': mincost,
+        'maxcost': maxcost,
     }
+
+    if attempt >= MAX_REROLLS:
+        return (False, 'Too many rerolls while attempting to generate item.')
 
     logger.debug(f'Rolling magic item with parameters { kwargs }.')
 
@@ -263,7 +304,7 @@ async def roll(ds, rank=None, subrank=None, category=None,
     categories = await ds['category'].categories()
 
     if not (categories and slots):
-        return await _finalize_roll(ds, (False, NOT_READY))
+        return (False, NOT_READY)
 
     compound = (ds.types['compound'] | ds.types['compound-spell']) & categories
     compound_spell = ds.types['compound-spell'] & categories
@@ -272,27 +313,29 @@ async def roll(ds, rank=None, subrank=None, category=None,
 
     match kwargs:
         case {'rank': 'minor', 'subrank': 'least', 'category': 'wondrous', 'slot': 'slotless'}:
-            item = await ds['slotless'].random('minor', 'least')
+            item = await ds['slotless'].random(rank='minor', subrank='least', mincost=mincost, maxcost=maxcost)
         case {'subrank': 'least'}:
             item = (False, 'Only slotless wondrous items have a least subrank.')
         case {'rank': rank, 'subrank': subrank, 'category': 'wondrous', 'slot': slot} if slot in slots:
-            item = await ds[slot].random(rank, subrank)
+            item = await ds[slot].random(rank=rank, subrank=subrank, mincost=mincost, maxcost=maxcost)
         case {'rank': rank, 'subrank': subrank, 'slot': slot} if slot in slots:
-            item = await ds[slot].random(rank, subrank)
+            item = await ds[slot].random(rank=rank, subrank=subrank, mincost=mincost, maxcost=maxcost)
         case {'rank': rank, 'subrank': subrank, 'category': 'wondrous'}:
             slot = await ds['wondrous'].random()
-            item = await ds[slot].random(rank, subrank)
+            item = await ds[slot].random(rank=rank, subrank=subrank, mincost=mincost, maxcost=maxcost)
         case {'rank': rank, 'subrank': subrank, 'category': category, 'base': None} if category in ordnance:
             agent = ds[category]
-            match await agent.random_pattern(rank, subrank, allow_specific=True):
+            match await agent.random_pattern(rank=rank, subrank=subrank, allow_specific=True, mincost=mincost, maxcost=maxcost):
                 case {'specific': specific}:
-                    item = await agent.random_specific(*specific)
+                    item = await agent.random_specific(*specific, mincost=mincost, maxcost=maxcost)
                 case pattern:
                     match await agent.random_base():
                         case False:
                             item = (False, NOT_READY)
                         case base_item:
                             match await agent.get_bonus_costs(base_item):
+                                case None:
+                                    item = (False, NO_ITEMS_IN_COST_RANGE)
                                 case False:
                                     item = (False, NOT_READY)
                                 case (masterwork, bonus_cost):
@@ -301,7 +344,7 @@ async def roll(ds, rank=None, subrank=None, category=None,
                                     )
         case {'rank': rank, 'subrank': subrank, 'category': category, 'base': base} if category in ordnance:
             agent = ds[category]
-            pattern = await agent.random_pattern(rank, subrank, allow_specific=False)
+            pattern = await agent.random_pattern(rank=rank, subrank=subrank, allow_specific=False, mincost=mincost, maxcost=maxcost)
 
             match await agent.get_base(base):
                 case False:
@@ -310,6 +353,8 @@ async def roll(ds, rank=None, subrank=None, category=None,
                     item = (False, msg)
                 case (True, base_item):
                     match await agent.get_bonus_costs(base_item):
+                        case None:
+                            item = (False, NO_ITEMS_IN_COST_RANGE)
                         case False:
                             item = (False, NOT_READY)
                         case (masterwork, bonus_cost):
@@ -327,42 +372,45 @@ async def roll(ds, rank=None, subrank=None, category=None,
                     cls = random.choice(list(classes))
 
                 if cls in classes:
-                    item = await ds[category].random(rank, cls)
-
-                    if not item:
-                        item = (False, NOT_READY)
+                    item = await ds[category].random(rank=rank, cls=cls, mincost=mincost, maxcost=maxcost)
                 else:
                     item = (False, f'Unknown spellcasting class { cls }. For a list of known classes, use the `classes` command.')
         case {'rank': _, 'subrank': subrank, 'category': category} if category in compound and subrank is not None:
             item = (False, f'Invalid parmeters specified, { category } does not take a subrank.')
         case {'rank': rank, 'category': category} if category in compound:
-            item = await ds[category].random(rank)
+            item = await ds[category].random(rank=rank, mincost=mincost, maxcost=maxcost)
         case {'rank': rank, 'subrank': subrank, 'category': category} if category in ranked:
-            item = await ds[category].random(rank, subrank)
+            item = await ds[category].random(rank=rank, subrank=subrank, mincost=mincost, maxcost=maxcost)
         case {'rank': _, 'subrank': _, 'category': None, 'base': base} if base is not None:
             item = (False, 'Invalid parmeters specified, specifying a base item is only valid if you specify a category of armor or weapon.')
         case {'rank': _, 'subrank': _, 'category': None, 'cls': cls} if cls is not None:
             item = (False, 'Invalid parmeters specified, specifying a class is only valid if you specify a category of scroll or wand.')
         case {'rank': None, 'subrank': None, 'category': None}:
-            return await roll(ds, rank=random.choice(RANK))
+            return await roll(ds, rank=random.choice(RANK), attempt=attempt, mincost=mincost, maxcost=maxcost)
         case {'rank': None, 'subrank': subrank, 'category': None}:
             item = (False, 'Invalid parmeters specified, must specify a rank for the item.')
         case {'rank': rank, 'subrank': subrank, 'category': None}:
             if rank is None:
                 rank = random.choice(RANK)
 
-            category = await ds['category'].random(rank)
+            category = await ds['category'].random(rank=rank)
 
             return await roll(
                 ds,
                 rank=rank,
                 subrank=subrank,
                 category=category,
+                attempt=attempt,
+                mincost=mincost,
+                maxcost=maxcost,
             )
         case _:
             item = (False, 'Invalid parmeters specified.')
 
-    if not item:
-        item = (False, NOT_READY)
-
-    return await _finalize_roll(ds, item)
+    match item:
+        case None:
+            return (False, NO_ITEMS_IN_COST_RANGE)
+        case False:
+            return (False, NOT_READY)
+        case item:
+            return await _finalize_roll(ds, attempt, item, mincost, maxcost, kwargs)
