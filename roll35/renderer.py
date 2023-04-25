@@ -118,14 +118,26 @@ class Renderer:
     @check_ready
     async def _render(self, item):
         match item:
-            case {'name': name, 'cls': cls, 'caster_level': cl}:
-                t = f'{ name } ({ cls.capitalize() } CL { cl }'
-            case {'name': name, 'cost': cost}:
-                t = f'{ name } (cost: { cost } gp)'
+            case {'name': _, 'cls': _, 'caster_level': _, 'cost': _}:
+                t = '{{ item["name"] }} ({{ item["cls"].capitalize() }} CL {{ item["caster_level"] }}, cost: {{ item["cost"] }})'
+            case {'name': _, 'cls': _, 'caster_level': _}:
+                t = '{{ item["name"] }} ({{ item["cls"].capitalize() }} CL {{ item["caster_level"] }})'
+            case {'name': name, 'cost': _}:
+                if '{{ spell }}' in name:
+                    t = '{{ item["name"] }} ({{ item["cls"].capitalize() }} CL {{ item["caster_level"] }}, cost: {{ item["cost"] }})'
+                else:
+                    t = '{{ item["name"] }} (cost: {{ item["cost"] }} gp)'
             case {'name': name}:
-                t = name
+                if '{{ spell }}' in name:
+                    t = '{{ item["name"] }} ({{ item["cls"].capitalize() }} CL {{ item["caster_level"] }})'
+                else:
+                    t = name
             case name if isinstance(name, str):
-                t = name
+                item = {'name': item}
+                if '{{ spell }}' in name:
+                    t = '{{ item["name"] }} ({{ item["cls"].capitalize() }} CL {{ item["caster_level"] }})'
+                else:
+                    t = name
             case _:
                 self.logger.error(f'Failed to render item: { item }.')
                 return (False, 'Failed to render item.')
@@ -143,13 +155,15 @@ class Renderer:
             if 'spell' in item:
                 match await self.get_spell(item):
                     case (True, spell):
+                        item['cls'] = spell['cls']
+                        item['caster_level'] = spell['caster_level']
                         spell = spell['name']
                     case (False, msg):
                         return (False, msg)
             else:
                 spell = None
 
-            n = await self.env.from_string(t).render_async({'keys': self._data, 'spell': spell})
+            n = await self.env.from_string(t).render_async({'keys': self._data, 'spell': spell, 'item': item})
 
             if n == t:
                 return (True, n)
