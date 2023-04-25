@@ -118,10 +118,6 @@ class Renderer:
     @check_ready
     async def _render(self, item):
         match item:
-            case {'name': _, 'cls': _, 'caster_level': _, 'cost': _}:
-                t = '{{ item["name"] }} ({{ item["cls"].capitalize() }} CL {{ item["caster_level"] }}, cost: {{ item["cost"] }})'
-            case {'name': _, 'cls': _, 'caster_level': _}:
-                t = '{{ item["name"] }} ({{ item["cls"].capitalize() }} CL {{ item["caster_level"] }})'
             case {'name': name, 'cost': _}:
                 if '{{ spell }}' in name:
                     t = '{{ item["name"] }} ({{ item["cls"].capitalize() }} CL {{ item["caster_level"] }}, cost: {{ item["cost"] }})'
@@ -153,13 +149,18 @@ class Renderer:
                 return (False, 'Failed to render item.')
 
             if 'spell' in item:
-                match await self.get_spell(item):
-                    case (True, spell):
-                        item['cls'] = spell['cls']
-                        item['caster_level'] = spell['caster_level']
-                        spell = spell['name']
-                    case (False, msg):
-                        return (False, msg)
+                if 'rolled_spell' in item:
+                    spell = item['rolled_spell']['name']
+                    item['cls'] = item['rolled_spell']['cls']
+                    item['caster_level'] = item['rolled_spell']['caster_level']
+                else:
+                    match await self.get_spell(item):
+                        case (True, spell):
+                            item['cls'] = spell['cls']
+                            item['caster_level'] = spell['caster_level']
+                            spell = spell['name']
+                        case (False, msg):
+                            return (False, msg)
             else:
                 spell = None
 

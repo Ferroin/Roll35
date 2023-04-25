@@ -166,6 +166,16 @@ def process_spell_chunk(items):
 
 
 class SpellAgent(agent.Agent):
+    EXTRA_CLASS_NAMES = {
+        'random',
+        'arcane',
+        'divine',
+        'spellpage',
+        'spellpage_arcane',
+        'spellpage_divine',
+        'minimum',
+    }
+
     def __init__(self, dataset, pool, name='spell', db_path=(Path.cwd() / 'spells.db'), logger=logger):
         self._spell_path = DATA_ROOT / f'{ name }.yaml'
         self._db_path = db_path
@@ -353,22 +363,22 @@ class SpellAgent(agent.Agent):
                 valid = [k for (k, v) in classes.enumerate()
                          if await self._level_in_cls(level, k)
                          and v.type == 'arcane']
-                cls = random.chioce(valid)
+                cls = random.choice(valid)
             case ('divine', None):
-                valid = [k for (k, v) in classes.enumerate()
+                valid = [k for (k, v) in classes.items()
                          if v.type == 'divine']
                 cls = random.choice(valid)
             case ('divine', level):
-                valid = [k for (k, v) in classes.enumerate()
+                valid = [k for (k, v) in classes.items()
                          if await self._level_in_cls(level, k)
                          and v.type == 'divine']
-                cls = random.chioce(valid)
+                cls = random.choice(valid)
             case ('random', None):
                 cls = random.choice(classes.keys())
             case ('random', level):
-                valid = [k for (k, v) in classes.enumerate()
+                valid = [k for (k, v) in classes.items()
                          if await self._level_in_cls(level, k)]
-                cls = random.chioce(valid)
+                cls = random.choice(valid)
             case (None, _):
                 cls = 'minimum'
             case (cls, level) if cls in valid_classes and \
@@ -462,6 +472,7 @@ class SpellAgent(agent.Agent):
 
         spell = {
             'name': spell['name'],
+            'level': spell[cls],
             'cls': cls,
             'caster_level': classes[cls]['levels'][level],
         }

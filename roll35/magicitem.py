@@ -254,16 +254,15 @@ class MagicItem(Cog):
                 if not classes:
                     item = (False, NOT_READY)
                 else:
+                    classes = set(classes) | self.ds['spell'].EXTRA_CLASS_NAMES
                     if cls is None:
-                        cls = random.choice(classes)
+                        cls = random.choice(list(classes))
 
                     if cls in classes:
-                        item = await self.ds[category].random(rank)
+                        item = await self.ds[category].random(rank, cls)
 
                         if not item:
                             item = (False, NOT_READY)
-                        else:
-                            item['spell']['cls'] = cls
                     else:
                         item = (False, f'Unknown spellcasting class { cls }. For a list of known classes, use the `classes` command.')
             case {'rank': _, 'subrank': subrank, 'category': category} if category in COMPOUND_AGENTS and subrank is not None:
