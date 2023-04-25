@@ -51,8 +51,8 @@ class CompoundAgent(agent.Agent):
 
         return ret
 
-    async def random(self, rank=None):
-        return await super().random_compound(rank)
+    async def random(self, rank=None, mincost=0, maxcost=float('inf')):
+        return await super().random_compound(rank, mincost, maxcost)
 
 
 class CompoundSpellAgent(CompoundAgent):
@@ -83,22 +83,25 @@ class CompoundSpellAgent(CompoundAgent):
 
         return True
 
-    async def random(self, rank=None, cls=None):
-        item = await super().random_compound(rank)
+    async def random(self, rank=None, cls=None, mincost=0, maxcost=float('inf')):
+        match await super().random_compound(rank, mincost, maxcost):
+            case None:
+                return (False, 'No items match specified cost range.')
+            case {'spell': spell, **item}:
+                match await self._ds['spell'].random(**spell):
+                    case False:
+                        return (False, 'Failed to roll random spell for item: spell data not ready.')
+                    case (False, msg):
+                        return (False, f'Failed to roll random spell for item: { msg }')
+                    case (True, spell):
+                        if 'costmult' in item:
+                            item['cost'] = item['costmult'] * spell['caster_level']
 
-        if 'spell' in item:
-            match await self._ds['spell'].random(**item['spell']):
-                case False:
-                    return (False, 'Failed to roll random spell for item: spell data not ready.')
-                case (False, msg):
-                    return (False, f'Failed to roll random spell for item: { msg }')
-                case (True, spell):
-                    if 'costmult' in item:
-                        item['cost'] = item['costmult'] * spell['caster_level']
-
-                    item['rolled_spell'] = spell
-                case ret:
-                    self.logger.warning(f'Searching random spell failed, got: { ret }')
-                    return (False, 'Unknown internal error.')
-
-        return (True, item)
+                        item['rolled_spell'] = spell
+                        item['spell'] = spell
+                        return (True, item)
+                    case ret:
+                        self.logger.warning(f'Searching random spell failed, got: { ret }')
+                        return (False, 'Unknown internal error.')
+            case item:
+                return (True, item)

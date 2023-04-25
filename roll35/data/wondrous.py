@@ -21,8 +21,8 @@ class WondrousAgent(agent.Agent):
             return yaml.load(f)
 
     @check_ready
-    async def random(self):
-        return rnd(self._data)
+    async def random(self, mincost=0, maxcost=float('inf')):
+        return rnd(agent.costfilter(self._data, mincost, maxcost))
 
     @check_ready
     async def slots(self):
