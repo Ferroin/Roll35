@@ -120,7 +120,7 @@ class Renderer:
         match item:
             case {'name': name, 'cost': _}:
                 if '{{ spell }}' in name:
-                    t = '{{ item["name"] }} ({{ item["cls"].capitalize() }} CL {{ item["caster_level"] }}, cost: {{ item["cost"] }})'
+                    t = '{{ item["name"] }} ({{ item["cls"].capitalize() }} CL {{ item["caster_level"] }}, cost: {{ item["cost"] }} gp)'
                 else:
                     t = '{{ item["name"] }} (cost: {{ item["cost"] }} gp)'
             case {'name': name}:
