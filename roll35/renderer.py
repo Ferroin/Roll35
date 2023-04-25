@@ -118,6 +118,8 @@ class Renderer:
     @check_ready
     async def _render(self, item):
         match item:
+            case {'name': name, 'cls': cls, 'caster_level': cl}:
+                t = f'{ name } ({ cls.capitalize() } CL { cl }'
             case {'name': name, 'cost': cost}:
                 t = f'{ name } (cost: { cost } gp)'
             case {'name': name}:
@@ -141,7 +143,7 @@ class Renderer:
             if 'spell' in item:
                 match await self.get_spell(item):
                     case (True, spell):
-                        spell = spell
+                        spell = spell['name']
                     case (False, msg):
                         return (False, msg)
             else:
