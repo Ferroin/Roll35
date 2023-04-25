@@ -82,3 +82,23 @@ class CompoundSpellAgent(CompoundAgent):
             self._ready.set()
 
         return True
+
+    async def random(self, rank=None, cls=None):
+        item = await super().random_compound(rank)
+
+        if 'spell' in item:
+            match await self._ds['spell'].random(**item['spell']):
+                case False:
+                    return (False, 'Failed to roll random spell for item: spell data not ready.')
+                case (False, msg):
+                    return (False, f'Failed to roll random spell for item: { msg }')
+                case (True, spell):
+                    if 'costmult' in item:
+                        item['cost'] = item['costmult'] * spell['caster_level']
+
+                    item['rolled_spell'] = spell
+                case ret:
+                    self.logger.warning(f'Searching random spell failed, got: { ret }')
+                    return (False, 'Unknown internal error.')
+
+        return (True, item)
