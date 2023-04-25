@@ -125,7 +125,7 @@ class Renderer:
             case name if isinstance(name, str):
                 t = name
             case _:
-                self.logger.error('Failed to render item: { item }.')
+                self.logger.error(f'Failed to render item: { item }.')
                 return (False, 'Failed to render item.')
 
         n = ''
