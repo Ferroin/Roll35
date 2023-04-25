@@ -177,8 +177,8 @@ class OrdnanceAgent(agent.Agent):
 
         return ret
 
-    async def random(self, rank, subrank, allow_specific=True):
-        return await super().random_pattern(rank, subrank, allow_specific)
+    async def random(self, rank, subrank, allow_specific=True, mincost=0, maxcost=float('inf')):
+        return await super().random_pattern(rank, subrank, allow_specific, mincost, maxcost)
 
     @check_ready
     async def get_bonus_costs(self, base):

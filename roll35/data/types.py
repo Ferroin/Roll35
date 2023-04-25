@@ -53,22 +53,42 @@ SLOT = [
 ]
 
 
-class R35Costs:
-    '''A simple container for tracking cost ranges.
+class R35Range:
+    '''A mutable range-like object that supports both ints and floats.
 
-       Provides two properties, min and max, with some basic sanity checks
-       to ensure correct behavior, together with a basic __contains__
-       method that simply indicates if a value is between min and max
-       inclusive.'''
-    MIN_VALUE = 0
+       Used by roll35.data to ranges of costs.
+
+       THe read only properties min and max track the lowest and highest
+       values added to the range, and are initialized based on the list
+       of values passed to the constructor.'''
+    MIN_VALUE = float('-inf')
     MAX_VALUE = float('inf')
 
-    def __init__(self):
-        self._min = self.MIN_VALUE
-        self._max = self.MAX_VALUE
+    def __init__(self, values=[]):
+        if not values:
+            self._min = None
+            self._max = None
+            self._empty = True
+        elif isinstance(values, self.__class__):
+            self._min = values.min
+            self._max = values.max
+            self._empty = False
+        elif values and all(map(self._typecheck, values)):
+            self._min = min(values)
+            self._max = max(values)
+            self._empty = False
+        else:
+            raise ValueError('Unsupported type for initializing R35Range.')
 
     def __contains__(self, v):
-        return v >= self._min and v <= self._max
+        if self._empty:
+            return False
+        elif self._typecheck(v):
+            return v >= self._min and v <= self._max
+        elif isinstance(v, R35Range):
+            return v.min in self and v.max in self
+        else:
+            raise ValueError(f'{ type(v) } is not supported by R35Range objects.')
 
     @staticmethod
     def _typecheck(v):
@@ -80,49 +100,64 @@ class R35Costs:
 
     @staticmethod
     def valid(v):
-        '''Check if a given value is a valid cost value.'''
-        if R35Costs._typecheck(v):
-            return R35Costs._rangecheck(v)
+        '''Check if a given value is a valid as a member of a R35Range object.'''
+        if R35Range._typecheck(v):
+            return R35Range._rangecheck(v)
         else:
             return False
 
+    def add(self, *v):
+        '''Add values to the range.'''
+        for e in v:
+            match e:
+                case R35Range(min=minv, max=maxv):
+                    if self._empty:
+                        self._min = minv
+                        self._max = maxv
+                        self._empty = False
+                    else:
+                        self._min = min(minv, self._min)
+                        self._max = max(maxv, self._max)
+                case e if self._typecheck(e):
+                    if self._rangecheck(e):
+                        if self._empty:
+                            self._min = e
+                            self._max = e
+                            self._empty = False
+                        else:
+                            self._min = min(e, self._min)
+                            self._max = max(e, self._max)
+                    else:
+                        raise ValueError(f'{ e } is out of range for R35Range objects.')
+                case e:
+                    raise TypeError(f'{ type(e) } is not supported by R35Range objects.')
+
     def reset(self):
-        self.min = self.MIN_VALUE
-        self.max = self.MAX_VALUE
+        '''Reset the cost range to the default values.'''
+        self._min = None
+        self._max = None
+        self._empty = True
+
+    def overlaps(self, other):
+        '''Return true if this cost range overlaps with other.'''
+        if not isinstance(other, R35Range):
+            raise ValueError('Must specify a R35Range object.')
+
+        return (self.min in other) or (self.max in other) or (other.min in self) or (other.max in self)
 
     @property
     def min(self):
-        return self._min
-
-    @min.setter
-    def min(self, v):
-        if self.__class__._typecheck(v):
-            if self.__class__._rangecheck(v):
-                self._min = v
-
-                if self._min > self._max:
-                    self._max = self._min
-            else:
-                raise ValueError('Minimum cost must be within the range { self.MIN_VALUE } and { self.MAX_VALUE }.')
+        if self._empty:
+            return self.MIN_VALUE
         else:
-            raise TypeError('Minimum cost must be an integer or float.')
+            return self._min
 
     @property
     def max(self):
-        return self._max
-
-    @max.setter
-    def max(self, v):
-        if self.__class__._typecheck(v):
-            if self.__class__._rangecheck(v):
-                self._max = v
-
-                if self._max < self._min:
-                    self._min = self._max
-            else:
-                raise ValueError('Maximum cost must be within the range { self.MIN_VALUE } and { self.MAX_VALUE }.')
+        if self._empty:
+            return self.MAX_VALUE
         else:
-            raise TypeError('Maximum cost must be an integer or float.')
+            return self._max
 
 
 class R35Container:
@@ -130,7 +165,7 @@ class R35Container:
 
        This exists just to minimize code duplication.'''
     def __init__(self):
-        self._costs = R35Costs()
+        self._costs = R35Range()
 
     def __len__(self):
         return len(self._data)
@@ -151,11 +186,15 @@ class R35Container:
     @staticmethod
     def _get_costs(item):
         match item:
-            case R35Container(costs=R35Costs(min=low, max=high)):
+            case R35Container(costs=R35Range(min=low, max=high)):
                 return (low, high)
-            case {'costrange': [low, high]} if R35Costs.valid(low) and R35Costs.valid(high):
+            case {'value': {'costrange': [low, high]}} if R35Range.valid(low) and R35Range.valid(high):
                 return (low, high)
-            case {'cost': cost} if R35Costs.valid(cost):
+            case {'costrange': [low, high]} if R35Range.valid(low) and R35Range.valid(high):
+                return (low, high)
+            case {'value': {'cost': cost}} if R35Range.valid(cost):
+                return (cost, cost)
+            case {'cost': cost} if R35Range.valid(cost):
                 return (cost, cost)
             case _:
                 return None
@@ -168,7 +207,7 @@ class R35Map(R35Container):
        dict methods to make it easier to use.
 
        It also maintains a property called costs, which is a
-       roll35.types.R35Costs object that tracks the minimum and maximum
+       roll35.types.R35Range object that tracks the minimum and maximum
        cost of items that have been added to the mapping.
 
        Costs are only updated for contained items that are one of:
@@ -213,8 +252,8 @@ class R35Map(R35Container):
                     del self[key]
 
                 self._data[key] = value
-                self._costs.min = min(self._costs.min, cost_min)
-                self._costs.max = max(self._costs.max, cost_max)
+                self._costs.add(cost_min)
+                self._costs.add(cost_max)
 
     def __delitem__(self, key):
         if key in self._data:
@@ -227,8 +266,8 @@ class R35Map(R35Container):
                     case None:
                         pass
                     case (cost_min, cost_max):
-                        self._costs.min = min(self._costs.min, cost_min)
-                        self._costs.max = max(self._costs.max, cost_max)
+                        self._costs.add(cost_min)
+                        self._costs.add(cost_max)
         else:
             raise KeyError(key)
 
@@ -249,7 +288,7 @@ class R35List(R35Container):
        of the list.append() method for simpler usage.
 
        It also maintains a property called costs, which is a
-       roll35.types.R35Costs object that tracks the minimum and maximum
+       roll35.types.R35Range object that tracks the minimum and maximum
        cost of items that have been added to the mapping.
 
        Costs are only updated for contained items that are one of:
@@ -310,8 +349,8 @@ class R35List(R35Container):
                 case None:
                     pass
                 case (cost_min, cost_max):
-                    self._costs.min = min(self._costs.min, cost_min)
-                    self._costs.max = max(self._costs.max, cost_max)
+                    self._costs.add(cost_min)
+                    self._costs.add(cost_max)
 
     def append(self, item):
         '''Append an item to the list.'''
@@ -321,5 +360,5 @@ class R35List(R35Container):
             case None:
                 pass
             case (cost_min, cost_max):
-                self._costs.min = min(self._costs.min, cost_min)
-                self._costs.max = max(self._costs.max, cost_max)
+                self._costs.add(cost_min)
+                self._costs.add(cost_max)

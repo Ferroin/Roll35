@@ -89,6 +89,39 @@ def generate_tags_entry(items):
     return tags | {x['type'] for x in items}
 
 
+def _cost_in_range(item, mincost, maxcost):
+    match maxcost:
+        case float('inf'):
+            return 'cost' in item and item['cost'] >= mincost
+        case _:
+            return 'cost' in item and item['cost'] in types.R35Range([mincost, maxcost])
+
+
+def _costrange_in_range(item, mincost, maxcost):
+    return 'costrange' in item and types.R35Range(item['costrange']).overlaps(types.R35Range([mincost, maxcost]))
+
+
+def costfilter(items, mincost, maxcost):
+    '''Filter a list of items by cost.'''
+    ret = []
+
+    for item in items:
+        match item:
+            case {'weight': _, 'value': v}:
+                value = v
+            case {'weight': _, **v}:
+                value = v
+            case v:
+                value = v
+
+        if _cost_in_range(value, mincost, maxcost) or \
+           _costrange_in_range(value, mincost, maxcost) or \
+           ('cost' not in value and 'costrange' not in value):
+            ret.append(item)
+
+    return ret
+
+
 class Agent:
     '''Abstract base class for data agents.'''
     def __init__(self, dataset, pool, name, logger=logger):
@@ -121,13 +154,37 @@ class Agent:
         return True
 
     @check_ready
-    async def random_ranked(self, rank=None, subrank=None):
+    async def random_rank(self, mincost=0, maxcost=float('inf')):
+        d = self._data
+        match [x for x in d if d[x].costs.min >= mincost and d[x].costs.max <= maxcost]:
+            case []:
+                return None
+            case [*ranks]:
+                return rnd(ranks)
+
+    @check_ready
+    async def random_subrank(self, rank, mincost=0, maxcost=float('inf')):
+        d = self._data[rank]
+        match [x for x in d if d[x].costs.min >= mincost and d[x].costs.max <= maxcost]:
+            case []:
+                return None
+            case [*subranks]:
+                return rnd(subranks)
+
+    @check_ready
+    async def random_ranked(self, rank=None, subrank=None, mincost=0, maxcost=float('inf')):
         match (rank, subrank):
             case (None, None):
-                rank = rnd(self._data.keys())
-                subrank = rnd(self._data[rank].keys())
+                rank = await self.random_rank(mincost, maxcost)
+                if rank is None:
+                    return None
+                subrank = await self.random_subrank(rank, mincost, maxcost)
+                if subrank is None:
+                    return None
             case (rank, None) if self._valid_rank(rank):
-                subrank = rnd(self._data[rank].keys())
+                subrank = await self.random_subrank(rank, mincost, maxcost)
+                if subrank is None:
+                    return None
             case (rank, subrank) if self._valid_subrank(rank, subrank):
                 pass
             case (rank, subrank) if self._valid_rank(rank):
@@ -135,19 +192,21 @@ class Agent:
             case (rank, _):
                 raise ValueError(f'Invalid rank for { self.name }: { rank }')
 
-        return rnd(self._data[rank][subrank])
+        return rnd(costfilter(self._data[rank][subrank], mincost, maxcost))
 
     @check_ready
-    async def random_compound(self, rank=None):
+    async def random_compound(self, rank=None, mincost=0, maxcost=float('inf')):
         match rank:
             case None:
-                rank = rnd(self._data.keys())
+                rank = await self.random_rank(mincost, maxcost)
+                if rank is None:
+                    return None
             case rank if self._valid_rank(rank):
                 pass
             case _:
                 raise ValueError(f'Invalid rank for { self.name }: { rank }')
 
-        return rnd(self._data[rank])
+        return rnd(costfilter(self._data[rank], mincost, maxcost))
 
     @check_ready
     async def get_base(self, name):
@@ -220,7 +279,7 @@ class Agent:
                 return random.choice(opts)['value']
 
     @check_ready
-    async def random_pattern(self, rank, subrank, allow_specific=True):
+    async def random_pattern(self, rank, subrank, allow_specific=True, mincost=0, maxcost=float('inf')):
         match rank:
             case None:
                 rank = random.choice(types.RANK)
@@ -232,7 +291,7 @@ class Agent:
         if subrank is None:
             subrank = random.choice(types.SUBRANK)
 
-        items = self._data[rank][subrank]
+        items = costfilter(self._data[rank][subrank], mincost, maxcost)
 
         if allow_specific:
             return random.choice(items)['value']
@@ -243,7 +302,7 @@ class Agent:
             )))['value']
 
     @check_ready
-    async def random_specific(self, *args):
+    async def random_specific(self, *args, mincost=0, maxcost=float('inf')):
         match args:
             case [_, _, _]:
                 group = args[0]
