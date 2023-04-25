@@ -15,18 +15,6 @@ from .parser import Parser
 
 NOT_READY = 'Magic item data is not yet available, please try again later.'
 
-RANKED_AGENTS = [
-    'ring',
-    'rod',
-    'staff',
-]
-
-COMPOUND_AGENTS = [
-    'potion',
-    'scroll',
-    'wand',
-]
-
 ITEM_PARSER = Parser({
     'base': {
         'names': [
@@ -139,9 +127,14 @@ class MagicItem(Cog):
     @commands.command()
     async def categories(self, ctx):
         '''List known magic item categories.'''
-        await ctx.send('The following item categories are recognized: ' +
-                       '`armor`, `weapon`, `potion`, `ring`, `rod`, ' +
-                       '`scroll`, `staff`, `wand`, `wondrous`')
+        match await self.ds['category'].categories():
+            case False:
+                await ctx.send(NOT_READY)
+            case cats:
+                await ctx.send(
+                    'The following item categories are recognized: ' +
+                    f'`{ "`, `".join(sorted(list(cats))) }`'
+                )
 
     @commands.command()
     async def slots(self, ctx):
@@ -267,9 +260,15 @@ async def roll(ds, rank=None, subrank=None, category=None,
     logger.debug(f'Rolling magic item with parameters { kwargs }.')
 
     slots = await ds['wondrous'].slots()
+    categories = await ds['category'].categories()
 
-    if not slots:
+    if not (categories and slots):
         return await _finalize_roll(ds, (False, NOT_READY))
+
+    compound = (ds.types['compound'] | ds.types['compound-spell']) & categories
+    compound_spell = ds.types['compound-spell'] & categories
+    ordnance = ds.types['ordnance'] & categories
+    ranked = ds.types['ranked'] & categories
 
     match kwargs:
         case {'rank': 'minor', 'subrank': 'least', 'category': 'wondrous', 'slot': 'slotless'}:
@@ -283,7 +282,7 @@ async def roll(ds, rank=None, subrank=None, category=None,
         case {'rank': rank, 'subrank': subrank, 'category': 'wondrous'}:
             slot = await ds['wondrous'].random()
             item = await ds[slot].random(rank, subrank)
-        case {'rank': rank, 'subrank': subrank, 'category': ('armor' | 'weapon') as category, 'base': None}:
+        case {'rank': rank, 'subrank': subrank, 'category': category, 'base': None} if category in ordnance:
             agent = ds[category]
             match await agent.random_pattern(rank, subrank, allow_specific=True):
                 case {'specific': specific}:
@@ -300,7 +299,7 @@ async def roll(ds, rank=None, subrank=None, category=None,
                                     item = await _assemble_magic_item(
                                         agent, base_item, pattern, masterwork, bonus_cost
                                     )
-        case {'rank': rank, 'subrank': subrank, 'category': ('armor' | 'weapon') as category, 'base': base}:
+        case {'rank': rank, 'subrank': subrank, 'category': category, 'base': base} if category in ordnance:
             agent = ds[category]
             pattern = await agent.random_pattern(rank, subrank, allow_specific=False)
 
@@ -317,7 +316,7 @@ async def roll(ds, rank=None, subrank=None, category=None,
                             item = await _assemble_magic_item(
                                 agent, base_item, pattern, masterwork, bonus_cost
                             )
-        case {'rank': rank, 'subrank': subrank, 'category': ('wand' | 'scroll') as category, 'cls': cls}:
+        case {'rank': rank, 'subrank': subrank, 'category': category, 'cls': cls} if category in compound_spell:
             classes = await ds['classes'].classes()
 
             if not classes:
@@ -334,11 +333,11 @@ async def roll(ds, rank=None, subrank=None, category=None,
                         item = (False, NOT_READY)
                 else:
                     item = (False, f'Unknown spellcasting class { cls }. For a list of known classes, use the `classes` command.')
-        case {'rank': _, 'subrank': subrank, 'category': category} if category in COMPOUND_AGENTS and subrank is not None:
+        case {'rank': _, 'subrank': subrank, 'category': category} if category in compound and subrank is not None:
             item = (False, f'Invalid parmeters specified, { category } does not take a subrank.')
-        case {'rank': rank, 'category': category} if category in COMPOUND_AGENTS:
+        case {'rank': rank, 'category': category} if category in compound:
             item = await ds[category].random(rank)
-        case {'rank': rank, 'subrank': subrank, 'category': category} if category in RANKED_AGENTS:
+        case {'rank': rank, 'subrank': subrank, 'category': category} if category in ranked:
             item = await ds[category].random(rank, subrank)
         case {'rank': _, 'subrank': _, 'category': None, 'base': base} if base is not None:
             item = (False, 'Invalid parmeters specified, specifying a base item is only valid if you specify a category of armor or weapon.')

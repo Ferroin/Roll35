@@ -40,12 +40,18 @@ class DataSet:
             structure = yaml.load(f)
 
         self.renderdata = structure['renderdata']
+        self._types = {k: set() for k in agents.keys()}
 
         for item in structure['agents']:
             self._agents[item['name']] = agents[item['type']](self, pool, item['name'])
+            self._types[item['type']].add(item['name'])
 
     def __getitem__(self, key):
         return self._agents[key]
+
+    @property
+    def types(self):
+        return self._types
 
     async def load_data(self):
         '''Load the data for this dataset.'''
