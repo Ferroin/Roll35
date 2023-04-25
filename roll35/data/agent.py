@@ -17,6 +17,20 @@ from ..common import check_ready, norm_string, rnd, did_you_mean, make_weighted_
 logger = logging.getLogger(__name__)
 
 
+def ensure_costs(func):
+    '''Decorate an async method to ensure that the mincost and maxcost arguments are valid.'''
+    async def f(self, *args, mincost=None, maxcost=None, **kwargs):
+        if mincost is None:
+            mincost = 0
+
+        if maxcost is None:
+            maxcost = float('inf')
+
+        return await func(self, *args, mincost=mincost, maxcost=maxcost, **kwargs)
+
+    return f
+
+
 def process_compound_itemlist(items, costmult_handler=lambda x: x):
     '''Process a compound list of weighted values.
 
@@ -154,7 +168,7 @@ class Agent:
         return True
 
     @check_ready
-    async def random_rank(self, mincost=0, maxcost=float('inf')):
+    async def random_rank(self, mincost, maxcost):
         d = self._data
         match [x for x in d if d[x].costs.min >= mincost and d[x].costs.max <= maxcost]:
             case []:
@@ -163,7 +177,7 @@ class Agent:
                 return rnd(ranks)
 
     @check_ready
-    async def random_subrank(self, rank, mincost=0, maxcost=float('inf')):
+    async def random_subrank(self, rank, mincost, maxcost):
         d = self._data[rank]
         match [x for x in d if d[x].costs.min >= mincost and d[x].costs.max <= maxcost]:
             case []:
@@ -172,7 +186,8 @@ class Agent:
                 return rnd(subranks)
 
     @check_ready
-    async def random_ranked(self, rank=None, subrank=None, mincost=0, maxcost=float('inf')):
+    @ensure_costs
+    async def random_ranked(self, rank=None, subrank=None, mincost=None, maxcost=None):
         match (rank, subrank):
             case (None, None):
                 rank = await self.random_rank(mincost, maxcost)
@@ -195,7 +210,8 @@ class Agent:
         return rnd(costfilter(self._data[rank][subrank], mincost, maxcost))
 
     @check_ready
-    async def random_compound(self, rank=None, mincost=0, maxcost=float('inf')):
+    @ensure_costs
+    async def random_compound(self, rank=None, mincost=None, maxcost=None):
         match rank:
             case None:
                 rank = await self.random_rank(mincost, maxcost)
@@ -279,7 +295,8 @@ class Agent:
                 return random.choice(opts)['value']
 
     @check_ready
-    async def random_pattern(self, rank, subrank, allow_specific=True, mincost=0, maxcost=float('inf')):
+    @ensure_costs
+    async def random_pattern(self, rank, subrank, allow_specific=True, mincost=None, maxcost=None):
         match rank:
             case None:
                 rank = random.choice(types.RANK)
@@ -302,7 +319,8 @@ class Agent:
             )))['value']
 
     @check_ready
-    async def random_specific(self, *args, mincost=0, maxcost=float('inf')):
+    @ensure_costs
+    async def random_specific(self, *args, mincost=None, maxcost=None):
         match args:
             case [_, _, _]:
                 group = args[0]

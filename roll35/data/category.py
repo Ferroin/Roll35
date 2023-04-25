@@ -30,7 +30,7 @@ class CategoryAgent(agent.Agent):
         return data
 
     async def random(self, rank=None):
-        return await super().random_compound(rank)
+        return await super().random_compound(rank=rank)
 
     @check_ready
     async def categories(self):

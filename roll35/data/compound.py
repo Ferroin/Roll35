@@ -51,8 +51,8 @@ class CompoundAgent(agent.Agent):
 
         return ret
 
-    async def random(self, rank=None, mincost=0, maxcost=float('inf')):
-        return await super().random_compound(rank, mincost, maxcost)
+    async def random(self, **kwargs):
+        return await super().random_compound(**kwargs)
 
 
 class CompoundSpellAgent(CompoundAgent):
@@ -83,8 +83,8 @@ class CompoundSpellAgent(CompoundAgent):
 
         return True
 
-    async def random(self, rank=None, cls=None, mincost=0, maxcost=float('inf')):
-        match await super().random_compound(rank, mincost, maxcost):
+    async def random(self, cls=None, **kwargs):
+        match await super().random_compound(**kwargs):
             case None:
                 return (False, 'No items match specified cost range.')
             case {'spell': spell, **item}:
