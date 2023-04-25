@@ -77,8 +77,8 @@ class Spell(Cog):
                 await ctx.send(NOT_READY)
             case (False, msg):
                 await ctx.send(msg)
-            case (True, msg):
-                match await self.render(msg):
+            case (True, spell):
+                match await self.render(spell):
                     case (True, msg):
                         await ctx.send(msg)
                     case (False, msg):

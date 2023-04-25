@@ -460,11 +460,10 @@ class SpellAgent(agent.Agent):
         if level is None:
             level = spell[cls]
 
-        caster_level = classes[cls]['levels'][level]
+        spell = {
+            'name': spell['name'],
+            'cls': cls,
+            'caster_level': classes[cls]['levels'][level],
+        }
 
-        return (
-            True,
-            f'{ spell["name"] } (' +
-            f'{ cls.capitalize() } CL ' +
-            f'{ caster_level })'
-        )
+        return (True, spell)
