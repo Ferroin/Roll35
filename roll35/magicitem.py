@@ -79,17 +79,6 @@ ITEM_PARSER = Parser({
 logger = logging.getLogger(__name__)
 
 
-def get_bonus_costs(category, base):
-    match category:
-        case 'armor':
-            return (150, 1000)
-        case 'weapon':
-            if 'double' in base['tags']:
-                return (600, 4000)
-            else:
-                return (300, 2000)
-
-
 class MagicItem(Cog):
     def __init__(self, bot, ds, renderer, logger=logger):
         super().__init__(bot, ds, renderer, logger)
@@ -228,11 +217,13 @@ class MagicItem(Cog):
                             case False:
                                 item = (False, NOT_READY)
                             case base_item:
-                                masterwork, bonus_cost = get_bonus_costs(category, base_item)
-
-                                item = await self._assemble_magic_item(
-                                    agent, base_item, pattern, masterwork, bonus_cost
-                                )
+                                match await agent.get_bonus_costs(base_item):
+                                    case False:
+                                        item = (False, NOT_READY)
+                                    case (masterwork, bonus_cost):
+                                        item = await self._assemble_magic_item(
+                                            agent, base_item, pattern, masterwork, bonus_cost
+                                        )
             case {'rank': rank, 'subrank': subrank, 'category': ('armor' | 'weapon') as category, 'base': base}:
                 agent = self.ds[category]
                 pattern = await agent.random_pattern(rank, subrank, allow_specific=False)
@@ -243,11 +234,13 @@ class MagicItem(Cog):
                     case (False, msg):
                         item = (False, msg)
                     case (True, base_item):
-                        masterwork, bonus_cost = get_bonus_costs(category, base_item)
-
-                        item = await self._assemble_magic_item(
-                            agent, base_item, pattern, masterwork, bonus_cost
-                        )
+                        match await agent.get_bonus_costs(base_item):
+                            case False:
+                                item = (False, NOT_READY)
+                            case (masterwork, bonus_cost):
+                                item = await self._assemble_magic_item(
+                                    agent, base_item, pattern, masterwork, bonus_cost
+                                )
             case {'rank': rank, 'subrank': subrank, 'category': ('wand' | 'scroll') as category, 'cls': cls}:
                 classes = await self.ds['classes'].classes()
 

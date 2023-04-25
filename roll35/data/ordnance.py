@@ -7,7 +7,7 @@ import logging
 
 from . import agent
 from . import types
-from ..common import DATA_ROOT, yaml, make_weighted_entry
+from ..common import DATA_ROOT, yaml, make_weighted_entry, check_ready
 
 logger = logging.getLogger(__name__)
 
@@ -27,17 +27,19 @@ def process_enchantment_table(items, basevalue):
     return ret
 
 
-def extra_cost_range(enchantments):
-    t = []
+def get_enchant_bonus_costs(data, base):
+    '''Compute the enchantment bonus costs for the specified ase item.'''
+    if 'double' in base['tags']:
+        masterwork = data['masterwork'] * 2
+        enchant_base_cost = data['enchant_base_cost'] * 2
+    else:
+        masterwork = data['masterwork']
+        enchant_base_cost = data['enchant_base_cost']
 
-    for x in enchantments:
-        match x:
-            case {'cost': cost}:
-                t.append(cost)
-            case _:
-                pass
-
-    return min(t), max(t)
+    return (
+        masterwork,
+        enchant_base_cost,
+    )
 
 
 def get_costs_and_bonus(enchants):
@@ -170,8 +172,14 @@ class OrdnanceAgent(agent.Agent):
         ret['tags'] = agent.generate_tags_entry(data['base'])
         ret['enchantments'] = enchantments
         ret['specific'] = specific
+        ret['masterwork'] = data['masterwork']
+        ret['enchant_base_cost'] = data['enchant_base_cost']
 
         return ret
 
     async def random(self, rank, subrank, allow_specific=True):
         return await super().random_pattern(rank, subrank, allow_specific)
+
+    @check_ready
+    async def get_bonus_costs(self, base):
+        return get_enchant_bonus_costs(self._data, base)

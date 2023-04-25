@@ -1,5 +1,6 @@
 ---
 enchant_base_cost: 2000
+masterwork: 300
 minor:
   lesser:
     - {weight: 80, bonus: 1, enchants: []}
