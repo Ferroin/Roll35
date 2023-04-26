@@ -149,18 +149,28 @@ class MagicItem(Cog):
                     k: v for k, v in enumerate(args) if k != 'count'
                 })
 
-                for item in asyncio.as_completed(items):
-                    await ctx.trigger_typing()
+                await ctx.trigger_typing()
 
+                results = []
+
+                for item in asyncio.as_completed(items):
                     match await item:
                         case (False, msg):
-                            await ctx.send(msg)
+                            results.append(f'\nFailed to generate remaining items: { msg }')
+                            break
                         case (True, msg):
                             match await self.render(msg):
                                 case (True, msg):
-                                    await ctx.send(msg)
+                                    results.append(msg)
                                 case (False, msg):
-                                    await ctx.send(msg)
+                                    results.append(f'\nFailed to generate remaining items: { msg }')
+                                    break
+
+                await ctx.trigger_typing()
+
+                msg = '\n'.join(results)
+
+                await ctx.send(f'{ len(results) } results: \n{ msg }')
             case {'count': c} if c < 1:
                 await ctx.send('Count must be an integer greater than 0.')
             case _:
