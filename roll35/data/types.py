@@ -90,6 +90,9 @@ class R35Range:
         else:
             raise ValueError(f'{ type(v) } is not supported by R35Range objects.')
 
+    def __repr__(self):
+        return f'R35Range({ self.min }, { self.max }, empty={ self._empty })'
+
     @staticmethod
     def _typecheck(v):
         return isinstance(v, int) or isinstance(v, float)
@@ -231,6 +234,9 @@ class R35Map(R35Container):
             for k, v in data.items():
                 self[k] = v
 
+    def __repr__(self):
+        return f'R35Map({ self.cost }, { self._data })'
+
     def __getitem__(self, key):
         if key in self._data:
             return self._data[key]
@@ -311,6 +317,9 @@ class R35List(R35Container):
         if data:
             for i in data:
                 self.append(i)
+
+    def __repr__(self):
+        return f'R35List({ self.cost }, { self._data })'
 
     def __getitem__(self, index):
         if not isinstance(index, int):
