@@ -1,0 +1,9 @@
+---
+- {name   :   Thorp, population:    20, base:    50, purchase:    500, casting: 1, minor: [1,  4], medium:    null, major:    null}
+- {name:     Hamlet, population:    60, base:   200, purchase:   1000, casting: 2, minor: [1,  6], medium:    null, major:    null}
+- {name:    Village, population:   200, base:   500, purchase:   2500, casting: 3, minor: [2,  8], medium: [1,  4], major:    null}
+- {name: Small Town, population:  2000, base:  1000, purchase:   5000, casting: 4, minor: [3, 12], medium: [1,  6], major:    null}
+- {name: Large Town, population:  5000, base:  2000, purchase:  10000, casting: 5, minor: [3, 12], medium: [2,  8], major: [1,  4]}
+- {name: Small City, population: 10000, base:  4000, purchase:  25000, casting: 6, minor: [4, 16], medium: [3, 12], major: [1,  6]}
+- {name: Large City, population: 25000, base:  8000, purchase:  50000, casting: 7, minor: [4, 16], medium: [3, 12], major: [2,  8]}
+- {name: Metropolis, population:  null, base: 16000, purchase: 100000, casting: 8, minor:     all, medium: [4, 16], major: [3, 12]}
