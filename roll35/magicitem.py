@@ -246,24 +246,6 @@ async def _reroll(ds, attempt, path, mincost, maxcost):
             )
 
 
-async def _finalize_roll(ds, attempt, item, mincost, maxcost, args):
-    '''Handle rerolls and ensure item is the right format.'''
-    match item:
-        case (False, msg):
-            return (False, msg)
-        case (True, item):
-            if mincost is not None and item['cost'] < mincost:
-                return await roll(ds, args, attempt)
-            elif maxcost is not None and item['cost'] > maxcost:
-                return await roll(ds, args, attempt)
-            else:
-                return (True, item)
-        case {'reroll': reroll}:
-            return await _reroll(ds, attempt, reroll, mincost, maxcost)
-        case _:
-            return (True, item)
-
-
 async def _assemble_magic_item(agent, base_item, pattern, masterwork, bonus_cost, attempt=0):
     '''Assemble a magic weapon or armor item.'''
     logger.debug(f'Assembling magic item with parameters: { base_item }, { pattern }, { masterwork }, { bonus_cost }')
@@ -496,5 +478,16 @@ async def roll(
             return (False, NO_ITEMS_IN_COST_RANGE)
         case False:
             return (False, NOT_READY)
-        case item:
-            return await _finalize_roll(ds, attempt, item, mincost, maxcost, args)
+        case (False, msg):
+            return (False, msg)
+        case (True, item):
+            if mincost is not None and item['cost'] < mincost:
+                return await roll(ds, args, attempt)
+            elif maxcost is not None and item['cost'] > maxcost:
+                return await roll(ds, args, attempt)
+            else:
+                return (True, item)
+        case {'reroll': reroll}:
+            return await _reroll(ds, attempt, reroll, mincost, maxcost)
+        case _:
+            return (True, item)
