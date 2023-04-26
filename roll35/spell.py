@@ -40,6 +40,7 @@ SPELL_PARSER = Parser({
     'count': {
         'type': int,
         'names': [
+            'cost',
             'co',
             'number',
             'num',
