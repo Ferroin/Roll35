@@ -17,6 +17,7 @@ NOT_READY = 'Magic item data is not yet available, please try again later.'
 NO_ITEMS_IN_COST_RANGE = 'No items found in requested cost range.'
 
 MAX_REROLLS = 8
+MAX_COUNT = 20
 
 ITEM_PARSER = Parser({
     'base': {
@@ -81,6 +82,14 @@ ITEM_PARSER = Parser({
             'cmax',
         ],
     },
+    'count': {
+        'type': int,
+        'names': [
+            'co',
+            'number',
+            'num',
+        ],
+    },
 })
 
 logger = logging.getLogger(__name__)
@@ -117,6 +126,7 @@ class MagicItem(Cog):
              random mundane armor and weapons.
            - `mincost`: Specify a lower limit on the cost of the item.
            - `maxcost`: Specify a upper limit on the cost of the item.
+           - `count`: Roll this many items using the same parameters.
 
            Parameters which are not specified are generated randomly.'''
         match ITEM_PARSER.parse(' '.join(args)):
@@ -130,15 +140,31 @@ class MagicItem(Cog):
             case (True, a):
                 args = a
 
-        match await roll(self.ds, **args):
-            case (False, msg):
-                await ctx.send(msg)
-            case (True, msg):
-                match await self.render(msg):
-                    case (True, msg):
-                        await ctx.send(msg)
-                    case (False, msg):
-                        await ctx.send(msg)
+        if args['count'] is None:
+            args['count'] = 1
+
+        match args:
+            case {'count': c} if isinstance(c, int) and c > 0:
+                items = roll_many(self.ds, c, {
+                    k: v for k, v in enumerate(args) if k != 'count'
+                })
+
+                for item in asyncio.as_completed(items):
+                    await ctx.trigger_typing()
+
+                    match await item:
+                        case (False, msg):
+                            await ctx.send(msg)
+                        case (True, msg):
+                            match await self.render(msg):
+                                case (True, msg):
+                                    await ctx.send(msg)
+                                case (False, msg):
+                                    await ctx.send(msg)
+            case {'count': c} if c < 1:
+                await ctx.send('Count must be an integer greater than 0.')
+            case _:
+                await ctx.send('Unrecognized value for count.')
 
     @commands.command()
     async def mi(self, ctx, *args):
@@ -176,9 +202,30 @@ async def _reroll(ds, attempt, path, mincost, maxcost):
     '''Reroll a magic item using the specified parameters.'''
     match path:
         case [category, slot, rank, subrank]:
-            return await roll(ds, category=category, slot=slot, rank=rank, subrank=subrank, reroll=attempt+1, mincost=mincost, maxcost=maxcost)
+            return await roll(
+                ds,
+                {
+                    'rank': rank,
+                    'subrnak': subrank,
+                    'category': category,
+                    'slot': slot,
+                    'mincost': mincost,
+                    'maxcost': maxcost,
+                },
+                attempt+1
+            )
         case [category, rank, subrank]:
-            return await roll(ds, category=category, rank=rank, subrank=subrank, reroll=attempt+1, mincost=mincost, maxcost=maxcost)
+            return await roll(
+                ds,
+                {
+                    'rank': rank,
+                    'subrnak': subrank,
+                    'category': category,
+                    'mincost': mincost,
+                    'maxcost': maxcost,
+                },
+                attempt+1
+            )
         case _:
             return (
                 False,
@@ -193,9 +240,9 @@ async def _finalize_roll(ds, attempt, item, mincost, maxcost, args):
             return (False, msg)
         case (True, item):
             if mincost is not None and item['cost'] < mincost:
-                return await roll(ds, attempt, **args)
+                return await roll(ds, args, attempt)
             elif maxcost is not None and item['cost'] > maxcost:
-                return await roll(ds, attempt, **args)
+                return await roll(ds, args, attempt)
             else:
                 return (True, item)
         case {'reroll': reroll}:
@@ -271,34 +318,46 @@ async def _assemble_magic_item(agent, base_item, pattern, masterwork, bonus_cost
         )
 
 
+def roll_many(ds, count, args):
+    '''Roll a number of magic items.
+
+       Returns a list of coroutines that can be awaited to get the
+       requested items.'''
+    if not ds.ready:
+        return [(False, NOT_READY)]
+
+    if count > MAX_COUNT:
+        return [(False, f'Too many items requested, no more than { MAX_COUNT } may be rolled at a time.')]
+
+    coros = []
+
+    for i in range(0, count):
+        coros.append(roll(ds, args))
+
+    return coros
+
+
 async def roll(
             ds,
-            rank=None,
-            subrank=None,
-            category=None,
-            slot=None,
-            base=None,
-            cls=None,
-            mincost=0,
-            maxcost=float('inf'),
+            args,
             attempt=0,
           ):
     '''Roll a magic item.'''
-    kwargs = {
-        'rank': rank,
-        'subrank': subrank,
-        'category': category,
-        'slot': slot,
-        'base': base,
-        'cls': cls,
-        'mincost': mincost,
-        'maxcost': maxcost,
+    args = {
+        'rank': args.get('rank', None),
+        'subrank': args.get('subrank', None),
+        'category': args.get('category', None),
+        'slot': args.get('slot', None),
+        'base': args.get('base', None),
+        'cls': args.get('cls', None),
+        'mincost': args.get('mincost', 0),
+        'maxcost': args.get('maxcost', float('inf')),
     }
 
     if attempt >= MAX_REROLLS:
         return (False, 'Too many rerolls while attempting to generate item.')
 
-    logger.debug(f'Rolling magic item with parameters { kwargs }.')
+    logger.debug(f'Rolling magic item with parameters { args }.')
 
     slots = await ds['wondrous'].slots()
     categories = await ds['category'].categories()
@@ -310,8 +369,10 @@ async def roll(
     compound_spell = ds.types['compound-spell'] & categories
     ordnance = ds.types['ordnance'] & categories
     ranked = ds.types['ranked'] & categories
+    mincost = args['mincost']
+    maxcost = args['maxcost']
 
-    match kwargs:
+    match args:
         case {'rank': 'minor', 'subrank': 'least', 'category': 'wondrous', 'slot': 'slotless'}:
             item = await ds['slotless'].random(rank='minor', subrank='least', mincost=mincost, maxcost=maxcost)
         case {'subrank': 'least'}:
@@ -386,7 +447,15 @@ async def roll(
         case {'rank': _, 'subrank': _, 'category': None, 'cls': cls} if cls is not None:
             item = (False, 'Invalid parmeters specified, specifying a class is only valid if you specify a category of scroll or wand.')
         case {'rank': None, 'subrank': None, 'category': None}:
-            return await roll(ds, rank=random.choice(RANK), attempt=attempt, mincost=mincost, maxcost=maxcost)
+            return await roll(
+                ds,
+                {
+                    'rank': random.choice(RANK),
+                    'mincost': mincost,
+                    'maxcost': maxcost,
+                },
+                attempt,
+            )
         case {'rank': None, 'subrank': subrank, 'category': None}:
             item = (False, 'Invalid parmeters specified, must specify a rank for the item.')
         case {'rank': rank, 'subrank': subrank, 'category': None}:
@@ -397,12 +466,14 @@ async def roll(
 
             return await roll(
                 ds,
-                rank=rank,
-                subrank=subrank,
-                category=category,
-                attempt=attempt,
-                mincost=mincost,
-                maxcost=maxcost,
+                {
+                    'rank': rank,
+                    'subrank': subrank,
+                    'category': category,
+                    'mincost': mincost,
+                    'maxcost': maxcost,
+                },
+                attempt,
             )
         case _:
             item = (False, 'Invalid parmeters specified.')
@@ -413,4 +484,4 @@ async def roll(
         case False:
             return (False, NOT_READY)
         case item:
-            return await _finalize_roll(ds, attempt, item, mincost, maxcost, kwargs)
+            return await _finalize_roll(ds, attempt, item, mincost, maxcost, args)

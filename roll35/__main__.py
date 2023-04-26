@@ -109,6 +109,10 @@ def main(token):
             asyncio.create_task(renderer.load_data()),
         )
 
+    @bot.event
+    async def on_close():
+        POOL.shutdown(wait=True, cancel_futures=True)
+
     for entry in COGS:
         cog = entry(bot, ds, renderer)
         bot.add_cog(cog)
