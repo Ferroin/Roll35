@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 class Core(Cog):
-    def __init__(self, bot, ds, renderer):
+    def __init__(self, bot, ds, renderer, logger=logger):
         super().__init__(bot, ds, renderer, logger)
 
     @commands.command()
