@@ -87,11 +87,14 @@ def rnd(items):
        If the list is a list of dicts with `weight` and `value` keys, then
        we make a weighted selection based on that info and return the
        value. Otherwise, this is the same as `random.choice(items)`.'''
-    match list(items)[0]:
-        case {'weight': _, 'value': _}:
-            return random.choice(expand_weighted_list(items))
-        case _:
-            return random.choice(list(items))
+    if list(items):
+        match list(items)[0]:
+            case {'weight': _, 'value': _}:
+                return random.choice(expand_weighted_list(items))
+            case _:
+                return random.choice(list(items))
+    else:
+        return None
 
 
 def chunk(items, size):
