@@ -3,6 +3,7 @@
 
 '''Cog for handling spells.'''
 
+import asyncio
 import logging
 
 from nextcord.ext import commands
@@ -11,6 +12,8 @@ from .cog import Cog
 from .parser import Parser
 
 NOT_READY = 'Spell data is not yet available, please try again later.'
+
+MAX_COUNT = 20
 
 SPELL_PARSER = Parser({
     'cls': {
@@ -34,6 +37,14 @@ SPELL_PARSER = Parser({
             't',
         ],
     },
+    'count': {
+        'type': int,
+        'names': [
+            'co',
+            'number',
+            'num',
+        ],
+    },
 })
 
 logger = logging.getLogger(__name__)
@@ -54,7 +65,8 @@ class Spell(Cog):
            - `level`: Only consider spells for the specified level.
            - `tag`: Only consider spells with the specified school,
              subschool or descriptor. To list recognized tags, run
-             `/r35 spelltags`.'''
+             `/r35 spelltags`.
+           - `count`: Roll this many spells at once.'''
         match SPELL_PARSER.parse(' '.join(args)):
             case (False, msg):
                 await ctx.send(
@@ -66,23 +78,50 @@ class Spell(Cog):
             case (True, a):
                 args = a
 
-        await ctx.trigger_typing()
+        if args['count'] is None:
+            args['count'] = 1
 
-        match await self.ds['spell'].random(
-            level=args['level'],
-            cls=args['cls'],
-            tag=args['tag'],
-        ):
-            case False:
-                await ctx.send(NOT_READY)
-            case (False, msg):
-                await ctx.send(msg)
-            case (True, spell):
-                match await self.render(spell):
-                    case (True, msg):
-                        await ctx.send(msg)
-                    case (False, msg):
-                        await ctx.send(msg)
+        match args:
+            case {'count': c} if isinstance(c, int) and c > 0:
+                if c > MAX_COUNT:
+                    await ctx.send(f'Too many spells requested, no more than { MAX_COUNT } may be rolled at a time.')
+                    return
+
+                coros = []
+
+                for i in range(0, c):
+                    coros.append(roll_spell(self.ds, {
+                        'level': args['level'],
+                        'cls': args['cls'],
+                        'tag': args['tag'],
+                    }))
+
+                await ctx.trigger_typing()
+
+                results = []
+
+                for item in asyncio.as_completed(coros):
+                    match await item:
+                        case (False, msg):
+                            results.append(f'\nFailed to generate remaining items: { msg }')
+                            break
+                        case (True, msg):
+                            match await self.render(msg):
+                                case (True, msg):
+                                    results.append(msg)
+                                case (False, msg):
+                                    results.append(f'\nFailed to generate remaining items: { msg }')
+                                    break
+
+                await ctx.trigger_typing()
+
+                msg = '\n'.join(results)
+
+                await ctx.send(f'{ len(results) } results: \n{ msg }')
+            case {'count': c} if c < 1:
+                await ctx.send('Count must be an integer greater than 0.')
+            case _:
+                await ctx.send('Unrecognized value for count.')
 
     @commands.command()
     async def spelltags(self, ctx):
@@ -119,3 +158,8 @@ class Spell(Cog):
                     '- `spellpage_arcane`: Same as `spellpage`, but only consider arcane classes.\n' +
                     '- `spellpage_divine`: Same as `spellpage`, but only consider divine classes.\n'
                 )
+
+
+def roll_spell(ds, args):
+    '''Return a coroutine that will return a spell.'''
+    return ds['spell'].random(**args)
