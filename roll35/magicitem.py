@@ -69,6 +69,7 @@ ITEM_PARSER = Parser({
     'mincost': {
         'type': int,
         'names': [
+            'mincost',
             'minc',
             'costmin',
             'cmin',
@@ -77,6 +78,7 @@ ITEM_PARSER = Parser({
     'maxcost': {
         'type': int,
         'names': [
+            'maxcost',
             'maxc',
             'costmax',
             'cmax',
@@ -85,6 +87,7 @@ ITEM_PARSER = Parser({
     'count': {
         'type': int,
         'names': [
+            'count',
             'co',
             'number',
             'num',
