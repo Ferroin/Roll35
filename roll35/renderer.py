@@ -118,22 +118,22 @@ class Renderer:
     @check_ready
     async def _render(self, item):
         match item:
-            case {'name': name, 'cls': _, 'caster_level': _}:
-                t = '{{ item["name"] }} ({{ item["cls"].capitalize() }} CL {{ item["caster_level"] }})'
+            case {'name': name, 'cls': _, 'caster_level': _, 'level': _}:
+                t = '{{ item["name"] }} ({{ item["cls"].capitalize() }} {{ item["level"] }}, CL {{ item["caster_level"] }})'
             case {'name': name, 'cost': _}:
                 if '{{ spell }}' in name:
-                    t = '{{ item["name"] }} ({{ item["cls"].capitalize() }} CL {{ item["caster_level"] }}, cost: {{ item["cost"] }} gp)'
+                    t = '{{ item["name"] }} ({{ item["cls"].capitalize() }} {{ item["level"] }}, CL {{ item["caster_level"] }}, {{ item["cost"] }} gp)'
                 else:
-                    t = '{{ item["name"] }} (cost: {{ item["cost"] }} gp)'
+                    t = '{{ item["name"] }} ({{ item["cost"] }} gp)'
             case {'name': name}:
                 if '{{ spell }}' in name:
-                    t = '{{ item["name"] }} ({{ item["cls"].capitalize() }} CL {{ item["caster_level"] }})'
+                    t = '{{ item["name"] }} ({{ item["cls"].capitalize() }} {{ item["level"] }}, CL {{ item["caster_level"] }})'
                 else:
                     t = name
             case name if isinstance(name, str):
                 item = {'name': item}
                 if '{{ spell }}' in name:
-                    t = '{{ item["name"] }} ({{ item["cls"].capitalize() }} CL {{ item["caster_level"] }})'
+                    t = '{{ item["name"] }} ({{ item["cls"].capitalize() }} {{ item["level"] }}, CL {{ item["caster_level"] }})'
                 else:
                     t = name
             case _:
@@ -155,6 +155,7 @@ class Renderer:
                     spell = item['rolled_spell']['name']
                     item['cls'] = item['rolled_spell']['cls']
                     item['caster_level'] = item['rolled_spell']['caster_level']
+                    item['level'] = item['rolled_spell']['level']
                 else:
                     match await self.get_spell(item):
                         case (True, spell):
