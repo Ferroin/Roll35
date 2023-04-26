@@ -118,6 +118,8 @@ class Renderer:
     @check_ready
     async def _render(self, item):
         match item:
+            case {'name': name, 'cls': _, 'caster_level': _}:
+                t = '{{ item["name"] }} ({{ item["cls"].capitalize() }} CL {{ item["caster_level"] }})'
             case {'name': name, 'cost': _}:
                 if '{{ spell }}' in name:
                     t = '{{ item["name"] }} ({{ item["cls"].capitalize() }} CL {{ item["caster_level"] }}, cost: {{ item["cost"] }} gp)'
