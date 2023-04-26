@@ -14,6 +14,7 @@ from .classes import ClassesAgent
 from .compound import CompoundAgent, CompoundSpellAgent
 from .ordnance import OrdnanceAgent
 from .ranked import RankedAgent
+from .settlement import SettlementAgent
 from .spell import SpellAgent
 from .wondrous import WondrousAgent
 
@@ -24,6 +25,7 @@ agents = {
     'compound-spell': CompoundSpellAgent,
     'ordnance': OrdnanceAgent,
     'ranked': RankedAgent,
+    'settlement': SettlementAgent,
     'spell': SpellAgent,
     'wondrous': WondrousAgent,
 }

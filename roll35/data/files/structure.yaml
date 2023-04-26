@@ -16,6 +16,7 @@ agents:
   - {name: ring, type: ranked}
   - {name: rod, type: ranked}
   - {name: scroll, type: compound-spell}
+  - {name: settlement, type: settlement}
   - {name: shoulders, type: ranked}
   - {name: slotless, type: ranked}
   - {name: spell, type: spell}
