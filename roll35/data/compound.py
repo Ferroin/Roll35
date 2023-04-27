@@ -6,7 +6,8 @@
 import logging
 
 from . import agent
-from ..common import DATA_ROOT, yaml
+from . import constants
+from ..common import yaml
 
 logger = logging.getLogger(__name__)
 
@@ -43,13 +44,8 @@ class CompoundAgent(agent.Agent):
         super().__init__(dataset, pool, name, logger)
 
     @staticmethod
-    def _loader(name):
-        with open(DATA_ROOT / f'{ name }.yaml') as f:
-            data = yaml.load(f)
-
-        ret = agent.process_compound_itemlist(data)
-
-        return ret
+    def _process_data(data):
+        return agent.process_compound_itemlist(data)
 
     async def random(self, **kwargs):
         return await super().random_compound(**kwargs)
@@ -57,10 +53,7 @@ class CompoundAgent(agent.Agent):
 
 class CompoundSpellAgent(CompoundAgent):
     @staticmethod
-    def _loader(name, classes):
-        with open(DATA_ROOT / f'{ name }.yaml') as f:
-            data = yaml.load(f)
-
+    def _process_data(data, classes):
         ret = agent.process_compound_itemlist(
             data,
             create_spellmult_xform(classes)
@@ -76,7 +69,11 @@ class CompoundSpellAgent(CompoundAgent):
             classes = await self._ds['classes'].W_classdata()
 
             self.logger.info(f'Loading { self.name } data.')
-            self._data = await self._process_async(self._loader, [self.name, classes])
+
+            with open(constants.DATA_ROOT / f'{ self.name }.yaml') as f:
+                data = yaml.load(f)
+
+            self._data = await self._process_async(self._process_data, [data, classes])
             self.logger.info(f'Finished loading { self.name } data.')
 
             self._ready.set()

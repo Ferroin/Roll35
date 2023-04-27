@@ -6,8 +6,8 @@
 import logging
 
 from . import agent
-from . import types
-from ..common import DATA_ROOT, yaml, check_ready
+from . import constants
+from ..common import check_ready
 
 logger = logging.getLogger(__name__)
 
@@ -17,13 +17,10 @@ class CategoryAgent(agent.Agent):
         super().__init__(dataset, pool, name, logger)
 
     @staticmethod
-    def _loader(name):
-        with open(DATA_ROOT / f'{ name }.yaml') as f:
-            data = yaml.load(f)
-
+    def _process_data(data):
         data['categories'] = set()
 
-        for rank in types.RANK:
+        for rank in constants.RANK:
             for cat in [x['value'] for x in data[rank]]:
                 data['categories'].add(cat)
 

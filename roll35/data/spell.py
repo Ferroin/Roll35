@@ -14,7 +14,8 @@ from pathlib import Path
 import aiosqlite
 
 from . import agent
-from ..common import check_ready, chunk, flatten, DATA_ROOT, yaml
+from . import constants
+from ..common import check_ready, chunk, flatten, yaml
 
 MAX_SPELL_LEVEL = 9
 
@@ -177,7 +178,7 @@ class SpellAgent(agent.Agent):
     }
 
     def __init__(self, dataset, pool, name='spell', db_path=(Path.cwd() / 'spells.db'), logger=logger):
-        self._spell_path = DATA_ROOT / f'{ name }.yaml'
+        self._spell_path = constants.DATA_ROOT / f'{ name }.yaml'
         self._db_path = db_path
         super().__init__(dataset, pool, name, logger)
 
@@ -191,7 +192,7 @@ class SpellAgent(agent.Agent):
         return len(levels) > level and levels[level]
 
     @staticmethod
-    def _loader(_):
+    def _process_data(_):
         return None
 
     async def load_data(self):

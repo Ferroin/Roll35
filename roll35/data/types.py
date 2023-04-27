@@ -6,55 +6,6 @@
 import abc
 import collections.abc
 
-CATEGORY = [
-    'armor',
-    'weapon',
-    'potion',
-    'ring',
-    'rod',
-    'scroll',
-    'staff',
-    'wand',
-    'wondrous',
-]
-
-RANK = [
-    'minor',
-    'medium',
-    'major',
-]
-
-LIMITED_RANK = [
-    'medium',
-    'major',
-]
-
-SUBRANK = [
-    'lesser',
-    'greater',
-]
-
-SLOTLESS_SUBRANK = [
-    'least',
-    'lesser',
-    'greater',
-]
-
-SLOT = [
-    'belt',
-    'body',
-    'chest',
-    'eyes',
-    'feet',
-    'hands',
-    'head',
-    'headband',
-    'neck',
-    'shoulders',
-    'wrists',
-    'slotless',
-]
-
 
 class R35Range(collections.abc.Container):
     '''A mutable range-like object that supports both ints and floats.

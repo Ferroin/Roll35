@@ -10,12 +10,9 @@ import random
 import unicodedata
 
 from functools import lru_cache
-from pathlib import Path
 
 from jaro import jaro_winkler_metric as jwm
 from ruamel.yaml import YAML
-
-DATA_ROOT = Path(__file__).parent / 'data' / 'files'
 
 VERSION = (3, 4, 0)
 

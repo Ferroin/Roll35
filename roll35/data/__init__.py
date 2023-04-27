@@ -5,9 +5,9 @@
 
 import asyncio
 
-from pathlib import Path
-
 from ..common import yaml
+
+from .constants import DATA_ROOT
 
 from .category import CategoryAgent
 from .classes import ClassesAgent
@@ -16,8 +16,6 @@ from .ordnance import OrdnanceAgent
 from .ranked import RankedAgent
 from .spell import SpellAgent
 from .wondrous import WondrousAgent
-
-DATA_ROOT = Path(__file__).parent / 'files'
 
 agents = {
     'category': CategoryAgent,
