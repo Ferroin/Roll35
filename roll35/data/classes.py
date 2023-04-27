@@ -6,7 +6,7 @@
 import logging
 
 from . import agent
-from ..common import check_ready, DATA_ROOT, yaml
+from ..common import check_ready
 
 logger = logging.getLogger(__name__)
 
@@ -16,9 +16,8 @@ class ClassesAgent(agent.Agent):
         super().__init__(dataset, pool, name, logger)
 
     @staticmethod
-    def _loader(name):
-        with open(DATA_ROOT / f'{ name }.yaml') as f:
-            return yaml.load(f)
+    def _process_data(data):
+        return data
 
     async def W_classdata(self):
         await self._ready.wait()

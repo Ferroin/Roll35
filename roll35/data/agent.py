@@ -11,8 +11,9 @@ import abc
 import asyncio
 import logging
 
+from . import constants
 from . import types
-from ..common import check_ready, rnd, make_weighted_entry
+from ..common import check_ready, rnd, make_weighted_entry, yaml
 
 logger = logging.getLogger(__name__)
 
@@ -35,12 +36,12 @@ def process_compound_itemlist(items, costmult_handler=lambda x: x):
     '''Process a compound list of weighted values.
 
        Each list entry must be a dict with keys coresponding to the
-       possible values for `roll35.data.types.RANK` with each such key
+       possible values for `roll35.data.constants.RANK` with each such key
        bearing a weight to use for the entry when rolling a random item
        of the corresponding rank.'''
     ret = types.R35Map()
 
-    for rank in types.RANK:
+    for rank in constants.RANK:
         ilist = types.R35List()
 
         for item in items:
@@ -62,10 +63,10 @@ def process_ranked_itemlist(items, xform=lambda x: x):
        of weighted items, and processes them into the format used by
        our weighted random selection in various data agent modules.'''
     ret = types.R35Map()
-    ranks = types.RANK
+    ranks = constants.RANK
 
-    if types.RANK[0] not in items:
-        ranks = types.LIMITED_RANK
+    if constants.RANK[0] not in items:
+        ranks = constants.LIMITED_RANK
 
     for rank in ranks:
         ret[rank] = process_subranked_itemlist(items[rank], xform)
@@ -80,10 +81,10 @@ def process_subranked_itemlist(items, xform=lambda x: x):
        and processes them into the format used by our weighted random
        selection in various data agent modules.'''
     ret = types.R35Map()
-    subranks = types.SUBRANK
+    subranks = constants.SUBRANK
 
-    if types.SLOTLESS_SUBRANK[0] in items:
-        subranks = types.SLOTLESS_SUBRANK
+    if constants.SLOTLESS_SUBRANK[0] in items:
+        subranks = constants.SLOTLESS_SUBRANK
 
     for rank in subranks:
         ret[rank] = types.R35List(
@@ -139,12 +140,17 @@ class Agent(abc.ABC):
         self.name = name
         self.logger = logger
 
-    @abc.abstractmethod
     @staticmethod
-    def _loader(name):
-        '''Fetch and load the data for this agent.
+    @abc.abstractmethod
+    def _process_data(data):
+        '''Callback to take the raw data for the agent and make it usable.
 
-           Must be overridden by subclasses.'''
+           Must be overridden by subclasses.
+
+           This will be called when loading data for the agent. It
+           should be a static method that accepts a single argument,
+           consisting of the data to be processed. The return value will
+           be assigned to the agent’s `_data` attribute.'''
         return NotImplemented
 
     def _valid_rank(self, rank):
@@ -161,7 +167,11 @@ class Agent(abc.ABC):
         '''Load data for this agent.'''
         if not self._ready.is_set():
             self.logger.info(f'Loading { self.name } data.')
-            self._data = await self._process_async(self._loader, [self.name])
+
+            with open(constants.DATA_ROOT / f'{ self.name }.yaml') as f:
+                data = yaml.load(f)
+
+            self._data = await self._process_async(self._process_data, [data])
             self.logger.info(f'Finished loading { self.name } data.')
 
             self._ready.set()

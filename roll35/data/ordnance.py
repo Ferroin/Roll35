@@ -7,8 +7,9 @@ import logging
 import random
 
 from . import agent
+from . import constants
 from . import types
-from ..common import DATA_ROOT, yaml, make_weighted_entry, check_ready, norm_string, did_you_mean
+from ..common import make_weighted_entry, check_ready, norm_string, did_you_mean
 
 logger = logging.getLogger(__name__)
 
@@ -153,13 +154,10 @@ class OrdnanceAgent(agent.Agent):
         super().__init__(dataset, pool, name, logger)
 
     @staticmethod
-    def _loader(name):
-        with open(DATA_ROOT / f'{ name }.yaml') as f:
-            data = yaml.load(f)
-
+    def _process_data(data):
         enchantments = process_enchantment_table(data['enchantments'], data['enchant_base_cost'])
 
-        if types.RANK[1] in data['specific']:
+        if constants.RANK[1] in data['specific']:
             specific = agent.process_ranked_itemlist(data['specific'])
         else:
             specific = types.R35Map()
@@ -193,14 +191,14 @@ class OrdnanceAgent(agent.Agent):
     async def random_pattern(self, rank, subrank, allow_specific=True, mincost=None, maxcost=None):
         match rank:
             case None:
-                rank = random.choice(types.RANK)
+                rank = random.choice(constants.RANK)
             case rank if self._valid_rank(rank):
                 pass
             case _:
                 raise ValueError(f'Invalid rank for { self.name }: { rank }')
 
         if subrank is None:
-            subrank = random.choice(types.SUBRANK)
+            subrank = random.choice(constants.SUBRANK)
 
         items = agent.costfilter(self._data[rank][subrank], mincost, maxcost)
 
@@ -297,14 +295,14 @@ class OrdnanceAgent(agent.Agent):
 
         match rank:
             case None:
-                rank = random.choice(types.RANK)
+                rank = random.choice(constants.RANK)
             case rank if self._valid_rank(rank):
                 pass
             case _:
                 raise ValueError(f'Invalid rank for { self.name }: { rank }')
 
         if subrank is None:
-            subrank = random.choice(types.SUBRANK)
+            subrank = random.choice(constants.SUBRANK)
 
         items = self._data['specific']
 

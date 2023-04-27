@@ -10,7 +10,7 @@ import random
 from nextcord.ext import commands
 
 from .cog import Cog
-from .data.types import RANK
+from .data.constants import RANK
 from .parser import Parser
 
 NOT_READY = 'Magic item data is not yet available, please try again later.'
