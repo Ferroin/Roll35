@@ -64,3 +64,21 @@ class DataSet:
             await asyncio.gather(*loaders)
 
         self.ready = True
+
+
+def _inspect_dataset():
+    '''Return a DataSet instance with data loaded for inspection.
+
+       This is intended for developer usage only, and _should not_
+       be called from module code.'''
+    from concurrent.futures import ProcessPoolExecutor
+
+    pool = ProcessPoolExecutor()
+    ds = DataSet(pool)
+
+    async def setup():
+        await ds.load_data()
+
+    asyncio.run(setup())
+
+    return ds
