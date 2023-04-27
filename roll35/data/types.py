@@ -247,7 +247,7 @@ class R35Map(R35Container, collections.abc.MutableMapping):
                 self[k] = v
 
     def __repr__(self):
-        return f'R35Map({ self.cost }, { self._data })'
+        return f'R35Map({ self.costs }, { self._data })'
 
     def __getitem__(self, key):
         if key in self._data:
@@ -331,7 +331,7 @@ class R35List(R35Container, collections.abc.MutableSequence):
                 self.append(i)
 
     def __repr__(self):
-        return f'R35List({ self.cost }, { self._data })'
+        return f'R35List({ self.costs }, { self._data })'
 
     def __getitem__(self, index):
         if not isinstance(index, int):
