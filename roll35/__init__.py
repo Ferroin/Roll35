@@ -4,6 +4,7 @@
 from .core import Core
 from .magicitem import MagicItem
 from .ordnance import Ordnance
+from .settlement import Settlement
 from .spell import Spell
 
 from .common import VERSION
@@ -12,6 +13,7 @@ COGS = [
     Core,
     MagicItem,
     Ordnance,
+    Settlement,
     Spell,
 ]
 
@@ -27,6 +29,8 @@ Note that currently we do not support:
 
 This bot is capable of responding to direct messages, though you will
 still need to use the command prefix.
+
+Commands, and most of ther parameters, are case-insensitive.
 
 Supported commands, grouped by category:
 '''
