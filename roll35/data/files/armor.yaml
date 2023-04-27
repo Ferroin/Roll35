@@ -166,7 +166,7 @@ specific:
         - {weight:  4, cost:  44215, name: 'Hamatula Hide'}
         - {weight:  6, cost:  46665, name: 'Giant Hide Armor (Hill Giant)'}
         - {weight:  4, cost:  52260, name: 'Demon Armor'}
-        - {weight:  6, cost:  54165, name: 'Giant Hide Armor ({{ keys.random("giant_armor3") }})'}
+        - {weight:  6, cost:  54165, name: 'Giant Hide Armor ({{ keys.giant_armor3 }})'}
         - {weight:  6, cost:  59165, name: 'Giant Hide Armor (Troll)'}
         - {weight:  6, cost:  61300, name: 'Mail of Malevolence'}
         - {weight:  6, cost:  69165, name: 'Giant Hide Armor (Cloud Giant)'}
@@ -222,7 +222,7 @@ enchantments:
       - {weight:  7, name: 'Champion'}
       - {weight:  6, name: 'Dastard'}
       - {weight:  7, name: 'Deathless'}
-      - {weight:  6, name: '{{ keys.random("bane") }} Defiant'}
+      - {weight:  6, name: '{{ keys.bane }} Defiant'}
       - {weight:  7, name: 'Light Fortification', exclude: ['Moderate Fortification', 'Heavy Fortification']}
       - {weight:  6, name: 'Grinding'}
       - {weight:  6, name: 'Impervious'}
@@ -256,7 +256,7 @@ enchantments:
       - {weight: 16, name: 'Harmonizing', bonuscost: 15000}
       - {weight: 17, name: 'Improved Shadow', bonuscost: 15000, exclude: ['Shadow', 'Greater Shadow']}
       - {weight: 17, name: 'Improved Slick', bonuscost: 15000, exclude: ['Adhesive', 'Slick', 'Greater Slick']}
-      - {weight: 17, name: '{{ keys.random("energy") }} Resistance', bonuscost: 18000, exclude: ['Improved {{ keys.random("energy") }} Resistance', 'Greater {{ keys.random("energy") }} Resistance']}
+      - {weight: 17, name: '{{ keys.energy }} Resistance', bonuscost: 18000, exclude: ['Improved {{ keys.energy }} Resistance', 'Greater {{ keys.energy }} Resistance']}
       - {weight: 16, name: 'Martyring', bonuscost: 18000, exclude: ['Light Fortification', 'Moderate Fortification', 'Heavy Fortification']}
       - {weight: 17, name: 'Spell Resistance (17)', exclude: ['Spell Resistance (13)', 'Spell Resistance (15)', 'Spell Resistance (19)']}
     5:
@@ -267,10 +267,10 @@ enchantments:
       - {weight:  7, name: 'Determination', bonuscost: 30000}
       - {weight:  8, name: 'Greater Shadow', bonuscost: 33750, exclude: ['Shadow', 'Improved Shadow']}
       - {weight:  8, name: 'Greater Slick', bonuscost: 33750, exclude: ['Adhesive', 'Slick', 'Improved Slick']}
-      - {weight:  8, name: 'Improved {{ keys.random("energy") }} Resistance', bonuscost: 42000, exclude: ['{{ keys.random("energy") }} Resistance', 'Greater {{ keys.random("energy") }} Resistance']}
+      - {weight:  8, name: 'Improved {{ keys.energy }} Resistance', bonuscost: 42000, exclude: ['{{ keys.energy }} Resistance', 'Greater {{ keys.energy }} Resistance']}
       - {weight:  8, name: 'Etherealness', bonuscost: 49000}
       - {weight:  7, name: 'Undead Controlling', bonuscost: 49000}
-      - {weight:  8, name: 'Greater {{ keys.random("energy") }} Resistance', bonuscost: 66000, exclude: ['{{ keys.random("energy") }} Resistance', 'Improved {{ keys.random("energy") }} Resistance']}
+      - {weight:  8, name: 'Greater {{ keys.energy }} Resistance', bonuscost: 66000, exclude: ['{{ keys.energy }} Resistance', 'Improved {{ keys.energy }} Resistance']}
       - {weight:  8, name: 'Heavy Fortification', exclude: ['Light Fortification', 'Moderate Fortification']}
       - {weight:  8, name: 'Spell Resistance (19)', exclude: ['Spell Resistance (13)', 'Spell Resistance (15)', 'Spell Resistance (17)']}
   shield:
@@ -280,7 +280,7 @@ enchantments:
       - {weight:  9, name: 'Bashing'}
       - {weight:  9, name: 'Blinding'}
       - {weight:  9, name: 'Clangorous'}
-      - {weight:  9, name: '{{ keys.random("bane") }} Defiant'}
+      - {weight:  9, name: '{{ keys.bane }} Defiant'}
       - {weight:  9, name: 'Light Fortification', exclude: ['Moderate Fortification', 'Heavy Fortification']}
       - {weight:  9, name: 'Grinding'}
       - {weight:  9, name: 'Impervious'}
@@ -288,7 +288,7 @@ enchantments:
       - {weight:  9, name: 'Ramming', limit: {only: [light, heavy]}}
     2:
       - {weight: 15, name: 'Rallying', bonuscost: 5000}
-      - {weight: 15, name: 'Wyrmbreath ({{ keys.random("elemental") }})', bonuscost: 5000}
+      - {weight: 15, name: 'Wyrmbreath ({{ keys.elemental }})', bonuscost: 5000}
       - {weight: 20, name: 'Animated', limit: {not: [tower]}}
       - {weight: 17, name: 'Arrow Deflection'}
       - {weight: 15, name: 'Merging', limit: {only: [light, heavy]}}
@@ -302,13 +302,13 @@ enchantments:
       - {weight: 15, name: 'Wild'}
       # The SRD table is missing entries covering 99 and 100.
     4:
-      - {weight: 50, name: '{{ keys.random("energy") }} Resistance', bonuscost: 18000, exclude: ['Improved {{ keys.random("energy") }} Resistance', 'Greater {{ keys.random("energy") }} Resistance']}
+      - {weight: 50, name: '{{ keys.energy }} Resistance', bonuscost: 18000, exclude: ['Improved {{ keys.energy }} Resistance', 'Greater {{ keys.energy }} Resistance']}
       - {weight: 50, name: 'Spell Resistance (17)', exclude: ['Spell Resistance (13)', 'Spell Resistance (15)', 'Spell Resistance (19)']}
     5:
       - {weight: 11, name: 'Determination', bonuscost: 30000}
-      - {weight: 16, name: 'Improved {{ keys.random("energy") }} Resistance', bonuscost: 42000, exclude: ['{{ keys.random("energy") }} Resistance', 'Greater {{ keys.random("energy") }} Resistance']}
+      - {weight: 16, name: 'Improved {{ keys.energy }} Resistance', bonuscost: 42000, exclude: ['{{ keys.energy }} Resistance', 'Greater {{ keys.energy }} Resistance']}
       - {weight: 11, name: 'Undead Controlling', bonuscost: 49000}
-      - {weight: 17, name: 'Greater {{ keys.random("energy") }} Resistance', bonuscost: 66000, exclude: ['{{ keys.random("energy") }} Resistance', 'Improved {{ keys.random("energy") }} Resistance']}
+      - {weight: 17, name: 'Greater {{ keys.energy }} Resistance', bonuscost: 66000, exclude: ['{{ keys.energy }} Resistance', 'Improved {{ keys.energy }} Resistance']}
       - {weight: 15, name: 'Heavy Fortification', exclude: ['Light Fortification', 'Moderate Fortification']}
       - {weight: 15, name: 'Reflecting'}
       - {weight: 15, name: 'Spell Resistance (19)', exclude: ['Spell Resistance (13)', 'Spell Resistance (15)', 'Spell Resistance (17)']}

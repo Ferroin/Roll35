@@ -70,11 +70,11 @@ firearm_ammo:
 metamagic:
   type: grouped_proportional
   data:
-    1:
+    plus1:
       - {weight:  4, value: 'Bouncing'}
       - {weight:  5, value: 'Disruptive'}
       - {weight:  5, value: 'Ectoplasmic'}
-      - {weight:  5, value: 'Elemental ({{ keys.random("elemental") }})'}
+      - {weight:  5, value: 'Elemental ({{ keys.elemental }})'}
       - {weight: 12, value: 'Enlarge'}
       - {weight: 12, value: 'Extend'}
       - {weight:  5, value: 'Flaring'}
@@ -87,7 +87,7 @@ metamagic:
       - {weight:  5, value: 'Selective'}
       - {weight: 12, value: 'Silent'}
       - {weight:  5, value: 'Toppling'}
-    2:
+    plus2:
       - {weight: 11, value: 'Burning'}
       - {weight: 11, value: 'Concussive'}
       - {weight: 18, value: 'Empower'}
@@ -96,7 +96,7 @@ metamagic:
       - {weight: 13, value: 'Thanatropic'}
       - {weight: 13, value: 'Threnodic'}
       - {weight: 12, value: 'Thundering'}
-    3:
+    plus3:
       - {weight: 20, value: 'Dazing'}
       - {weight: 20, value: 'Echoing'}
       - {weight: 30, value: 'Maximize'}
@@ -109,11 +109,11 @@ bane:
     - {weight:  7, value: "Construct"}
     - {weight:  6, value: "Dragon"}
     - {weight:  5, value: "Fey"}
-    - {weight: 33, value: "Humanoid ({{ keys.random('humanoid') }})"}
+    - {weight: 33, value: "Humanoid ({{ keys.humanoid }})"}
     - {weight:  5, value: "Magical Beast"}
     - {weight:  5, value: "Monstrous Humanoid"}
     - {weight:  2, value: "Ooze"}
-    - {weight: 16, value: "Outsider ({{ keys.random('outsider') }})"}
+    - {weight: 16, value: "Outsider ({{ keys.outsider }})"}
     - {weight:  2, value: "Plant"}
     - {weight:  8, value: "Undead"}
     - {weight:  2, value: "Vermin"}
