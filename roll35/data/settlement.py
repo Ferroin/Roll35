@@ -62,12 +62,12 @@ class SettlementAgent(agent.Agent):
         }
 
     @check_ready
-    def get_by_name(self, name):
+    async def get_by_name(self, name):
         if name in self._data['by_name']:
             return self._data['by_name'][name]
         else:
             return Ret.NO_MATCH
 
     @check_ready
-    def get_by_population(self, population):
+    async def get_by_population(self, population):
         return self._data['by_population'][population]
