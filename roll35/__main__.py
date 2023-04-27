@@ -30,7 +30,7 @@ logging.config.dictConfig({
     'version': 1,
     'formatters': {
         'basic': {
-            'format': '%(asctime)s %(levelname)-8s %(name)-15s %(message)s',
+            'format': '%(asctime)s %(levelname)-7s %(name)-20s %(message)s',
             'datefmt': '%Y-%m-%d %H:%M:%S',
         },
     },
@@ -55,7 +55,20 @@ logger = logging.getLogger('roll35')
 
 
 class Bot(commands.Bot):
+    '''Custom bot class.
+
+       This overrides a few specific methods of the base class to get
+       desired behavior.'''
+    async def start(self, token, *args, reconnect=True, ds=None, renderer=None):
+        '''Overridden to schedule data loads in parallel with bot startup.'''
+        return await asyncio.gather(
+            ds.load_data(),
+            renderer.load_data(),
+            super().start(token, *args, reconnect=reconnect),
+        )
+
     async def on_command_error(self, ctx, exception):
+        '''Overridden to provide useful feedback to users on bad commands.'''
         if isinstance(exception, commands.errors.CommandNotFound):
             loop = asyncio.get_running_loop()
 
@@ -74,6 +87,7 @@ class Bot(commands.Bot):
         await super().on_command_error(ctx, exception)
 
     async def on_error(self, event_method, *args, **kwargs):
+        '''Overridden to explicitly bail on specific error types.'''
         match sys.exc_info():
             case (concurrent.futures.BrokenExecutor, _, _):
                 raise
@@ -102,23 +116,18 @@ def main(token):
     async def on_ready():
         logger.info(f'Successfully logged in as { bot.user }')
 
-    @bot.event
-    async def on_connect():
-        await asyncio.gather(
-            ds.load_data(),
-            asyncio.create_task(renderer.load_data()),
-        )
-
-    @bot.event
-    async def on_close():
-        POOL.shutdown(wait=True, cancel_futures=True)
+    logger.info('Loading cogs.')
 
     for entry in COGS:
         cog = entry(bot, ds, renderer)
         bot.add_cog(cog)
 
     logger.info(f'Starting bot with token: { token }')
-    bot.run(token)
+
+    try:
+        bot.run(TOKEN, ds=ds, renderer=renderer)
+    finally:
+        POOL.shutdown(cancel_futures=True)
 
 
 if __name__ == '__main__':
