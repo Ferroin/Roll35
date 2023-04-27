@@ -17,10 +17,13 @@ related games.
 
 ## Planned Features
 
+- Roll for magic item availability in settlements.
+- Roll wands or scrolls for a specific spell level.
+- Roll for random weather conditions.
 - Automatically roll random spells present in items that store spells.
 - Automatically roll for intelligence/special markings on magic items.
-- Roll for random weather conditions.
-- Roll for magic item availability in settlements.
+- Respond to DMs without requring the command prefix.
+- Mention the user who requested the command when responding outside of a DM.
 - Respond with embeds containing relevent information about the rolled
   item, including hyperlinks to relevant reference material.
 - Fetch data on specific items directly without rolling for them randomly.
@@ -42,13 +45,12 @@ All bot commands start with the prefix `/r35`.
 
 You can see interactive help by running `/r35 help`
 
-Note that if a command is mistyped, the bot will currently simply not
-respond instead of responding with an error. We plan to fix this for
-commands where the command prefix was specified properly, but cannot do
-so for mistyped command prefixes.
+Commands, including the prefix, are case insensitive.
 
-The bot supports responding to DMs, but still requires the command prefix
-for them.
+If the command prefix is not correct, then the bot will not respond at all.
+
+The bot supports responding to DMs, but currently still requires the
+command prefix for them.
 
 ## Running the Bot
 
