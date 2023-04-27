@@ -11,42 +11,100 @@ from ..common import expand_weighted_list, rnd
 logger = logging.getLogger(__name__)
 
 
-class RenderData(collections.abc.Mapping):
-    '''Data used to render templates.'''
-    def __init__(self, data, logger=logger):
+class RenderMap(collections.abc.Mapping):
+    '''Immutable mapping used for grouped render data types.
+
+       Keys must be strings that are valid Python identifiers.
+
+       Values must be lists.
+
+       Each key is also exposed as an attribute. When accessing that
+       attribute, a random item from the value for that key will be
+       returned.'''
+    def __init__(self, data):
+        if not (isinstance(data, dict) or
+                isinstance(data, collections.abc.Mapping)):
+            raise TypeError('Initializer must be a mapping.')
+
+        for k, v in data.items():
+            try:
+                k = str(k)
+
+                if not k.isidentifier():
+                    raise KeyError(f'{ k }: RenderMap keys must be valid Python identifiers.')
+            except TypeError:
+                raise KeyError('RenderMap keys must be strings.')
+
+            if not (isinstance(v, list) or
+                    isinstance(v, collections.abc.Sequence)):
+                raise ValueError('RenderMap values must be valid sequences.')
+
         self._data = data
-        self.logger = logger
+
+    def __getattr__(self, key):
+        data = object.__getattribute__(self, '_data')
+
+        if key in data:
+            return rnd(data[key])
+        else:
+            raise AttributeError
 
     def __len__(self):
         return len(self._data)
 
     def __getitem__(self, key):
-        match self._data[key]:
-            case {'type': 'grouped_proportional', 'data': data}:
-                ret = dict()
-
-                for group in data:
-                    ret[group] = expand_weighted_list(data[group])
-
-                return ret
-            case {'type': 'flat_proportional', 'data': data}:
-                return expand_weighted_list(data)
-            case {'type': 'grouped', 'data': data}:
-                return data
-            case {'type': 'flat', 'data': data}:
-                return data
+        return self._data[key]
 
     def __iter__(self):
-        return list(self._data.keys())
+        return list(self._data)
 
-    def __contains__(self, item):
-        return item in self._data
+    def __contains__(self, key):
+        return key in self._data
 
-    def random(self, key, group=None):
-        match self._data[key]:
-            case {'type': 'grouped_proportional', 'data': data} | \
-                 {'type': 'grouped', 'data': data}:
-                return rnd(data[group])
-            case {'type': 'flat_proportional', 'data': data} | \
-                 {'type': 'flat', 'data': data}:
-                return rnd(data)
+
+class RenderData(collections.abc.Mapping):
+    '''Top level type for data used to render templates.'''
+    def __init__(self, data):
+        self._data = dict()
+
+        for k, v in data.items():
+            try:
+                k = str(k)
+
+                if not k.isidentifier():
+                    raise KeyError(f'{ k }: RenderData keys must be valid Python identifiers.')
+            except TypeError:
+                raise KeyError('RenderData keys must be strings.')
+
+            match v:
+                case {'type': 'grouped_proportional', 'data': data}:
+                    self._data[k] = RenderMap(data)
+                case {'type': 'grouped', 'data': data}:
+                    self._data[k] = RenderMap(data)
+                case {'type': 'flat_proportional', 'data': data}:
+                    self._data[k] = data
+                case {'type': 'flat', 'data': data}:
+                    self._data[k] = data
+
+    def __getattr__(self, key):
+        data = object.__getattribute__(self, '_data')
+
+        if key in data:
+            if isinstance(data[key], RenderMap):
+                return data[key]
+            else:
+                return rnd(data[key])
+        else:
+            raise AttributeError
+
+    def __len__(self):
+        return len(self._data)
+
+    def __getitem__(self, key):
+        return self._data[key]
+
+    def __iter__(self):
+        return list(self._data)
+
+    def __contains__(self, key):
+        return key in self._data
