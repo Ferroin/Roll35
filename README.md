@@ -23,7 +23,7 @@ related games.
 - Automatically roll random spells present in items that store spells.
 - Automatically roll for intelligence/special markings on magic items.
 - Respond to DMs without requring the command prefix.
-- Mention the user who requested the command when responding outside of a DM.
+- Mention the user who requested the command when responding in a server channel.
 - Respond with embeds containing relevent information about the rolled
   item, including hyperlinks to relevant reference material.
 - Fetch data on specific items directly without rolling for them randomly.
@@ -45,7 +45,7 @@ All bot commands start with the prefix `/r35`.
 
 You can see interactive help by running `/r35 help`
 
-Commands, including the prefix, are case insensitive.
+Commands, including the prefix, are case-insensitive.
 
 If the command prefix is not correct, then the bot will not respond at all.
 
