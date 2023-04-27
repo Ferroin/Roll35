@@ -6,7 +6,7 @@
 import collections.abc
 import logging
 
-from ..common import expand_weighted_list, rnd
+from ..common import rnd
 
 logger = logging.getLogger(__name__)
 
