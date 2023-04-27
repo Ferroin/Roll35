@@ -14,7 +14,7 @@ from functools import lru_cache
 from jaro import jaro_winkler_metric as jwm
 from ruamel.yaml import YAML
 
-VERSION = (3, 4, 0)
+VERSION = (3, 5, 0)
 
 READINESS_TIMEOUT = 5.0
 
