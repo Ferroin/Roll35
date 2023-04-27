@@ -16,8 +16,8 @@ class WondrousAgent(agent.Agent):
         super().__init__(dataset, pool, name, logger)
 
     @staticmethod
-    def _loader(_):
-        with open(DATA_ROOT / 'wondrous.yaml') as f:
+    def _loader(name):
+        with open(DATA_ROOT / '{ name }.yaml') as f:
             return yaml.load(f)
 
     @check_ready

@@ -190,6 +190,10 @@ class SpellAgent(agent.Agent):
 
         return len(levels) > level and levels[level]
 
+    @staticmethod
+    def _loader(_):
+        return None
+
     async def load_data(self):
         if not self._ready.is_set():
             self.logger.info('Fetching class data.')

@@ -7,12 +7,12 @@
    files, as well as providing the baasic functions needed by the bot
    code to work with that data. '''
 
+import abc
 import asyncio
 import logging
-import random
 
 from . import types
-from ..common import check_ready, norm_string, rnd, did_you_mean, make_weighted_entry
+from ..common import check_ready, rnd, make_weighted_entry
 
 logger = logging.getLogger(__name__)
 
@@ -96,13 +96,6 @@ def process_subranked_itemlist(items, xform=lambda x: x):
     return ret
 
 
-def generate_tags_entry(items):
-    '''Generate a list of tags based on a list of items.'''
-    tags = map(lambda x: set(x['tags']), items)
-    tags = set.union(*tags)
-    return tags | {x['type'] for x in items}
-
-
 def _cost_in_range(item, mincost, maxcost):
     match maxcost:
         case float('inf'):
@@ -136,7 +129,7 @@ def costfilter(items, mincost, maxcost):
     return ret
 
 
-class Agent:
+class Agent(abc.ABC):
     '''Abstract base class for data agents.'''
     def __init__(self, dataset, pool, name, logger=logger):
         self._ds = dataset
@@ -145,6 +138,14 @@ class Agent:
         self._pool = pool
         self.name = name
         self.logger = logger
+
+    @abc.abstractmethod
+    @staticmethod
+    def _loader(name):
+        '''Fetch and load the data for this agent.
+
+           Must be overridden by subclasses.'''
+        return NotImplemented
 
     def _valid_rank(self, rank):
         return rank in self._data
@@ -223,138 +224,3 @@ class Agent:
                 raise ValueError(f'Invalid rank for { self.name }: { rank }')
 
         return rnd(costfilter(self._data[rank], mincost, maxcost))
-
-    @check_ready
-    async def get_base(self, name):
-        items = self._data['base']
-        norm_name = norm_string(name)
-
-        match next((x for x in items if norm_string(x['name']) == norm_name), None):
-            case None:
-                match await self._process_async(
-                    did_you_mean,
-                    [items, norm_name],
-                ):
-                    case (True, msg):
-                        return (
-                            False,
-                            f'{ name } is not a recognized item.\n { msg }'
-                        )
-                    case (False, msg):
-                        return (False, msg)
-            case item:
-                return (True, item)
-
-    @check_ready
-    async def random_base(self, tags=[]):
-        items = self._data['base']
-
-        match tags:
-            case []:
-                pass
-            case [*tags]:
-                items = list(filter(
-                    lambda x: all(
-                        map(
-                            lambda y: y == x['type'] or y in x['tags'],
-                            tags
-                        )
-                    ), items
-                ))
-            case _:
-                raise ValueError('Tags must be a list.')
-
-        if items:
-            return random.choice(items)
-        else:
-            return None
-
-    @check_ready
-    async def random_enchant(self, group, bonus, enchants=[], tags=[]):
-        items = self._data['enchantments'][group][bonus]
-
-        def _efilter(x):
-            result = True
-
-            match x:
-                case {'exclude': excluded}:
-                    result = result and not any(lambda y: y in excluded, enchants)
-
-            match x:
-                case {'limit': {'only': limit}}:
-                    result = result and any(lambda y: y in limit, tags)
-                case {'limit': {'not': limit}}:
-                    result = result and not any(lambda y: y in limit, tags)
-
-            return result
-
-        match list(filter(_efilter, items)):
-            case []:
-                return None
-            case [*opts]:
-                return random.choice(opts)['value']
-
-    @check_ready
-    @ensure_costs
-    async def random_pattern(self, rank, subrank, allow_specific=True, mincost=None, maxcost=None):
-        match rank:
-            case None:
-                rank = random.choice(types.RANK)
-            case rank if self._valid_rank(rank):
-                pass
-            case _:
-                raise ValueError(f'Invalid rank for { self.name }: { rank }')
-
-        if subrank is None:
-            subrank = random.choice(types.SUBRANK)
-
-        items = costfilter(self._data[rank][subrank], mincost, maxcost)
-
-        if allow_specific:
-            return random.choice(items)['value']
-        else:
-            return random.choice(list(filter(
-                lambda x: 'specific' not in x['value'],
-                items
-            )))['value']
-
-    @check_ready
-    @ensure_costs
-    async def random_specific(self, *args, mincost=None, maxcost=None):
-        match args:
-            case [_, _, _]:
-                group = args[0]
-                rank = args[1]
-                subrank = args[2]
-            case [_, _]:
-                group = False
-                rank = args[0]
-                subrank = args[1]
-
-        match rank:
-            case None:
-                rank = random.choice(types.RANK)
-            case rank if self._valid_rank(rank):
-                pass
-            case _:
-                raise ValueError(f'Invalid rank for { self.name }: { rank }')
-
-        if subrank is None:
-            subrank = random.choice(types.SUBRANK)
-
-        items = self._data['specific']
-
-        if group:
-            if group not in items:
-                raise ValueError(f'Unrecognized item type for { self.name }: { rank }')
-
-            return random.choice(items[group][rank][subrank])['value']
-        else:
-            return random.choice(items[rank][subrank])['value']
-
-    @check_ready
-    async def tags(self):
-        if 'tags' in self._data:
-            return list(self._data['tags'])
-        else:
-            return []
