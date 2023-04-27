@@ -8,50 +8,11 @@ import logging
 
 import jinja2
 
-from .common import check_ready, expand_weighted_list, yaml, rnd
-from .data import DATA_ROOT
+from ..common import check_ready
 
 logger = logging.getLogger(__name__)
 
 MAX_TEMPLATE_RECURSION = 5
-
-
-class RenderData:
-    '''Data used to render templates.'''
-    def __init__(self, data, logger=logger):
-        self._data = data
-        self.logger = logger
-
-    def __getitem__(self, key):
-        match self._data[key]:
-            case {'type': 'grouped_proportional', 'data': data}:
-                ret = dict()
-
-                for group in data:
-                    ret[group] = expand_weighted_list(data[group])
-
-                return ret
-            case {'type': 'flat_proportional', 'data': data}:
-                return expand_weighted_list(data)
-            case {'type': 'grouped', 'data': data}:
-                return data
-            case {'type': 'flat', 'data': data}:
-                return data
-
-    def __iter__(self):
-        return list(self._data.keys())
-
-    def __contains__(self, item):
-        return item in self._data
-
-    def random(self, key, group=None):
-        match self._data[key]:
-            case {'type': 'grouped_proportional', 'data': data} | \
-                 {'type': 'grouped', 'data': data}:
-                return rnd(data[group])
-            case {'type': 'flat_proportional', 'data': data} | \
-                 {'type': 'flat', 'data': data}:
-                return rnd(data)
 
 
 class Renderer:
@@ -72,6 +33,10 @@ class Renderer:
 
     @staticmethod
     def _loader(name):
+        from ..common import yaml
+        from ..data import DATA_ROOT
+        from .types import RenderData
+
         with open(DATA_ROOT / f'{ name }.yaml') as f:
             return RenderData(yaml.load(f))
 

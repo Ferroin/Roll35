@@ -5,10 +5,11 @@ area/bot:
   - all:
       - 'roll35/*.py'
       - '!roll35/common.py'
-      - '!roll35/data/**/*.py'
       - '!roll35/data/*.py'
+      - '!roll35/data/**/*.py'
       - '!roll35/parser.py'
-      - '!roll35/renderer.py'
+      - '!roll35/renderer/*.py'
+      - '!roll35/renderer/**/*.py'
 
 area/common:
   - roll35/common.py
@@ -21,7 +22,8 @@ area/parser:
   - roll35/parser.py
 
 area/renderer:
-  - roll35/renderer.py
+  - roll35/renderer/*.py
+  - roll35/renderer/**/*.py
 
 area/scripts:
   - scripts/*
