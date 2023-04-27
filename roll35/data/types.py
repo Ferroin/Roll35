@@ -3,6 +3,9 @@
 
 '''Data type definitons.'''
 
+import abc
+import collections.abc
+
 CATEGORY = [
     'armor',
     'weapon',
@@ -53,7 +56,7 @@ SLOT = [
 ]
 
 
-class R35Range:
+class R35Range(collections.abc.Container):
     '''A mutable range-like object that supports both ints and floats.
 
        Used by roll35.data to ranges of costs.
@@ -80,6 +83,9 @@ class R35Range:
         else:
             raise ValueError('Unsupported type for initializing R35Range.')
 
+    def __repr__(self):
+        return f'R35Range({ self.min }, { self.max }, empty={ self._empty })'
+
     def __contains__(self, v):
         if self._empty:
             return False
@@ -89,9 +95,6 @@ class R35Range:
             return v.min in self and v.max in self
         else:
             raise ValueError(f'{ type(v) } is not supported by R35Range objects.')
-
-    def __repr__(self):
-        return f'R35Range({ self.min }, { self.max }, empty={ self._empty })'
 
     @staticmethod
     def _typecheck(v):
@@ -163,7 +166,7 @@ class R35Range:
             return self._max
 
 
-class R35Container:
+class R35Container(abc.ABC, collections.abc.Collection):
     '''Base class used by R35Map and R35List.
 
        This exists just to minimize code duplication.'''
@@ -176,9 +179,6 @@ class R35Container:
     def __iter__(self):
         return self._data.__iter__()
 
-    def __reversed__(self):
-        return reversed(self._data)
-
     def __contains__(self, key):
         return key in self._data
 
@@ -189,8 +189,9 @@ class R35Container:
     @staticmethod
     def _get_costs(item):
         match item:
-            case R35Container(costs=R35Range(min=low, max=high)):
-                return (low, high)
+            case R35Container(costs=R35Range()):
+                item.sync()
+                return (item.costs.min, item.costs.max)
             case {'value': {'costrange': [low, high]}} if R35Range.valid(low) and R35Range.valid(high):
                 return (low, high)
             case {'costrange': [low, high]} if R35Range.valid(low) and R35Range.valid(high):
@@ -202,20 +203,29 @@ class R35Container:
             case _:
                 return None
 
+    def sync(self):
+        '''Recompute the costs for this container.'''
+        self._recompute_costs()
 
-class R35Map(R35Container):
+    @abc.abstractmethod
+    def _recompute_costs(self):
+        return NotImplemented
+
+
+class R35Map(R35Container, collections.abc.MutableMapping):
     '''A simple cost-tracking mapping class.
 
-       This implements the basic mapping protocol, plus a handful of
-       dict methods to make it easier to use.
+       In addition to the standard mapping protocol, this class also
+       provides equivalents to the `dict.items()`, `dict.values()`, and
+       `dict.keys()` methods, allowing it to be used almost transparently
+       as a dictionary.
 
        It also maintains a property called costs, which is a
        roll35.types.R35Range object that tracks the minimum and maximum
        cost of items that have been added to the mapping.
 
        Costs are only updated for contained items that are one of:
-       - Another roll35.types.R35Map instance.
-       - A roll35.types.R35List instance.
+       - Another roll35.types.R35Container.
        - A mapping with a key called 'cost' that has a value that is
          either an integer or a float.
        - A mapping with a key called 'costrange' that has a value which
@@ -225,7 +235,9 @@ class R35Map(R35Container):
        Keys must be strings or integers.
 
        This class is (intentionally) optimized for WORM access
-       patterns.'''
+       patterns. In-place replacement of existing keys is expensive
+       as it requires rescanning the contained items to recompute the
+       `costs` property.'''
     def __init__(self, data=None):
         super().__init__()
         self._data = dict()
@@ -265,17 +277,20 @@ class R35Map(R35Container):
         if key in self._data:
             del self._data[key]
 
-            self._costs.reset()
-
-            for item in self._data.values():
-                match self._get_costs(item):
-                    case None:
-                        pass
-                    case (cost_min, cost_max):
-                        self._costs.add(cost_min)
-                        self._costs.add(cost_max)
+            self._recompute_costs()
         else:
             raise KeyError(key)
+
+    def _recompute_costs(self):
+        self._costs.reset()
+
+        for item in self._data.values():
+            match self._get_costs(item):
+                case None:
+                    pass
+                case (cost_min, cost_max):
+                    self._costs.add(cost_min)
+                    self._costs.add(cost_max)
 
     def items(self):
         return self._data.items()
@@ -287,19 +302,15 @@ class R35Map(R35Container):
         return self._data.values()
 
 
-class R35List(R35Container):
+class R35List(R35Container, collections.abc.MutableSequence):
     '''A simple cost-tracking list class.
-
-       This implements the basic container protocol, plus an equivalent
-       of the list.append() method for simpler usage.
 
        It also maintains a property called costs, which is a
        roll35.types.R35Range object that tracks the minimum and maximum
        cost of items that have been added to the mapping.
 
        Costs are only updated for contained items that are one of:
-       - Another roll35.types.R35Map instance.
-       - A roll35.types.R35List instance.
+       - Another roll35.types.R35Container.
        - A mapping with a key called 'cost' that has a value that is
          either an integer or a float.
        - A mapping with a key called 'costrange' that has a value which
@@ -308,8 +319,9 @@ class R35List(R35Container):
 
        Slicing is not supported.
 
-       This class is (intentionally) optimized for append-only WORM
-       access patterns.'''
+       This class is (intentionally) optimized for WORM access
+       patterns. In-place replacement of items is expensive as it requires
+       re-scanning the entire container again to recompute costs.'''
     def __init__(self, data=None):
         super().__init__()
         self._data = list()
@@ -361,9 +373,8 @@ class R35List(R35Container):
                     self._costs.add(cost_min)
                     self._costs.add(cost_max)
 
-    def append(self, item):
-        '''Append an item to the list.'''
-        self._data.append(item)
+    def insert(self, index, item):
+        self._data.insert(index, item)
 
         match self._get_costs(item):
             case None:
