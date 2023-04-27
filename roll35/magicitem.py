@@ -149,7 +149,7 @@ class MagicItem(Cog):
         match args:
             case {'count': c} if isinstance(c, int) and c > 0:
                 items = roll_many(self.ds, c, {
-                    k: v for k, v in enumerate(args) if k != 'count'
+                    k: v for k, v in args.items() if k != 'count'
                 })
 
                 await ctx.trigger_typing()
