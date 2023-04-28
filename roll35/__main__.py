@@ -16,10 +16,11 @@ import nextcord
 
 from nextcord.ext import commands
 
-from .common import prepare_cog, did_you_mean
-from .renderer import Renderer
-from .data import DataSet
 from . import COGS, BOT_HELP
+from .common import did_you_mean
+from .data import DataSet
+from .renderer import Renderer
+from .retcode import Ret
 
 TOKEN = os.environ['DISCORD_TOKEN']
 LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO')
@@ -79,9 +80,9 @@ class Bot(commands.Bot):
                 exception.command_name,
                 True,
             ):
-                case (True, msg):
+                case (Ret.OK, msg):
                     return await ctx.send(f'{ exception.command_name } is not a recognized command. { msg }')
-                case (False, _):
+                case (Ret.NO_MATCH, _):
                     return await ctx.send(f'{ exception.command_name } is not a recognized command.')
 
         await super().on_command_error(ctx, exception)

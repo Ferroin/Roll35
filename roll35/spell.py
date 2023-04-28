@@ -10,6 +10,7 @@ from nextcord.ext import commands
 
 from .cog import Cog
 from .parser import Parser
+from .retcode import Ret
 
 NOT_READY = 'Spell data is not yet available, please try again later.'
 
@@ -69,14 +70,14 @@ class Spell(Cog):
              `/r35 spelltags`.
            - `count`: Roll this many spells at once.'''
         match SPELL_PARSER.parse(' '.join(args)):
-            case (False, msg):
+            case (Ret.FAILED, msg):
                 await ctx.send(
                     'Invalid arguments for command `spell`: ' +
                     f'{ msg }\n' +
                     'See `/r35 help spell` for supported arguments.'
                 )
                 return
-            case (True, a):
+            case (Ret.OK, a):
                 args = a
 
         if args['count'] is None:
@@ -103,16 +104,16 @@ class Spell(Cog):
 
                 for item in asyncio.as_completed(coros):
                     match await item:
-                        case (False, msg):
+                        case (ret, msg) if ret is not Ret.OK:
                             results.append(f'\nFailed to generate remaining items: { msg }')
                             break
-                        case (True, msg):
+                        case (Ret.OK, msg):
                             match await self.render(msg):
-                                case (True, msg):
-                                    results.append(msg)
-                                case (False, msg):
+                                case (ret, msg) if ret is not Ret.OK:
                                     results.append(f'\nFailed to generate remaining items: { msg }')
                                     break
+                                case (Ret.OK, msg):
+                                    results.append(msg)
 
                 await ctx.trigger_typing()
 
@@ -128,9 +129,9 @@ class Spell(Cog):
     async def spelltags(self, ctx):
         '''List known spell tags.'''
         match await self.ds['spell'].tags():
-            case False:
+            case Ret.NOT_READY:
                 await ctx.send(NOT_READY)
-            case []:
+            case Ret.NO_MATCH:
                 await ctx.send('No tags found for spells.')
             case tags:
                 await ctx.send(
@@ -142,9 +143,9 @@ class Spell(Cog):
     async def classes(self, ctx):
         '''List known classes for spells.'''
         match await self.ds['classes'].classes():
-            case False:
+            case Ret.NOT_READY:
                 await ctx.send(NOT_READY)
-            case []:
+            case Ret.NO_MATCH:
                 await ctx.send('No classes found for spells.')
             case classes:
                 await ctx.send(

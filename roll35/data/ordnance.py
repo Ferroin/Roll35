@@ -10,6 +10,7 @@ from . import agent
 from . import constants
 from . import types
 from ..common import make_weighted_entry, check_ready, norm_string, did_you_mean
+from ..retcode import Ret
 
 logger = logging.getLogger(__name__)
 
@@ -207,7 +208,7 @@ class OrdnanceAgent(agent.Agent):
         else:
             match list(filter(lambda x: 'specific' not in x['value'], items)):
                 case []:
-                    return None
+                    return Ret.NO_MATCH
                 case [*items]:
                     return random.choice(items)['value']
 
@@ -222,15 +223,15 @@ class OrdnanceAgent(agent.Agent):
                     did_you_mean,
                     [items, norm_name],
                 ):
-                    case (True, msg):
+                    case (Ret.OK, msg):
                         return (
-                            False,
+                            Ret.FAILED,
                             f'{ name } is not a recognized item.\n { msg }'
                         )
-                    case (False, msg):
-                        return (False, msg)
+                    case (ret, msg) if ret is not Ret.OK:
+                        return (ret, msg)
             case item:
-                return (True, item)
+                return (Ret.OK, item)
 
     @check_ready
     async def random_base(self, tags=[]):
@@ -254,7 +255,7 @@ class OrdnanceAgent(agent.Agent):
         if items:
             return random.choice(items)
         else:
-            return None
+            return Ret.NO_MATCH
 
     @check_ready
     async def random_enchant(self, group, bonus, enchants=[], tags=[]):
@@ -277,7 +278,7 @@ class OrdnanceAgent(agent.Agent):
 
         match list(filter(_efilter, items)):
             case []:
-                return None
+                return Ret.NO_MATCH
             case [*opts]:
                 return random.choice(opts)['value']
 
@@ -324,4 +325,4 @@ class OrdnanceAgent(agent.Agent):
         if 'tags' in self._data:
             return list(self._data['tags'])
         else:
-            return []
+            return Ret.NO_MATCH

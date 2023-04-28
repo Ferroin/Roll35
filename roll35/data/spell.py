@@ -16,6 +16,7 @@ import aiosqlite
 from . import agent
 from . import constants
 from ..common import check_ready, chunk, flatten, yaml
+from ..retcode import Ret
 
 MAX_SPELL_LEVEL = 9
 
@@ -308,7 +309,7 @@ class SpellAgent(agent.Agent):
             ''', {'name': name})
 
             if not spellrow:
-                return None
+                return Ret.NO_MATCH
             else:
                 spellrow = spellrow[0]
 
@@ -336,8 +337,8 @@ class SpellAgent(agent.Agent):
     @check_ready
     async def random(self, level=None, cls=None, tag=None):
         match await self._ds['classes'].classdata():
-            case False:
-                return (False, 'Failed to fetch class data.')
+            case Ret.NOT_READY:
+                return (Ret.NOT_READY, 'Failed to fetch class data.')
             case ret:
                 classes = ret
 
@@ -349,7 +350,7 @@ class SpellAgent(agent.Agent):
 
         if level is not None and level not in range(0, MAX_SPELL_LEVEL + 1):
             return (
-                False,
+                Ret.INVALID,
                 'Level must be an integer between ' +
                 f'0 and { MAX_SPELL_LEVEL }.'
             )
@@ -389,7 +390,7 @@ class SpellAgent(agent.Agent):
             case (cls, level) if cls in valid_classes and \
                     not await self._level_in_cls(level, cls):
                 return (
-                    False,
+                    Ret.INVALID,
                     f'Class { cls } does not have access to ' +
                     f'level { level } spells.'
                 )
@@ -397,7 +398,7 @@ class SpellAgent(agent.Agent):
                 pass
             case _:
                 return (
-                    False,
+                    Ret.INVALID,
                     'Invalid class name. ' +
                     'Must be one of: random, spellpage, ' +
                     f'{ ", ".join(valid_classes) }'
@@ -458,7 +459,7 @@ class SpellAgent(agent.Agent):
 
         if not spell:
             return (
-                False,
+                Ret.NO_MATCH,
                 'No spells found matching the requested parameters.'
             )
         else:
@@ -482,4 +483,4 @@ class SpellAgent(agent.Agent):
             'caster_level': classes[cls]['levels'][level],
         }
 
-        return (True, spell)
+        return (Ret.OK, spell)

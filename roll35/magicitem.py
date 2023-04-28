@@ -12,6 +12,7 @@ from nextcord.ext import commands
 from .cog import Cog
 from .data.constants import RANK
 from .parser import Parser
+from .retcode import Ret
 
 NOT_READY = 'Magic item data is not yet available, please try again later.'
 NO_ITEMS_IN_COST_RANGE = 'No items found in requested cost range.'
@@ -133,14 +134,14 @@ class MagicItem(Cog):
 
            Parameters which are not specified are generated randomly.'''
         match ITEM_PARSER.parse(' '.join(args)):
-            case (False, msg):
+            case (Ret.FAILED, msg):
                 await ctx.send(
                     'Invalid arguments for command `magicitem`: ' +
                     f'{ msg }\n' +
                     'See `/r35 help magicitem` for supported arguments.'
                 )
                 return
-            case (True, a):
+            case (Ret.OK, a):
                 args = a
 
         if args['count'] is None:
@@ -158,16 +159,16 @@ class MagicItem(Cog):
 
                 for item in asyncio.as_completed(items):
                     match await item:
-                        case (False, msg):
+                        case (ret, msg) if ret is not Ret.OK:
                             results.append(f'\nFailed to generate remaining items: { msg }')
                             break
-                        case (True, msg):
+                        case (Ret.OK, msg):
                             match await self.render(msg):
-                                case (True, msg):
-                                    results.append(msg)
-                                case (False, msg):
+                                case (ret, msg) if ret is not Ret.OK:
                                     results.append(f'\nFailed to generate remaining items: { msg }')
                                     break
+                                case (Ret.OK, msg):
+                                    results.append(msg)
 
                 await ctx.trigger_typing()
 
@@ -188,7 +189,7 @@ class MagicItem(Cog):
     async def categories(self, ctx):
         '''List known magic item categories.'''
         match await self.ds['category'].categories():
-            case False:
+            case Ret.NOT_READY:
                 await ctx.send(NOT_READY)
             case cats:
                 await ctx.send(
@@ -200,9 +201,9 @@ class MagicItem(Cog):
     async def slots(self, ctx):
         '''List known wondrous item slots.'''
         match await self.ds['wondrous'].slots():
-            case False:
+            case Ret.NOT_READY:
                 await ctx.send(NOT_READY)
-            case []:
+            case Ret.NO_MATCH:
                 await ctx.send('No slots found for wondrous items.')
             case slots:
                 await ctx.send(
@@ -241,7 +242,7 @@ async def _reroll(ds, attempt, path, mincost, maxcost):
             )
         case _:
             return (
-                False,
+                Ret.FAILED,
                 "Invalid reroll directive found while rolling for magic item."
             )
 
@@ -264,11 +265,11 @@ async def _assemble_magic_item(agent, base_item, pattern, masterwork, bonus_cost
 
     for ebonus in pattern['enchants']:
         match await agent.random_enchant(group, ebonus, enchants, tags):
-            case False:
+            case Ret.NOT_READY:
                 failed = True
                 await asyncio.sleep(1)
                 break
-            case None:
+            case Ret.NO_MATCH:
                 failed = True
                 break
             case enchant:
@@ -290,7 +291,7 @@ async def _assemble_magic_item(agent, base_item, pattern, masterwork, bonus_cost
 
     if failed:
         if attempt >= 6:
-            return (False, "Too many failed attempts to select enchantments.")
+            return (Ret.LIMITED, "Too many failed attempts to select enchantments.")
         else:
             attempt += 1
             logger.debug(
@@ -304,7 +305,7 @@ async def _assemble_magic_item(agent, base_item, pattern, masterwork, bonus_cost
         item_cost += ((cbonus ** 2) * bonus_cost) + extra_ecost
         etitle = ''.join(list(map(lambda x: f'{ x } ', enchants)))
         return (
-            True,
+            Ret.OK,
             {
                 'name': f'+{ pattern["bonus"] } ' +
                         f'{ etitle }{ base_item["name"] }',
@@ -319,10 +320,10 @@ def roll_many(ds, count, args):
        Returns a list of coroutines that can be awaited to get the
        requested items.'''
     if not ds.ready:
-        return [(False, NOT_READY)]
+        return [(Ret.NOT_READY, NOT_READY)]
 
     if count > MAX_COUNT:
-        return [(False, f'Too many items requested, no more than { MAX_COUNT } may be rolled at a time.')]
+        return [(Ret.LIMITED, f'Too many items requested, no more than { MAX_COUNT } may be rolled at a time.')]
 
     coros = []
 
@@ -351,15 +352,15 @@ async def roll(
 
     if attempt >= MAX_REROLLS:
         logger.warning(f'Recursion limit hit while rolling magic item: { args }')
-        return (False, 'Too many rerolls while attempting to generate item.')
+        return (Ret.LIMITED, 'Too many rerolls while attempting to generate item.')
 
     logger.debug(f'Rolling magic item with parameters { args }.')
 
     slots = await ds['wondrous'].slots()
     categories = await ds['category'].categories()
 
-    if not (categories and slots):
-        return (False, NOT_READY)
+    if categories is Ret.NOT_READY or slots is Ret.NOT_READY:
+        return (Ret.NOT_READY, NOT_READY)
 
     compound = (ds.types['compound'] | ds.types['compound-spell']) & categories
     compound_spell = ds.types['compound-spell'] & categories
@@ -372,7 +373,7 @@ async def roll(
         case {'rank': 'minor', 'subrank': 'least', 'category': 'wondrous', 'slot': 'slotless'}:
             item = await ds['slotless'].random(rank='minor', subrank='least', mincost=mincost, maxcost=maxcost)
         case {'subrank': 'least'}:
-            item = (False, 'Only slotless wondrous items have a least subrank.')
+            item = (Ret.INVALID, 'Only slotless wondrous items have a least subrank.')
         case {'rank': rank, 'subrank': subrank, 'category': 'wondrous', 'slot': slot} if slot in slots:
             item = await ds[slot].random(rank=rank, subrank=subrank, mincost=mincost, maxcost=maxcost)
         case {'rank': rank, 'subrank': subrank, 'slot': slot} if slot in slots:
@@ -387,42 +388,32 @@ async def roll(
                     item = await agent.random_specific(*specific, mincost=mincost, maxcost=maxcost)
                 case pattern:
                     match await agent.random_base():
-                        case False:
-                            item = (False, NOT_READY)
+                        case Ret.NOT_READY:
+                            item = (Ret.NOT_READY, NOT_READY)
                         case base_item:
-                            match await agent.get_bonus_costs(base_item):
-                                case None:
-                                    item = (False, NO_ITEMS_IN_COST_RANGE)
-                                case False:
-                                    item = (False, NOT_READY)
-                                case (masterwork, bonus_cost):
-                                    item = await _assemble_magic_item(
-                                        agent, base_item, pattern, masterwork, bonus_cost
-                                    )
+                            masterwork, bonus_cost = await agent.get_bonus_costs(base_item)
+                            item = await _assemble_magic_item(
+                                agent, base_item, pattern, masterwork, bonus_cost
+                            )
         case {'rank': rank, 'subrank': subrank, 'category': category, 'base': base} if category in ordnance:
             agent = ds[category]
             pattern = await agent.random_pattern(rank=rank, subrank=subrank, allow_specific=False, mincost=mincost, maxcost=maxcost)
 
             match await agent.get_base(base):
-                case False:
-                    item = (False, NOT_READY)
-                case (False, msg):
-                    item = (False, msg)
-                case (True, base_item):
-                    match await agent.get_bonus_costs(base_item):
-                        case None:
-                            item = (False, NO_ITEMS_IN_COST_RANGE)
-                        case False:
-                            item = (False, NOT_READY)
-                        case (masterwork, bonus_cost):
-                            item = await _assemble_magic_item(
-                                agent, base_item, pattern, masterwork, bonus_cost
-                            )
+                case Ret.NOT_READY:
+                    item = (Ret.NOT_READY, NOT_READY)
+                case (ret, msg) if ret is not Ret.OK:
+                    item = (ret, msg)
+                case (Ret.OK, base_item):
+                    masterwork, bonus_cost = await agent.get_bonus_costs(base_item)
+                    item = await _assemble_magic_item(
+                        agent, base_item, pattern, masterwork, bonus_cost
+                    )
         case {'rank': rank, 'subrank': subrank, 'category': category, 'cls': cls} if category in compound_spell:
             classes = await ds['classes'].classes()
 
             if not classes:
-                item = (False, NOT_READY)
+                item = (Ret.NOT_READY, NOT_READY)
             else:
                 classes = set(classes) | ds['spell'].EXTRA_CLASS_NAMES
                 if cls is None:
@@ -431,17 +422,17 @@ async def roll(
                 if cls in classes:
                     item = await ds[category].random(rank=rank, cls=cls, mincost=mincost, maxcost=maxcost)
                 else:
-                    item = (False, f'Unknown spellcasting class { cls }. For a list of known classes, use the `classes` command.')
+                    item = (Ret.FAILED, f'Unknown spellcasting class { cls }. For a list of known classes, use the `classes` command.')
         case {'rank': _, 'subrank': subrank, 'category': category} if category in compound and subrank is not None:
-            item = (False, f'Invalid parmeters specified, { category } does not take a subrank.')
+            item = (Ret.INVALID, f'Invalid parmeters specified, { category } does not take a subrank.')
         case {'rank': rank, 'category': category} if category in compound:
             item = await ds[category].random(rank=rank, mincost=mincost, maxcost=maxcost)
         case {'rank': rank, 'subrank': subrank, 'category': category} if category in ranked:
             item = await ds[category].random(rank=rank, subrank=subrank, mincost=mincost, maxcost=maxcost)
         case {'rank': _, 'subrank': _, 'category': None, 'base': base} if base is not None:
-            item = (False, 'Invalid parmeters specified, specifying a base item is only valid if you specify a category of armor or weapon.')
+            item = (Ret.INVALID, 'Invalid parmeters specified, specifying a base item is only valid if you specify a category of armor or weapon.')
         case {'rank': _, 'subrank': _, 'category': None, 'cls': cls} if cls is not None:
-            item = (False, 'Invalid parmeters specified, specifying a class is only valid if you specify a category of scroll or wand.')
+            item = (Ret.INVALID, 'Invalid parmeters specified, specifying a class is only valid if you specify a category of scroll or wand.')
         case {'rank': None, 'subrank': None, 'category': None}:
             return await roll(
                 ds,
@@ -453,7 +444,7 @@ async def roll(
                 attempt,
             )
         case {'rank': None, 'subrank': subrank, 'category': None}:
-            item = (False, 'Invalid parmeters specified, must specify a rank for the item.')
+            item = (Ret.INVALID, 'Invalid parmeters specified, must specify a rank for the item.')
         case {'rank': rank, 'subrank': subrank, 'category': None}:
             if rank is None:
                 rank = random.choice(RANK)
@@ -473,23 +464,23 @@ async def roll(
             )
         case _:
             logger.warning(f'Invalid parameters when rolling magic item: { args }')
-            item = (False, 'Invalid parmeters specified.')
+            item = (Ret.INVALID, 'Invalid parmeters specified.')
 
     match item:
-        case None:
-            return (False, NO_ITEMS_IN_COST_RANGE)
-        case False:
-            return (False, NOT_READY)
-        case (False, msg):
-            return (False, msg)
-        case (True, item):
+        case Ret.NO_MATCH:
+            return (Ret.NO_MATCH, NO_ITEMS_IN_COST_RANGE)
+        case Ret.NOT_READY:
+            return (Ret.NOT_READY, NOT_READY)
+        case (ret, msg) if ret is not Ret.OK:
+            return (ret, msg)
+        case (Ret.OK, item):
             if mincost is not None and item['cost'] < mincost:
                 return await roll(ds, args, attempt)
             elif maxcost is not None and item['cost'] > maxcost:
                 return await roll(ds, args, attempt)
             else:
-                return (True, item)
+                return (Ret.OK, item)
         case {'reroll': reroll}:
             return await _reroll(ds, attempt, reroll, mincost, maxcost)
         case _:
-            return (True, item)
+            return (Ret.OK, item)

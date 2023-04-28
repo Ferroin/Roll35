@@ -14,17 +14,14 @@ from functools import lru_cache
 from jaro import jaro_winkler_metric as jwm
 from ruamel.yaml import YAML
 
+from .retcode import Ret
+
 VERSION = (3, 5, 0)
 
 READINESS_TIMEOUT = 5.0
 
 yaml = YAML(typ='safe')
 logger = logging.getLogger(__name__)
-
-
-async def prepare_cog(cog):
-    '''Load any data needed for the cog.'''
-    await cog.load_agent_data()
 
 
 @lru_cache(maxsize=256)
@@ -91,7 +88,7 @@ def rnd(items):
             case _:
                 return random.choice(list(items))
     else:
-        return None
+        return Ret.NO_MATCH
 
 
 def chunk(items, size):
@@ -157,11 +154,11 @@ def did_you_mean(items, name, flat_items=False):
         possible = ', '.join(possible)
 
         return (
-            True,
+            Ret.OK,
             f'Did you possibly mean one of: { possible }'
         )
     else:
-        return (False, 'No matching items found.')
+        return (Ret.NO_MATCH, 'No matching items found.')
 
 
 def check_ready(func):
@@ -180,7 +177,7 @@ def check_ready(func):
             await asyncio.wait_for(self._ready.wait(), timeout=READINESS_TIMEOUT)
         except asyncio.TimeoutError:
             self.logger.warning('Timed out waiting for data to be ready.')
-            return False
+            return Ret.NOT_READY
 
         return await func(self, *args, **kwargs)
 

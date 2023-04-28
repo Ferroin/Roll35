@@ -8,6 +8,7 @@ import logging
 from . import agent
 from . import constants
 from ..common import yaml
+from ..retcode import Ret
 
 logger = logging.getLogger(__name__)
 
@@ -78,28 +79,28 @@ class CompoundSpellAgent(CompoundAgent):
 
             self._ready.set()
 
-        return True
+        return Ret.OK
 
     async def random(self, cls=None, **kwargs):
         match await super().random_compound(**kwargs):
-            case None:
-                return (False, 'No items match specified cost range.')
+            case Ret.NO_MATCH:
+                return (Ret.NO_MATCH, 'No items match specified cost range.')
             case {'spell': spell, **item}:
                 match await self._ds['spell'].random(**spell):
-                    case False:
-                        return (False, 'Failed to roll random spell for item: spell data not ready.')
-                    case (False, msg):
+                    case Ret.NOT_READY:
+                        return (Ret.NOT_READY, 'Failed to roll random spell for item: spell data not ready.')
+                    case (ret, msg) if ret is not Ret.OK:
                         self.logger.warning(f'Failed to roll random spell for item using parameters: { msg }, recieved: { msg }')
-                        return (False, f'Failed to roll random spell for item: { msg }')
-                    case (True, spell):
+                        return (ret, f'Failed to roll random spell for item: { msg }')
+                    case (Ret.OK, spell):
                         if 'costmult' in item:
                             item['cost'] = item['costmult'] * spell['caster_level']
 
                         item['rolled_spell'] = spell
                         item['spell'] = spell
-                        return (True, item)
+                        return (Ret.OK, item)
                     case ret:
                         self.logger.warning(f'Searching random spell failed, got: { ret }')
-                        return (False, 'Unknown internal error.')
+                        return (Ret.FAILED, 'Unknown internal error.')
             case item:
-                return (True, item)
+                return (Ret.OK, item)
