@@ -14,6 +14,7 @@ import logging
 from . import constants
 from . import types
 from ..common import check_ready, rnd, make_weighted_entry, yaml
+from ..retcode import Ret
 
 logger = logging.getLogger(__name__)
 
@@ -176,14 +177,14 @@ class Agent(abc.ABC):
 
             self._ready.set()
 
-        return True
+        return Ret.OK
 
     @check_ready
     async def random_rank(self, mincost, maxcost):
         d = self._data
         match [x for x in d if d[x].costs.min >= mincost and d[x].costs.max <= maxcost]:
             case []:
-                return None
+                return Ret.NO_MATCH
             case [*ranks]:
                 return rnd(ranks)
 
@@ -192,7 +193,7 @@ class Agent(abc.ABC):
         d = self._data[rank]
         match [x for x in d if d[x].costs.min >= mincost and d[x].costs.max <= maxcost]:
             case []:
-                return None
+                return Ret.NO_MATCH
             case [*subranks]:
                 return rnd(subranks)
 
@@ -202,15 +203,15 @@ class Agent(abc.ABC):
         match (rank, subrank):
             case (None, None):
                 rank = await self.random_rank(mincost, maxcost)
-                if rank is None:
-                    return None
+                if rank is Ret.NO_MATCH:
+                    return Ret.NO_MATCH
                 subrank = await self.random_subrank(rank, mincost, maxcost)
-                if subrank is None:
-                    return None
+                if subrank is Ret.NO_MATCH:
+                    return Ret.NO_MATCH
             case (rank, None) if self._valid_rank(rank):
                 subrank = await self.random_subrank(rank, mincost, maxcost)
-                if subrank is None:
-                    return None
+                if subrank is Ret.NO_MATCH:
+                    return Ret.NO_MATCH
             case (rank, subrank) if self._valid_subrank(rank, subrank):
                 pass
             case (rank, subrank) if self._valid_rank(rank):
@@ -226,8 +227,8 @@ class Agent(abc.ABC):
         match rank:
             case None:
                 rank = await self.random_rank(mincost, maxcost)
-                if rank is None:
-                    return None
+                if rank is Ret.NO_MATCH:
+                    return Ret.NO_MATCH
             case rank if self._valid_rank(rank):
                 pass
             case _:

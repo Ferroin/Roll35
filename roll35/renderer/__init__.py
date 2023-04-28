@@ -9,6 +9,7 @@ import logging
 import jinja2
 
 from ..common import check_ready
+from ..retcode import Ret
 
 logger = logging.getLogger(__name__)
 
@@ -51,20 +52,20 @@ class Renderer:
 
             self._ready.set()
 
-        return True
+        return Ret.OK
 
     async def get_spell(self, item):
         '''Get a random spell for the given item.'''
         match await self._ds['spell'].random(**item['spell']):
-            case (True, spell):
-                return (True, spell)
-            case (False, msg):
-                return (False, msg)
-            case False:
-                return (False, 'Unable to get spell for item.')
+            case (Ret.OK, spell):
+                return (Ret.OK, spell)
+            case (ret, msg) if ret is not Ret.OK:
+                return (ret, msg)
+            case Ret.NOT_READY:
+                return (Ret.NOT_READY, 'Unable to get spell for item.')
             case ret:
                 logging.warning(f'Searching random spell failed, got: { ret }')
-                return (False, 'Unknown internal error.')
+                return (Ret.FAILED, 'Unknown internal error.')
 
     async def render(self, item):
         '''Render an item.
@@ -75,8 +76,8 @@ class Renderer:
            Returns either (True, x) where x is the rendered item, or
            (False, msg) where msg is an error message.'''
         match await self._render(item):
-            case False:
-                return (False, 'Unable to render item as renderer is not yet fully initilized.')
+            case Ret.NOT_READY:
+                return (Ret.NOT_READY, 'Unable to render item as renderer is not yet fully initilized.')
             case ret:
                 return ret
 
@@ -103,7 +104,7 @@ class Renderer:
                     t = name
             case _:
                 self.logger.error(f'Failed to render item: { item }.')
-                return (False, 'Failed to render item.')
+                return (Ret.INVALID, 'Failed to render item.')
 
         n = ''
         i = 0
@@ -113,7 +114,7 @@ class Renderer:
 
             if i > MAX_TEMPLATE_RECURSION:
                 self.logger.error('Too many levels of recursion in template: { template }.')
-                return (False, 'Failed to render item.')
+                return (Ret.LIMMITED, 'Failed to render item.')
 
             if 'spell' in item:
                 if 'rolled_spell' in item:
@@ -123,18 +124,18 @@ class Renderer:
                     item['level'] = item['rolled_spell']['level']
                 else:
                     match await self.get_spell(item):
-                        case (True, spell):
+                        case (Ret.OK, spell):
                             item['cls'] = spell['cls']
                             item['caster_level'] = spell['caster_level']
                             spell = spell['name']
-                        case (False, msg):
-                            return (False, msg)
+                        case (ret, msg) if ret is not Ret.OK:
+                            return (ret, msg)
             else:
                 spell = None
 
             n = await self.env.from_string(t).render_async({'keys': self._data, 'spell': spell, 'item': item})
 
             if n == t:
-                return (True, n)
+                return (Ret.OK, n)
             else:
                 t = n

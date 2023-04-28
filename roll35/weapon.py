@@ -8,6 +8,7 @@ import logging
 from nextcord.ext import commands
 
 from .cog import Cog
+from .retcode import Ret
 
 NOT_READY = 'Weapon data is not yet available, please try again later.'
 
@@ -26,24 +27,21 @@ class Weapon(Cog):
            weapon items can be returned. To list recognized tags, run
            `/r35 weapontags`'''
         match await self.ds['weapon'].random_base(tags):
-            case False:
+            case Ret.NOT_READY:
                 await ctx.send(NOT_READY)
-            case None:
+            case Ret.NO_MATCH:
                 await ctx.send('No item found matching requested tags.')
             case item:
-                match await self.render(item):
-                    case (True, msg):
-                        await ctx.send(msg)
-                    case (False, msg):
-                        await ctx.send(msg)
+                _, msg = await self.render(item)
+                await ctx.send(msg)
 
     @commands.command()
     async def weapontags(self, ctx):
         '''List known weapon tags.'''
         match await self.ds['weapon'].tags():
-            case False:
+            case Ret.NOT_READY:
                 await ctx.send(NOT_READY)
-            case []:
+            case Ret.NO_MATCH:
                 await ctx.send('No tags found for weapons.')
             case tags:
                 await ctx.send(

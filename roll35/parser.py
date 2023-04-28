@@ -8,6 +8,8 @@ import shlex
 
 from io import StringIO
 
+from .retcode import Ret
+
 logger = logging.getLogger(__name__)
 
 
@@ -50,21 +52,21 @@ class Parser:
         while True:
             match lexer.get_token():
                 case lexer.eof:
-                    return (True, ret)
+                    return (Ret.OK, ret)
                 case token if token.casefold() in self._rindex:
                     key = self._rindex[token]
                     value = lexer.get_token()
                     schema = self._schema[key]
 
                     if value == lexer.eof:
-                        return (False, f'Unexpected end of arguments after `{ token }`.')
+                        return (Ret.FAILED, f'Unexpected end of arguments after `{ token }`.')
 
                     if 'type' in schema:
                         try:
                             ret[key] = schema['type'](value.casefold())
                         except Exception:
-                            return (False, f'Failed to parse `{ value }` as value for `{ token }`.')
+                            return (Ret.FAILED, f'Failed to parse `{ value }` as value for `{ token }`.')
                     else:
                         ret[key] = value.casefold()
                 case token:
-                    return (False, f'Unrecognized token `{ token }`.')
+                    return (Ret.FAILED, f'Unrecognized token `{ token }`.')
