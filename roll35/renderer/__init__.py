@@ -8,7 +8,7 @@ import logging
 
 import jinja2
 
-from ..common import check_ready
+from ..common import check_ready, bad_return
 from ..retcode import Ret
 
 logger = logging.getLogger(__name__)
@@ -64,7 +64,7 @@ class Renderer:
             case Ret.NOT_READY:
                 return (Ret.NOT_READY, 'Unable to get spell for item.')
             case ret:
-                logging.warning(f'Searching random spell failed, got: { ret }')
+                self.logger.error(bad_return(ret))
                 return (Ret.FAILED, 'Unknown internal error.')
 
     async def render(self, item):
@@ -130,6 +130,9 @@ class Renderer:
                             spell = spell['name']
                         case (ret, msg) if ret is not Ret.OK:
                             return (ret, msg)
+                        case ret:
+                            self.logger.error(bad_return(ret))
+                            return (Ret.FAILED, 'Unknown internal error.')
             else:
                 spell = None
 

@@ -9,7 +9,7 @@ import random
 from . import agent
 from . import constants
 from . import types
-from ..common import make_weighted_entry, check_ready, norm_string, did_you_mean
+from ..common import make_weighted_entry, check_ready, norm_string, did_you_mean, bad_return
 from ..retcode import Ret
 
 logger = logging.getLogger(__name__)
@@ -230,6 +230,9 @@ class OrdnanceAgent(agent.Agent):
                         )
                     case (ret, msg) if ret is not Ret.OK:
                         return (ret, msg)
+                    case ret:
+                        self.logger.error(bad_return(ret))
+                        return (Ret.FAILED, 'Unknown internal error.')
             case item:
                 return (Ret.OK, item)
 
@@ -294,6 +297,8 @@ class OrdnanceAgent(agent.Agent):
                 group = False
                 rank = args[0]
                 subrank = args[1]
+            case _:
+                raise ValueError(f'Invalid arguments for { self.name }.random_specific: { args }')
 
         match rank:
             case None:

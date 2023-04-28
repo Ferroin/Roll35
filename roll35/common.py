@@ -33,6 +33,13 @@ async def ret_async(value):
     return value
 
 
+def bad_return(value):
+    '''Produce a log message indicating a bad return code, including call site info.'''
+    import inspect
+    frame = inspect.getframeinfo(inspect.stack()[1][0])
+    return f'Unexpected return code { value } at { frame.filename }:{ frame.lineno }'
+
+
 @lru_cache(maxsize=256)
 def norm_string(string):
     '''Normalize a string.
@@ -80,6 +87,8 @@ def make_weighted_entry(entry, costmult_handler=lambda x: x):
                     ret['costrange'] = [low, high]
                 case _:
                     raise ValueError('Invalid entry returned by costmult function.')
+        case _:
+            pass
 
     return ret
 

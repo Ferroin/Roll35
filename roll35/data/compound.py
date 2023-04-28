@@ -7,7 +7,7 @@ import logging
 
 from . import agent
 from . import constants
-from ..common import yaml
+from ..common import yaml, bad_return
 from ..retcode import Ret
 
 logger = logging.getLogger(__name__)
@@ -100,7 +100,7 @@ class CompoundSpellAgent(CompoundAgent):
                         item['spell'] = spell
                         return (Ret.OK, item)
                     case ret:
-                        self.logger.warning(f'Searching random spell failed, got: { ret }')
+                        self.logger.error(bad_return(ret))
                         return (Ret.FAILED, 'Unknown internal error.')
             case item:
                 return (Ret.OK, item)
