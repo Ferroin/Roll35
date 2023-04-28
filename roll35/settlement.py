@@ -62,7 +62,7 @@ async def roll_settlement(population, ds, renderer):
             case [low, high]:
                 slots = random.randint(low, high)
                 response += f'\nThe following { slots } additional { rank } items are available irrespective of cost:\n'
-                for item in asyncio.as_completed(roll_many(ds, slots, {'rank': rank, 'mincost': settlement['base']})):
+                for item in asyncio.as_completed(roll_many(ds, slots, {'rank': rank, 'mincost': settlement['base'] + 1})):
                     match await item:
                         case (Ret.OK, item):
                             match await renderer.render(item):
