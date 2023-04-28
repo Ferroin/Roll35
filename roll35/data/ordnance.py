@@ -205,10 +205,11 @@ class OrdnanceAgent(agent.Agent):
         if allow_specific:
             return random.choice(items)['value']
         else:
-            return random.choice(list(filter(
-                lambda x: 'specific' not in x['value'],
-                items
-            )))['value']
+            match list(filter(lambda x: 'specific' not in x['value'], items)):
+                case []:
+                    return None
+                case [*items]:
+                    return random.choice(items)['value']
 
     @check_ready
     async def get_base(self, name):
