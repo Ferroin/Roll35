@@ -396,6 +396,10 @@ async def roll(
         case {'rank': rank, 'subrank': subrank, 'category': category, 'base': None} if category in ordnance:
             agent = ds[category]
             match await agent.random_pattern(rank=rank, subrank=subrank, allow_specific=True, mincost=mincost, maxcost=maxcost):
+                case Ret.NOT_READY:
+                    item = (Ret.NOT_READY, NOT_READY)
+                case Ret.NO_MATCH:
+                    item = Ret.NO_MATCH
                 case {'specific': specific}:
                     item = await agent.random_specific(*specific, mincost=mincost, maxcost=maxcost)
                 case pattern:

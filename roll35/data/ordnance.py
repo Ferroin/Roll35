@@ -204,7 +204,10 @@ class OrdnanceAgent(agent.Agent):
         items = agent.costfilter(self._data[rank][subrank], mincost, maxcost)
 
         if allow_specific:
-            return random.choice(items)['value']
+            if items:
+                return random.choice(items)['value']
+            else:
+                return Ret.NO_MATCH
         else:
             match list(filter(lambda x: 'specific' not in x['value'], items)):
                 case []:
@@ -317,9 +320,14 @@ class OrdnanceAgent(agent.Agent):
             if group not in items:
                 raise ValueError(f'Unrecognized item type for { self.name }: { rank }')
 
-            return random.choice(items[group][rank][subrank])['value']
+            items = items[group]
+
+        items = agent.costfilter(items[rank][subrank], mincost, maxcost)
+
+        if items:
+            return random.choice(items)['value']
         else:
-            return random.choice(items[rank][subrank])['value']
+            return Ret.NO_MATCH
 
     @check_ready
     async def get_bonus_costs(self, base):
