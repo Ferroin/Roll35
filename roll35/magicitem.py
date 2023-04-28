@@ -10,6 +10,7 @@ import random
 from nextcord.ext import commands
 
 from .cog import Cog
+from .common import ret_async
 from .data.constants import RANK
 from .parser import Parser
 from .retcode import Ret
@@ -320,10 +321,10 @@ def roll_many(ds, count, args):
        Returns a list of coroutines that can be awaited to get the
        requested items.'''
     if not ds.ready:
-        return [(Ret.NOT_READY, NOT_READY)]
+        return [ret_async((Ret.NOT_READY, NOT_READY))]
 
     if count > MAX_COUNT:
-        return [(Ret.LIMITED, f'Too many items requested, no more than { MAX_COUNT } may be rolled at a time.')]
+        return [ret_async((Ret.LIMITED, f'Too many items requested, no more than { MAX_COUNT } may be rolled at a time.'))]
 
     coros = []
 
