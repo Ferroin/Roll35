@@ -2,19 +2,17 @@
 # SPDX-License-Identifier: MITNFA
 
 from .core import Core
-from .spell import Spell
 from .magicitem import MagicItem
-from .armor import Armor
-from .weapon import Weapon
+from .ordnance import Ordnance
+from .spell import Spell
 
 from .common import VERSION
 
 COGS = [
     Core,
-    Spell,
     MagicItem,
-    Armor,
-    Weapon,
+    Ordnance,
+    Spell,
 ]
 
 BOT_HELP = '''Roll items and spells for first-edition Pathfinder.
