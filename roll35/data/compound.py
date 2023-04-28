@@ -89,6 +89,7 @@ class CompoundSpellAgent(CompoundAgent):
                     case False:
                         return (False, 'Failed to roll random spell for item: spell data not ready.')
                     case (False, msg):
+                        self.logger.warning(f'Failed to roll random spell for item using parameters: { msg }, recieved: { msg }')
                         return (False, f'Failed to roll random spell for item: { msg }')
                     case (True, spell):
                         if 'costmult' in item:

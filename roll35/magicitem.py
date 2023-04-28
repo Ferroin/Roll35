@@ -289,7 +289,7 @@ async def _assemble_magic_item(agent, base_item, pattern, masterwork, bonus_cost
                     tags = tags - set(enchant['remove'])
 
     if failed:
-        if attempt >= 3:
+        if attempt >= 6:
             return (False, "Too many failed attempts to select enchantments.")
         else:
             attempt += 1
@@ -350,6 +350,7 @@ async def roll(
     }
 
     if attempt >= MAX_REROLLS:
+        logger.warning(f'Recursion limit hit while rolling magic item: { args }')
         return (False, 'Too many rerolls while attempting to generate item.')
 
     logger.debug(f'Rolling magic item with parameters { args }.')
@@ -471,6 +472,7 @@ async def roll(
                 attempt,
             )
         case _:
+            logger.warning(f'Invalid parameters when rolling magic item: { args }')
             item = (False, 'Invalid parmeters specified.')
 
     match item:
