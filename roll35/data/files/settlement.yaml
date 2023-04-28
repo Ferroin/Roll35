@@ -1,5 +1,5 @@
 ---
-- {name   :   Thorp, population:    20, base:    50, purchase:    500, casting: 1, minor: [1,  4], medium:    null, major:    null}
+- {name:      Thorp, population:    20, base:    50, purchase:    500, casting: 1, minor: [1,  4], medium:    null, major:    null}
 - {name:     Hamlet, population:    60, base:   200, purchase:   1000, casting: 2, minor: [1,  6], medium:    null, major:    null}
 - {name:    Village, population:   200, base:   500, purchase:   2500, casting: 3, minor: [2,  8], medium: [1,  4], major:    null}
 - {name: Small Town, population:  2000, base:  1000, purchase:   5000, casting: 4, minor: [3, 12], medium: [1,  6], major:    null}
