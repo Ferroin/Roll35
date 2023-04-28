@@ -24,6 +24,15 @@ yaml = YAML(typ='safe')
 logger = logging.getLogger(__name__)
 
 
+async def ret_async(value):
+    '''Simple async wrapper to directly return a value.
+
+       This is used in a couple of places where we are passing around
+       coroutines, but need to also be able to return explicit values
+       instead of a full coroutine.'''
+    return value
+
+
 @lru_cache(maxsize=256)
 def norm_string(string):
     '''Normalize a string.
