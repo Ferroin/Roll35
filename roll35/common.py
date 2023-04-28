@@ -16,7 +16,7 @@ from ruamel.yaml import YAML
 
 from .retcode import Ret
 
-VERSION = (3, 5, 0)
+VERSION = (3, 5, 1)
 
 READINESS_TIMEOUT = 5.0
 
