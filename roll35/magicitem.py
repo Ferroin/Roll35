@@ -453,34 +453,43 @@ async def roll(
         case {'rank': _, 'subrank': _, 'category': None, 'cls': cls} if cls is not None:
             item = (Ret.INVALID, 'Invalid parmeters specified, specifying a class is only valid if you specify a category of scroll or wand.')
         case {'rank': None, 'subrank': None, 'category': None}:
-            return await roll(
-                ds,
-                {
-                    'rank': random.choice(RANK),
-                    'mincost': mincost,
-                    'maxcost': maxcost,
-                },
-                attempt,
-            )
+            item = None
+            while item is None:
+                args['rank'] = random.choice(RANK)
+                attempt += 1
+
+                match await roll(ds, args, attempt):
+                    case (Ret.OK, item):
+                        item = item
+                    case (Ret.NO_MATCH, _):
+                        continue
+                    case (ret, msg) if ret not in [Ret.OK, Ret.NO_MATCH]:
+                        item = (ret, msg)
+                    case ret:
+                        logger.error(bad_return(ret))
+                        item = (Ret.FAILED, 'Unknown internal error.')
         case {'rank': None, 'subrank': subrank, 'category': None}:
             item = (Ret.INVALID, 'Invalid parmeters specified, must specify a rank for the item.')
         case {'rank': rank, 'subrank': subrank, 'category': None}:
-            if rank is None:
-                rank = random.choice(RANK)
+            item = None
+            while item is None:
+                if args['rank'] is None:
+                    args['rank'] = random.choice(RANK)
 
-            category = await ds['category'].random(rank=rank)
+                args['category'] = await ds['category'].random(rank=rank)
 
-            return await roll(
-                ds,
-                {
-                    'rank': rank,
-                    'subrank': subrank,
-                    'category': category,
-                    'mincost': mincost,
-                    'maxcost': maxcost,
-                },
-                attempt,
-            )
+                attempt += 1
+
+                match await roll(ds, args, attempt):
+                    case (Ret.OK, item):
+                        item = item
+                    case (Ret.NO_MATCH, _):
+                        continue
+                    case (ret, msg) if ret not in [Ret.OK, Ret.NO_MATCH]:
+                        item = (ret, msg)
+                    case ret:
+                        logger.error(bad_return(ret))
+                        item = (Ret.FAILED, 'Unknown internal error.')
         case _:
             logger.warning(f'Invalid parameters when rolling magic item: { args }')
             item = (Ret.INVALID, 'Invalid parmeters specified.')
@@ -494,12 +503,17 @@ async def roll(
             return (ret, msg)
         case (Ret.OK, item):
             if mincost is not None and item['cost'] < mincost:
-                return await roll(ds, args, attempt)
+                return await roll(ds, args, attempt+1)
             elif maxcost is not None and item['cost'] > maxcost:
-                return await roll(ds, args, attempt)
+                return await roll(ds, args, attempt+1)
             else:
                 return (Ret.OK, item)
         case {'reroll': reroll}:
             return await _reroll(ds, attempt, reroll, mincost, maxcost)
         case _:
-            return (Ret.OK, item)
+            if mincost is not None and item['cost'] < mincost:
+                return await roll(ds, args, attempt+1)
+            elif maxcost is not None and item['cost'] > maxcost:
+                return await roll(ds, args, attempt+1)
+            else:
+                return (Ret.OK, item)
