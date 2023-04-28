@@ -9,6 +9,7 @@ import logging
 from nextcord.ext import commands
 
 from .cog import Cog
+from .common import bad_return
 from .parser import Parser
 from .retcode import Ret
 
@@ -79,6 +80,9 @@ class Spell(Cog):
                 return
             case (Ret.OK, a):
                 args = a
+            case ret:
+                self.logger.error(bad_return(ret))
+                return await ctx.send('Unknown internal error.')
 
         if args['count'] is None:
             args['count'] = 1
@@ -114,6 +118,14 @@ class Spell(Cog):
                                     break
                                 case (Ret.OK, msg):
                                     results.append(msg)
+                                case ret:
+                                    self.logger.error(bad_return(ret))
+                                    results.append('\nFailed to generate remaining items: Unknown internal error.')
+                                    break
+                        case ret:
+                            self.logger.error(bad_return(ret))
+                            results.append('\nFailed to generate remaining items: Unknown internal error.')
+                            break
 
                 await ctx.trigger_typing()
 

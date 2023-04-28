@@ -10,7 +10,7 @@ import random
 from nextcord.ext import commands
 
 from .cog import Cog
-from .common import ret_async
+from .common import ret_async, bad_return
 from .data.constants import RANK
 from .parser import Parser
 from .retcode import Ret
@@ -136,14 +136,16 @@ class MagicItem(Cog):
            Parameters which are not specified are generated randomly.'''
         match ITEM_PARSER.parse(' '.join(args)):
             case (Ret.FAILED, msg):
-                await ctx.send(
+                return await ctx.send(
                     'Invalid arguments for command `magicitem`: ' +
                     f'{ msg }\n' +
                     'See `/r35 help magicitem` for supported arguments.'
                 )
-                return
             case (Ret.OK, a):
                 args = a
+            case ret:
+                self.logger.error(bad_return(ret))
+                return await ctx.send('Unknown internal error.')
 
         if args['count'] is None:
             args['count'] = 1
@@ -170,6 +172,14 @@ class MagicItem(Cog):
                                     break
                                 case (Ret.OK, msg):
                                     results.append(msg)
+                                case ret:
+                                    self.logger.error(bad_return(ret))
+                                    results.append('\nFailed to generate remaining items: Unknown internal error.')
+                                    break
+                        case ret:
+                            self.logger.error(bad_return(ret))
+                            results.append('\nFailed to generate remaining items: Unknown internal error.')
+                            break
 
                 await ctx.trigger_typing()
 
@@ -242,6 +252,7 @@ async def _reroll(ds, attempt, path, mincost, maxcost):
                 attempt+1
             )
         case _:
+            logger.warning('Invalid reroll directive found while rolling for magic item: { path }.')
             return (
                 Ret.FAILED,
                 "Invalid reroll directive found while rolling for magic item."
@@ -410,6 +421,9 @@ async def roll(
                     item = await _assemble_magic_item(
                         agent, base_item, pattern, masterwork, bonus_cost
                     )
+                case ret:
+                    logger.error(bad_return(ret))
+                    item = (Ret.FAILED, 'Unknown internal error.')
         case {'rank': rank, 'subrank': subrank, 'category': category, 'cls': cls} if category in compound_spell:
             classes = await ds['classes'].classes()
 

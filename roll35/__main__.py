@@ -17,7 +17,7 @@ import nextcord
 from nextcord.ext import commands
 
 from . import COGS, BOT_HELP
-from .common import did_you_mean
+from .common import did_you_mean, bad_return
 from .data import DataSet
 from .renderer import Renderer
 from .retcode import Ret
@@ -83,6 +83,9 @@ class Bot(commands.Bot):
                 case (Ret.OK, msg):
                     return await ctx.send(f'{ exception.command_name } is not a recognized command. { msg }')
                 case (Ret.NO_MATCH, _):
+                    return await ctx.send(f'{ exception.command_name } is not a recognized command.')
+                case ret:
+                    logger.error(bad_return(ret))
                     return await ctx.send(f'{ exception.command_name } is not a recognized command.')
 
         await super().on_command_error(ctx, exception)
