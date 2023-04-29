@@ -11,11 +11,10 @@ logger = logging.getLogger(__name__)
 
 
 class Cog(commands.Cog):
-    def __init__(self, bot, dataset, renderer, logger=logger):
+    def __init__(self, bot, dataset, renderer):
         self.bot = bot
         self.ds = dataset
         self.renderer = renderer
-        self.logger = logger
 
     async def render(self, item):
         return await self.renderer.render(item)
@@ -23,7 +22,7 @@ class Cog(commands.Cog):
     async def cog_before_invoke(self, ctx):
         await ctx.trigger_typing()
 
-        self.logger.debug(
+        logger.debug(
             f'Invoking { ctx.command.name } from message { ctx.message.content }.'
         )
 

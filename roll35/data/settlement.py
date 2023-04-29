@@ -47,9 +47,6 @@ class PopulationMap(Sequence):
 
 
 class SettlementAgent(agent.Agent):
-    def __init__(self, dataset, name):
-        super().__init__(dataset, name)
-
     @staticmethod
     def _process_data(data):
         return {

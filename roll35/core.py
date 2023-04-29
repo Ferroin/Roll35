@@ -3,7 +3,6 @@
 
 '''Core commands.'''
 
-import logging
 import platform
 
 import nextcord
@@ -13,13 +12,8 @@ from nextcord.ext import commands
 from .cog import Cog
 from .common import VERSION
 
-logger = logging.getLogger(__name__)
-
 
 class Core(Cog):
-    def __init__(self, bot, ds, renderer, logger=logger):
-        super().__init__(bot, ds, renderer, logger)
-
     @commands.command()
     async def ping(self, ctx):
         '''Check if the bot is alive'''

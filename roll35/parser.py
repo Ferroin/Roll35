@@ -3,14 +3,11 @@
 
 '''Provides basic command parameter parsing functionality.'''
 
-import logging
 import shlex
 
 from io import StringIO
 
 from .retcode import Ret
-
-logger = logging.getLogger(__name__)
 
 
 class Parser:

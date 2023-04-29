@@ -7,9 +7,6 @@ from . import agent
 
 
 class RankedAgent(agent.Agent):
-    def __init__(self, dataset, name):
-        super().__init__(dataset, name)
-
     @staticmethod
     def _process_data(data):
         return agent.process_ranked_itemlist(data)

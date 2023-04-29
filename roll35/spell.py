@@ -54,9 +54,6 @@ logger = logging.getLogger(__name__)
 
 
 class Spell(Cog):
-    def __init__(self, bot, ds, renderer, logger=logger):
-        super().__init__(bot, ds, renderer, logger)
-
     @commands.command()
     async def spell(self, ctx, *args):
         '''Roll a random spell.
@@ -81,7 +78,7 @@ class Spell(Cog):
             case (Ret.OK, a):
                 args = a
             case ret:
-                self.logger.error(bad_return(ret))
+                logger.error(bad_return(ret))
                 return await ctx.send('Unknown internal error.')
 
         if args['count'] is None:
@@ -119,11 +116,11 @@ class Spell(Cog):
                                 case (Ret.OK, msg):
                                     results.append(msg)
                                 case ret:
-                                    self.logger.error(bad_return(ret))
+                                    logger.error(bad_return(ret))
                                     results.append('\nFailed to generate remaining items: Unknown internal error.')
                                     break
                         case ret:
-                            self.logger.error(bad_return(ret))
+                            logger.error(bad_return(ret))
                             results.append('\nFailed to generate remaining items: Unknown internal error.')
                             break
 
