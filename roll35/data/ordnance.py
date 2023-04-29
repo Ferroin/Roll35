@@ -151,9 +151,6 @@ def generate_tags_entry(items):
 
 
 class OrdnanceAgent(agent.Agent):
-    def __init__(self, dataset, name):
-        super().__init__(dataset, name)
-
     @staticmethod
     def _process_data(data):
         enchantments = process_enchantment_table(data['enchantments'], data['enchant_base_cost'])

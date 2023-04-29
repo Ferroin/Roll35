@@ -3,8 +3,6 @@
 
 '''Cog for handling armor and weapon items.'''
 
-import logging
-
 from nextcord.ext import commands
 
 from .cog import Cog
@@ -12,13 +10,8 @@ from .retcode import Ret
 
 NOT_READY = 'Item data is not yet available, please try again later.'
 
-logger = logging.getLogger(__name__)
-
 
 class Ordnance(Cog):
-    def __init__(self, bot, ds, renderer, logger=logger):
-        super().__init__(bot, ds, renderer, logger)
-
     async def get_item(self, ctx, typ, *tags):
         '''Get a mundane item.'''
         match await self.ds[typ].random_base(tags):

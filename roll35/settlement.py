@@ -10,9 +10,10 @@ import random
 from nextcord.ext import commands
 
 from .cog import Cog
-from .retcode import Ret
+from .common import bad_return
 from .data.constants import RANK
 from .magicitem import roll_many
+from .retcode import Ret
 
 NOT_READY = 'Settlement data is not yet available, please try again later.'
 
@@ -20,9 +21,6 @@ logger = logging.getLogger(__name__)
 
 
 class Settlement(Cog):
-    def __init__(self, bot, ds, renderer, logger=logger):
-        super().__init__(bot, ds, renderer, logger)
-
     @commands.command()
     async def settlement(self, ctx, population):
         '''Roll magic items for a settlement with the given population.'''
@@ -70,7 +68,13 @@ async def roll_settlement(population, ds, renderer):
                                     response += f'- { msg }\n'
                                 case (ret, msg) if ret is not Ret.OK:
                                     return (Ret.FAILED, f'Failed to generate items for settlement: { msg }')
+                                case ret:
+                                    logger.error(bad_return(ret))
+                                    return (Ret.FAILED, f'Failed to generate items for settlement: { msg }')
                         case (ret, msg) if ret is not Ret.OK:
+                            return (Ret.FAILED, f'Failed to generate items for settlement: { msg }')
+                        case ret:
+                            logger.error(bad_return(ret))
                             return (Ret.FAILED, f'Failed to generate items for settlement: { msg }')
 
     return (Ret.OK, response)
