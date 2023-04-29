@@ -133,11 +133,10 @@ def costfilter(items, mincost, maxcost):
 
 class Agent(abc.ABC):
     '''Abstract base class for data agents.'''
-    def __init__(self, dataset, pool, name):
+    def __init__(self, dataset, name):
         self._ds = dataset
         self._data = dict()
         self._ready = asyncio.Event()
-        self._pool = pool
         self.name = name
 
     @staticmethod
@@ -159,11 +158,11 @@ class Agent(abc.ABC):
     def _valid_subrank(self, rank, subrank):
         return rank in self._data and subrank in self._data[rank]
 
-    async def _process_async(self, func, args):
+    async def _process_async(self, pool, func, args):
         loop = asyncio.get_running_loop()
-        return await loop.run_in_executor(self._pool, func, *args)
+        return await loop.run_in_executor(pool, func, *args)
 
-    async def load_data(self):
+    async def load_data(self, pool):
         '''Load data for this agent.'''
         if not self._ready.is_set():
             logger.info(f'Loading { self.name } data.')
@@ -171,7 +170,7 @@ class Agent(abc.ABC):
             with open(constants.DATA_ROOT / f'{ self.name }.yaml') as f:
                 data = yaml.load(f)
 
-            self._data = await self._process_async(self._process_data, [data])
+            self._data = await self._process_async(pool, self._process_data, [data])
             logger.info(f'Finished loading { self.name } data.')
 
             self._ready.set()

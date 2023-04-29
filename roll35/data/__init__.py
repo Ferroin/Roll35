@@ -32,7 +32,7 @@ agents = {
 
 
 class DataSet:
-    def __init__(self, pool):
+    def __init__(self):
         self._agents = dict()
         self.ready = False
 
@@ -43,7 +43,7 @@ class DataSet:
         self._types = {k: set() for k in agents.keys()}
 
         for item in structure['agents']:
-            self._agents[item['name']] = agents[item['type']](self, pool, item['name'])
+            self._agents[item['name']] = agents[item['type']](self, item['name'])
             self._types[item['type']].add(item['name'])
 
     def __getitem__(self, key):
@@ -53,13 +53,13 @@ class DataSet:
     def types(self):
         return self._types
 
-    async def load_data(self):
+    async def load_data(self, pool):
         '''Load the data for this dataset.'''
         if not self.ready:
             loaders = []
 
             for agent in self._agents.values():
-                loaders.append(asyncio.create_task(agent.load_data()))
+                loaders.append(asyncio.create_task(agent.load_data(pool)))
 
             await asyncio.gather(*loaders)
 
@@ -74,10 +74,10 @@ def _inspect_dataset():
     from concurrent.futures import ProcessPoolExecutor
 
     pool = ProcessPoolExecutor()
-    ds = DataSet(pool)
+    ds = DataSet()
 
     async def setup():
-        await ds.load_data()
+        await ds.load_data(pool)
 
     asyncio.run(setup())
 

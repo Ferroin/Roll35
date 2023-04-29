@@ -8,8 +8,8 @@ from ..common import check_ready
 
 
 class ClassesAgent(agent.Agent):
-    def __init__(self, dataset, pool, name='classes'):
-        super().__init__(dataset, pool, name)
+    def __init__(self, dataset, name='classes'):
+        super().__init__(dataset, name)
 
     @staticmethod
     def _process_data(data):

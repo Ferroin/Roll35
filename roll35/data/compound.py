@@ -41,8 +41,8 @@ def create_spellmult_xform(classes):
 
 
 class CompoundAgent(agent.Agent):
-    def __init__(self, dataset, pool, name):
-        super().__init__(dataset, pool, name)
+    def __init__(self, dataset, name):
+        super().__init__(dataset, name)
 
     @staticmethod
     def _process_data(data):
@@ -62,7 +62,7 @@ class CompoundSpellAgent(CompoundAgent):
 
         return ret
 
-    async def load_data(self):
+    async def load_data(self, pool):
         '''Load data for this agent.'''
         if not self._ready.is_set():
             logger.info('Fetching class data.')
@@ -74,7 +74,7 @@ class CompoundSpellAgent(CompoundAgent):
             with open(constants.DATA_ROOT / f'{ self.name }.yaml') as f:
                 data = yaml.load(f)
 
-            self._data = await self._process_async(self._process_data, [data, classes])
+            self._data = await self._process_async(pool, self._process_data, [data, classes])
             logger.info(f'Finished loading { self.name } data.')
 
             self._ready.set()
