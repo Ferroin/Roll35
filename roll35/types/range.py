@@ -38,7 +38,7 @@ class R35Range(collections.abc.Container):
         if self._empty:
             return False
         elif self._typecheck(v):
-            return v >= self._min and v <= self._max
+            return self._min <= v <= self._max
         elif isinstance(v, R35Range):
             return v.min in self and v.max in self
         else:
@@ -50,7 +50,7 @@ class R35Range(collections.abc.Container):
 
     @classmethod
     def _rangecheck(cls, v):
-        return v >= cls.MIN_VALUE and v <= cls.MAX_VALUE
+        return cls.MIN_VALUE <= v <= cls.MAX_VALUE
 
     @staticmethod
     def valid(v):
