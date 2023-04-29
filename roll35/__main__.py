@@ -16,7 +16,8 @@ import nextcord
 
 from nextcord.ext import commands
 
-from . import COGS, BOT_HELP
+from . import BOT_HELP
+from .cogs import COGS
 from .common import did_you_mean, bad_return
 from .data import DataSet
 from .renderer import Renderer

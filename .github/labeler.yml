@@ -2,17 +2,12 @@
 # Configuration for the pr-labeler workflow.
 
 area/bot:
-  - all:
-      - 'roll35/*.py'
-      - '!roll35/common.py'
-      - '!roll35/data/*.py'
-      - '!roll35/data/**/*.py'
-      - '!roll35/types/*.py'
-      - '!roll35/parser.py'
-      - '!roll35/renderer/*.py'
-      - '!roll35/renderer/**/*.py'
+  - roll35/__main__.py
+  - roll35/cogs/*.py
+  - roll35/cogs/**/*.py
 
 area/common:
+  - roll35/__init__.py
   - roll35/common.py
 
 area/data-handling:

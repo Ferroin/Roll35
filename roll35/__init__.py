@@ -1,21 +1,7 @@
 # Copyright (c) 2023 Austin S. Hemmelgarn
 # SPDX-License-Identifier: MITNFA
 
-from .core import Core
-from .magicitem import MagicItem
-from .ordnance import Ordnance
-from .settlement import Settlement
-from .spell import Spell
-
 from .common import VERSION
-
-COGS = [
-    Core,
-    MagicItem,
-    Ordnance,
-    Settlement,
-    Spell,
-]
 
 BOT_HELP = '''Roll items and spells for first-edition Pathfinder.
 

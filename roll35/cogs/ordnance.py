@@ -5,8 +5,8 @@
 
 from nextcord.ext import commands
 
-from .types.cog import R35Cog
-from .retcode import Ret
+from ..retcode import Ret
+from ..types import R35Cog
 
 NOT_READY = 'Item data is not yet available, please try again later.'
 
