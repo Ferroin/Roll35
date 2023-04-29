@@ -41,8 +41,8 @@ def create_spellmult_xform(classes):
 
 
 class CompoundAgent(agent.Agent):
-    def __init__(self, dataset, pool, name, logger=logger):
-        super().__init__(dataset, pool, name, logger)
+    def __init__(self, dataset, pool, name):
+        super().__init__(dataset, pool, name)
 
     @staticmethod
     def _process_data(data):
@@ -65,17 +65,17 @@ class CompoundSpellAgent(CompoundAgent):
     async def load_data(self):
         '''Load data for this agent.'''
         if not self._ready.is_set():
-            self.logger.info('Fetching class data.')
+            logger.info('Fetching class data.')
 
             classes = await self._ds['classes'].W_classdata()
 
-            self.logger.info(f'Loading { self.name } data.')
+            logger.info(f'Loading { self.name } data.')
 
             with open(constants.DATA_ROOT / f'{ self.name }.yaml') as f:
                 data = yaml.load(f)
 
             self._data = await self._process_async(self._process_data, [data, classes])
-            self.logger.info(f'Finished loading { self.name } data.')
+            logger.info(f'Finished loading { self.name } data.')
 
             self._ready.set()
 
@@ -90,7 +90,7 @@ class CompoundSpellAgent(CompoundAgent):
                     case Ret.NOT_READY:
                         return (Ret.NOT_READY, 'Failed to roll random spell for item: spell data not ready.')
                     case (ret, msg) if ret is not Ret.OK:
-                        self.logger.warning(f'Failed to roll random spell for item using parameters: { msg }, recieved: { msg }')
+                        logger.warning(f'Failed to roll random spell for item using parameters: { msg }, recieved: { msg }')
                         return (ret, f'Failed to roll random spell for item: { msg }')
                     case (Ret.OK, spell):
                         if 'costmult' in item:
@@ -100,7 +100,7 @@ class CompoundSpellAgent(CompoundAgent):
                         item['spell'] = spell
                         return (Ret.OK, item)
                     case ret:
-                        self.logger.error(bad_return(ret))
+                        logger.error(bad_return(ret))
                         return (Ret.FAILED, 'Unknown internal error.')
             case item:
                 return (Ret.OK, item)

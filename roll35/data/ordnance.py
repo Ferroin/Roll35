@@ -151,8 +151,8 @@ def generate_tags_entry(items):
 
 
 class OrdnanceAgent(agent.Agent):
-    def __init__(self, dataset, pool, name, logger=logger):
-        super().__init__(dataset, pool, name, logger)
+    def __init__(self, dataset, pool, name):
+        super().__init__(dataset, pool, name)
 
     @staticmethod
     def _process_data(data):
@@ -234,7 +234,7 @@ class OrdnanceAgent(agent.Agent):
                     case (ret, msg) if ret is not Ret.OK:
                         return (ret, msg)
                     case ret:
-                        self.logger.error(bad_return(ret))
+                        logger.error(bad_return(ret))
                         return (Ret.FAILED, 'Unknown internal error.')
             case item:
                 return (Ret.OK, item)
