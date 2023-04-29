@@ -9,11 +9,11 @@ import nextcord
 
 from nextcord.ext import commands
 
-from .cog import Cog
+from .types.cog import R35Cog
 from .common import VERSION
 
 
-class Core(Cog):
+class Core(R35Cog):
     @commands.command()
     async def ping(self, ctx):
         '''Check if the bot is alive'''

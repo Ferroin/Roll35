@@ -12,7 +12,7 @@ import asyncio
 import logging
 
 from . import constants
-from . import types
+from .. import types
 from ..common import check_ready, rnd, make_weighted_entry, yaml
 from ..retcode import Ret
 

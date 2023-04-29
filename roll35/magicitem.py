@@ -9,11 +9,11 @@ import random
 
 from nextcord.ext import commands
 
-from .cog import Cog
 from .common import ret_async, bad_return
 from .data.constants import RANK
 from .parser import Parser
 from .retcode import Ret
+from .types.cog import R35Cog
 
 NOT_READY = 'Magic item data is not yet available, please try again later.'
 NO_ITEMS_IN_COST_RANGE = 'No items found in requested cost range.'
@@ -100,7 +100,7 @@ ITEM_PARSER = Parser({
 logger = logging.getLogger(__name__)
 
 
-class MagicItem(Cog):
+class MagicItem(R35Cog):
     @commands.command()
     async def magicitem(self, ctx, *args):
         '''Roll a random magic item.
