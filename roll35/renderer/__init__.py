@@ -18,7 +18,7 @@ MAX_TEMPLATE_RECURSION = 5
 
 class Renderer:
     '''Encapsulates the state required for rendering items.'''
-    def __init__(self, pool, dataset):
+    def __init__(self, dataset):
         self.env = jinja2.Environment(
             loader=jinja2.FunctionLoader(lambda x: None),
             autoescape=False,
@@ -26,7 +26,6 @@ class Renderer:
         )
 
         self._data = None
-        self._pool = pool
         self._ready = asyncio.Event()
         self._ds = dataset
 
@@ -39,13 +38,13 @@ class Renderer:
         with open(DATA_ROOT / f'{ name }.yaml') as f:
             return RenderData(yaml.load(f))
 
-    async def load_data(self):
+    async def load_data(self, pool):
         '''Load required data.'''
         if not self._ready.is_set():
             loop = asyncio.get_running_loop()
 
             logger.info('Loading renderer data.')
-            self._data = await loop.run_in_executor(self._pool, self._loader, self._ds.renderdata)
+            self._data = await loop.run_in_executor(pool, self._loader, self._ds.renderdata)
             logger.info('Finished loading renderer data.')
 
             self._ready.set()

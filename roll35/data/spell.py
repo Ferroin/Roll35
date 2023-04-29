@@ -178,9 +178,9 @@ class SpellAgent(agent.Agent):
         'minimum',
     }
 
-    def __init__(self, dataset, pool, name='spell', db_path=(Path.cwd() / 'spells.db')):
+    def __init__(self, dataset, name='spell', db_path=(Path.cwd() / 'spells.db')):
         self._db_path = db_path
-        super().__init__(dataset, pool, name)
+        super().__init__(dataset, name)
 
     async def _level_in_cls(self, level, cls):
         levels = await self._ds['classes'].get_class(cls)
@@ -195,7 +195,7 @@ class SpellAgent(agent.Agent):
     def _process_data(_):
         return None
 
-    async def load_data(self):
+    async def load_data(self, pool):
         if not self._ready.is_set():
             logger.info('Fetching class data.')
 
@@ -238,7 +238,7 @@ class SpellAgent(agent.Agent):
 
                 for spell_chunk in chunk(spells, 100):
                     coros.append(loop.run_in_executor(
-                        self._pool,
+                        pool,
                         process_spell_chunk,
                         spell_chunk
                     ))

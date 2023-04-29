@@ -8,8 +8,8 @@ from ..common import check_ready, rnd
 
 
 class WondrousAgent(agent.Agent):
-    def __init__(self, dataset, pool, name='wondrous'):
-        super().__init__(dataset, pool, name)
+    def __init__(self, dataset, name='wondrous'):
+        super().__init__(dataset, name)
 
     @staticmethod
     def _process_data(data):

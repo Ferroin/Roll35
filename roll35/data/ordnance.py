@@ -151,8 +151,8 @@ def generate_tags_entry(items):
 
 
 class OrdnanceAgent(agent.Agent):
-    def __init__(self, dataset, pool, name):
-        super().__init__(dataset, pool, name)
+    def __init__(self, dataset, name):
+        super().__init__(dataset, name)
 
     @staticmethod
     def _process_data(data):
@@ -216,13 +216,14 @@ class OrdnanceAgent(agent.Agent):
                     return random.choice(items)['value']
 
     @check_ready
-    async def get_base(self, name):
+    async def get_base(self, pool, name):
         items = self._data['base']
         norm_name = norm_string(name)
 
         match next((x for x in items if norm_string(x['name']) == norm_name), None):
             case None:
                 match await self._process_async(
+                    pool,
                     did_you_mean,
                     [items, norm_name],
                 ):

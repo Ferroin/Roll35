@@ -7,8 +7,8 @@ from . import agent
 
 
 class RankedAgent(agent.Agent):
-    def __init__(self, dataset, pool, name):
-        super().__init__(dataset, pool, name)
+    def __init__(self, dataset, name):
+        super().__init__(dataset, name)
 
     @staticmethod
     def _process_data(data):

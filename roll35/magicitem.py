@@ -152,7 +152,7 @@ class MagicItem(Cog):
 
         match args:
             case {'count': c} if isinstance(c, int) and c > 0:
-                items = roll_many(self.ds, c, {
+                items = roll_many(self.bot.pool, self.ds, c, {
                     k: v for k, v in args.items() if k != 'count'
                 })
 
@@ -223,11 +223,12 @@ class MagicItem(Cog):
                 )
 
 
-async def _reroll(ds, attempt, path, mincost, maxcost):
+async def _reroll(pool, ds, attempt, path, mincost, maxcost):
     '''Reroll a magic item using the specified parameters.'''
     match path:
         case [category, slot, rank, subrank]:
             return await roll(
+                pool,
                 ds,
                 {
                     'rank': rank,
@@ -241,6 +242,7 @@ async def _reroll(ds, attempt, path, mincost, maxcost):
             )
         case [category, rank, subrank]:
             return await roll(
+                pool,
                 ds,
                 {
                     'rank': rank,
@@ -326,7 +328,7 @@ async def _assemble_magic_item(agent, base_item, pattern, masterwork, bonus_cost
         )
 
 
-def roll_many(ds, count, args):
+def roll_many(pool, ds, count, args):
     '''Roll a number of magic items.
 
        Returns a list of coroutines that can be awaited to get the
@@ -340,12 +342,13 @@ def roll_many(ds, count, args):
     coros = []
 
     for i in range(0, count):
-        coros.append(roll(ds, args))
+        coros.append(roll(pool, ds, args))
 
     return coros
 
 
 async def roll(
+            pool,
             ds,
             args,
             attempt=0,
@@ -415,7 +418,7 @@ async def roll(
             agent = ds[category]
             pattern = await agent.random_pattern(rank=rank, subrank=subrank, allow_specific=False, mincost=mincost, maxcost=maxcost)
 
-            match await agent.get_base(base):
+            match await agent.get_base(pool, base):
                 case Ret.NOT_READY:
                     item = (Ret.NOT_READY, NOT_READY)
                 case (ret, msg) if ret is not Ret.OK:
@@ -458,7 +461,7 @@ async def roll(
                 args['rank'] = random.choice(RANK)
                 attempt += 1
 
-                match await roll(ds, args, attempt):
+                match await roll(pool, ds, args, attempt):
                     case (Ret.OK, item):
                         item = item
                     case (Ret.NO_MATCH, _):
@@ -480,7 +483,7 @@ async def roll(
 
                 attempt += 1
 
-                match await roll(ds, args, attempt):
+                match await roll(pool, ds, args, attempt):
                     case (Ret.OK, item):
                         item = item
                     case (Ret.NO_MATCH, _):
@@ -503,17 +506,17 @@ async def roll(
             return (ret, msg)
         case (Ret.OK, item):
             if mincost is not None and item['cost'] < mincost:
-                return await roll(ds, args, attempt+1)
+                return await roll(pool, ds, args, attempt+1)
             elif maxcost is not None and item['cost'] > maxcost:
-                return await roll(ds, args, attempt+1)
+                return await roll(pool, ds, args, attempt+1)
             else:
                 return (Ret.OK, item)
         case {'reroll': reroll}:
-            return await _reroll(ds, attempt, reroll, mincost, maxcost)
+            return await _reroll(pool, ds, attempt, reroll, mincost, maxcost)
         case _:
             if mincost is not None and item['cost'] < mincost:
-                return await roll(ds, args, attempt+1)
+                return await roll(pool, ds, args, attempt+1)
             elif maxcost is not None and item['cost'] > maxcost:
-                return await roll(ds, args, attempt+1)
+                return await roll(pool, ds, args, attempt+1)
             else:
                 return (Ret.OK, item)

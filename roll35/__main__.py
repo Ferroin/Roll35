@@ -25,8 +25,6 @@ from .retcode import Ret
 TOKEN = os.environ['DISCORD_TOKEN']
 LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO')
 
-POOL = ProcessPoolExecutor()
-
 logging.config.dictConfig({
     'version': 1,
     'formatters': {
@@ -60,11 +58,15 @@ class Bot(commands.Bot):
 
        This overrides a few specific methods of the base class to get
        desired behavior.'''
+    def __init__(self, *args, pool=None, **kwargs):
+        self.pool = pool
+        super().__init__(*args, **kwargs)
+
     async def start(self, token, *args, reconnect=True, ds=None, renderer=None):
         '''Overridden to schedule data loads in parallel with bot startup.'''
         return await asyncio.gather(
-            ds.load_data(),
-            renderer.load_data(),
+            ds.load_data(self.pool),
+            renderer.load_data(self.pool),
             super().start(token, *args, reconnect=reconnect),
         )
 
@@ -74,7 +76,7 @@ class Bot(commands.Bot):
             loop = asyncio.get_running_loop()
 
             match await loop.run_in_executor(
-                POOL,
+                self.pool,
                 did_you_mean,
                 [x.name for x in self.walk_commands()],
                 exception.command_name,
@@ -102,6 +104,7 @@ class Bot(commands.Bot):
 def main(token):
     intents = nextcord.Intents.default()
     intents.message_content = True
+    pool = ProcessPoolExecutor()
 
     bot = Bot(
         case_insensitive=True,
@@ -112,9 +115,10 @@ def main(token):
         description=BOT_HELP,
         intents=intents,
         strip_after_prefix=True,
+        pool=pool,
     )
-    ds = DataSet(POOL)
-    renderer = Renderer(POOL, ds)
+    ds = DataSet()
+    renderer = Renderer(ds)
 
     @bot.event
     async def on_ready():
@@ -131,7 +135,7 @@ def main(token):
     try:
         bot.run(TOKEN, ds=ds, renderer=renderer)
     finally:
-        POOL.shutdown(cancel_futures=True)
+        pool.shutdown(cancel_futures=True)
 
 
 if __name__ == '__main__':
