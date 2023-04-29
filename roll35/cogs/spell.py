@@ -8,10 +8,10 @@ import logging
 
 from nextcord.ext import commands
 
-from .common import bad_return
-from .parser import Parser
-from .retcode import Ret
-from .types.cog import R35Cog
+from ..common import bad_return
+from ..parser import Parser
+from ..retcode import Ret
+from ..types import R35Cog
 
 NOT_READY = 'Spell data is not yet available, please try again later.'
 

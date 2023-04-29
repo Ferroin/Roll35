@@ -9,8 +9,8 @@ import nextcord
 
 from nextcord.ext import commands
 
-from .types.cog import R35Cog
-from .common import VERSION
+from ..types import R35Cog
+from ..common import VERSION
 
 
 class Core(R35Cog):

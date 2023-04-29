@@ -9,11 +9,12 @@ import random
 
 from nextcord.ext import commands
 
-from .common import bad_return
-from .data.constants import RANK
 from .magicitem import roll_many
-from .retcode import Ret
-from .types.cog import R35Cog
+
+from ..common import bad_return
+from ..data.constants import RANK
+from ..retcode import Ret
+from ..types.cog import R35Cog
 
 NOT_READY = 'Settlement data is not yet available, please try again later.'
 
