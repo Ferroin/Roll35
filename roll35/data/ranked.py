@@ -3,16 +3,12 @@
 
 '''Data handling for ranked item lists.'''
 
-import logging
-
 from . import agent
-
-logger = logging.getLogger(__name__)
 
 
 class RankedAgent(agent.Agent):
-    def __init__(self, dataset, pool, name, logger=logger):
-        super().__init__(dataset, pool, name, logger)
+    def __init__(self, dataset, pool, name):
+        super().__init__(dataset, pool, name)
 
     @staticmethod
     def _process_data(data):

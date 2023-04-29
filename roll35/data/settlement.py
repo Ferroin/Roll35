@@ -3,16 +3,12 @@
 
 '''Data handling for settlements properties.'''
 
-import logging
-
 from collections.abc import Sequence
 from itertools import repeat
 
 from . import agent
 from ..common import check_ready
 from ..retcode import Ret
-
-logger = logging.getLogger(__name__)
 
 
 class PopulationMap(Sequence):
@@ -51,8 +47,8 @@ class PopulationMap(Sequence):
 
 
 class SettlementAgent(agent.Agent):
-    def __init__(self, dataset, pool, name, logger=logger):
-        super().__init__(dataset, pool, name, logger)
+    def __init__(self, dataset, pool, name):
+        super().__init__(dataset, pool, name)
 
     @staticmethod
     def _process_data(data):

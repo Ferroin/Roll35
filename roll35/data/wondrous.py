@@ -3,17 +3,13 @@
 
 '''Data handling for wondrous item slots.'''
 
-import logging
-
 from . import agent
 from ..common import check_ready, rnd
 
-logger = logging.getLogger(__name__)
-
 
 class WondrousAgent(agent.Agent):
-    def __init__(self, dataset, pool, name='wondrous', logger=logger):
-        super().__init__(dataset, pool, name, logger)
+    def __init__(self, dataset, pool, name='wondrous'):
+        super().__init__(dataset, pool, name)
 
     @staticmethod
     def _process_data(data):

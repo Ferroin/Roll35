@@ -3,18 +3,14 @@
 
 '''Data agent for handling item categories.'''
 
-import logging
-
 from . import agent
 from . import constants
 from ..common import check_ready
 
-logger = logging.getLogger(__name__)
-
 
 class CategoryAgent(agent.Agent):
-    def __init__(self, dataset, pool, name, logger=logger):
-        super().__init__(dataset, pool, name, logger)
+    def __init__(self, dataset, pool, name):
+        super().__init__(dataset, pool, name)
 
     @staticmethod
     def _process_data(data):

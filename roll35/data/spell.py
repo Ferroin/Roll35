@@ -178,10 +178,9 @@ class SpellAgent(agent.Agent):
         'minimum',
     }
 
-    def __init__(self, dataset, pool, name='spell', db_path=(Path.cwd() / 'spells.db'), logger=logger):
-        self._spell_path = constants.DATA_ROOT / f'{ name }.yaml'
+    def __init__(self, dataset, pool, name='spell', db_path=(Path.cwd() / 'spells.db')):
         self._db_path = db_path
-        super().__init__(dataset, pool, name, logger)
+        super().__init__(dataset, pool, name)
 
     async def _level_in_cls(self, level, cls):
         levels = await self._ds['classes'].get_class(cls)
@@ -198,14 +197,14 @@ class SpellAgent(agent.Agent):
 
     async def load_data(self):
         if not self._ready.is_set():
-            self.logger.info('Fetching class data.')
+            logger.info('Fetching class data.')
 
             classes = await self._ds['classes'].W_classdata()
 
             async with aiosqlite.connect(self._db_path) as db:
                 db.row_factory = aiosqlite.Row
 
-                self.logger.info(f'Initializing spell DB at { self._db_path }')
+                logger.info(f'Initializing spell DB at { self._db_path }')
 
                 loop = asyncio.get_running_loop()
 
@@ -226,12 +225,12 @@ class SpellAgent(agent.Agent):
                     VACUUM;
                 ''')
 
-                self.logger.info('Reading spell data.')
+                logger.info('Reading spell data.')
 
-                with open(self._spell_path) as f:
+                with open(constants.DATA_ROOT / f'{ self.name }.yaml') as f:
                     spells = yaml.load(f)
 
-                self.logger.info('Processing spells to add to DB.')
+                logger.info('Processing spells to add to DB.')
 
                 spells = zip(spells, repeat(classes, len(spells)))
 
@@ -255,7 +254,7 @@ class SpellAgent(agent.Agent):
                     spells
                 )
 
-                self.logger.info('Adding spells to spell table.')
+                logger.info('Adding spells to spell table.')
 
                 cls_params = ', '.join(map(lambda x: f':{ x }', classes))
 
@@ -272,7 +271,7 @@ class SpellAgent(agent.Agent):
                     );
                 ''', spell_params)
 
-                self.logger.info('Adding spells to tag map table.')
+                logger.info('Adding spells to tag map table.')
 
                 await db.executemany('''
                     INSERT INTO tagmap VALUES (
@@ -281,17 +280,17 @@ class SpellAgent(agent.Agent):
                     );
                 ''', tag_params)
 
-                self.logger.info('Storing tag list.')
+                logger.info('Storing tag list.')
 
                 self._data['tags'] = ' '.join(filter(lambda x: x, set.union(*map(lambda x: x[1], spells))))
 
-                self.logger.info('Optimizing DB.')
+                logger.info('Optimizing DB.')
 
                 await db.executescript('''
                     PRAGMA optimize;
                 ''')
 
-                self.logger.info('Finished initializing spell DB.')
+                logger.info('Finished initializing spell DB.')
 
             self._ready.set()
 

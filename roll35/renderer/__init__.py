@@ -18,7 +18,7 @@ MAX_TEMPLATE_RECURSION = 5
 
 class Renderer:
     '''Encapsulates the state required for rendering items.'''
-    def __init__(self, pool, dataset, logger=logger):
+    def __init__(self, pool, dataset):
         self.env = jinja2.Environment(
             loader=jinja2.FunctionLoader(lambda x: None),
             autoescape=False,
@@ -29,8 +29,6 @@ class Renderer:
         self._pool = pool
         self._ready = asyncio.Event()
         self._ds = dataset
-
-        self.logger = logger
 
     @staticmethod
     def _loader(name):
@@ -46,9 +44,9 @@ class Renderer:
         if not self._ready.is_set():
             loop = asyncio.get_running_loop()
 
-            self.logger.info('Loading renderer data.')
+            logger.info('Loading renderer data.')
             self._data = await loop.run_in_executor(self._pool, self._loader, self._ds.renderdata)
-            self.logger.info('Finished loading renderer data.')
+            logger.info('Finished loading renderer data.')
 
             self._ready.set()
 
@@ -64,7 +62,7 @@ class Renderer:
             case Ret.NOT_READY:
                 return (Ret.NOT_READY, 'Unable to get spell for item.')
             case ret:
-                self.logger.error(bad_return(ret))
+                logger.error(bad_return(ret))
                 return (Ret.FAILED, 'Unknown internal error.')
 
     async def render(self, item):
@@ -103,7 +101,7 @@ class Renderer:
                 else:
                     t = name
             case _:
-                self.logger.error(f'Failed to render item: { item }.')
+                logger.error(f'Failed to render item: { item }.')
                 return (Ret.INVALID, 'Failed to render item.')
 
         n = ''
@@ -113,7 +111,7 @@ class Renderer:
             i += 1
 
             if i > MAX_TEMPLATE_RECURSION:
-                self.logger.error('Too many levels of recursion in template: { template }.')
+                logger.error('Too many levels of recursion in template: { template }.')
                 return (Ret.LIMMITED, 'Failed to render item.')
 
             if 'spell' in item:
@@ -131,7 +129,7 @@ class Renderer:
                         case (ret, msg) if ret is not Ret.OK:
                             return (ret, msg)
                         case ret:
-                            self.logger.error(bad_return(ret))
+                            logger.error(bad_return(ret))
                             return (Ret.FAILED, 'Unknown internal error.')
             else:
                 spell = None

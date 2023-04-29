@@ -3,17 +3,13 @@
 
 '''Data handling for spell classes.'''
 
-import logging
-
 from . import agent
 from ..common import check_ready
 
-logger = logging.getLogger(__name__)
-
 
 class ClassesAgent(agent.Agent):
-    def __init__(self, dataset, pool, name='classes', logger=logger):
-        super().__init__(dataset, pool, name, logger)
+    def __init__(self, dataset, pool, name='classes'):
+        super().__init__(dataset, pool, name)
 
     @staticmethod
     def _process_data(data):
