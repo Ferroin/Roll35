@@ -88,6 +88,9 @@
 - name: area/scripts
   description: Issues and PRs involving our developer support scripts.
   color: *area
+- name: area/types
+  description: Issues and PRs involving our internal data types.
+  color: *area
 
 - name: infra
   description: Issues and PRs involving our infrastructure that have no more specific label.

@@ -10,7 +10,7 @@ from nextcord.ext import commands
 logger = logging.getLogger(__name__)
 
 
-class Cog(commands.Cog):
+class R35Cog(commands.Cog):
     def __init__(self, bot, dataset, renderer):
         self.bot = bot
         self.ds = dataset

@@ -8,7 +8,7 @@ import random
 
 from . import agent
 from . import constants
-from . import types
+from .. import types
 from ..common import make_weighted_entry, check_ready, norm_string, did_you_mean, bad_return
 from ..retcode import Ret
 

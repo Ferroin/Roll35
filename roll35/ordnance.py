@@ -5,13 +5,13 @@
 
 from nextcord.ext import commands
 
-from .cog import Cog
+from .types.cog import R35Cog
 from .retcode import Ret
 
 NOT_READY = 'Item data is not yet available, please try again later.'
 
 
-class Ordnance(Cog):
+class Ordnance(R35Cog):
     async def get_item(self, ctx, typ, *tags):
         '''Get a mundane item.'''
         match await self.ds[typ].random_base(tags):

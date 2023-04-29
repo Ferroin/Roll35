@@ -8,10 +8,10 @@ import logging
 
 from nextcord.ext import commands
 
-from .cog import Cog
 from .common import bad_return
 from .parser import Parser
 from .retcode import Ret
+from .types.cog import R35Cog
 
 NOT_READY = 'Spell data is not yet available, please try again later.'
 
@@ -53,7 +53,7 @@ SPELL_PARSER = Parser({
 logger = logging.getLogger(__name__)
 
 
-class Spell(Cog):
+class Spell(R35Cog):
     @commands.command()
     async def spell(self, ctx, *args):
         '''Roll a random spell.

@@ -8,8 +8,8 @@ import logging
 
 import jinja2
 
-from ..common import check_ready, bad_return
-from ..retcode import Ret
+from .common import check_ready, bad_return
+from .retcode import Ret
 
 logger = logging.getLogger(__name__)
 
@@ -31,8 +31,8 @@ class Renderer:
 
     @staticmethod
     def _loader(name):
-        from ..common import yaml
-        from ..data import DATA_ROOT
+        from .common import yaml
+        from .data import DATA_ROOT
         from .types import RenderData
 
         with open(DATA_ROOT / f'{ name }.yaml') as f:
