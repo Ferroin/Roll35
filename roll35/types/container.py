@@ -8,9 +8,7 @@ from .range import R35Range
 
 
 class R35Container(abc.ABC, collections.abc.Collection):
-    '''Base class used by roll35 container types.
-
-       This exists just to minimize code duplication.'''
+    '''Base class used by roll35 container types.'''
     def __init__(self):
         self._costs = R35Range()
 
@@ -25,6 +23,7 @@ class R35Container(abc.ABC, collections.abc.Collection):
 
     @property
     def costs(self):
+        '''A R35Range instance that tracks the costs of items added to the container.'''
         return self._costs
 
     @staticmethod

@@ -1,8 +1,6 @@
 # Copyright (c) 2023 Austin S. Hemmelgarn
 # SPDX-License-Identifier: MITNFA
 
-'''Cog for handling magic items.'''
-
 import asyncio
 import logging
 import random
@@ -101,6 +99,7 @@ logger = logging.getLogger(__name__)
 
 
 class MagicItem(R35Cog):
+    '''Roll35 cog for handling magic items.'''
     @commands.command()
     async def magicitem(self, ctx, *args):
         '''Roll a random magic item.

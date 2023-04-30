@@ -70,8 +70,8 @@ class Renderer:
            This recursively evaluates the item name as a jinja2 template,
            possibly with some extra formatting added.
 
-           Returns either (True, x) where x is the rendered item, or
-           (False, msg) where msg is an error message.'''
+           Returns either (roll35.retcode.Ret.OK, x) where x is the rendered item, or
+           (roll35.retcode.Ret.*, msg) where msg is an error message.'''
         match await self._render(item):
             case Ret.NOT_READY:
                 return (Ret.NOT_READY, 'Unable to render item as renderer is not yet fully initilized.')

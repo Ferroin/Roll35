@@ -1,8 +1,6 @@
 # Copyright (c) 2023 Austin S. Hemmelgarn
 # SPDX-License-Identifier: MITNFA
 
-'''Cog for handling settlements.'''
-
 import asyncio
 import logging
 import random
@@ -22,6 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 class Settlement(R35Cog):
+    '''Roll35 cog for handling settlements.'''
     @commands.command()
     async def settlement(self, ctx, population):
         '''Roll magic items for a settlement with the given population.'''

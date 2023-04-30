@@ -1,8 +1,6 @@
 # Copyright (c) 2023 Austin S. Hemmelgarn
 # SPDX-License-Identifier: MITNFA
 
-'''Cog for handling spells.'''
-
 import asyncio
 import logging
 
@@ -54,6 +52,7 @@ logger = logging.getLogger(__name__)
 
 
 class Spell(R35Cog):
+    '''Roll35 cog for handling spells.'''
     @commands.command()
     async def spell(self, ctx, *args):
         '''Roll a random spell.

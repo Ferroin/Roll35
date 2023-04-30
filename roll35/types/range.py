@@ -101,6 +101,7 @@ class R35Range(collections.abc.Container):
 
     @property
     def min(self):
+        '''The lowest value that has been added to the range.'''
         if self._empty:
             return self.MIN_VALUE
         else:
@@ -108,6 +109,7 @@ class R35Range(collections.abc.Container):
 
     @property
     def max(self):
+        '''The highest value that has been added to the range.'''
         if self._empty:
             return self.MAX_VALUE
         else:

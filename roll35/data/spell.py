@@ -24,6 +24,9 @@ logger = logging.getLogger(__name__)
 
 
 def _eval_minimum(level, cls, minimum, minimum_cls):
+    '''Used to figure out the minimum level and class of a spell.
+
+       This is intended to be used with functools.reduce().'''
     if level is not None:
         if level == minimum and not minimum_cls:
             return (level, cls)
@@ -35,6 +38,9 @@ def _eval_minimum(level, cls, minimum, minimum_cls):
 
 def _eval_spellpage(level, cls, spellpage, spellpage_cls,
                     spellpage_fixed, cls_match):
+    '''Used to figure out the spellpage class and level for a spell.
+
+       This is intended to be used with functools.reduce().'''
     if spellpage_fixed:
         return (spellpage, spellpage_cls, True)
     elif level is not None:
@@ -49,6 +55,7 @@ def _eval_spellpage(level, cls, spellpage, spellpage_cls,
 
 
 def _gen_spell_fields(acc, cls):
+    '''Generate the SQL fields for a spell.'''
     spell = acc['spell']
     clsdata = acc['clsdata']
 
@@ -164,10 +171,17 @@ def process_spell(data):
 
 
 def process_spell_chunk(items):
+    '''Map a list of spell items into a list of SQL fields.'''
     return map(process_spell, items)
 
 
 class SpellAgent(agent.Agent):
+    '''Data agent for handling spell data.
+
+       This internally uses a SQLite3 database for performance and memory
+       efficiency reasons. This lets us push a lot of the actual filtering
+       and selection logic into C code, allowing it to run much faster
+       than it would in Python while using much less memory.'''
     EXTRA_CLASS_NAMES = {
         'random',
         'arcane',
@@ -196,6 +210,14 @@ class SpellAgent(agent.Agent):
         return None
 
     async def load_data(self, pool):
+        '''Load the data for this agent, using the specified executor pool.
+
+           This requires a specific overide as it involves a large amount
+           of custom logic and handles the aprallelization in a different
+           way from most other agents.
+
+           This also requires the dataset to have a `classes` agent either
+           queued to load data itself, or with data properly loaded.'''
         if not self._ready.is_set():
             logger.info('Fetching class data.')
 
@@ -298,6 +320,7 @@ class SpellAgent(agent.Agent):
 
     @check_ready
     async def get_spell(self, name):
+        '''Look up a spell by name.'''
         async with aiosqlite.connect(self._db_path) as db:
             db.row_factory = aiosqlite.Row
 
@@ -335,6 +358,7 @@ class SpellAgent(agent.Agent):
 
     @check_ready
     async def random(self, level=None, cls=None, tag=None):
+        '''Get a random spell, optionally limited by level, class, or tag.'''
         match await self._ds['classes'].classdata():
             case Ret.NOT_READY:
                 return (Ret.NOT_READY, 'Failed to fetch class data.')

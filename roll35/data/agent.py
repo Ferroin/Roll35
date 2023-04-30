@@ -179,6 +179,7 @@ class Agent(abc.ABC):
 
     @check_ready
     async def random_rank(self, mincost, maxcost):
+        '''Return a random rank, possibly within the cost limits.'''
         d = self._data
         match [x for x in d if d[x].costs.min >= mincost and d[x].costs.max <= maxcost]:
             case []:
@@ -188,6 +189,7 @@ class Agent(abc.ABC):
 
     @check_ready
     async def random_subrank(self, rank, mincost, maxcost):
+        '''Return a random subrank for the given rank, possibly within the cost limits.'''
         d = self._data[rank]
         match [x for x in d if d[x].costs.min >= mincost and d[x].costs.max <= maxcost]:
             case []:
@@ -198,6 +200,7 @@ class Agent(abc.ABC):
     @check_ready
     @ensure_costs
     async def random_ranked(self, rank=None, subrank=None, mincost=None, maxcost=None):
+        '''Roll a random item for the given rank and subrank, possibly within the specified cost range.'''
         match (rank, subrank):
             case (None, None):
                 rank = await self.random_rank(mincost, maxcost)
@@ -222,6 +225,7 @@ class Agent(abc.ABC):
     @check_ready
     @ensure_costs
     async def random_compound(self, rank=None, mincost=None, maxcost=None):
+        '''Roll a random item for the given rank, possibly within the specified cost range.'''
         match rank:
             case None:
                 rank = await self.random_rank(mincost, maxcost)
