@@ -1,7 +1,7 @@
 # Roll35
 
-A Discord bot for rolling against various tables for Pathfinder 1e and
-related games.
+A Discord bot and Python module for rolling against various tables for
+Pathfinder 1e and related games.
 
 ## Features
 
@@ -17,7 +17,6 @@ related games.
 
 ## Planned Features
 
-- Roll for magic item availability in settlements.
 - Roll wands or scrolls for a specific spell level.
 - Roll for random weather conditions.
 - Automatically roll random spells present in items that store spells.
@@ -66,9 +65,8 @@ The following environment variables are used by the image:
   for info on how to create a bot account and invite it to your server.
 - `LOG_LEVEL`: Specifies the minimum severity level of log messages to
   produce. Valid values (in descending order of severity) are:
-  `emergency`, `alert`, `critical`, `error`, `warning`, `notice`,
-  `info`, `debuga`. It is not recommended to set this any higher than
-  `error`.
+  `emergency`, `CRITICAL`, `ERROR`, `WARNING`, `INFO`, `DEBUG`. It is
+  not recommended to set this any higher than `ERROR`.
 
 If you just want to run the bot locally to test it though, you can do
 so using the `scripts/run.sh` script. It utilizes the exact same
@@ -86,14 +84,15 @@ the regular variant).
 
 Note that this data set includes some slight differences from the official
 tables. In particular:
-* In cases where the table is obviously indicating a desired one-in-three
+
+- In cases where the table is obviously indicating a desired one-in-three
   split for three items or a 1:2 ratio for two items, the proportions are
   annotated in the datset to actually provide this.
-* In a couple of places, we group multiple items that are identical in
+- In a couple of places, we group multiple items that are identical in
   cost and proportion relative to each other into a single item which rolls
   for the variant automatically. This is done to make the datast maller
   and slightly improve performance and resource usage of the bot itself.
-* In a handful of places, the official tables are, quite simply, broken
+- In a handful of places, the official tables are, quite simply, broken
   (they either have missing ranges of dice values, or have specific
   values that correlate to multiple items, or have ranges that are
   logically swapped). If ranges are missing, we behave as if they
@@ -116,12 +115,3 @@ changes will translate to a patch release at the project level, not a
 major relese. Additionally, some non-breaking changes at the project
 level may result in a major release at the project level simply because
 they are so impactful that they warrant a major release.
-
-#### Why are there no published images for versions prior to 1.2.0?
-
-My initial plan was to make the code public and publish Docker images
-with version 1.0.0. However, there were a handful of bugs I found
-just after preparing v1.0.0, as well as a number of other refactoring
-changes I decided to make before going public. I would much rather not
-rewrite git history just to make versions sync up correctly with tags,
-so I opted to just release v1.2.0 as the first public verson.
