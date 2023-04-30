@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 def create_spellmult_xform(classes):
+    '''Create a costmult handler function based on spell levels.'''
     def xform(x):
         levels = map(lambda x: x['levels'], classes.values())
 
@@ -41,6 +42,7 @@ def create_spellmult_xform(classes):
 
 
 class CompoundAgent(agent.Agent):
+    '''Basic data agent for compound item lists.'''
     @staticmethod
     def _process_data(data):
         return agent.process_compound_itemlist(data)
@@ -50,6 +52,7 @@ class CompoundAgent(agent.Agent):
 
 
 class CompoundSpellAgent(CompoundAgent):
+    '''A compound agent for handling spell-based items.'''
     @staticmethod
     def _process_data(data, classes):
         ret = agent.process_compound_itemlist(
@@ -79,6 +82,7 @@ class CompoundSpellAgent(CompoundAgent):
         return Ret.OK
 
     async def random(self, cls=None, **kwargs):
+        '''Roll a random item, then roll a spell for it if needed.'''
         match await super().random_compound(**kwargs):
             case Ret.NO_MATCH:
                 return (Ret.NO_MATCH, 'No items match specified cost range.')

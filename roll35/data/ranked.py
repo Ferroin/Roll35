@@ -7,6 +7,7 @@ from . import agent
 
 
 class RankedAgent(agent.Agent):
+    '''Data agent for ranked item lists.'''
     @staticmethod
     def _process_data(data):
         return agent.process_ranked_itemlist(data)

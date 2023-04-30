@@ -49,6 +49,7 @@ def norm_string(string):
 
 
 def get_item_value(item):
+    '''Retrieve the ‘value’ of an item.'''
     match item:
         case {'value': value}:
             return value
@@ -57,6 +58,7 @@ def get_item_value(item):
 
 
 def expand_weighted_list(items):
+    '''Transform a list of items with weights into a list of items usable with random.choice().'''
     ret = []
 
     for item in items:
@@ -69,6 +71,10 @@ def expand_weighted_list(items):
 
 
 def make_weighted_entry(entry, costmult_handler=lambda x: x):
+    '''Create a weighted item entry understandable by expand_weighted_list().
+
+       costmult_handler is an optional callback that adds an appropriate
+       costrange or cost entry to items that have a costmult property.'''
     ret = {
         'weight': entry['weight'],
         'value': {k: entry[k] for k in entry if k != 'weight'}
@@ -110,7 +116,10 @@ def rnd(items):
 
 
 def chunk(items, size):
-    '''Split a list into chunks.'''
+    '''Split a list into chunks of a given size.
+
+       The final chunk will be less than the requested size if the total
+       number of items is not an exact multiple of the requested size.'''
     data = []
 
     for item in items:
@@ -187,8 +196,8 @@ def check_ready(func):
        for methods with this decorator to run.
 
        The decorated method will wait up to
-       `roll35.common.READINESS_TIMEOUT` seconds for the event to
-       be set before running the method. If it times out while waiting,
+       `roll35.common.READINESS_TIMEOUT` seconds for the event to be
+       set before running the method. If it times out while waiting,
        it will log a warning and return `False`.'''
     async def f(self, *args, **kwargs):
         try:

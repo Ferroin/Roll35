@@ -9,10 +9,6 @@ from .container import R35Container
 class R35List(R35Container, collections.abc.MutableSequence):
     '''A simple cost-tracking list class.
 
-       It also maintains a property called costs, which is a
-       roll35.types.R35Range object that tracks the minimum and maximum
-       cost of items that have been added to the mapping.
-
        Costs are only updated for contained items that are one of:
        - Another roll35.types.R35Container.
        - A mapping with a key called 'cost' that has a value that is
@@ -20,8 +16,6 @@ class R35List(R35Container, collections.abc.MutableSequence):
        - A mapping with a key called 'costrange' that has a value which
          is an list with two values, one for the minimum cost and one
          for the maximum cost.
-
-       Slicing is not supported.
 
        This class is (intentionally) optimized for WORM access
        patterns. In-place replacement of items is expensive as it requires
@@ -78,6 +72,8 @@ class R35List(R35Container, collections.abc.MutableSequence):
                     self._costs.add(cost_max)
 
     def insert(self, index, item):
+        '''Add item to the list at index.'''
+
         self._data.insert(index, item)
 
         match self._get_costs(item):

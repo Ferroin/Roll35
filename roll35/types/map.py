@@ -9,15 +9,6 @@ from .container import R35Container
 class R35Map(R35Container, collections.abc.MutableMapping):
     '''A simple cost-tracking mapping class.
 
-       In addition to the standard mapping protocol, this class also
-       provides equivalents to the `dict.items()`, `dict.values()`, and
-       `dict.keys()` methods, allowing it to be used almost transparently
-       as a dictionary.
-
-       It also maintains a property called costs, which is a
-       roll35.types.R35Range object that tracks the minimum and maximum
-       cost of items that have been added to the mapping.
-
        Costs are only updated for contained items that are one of:
        - Another roll35.types.R35Container.
        - A mapping with a key called 'cost' that has a value that is
@@ -87,10 +78,13 @@ class R35Map(R35Container, collections.abc.MutableMapping):
                     self._costs.add(cost_max)
 
     def items(self):
+        '''Return a view of the keys and values of the mapping.'''
         return self._data.items()
 
     def keys(self):
+        '''Return a view of the keys of the mapping.'''
         return self._data.keys()
 
     def values(self):
+        '''Return a view of the values of the mapping.'''
         return self._data.values()

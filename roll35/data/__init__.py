@@ -32,6 +32,13 @@ agents = {
 
 
 class DataSet:
+    '''Represents a dataset for the module.
+
+       Data must be loaded at runtime by calling and awaiting the
+       `load_data()` coroutine.
+
+       Individual categories within the data set are accessed by name
+       via subscripting.'''
     def __init__(self):
         self._agents = dict()
         self.ready = False
@@ -51,6 +58,7 @@ class DataSet:
 
     @property
     def types(self):
+        '''A list of the categories within the data set, grouped by type.'''
         return self._types
 
     async def load_data(self, pool):

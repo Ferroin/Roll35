@@ -3,6 +3,11 @@
 # Copyright (c) 2023 Austin S. Hemmelgarn
 # SPDX-License-Identifier: MITNFA
 
+'''Core logic for running the module as a Discord bot.
+
+   This handles setup of logging, the data set, the renderer, and the
+   bot itself.'''
+
 import asyncio
 import concurrent.futures
 import logging

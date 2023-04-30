@@ -82,6 +82,7 @@ def get_costs_and_bonus(enchants):
 
 
 def get_costs(bonus, base, enchants, enchantments):
+    '''Determine the range of possible costs for a set of enchantments.'''
     if isinstance(list(enchantments.values())[0], dict):
         min_cost = float('inf')
         max_cost = 0
@@ -151,6 +152,7 @@ def generate_tags_entry(items):
 
 
 class OrdnanceAgent(agent.Agent):
+    '''Data agent for weapon or armor item data.'''
     @staticmethod
     def _process_data(data):
         enchantments = process_enchantment_table(data['enchantments'], data['enchant_base_cost'])
@@ -187,6 +189,7 @@ class OrdnanceAgent(agent.Agent):
     @check_ready
     @agent.ensure_costs
     async def random_pattern(self, rank, subrank, allow_specific=True, mincost=None, maxcost=None):
+        '''Return a random item pattern to use to generate a random item from.'''
         match rank:
             case None:
                 rank = random.choice(constants.RANK)
@@ -214,6 +217,10 @@ class OrdnanceAgent(agent.Agent):
 
     @check_ready
     async def get_base(self, pool, name):
+        '''Get a base item by name.
+
+           On a mismatch, returns a list of possible names that might
+           have been intended.'''
         items = self._data['base']
         norm_name = norm_string(name)
 
@@ -239,6 +246,7 @@ class OrdnanceAgent(agent.Agent):
 
     @check_ready
     async def random_base(self, tags=[]):
+        '''Get a base item at random.'''
         items = self._data['base']
 
         match tags:
@@ -263,6 +271,7 @@ class OrdnanceAgent(agent.Agent):
 
     @check_ready
     async def random_enchant(self, group, bonus, enchants=[], tags=[]):
+        '''Roll a random enchantment.'''
         items = self._data['enchantments'][group][bonus]
 
         def _efilter(x):
@@ -289,6 +298,7 @@ class OrdnanceAgent(agent.Agent):
     @check_ready
     @agent.ensure_costs
     async def random_specific(self, *args, mincost=None, maxcost=None):
+        '''Roll a random specific item.'''
         match args:
             case [_, _, _]:
                 group = args[0]
@@ -329,10 +339,12 @@ class OrdnanceAgent(agent.Agent):
 
     @check_ready
     async def get_bonus_costs(self, base):
+        '''Get the bonus costs associated with the given item.'''
         return get_enchant_bonus_costs(self._data, base)
 
     @check_ready
     async def tags(self):
+        '''Get a list of recognized tags.'''
         if 'tags' in self._data:
             return list(self._data['tags'])
         else:

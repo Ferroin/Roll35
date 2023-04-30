@@ -12,6 +12,25 @@ from ..retcode import Ret
 
 
 class PopulationMap(Sequence):
+    '''A sequence-like container for looking up settlement info by population.
+
+       The data used to initialize an instance should be a sequence of
+       dicts with `population` keys that map to positive integers. There
+       may be exactly one item with the `population` key having a value of
+       `None`. If such an entry exists, that entry will be returned for
+       any index above the largest value of any other `population` key.
+
+       Indexing the resultant sequence will return the item which has
+       that specific value for it’s `population` key.
+
+       Indexes of 0 or less are invalid.
+
+       Indexes of more than the highest population of any item in the
+       sequence will return the item with the highest population.
+
+       Internally, this only stores a single instance of each item in
+       the initial data set, and then constructs a lookup table to map
+       from the population to the actual item. '''
     def __init__(self, data):
         self._data = {x['name']: x for x in data}
         self._lookup = []
@@ -47,6 +66,7 @@ class PopulationMap(Sequence):
 
 
 class SettlementAgent(agent.Agent):
+    '''Data agent for settlement data.'''
     @staticmethod
     def _process_data(data):
         return {
@@ -56,6 +76,7 @@ class SettlementAgent(agent.Agent):
 
     @check_ready
     async def get_by_name(self, name):
+        '''Look up a settlement category by name.'''
         if name in self._data['by_name']:
             return self._data['by_name'][name]
         else:
@@ -63,4 +84,5 @@ class SettlementAgent(agent.Agent):
 
     @check_ready
     async def get_by_population(self, population):
+        '''Look up a settlement category by population.'''
         return self._data['by_population'][population]

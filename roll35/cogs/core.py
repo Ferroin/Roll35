@@ -1,8 +1,6 @@
 # Copyright (c) 2023 Austin S. Hemmelgarn
 # SPDX-License-Identifier: MITNFA
 
-'''Core commands.'''
-
 import platform
 
 import nextcord
@@ -14,6 +12,7 @@ from ..common import VERSION
 
 
 class Core(R35Cog):
+    '''Roll35 core bot commands.'''
     @commands.command()
     async def ping(self, ctx):
         '''Check if the bot is alive'''
