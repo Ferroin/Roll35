@@ -13,7 +13,7 @@ from nextcord.ext import commands
 from .. import types
 from ..common import ret_async, bad_return
 from ..data.category import CategoryAgent
-from ..data.classes import ClassesAgent
+from ..data.classes import ClassesAgent, ClassEntry
 from ..data.compound import CompoundAgent
 from ..data.ordnance import OrdnanceAgent
 from ..data.ranked import RankedAgent
@@ -228,11 +228,14 @@ class MagicItem(types.R35Cog):
         match await cast(CategoryAgent, self.ds['category']).categories():
             case types.Ret.NOT_READY:
                 await ctx.send(NOT_READY)
-            case cats:
+            case set() as cats:
                 await ctx.send(
                     'The following item categories are recognized: ' +
                     f'`{ "`, `".join(sorted(list(cats))) }`'
                 )
+            case ret:
+                logger.warning(bad_return(ret))
+                await ctx.send('Unknown internal error.')
 
     @commands.command()
     async def categories(self, ctx):
@@ -245,11 +248,14 @@ class MagicItem(types.R35Cog):
                 await ctx.send(NOT_READY)
             case types.Ret.NO_MATCH:
                 await ctx.send('No slots found for wondrous items.')
-            case slots:
+            case set() as slots:
                 await ctx.send(
                     'The following wobndrous item slots are recognized: ' +
                     f'`{ "`, `".join(sorted(slots)) }`'
                 )
+            case ret:
+                logger.warning(bad_return(ret))
+                await ctx.send('Unknown internal error.')
 
     @commands.command()
     async def slots(self, ctx) -> None:
@@ -306,8 +312,8 @@ async def _assemble_magic_item(
         agent: OrdnanceAgent,
         base_item: types.item.OrdnanceBaseItem,
         pattern: types.item.OrdnancePattern,
-        masterwork: int,
-        bonus_cost: int,
+        masterwork: int | float,
+        bonus_cost: int | float,
         attempt: int = 0) -> \
         types.Result[types.item.SimpleItem]:
     '''Assemble a magic weapon or armor item.'''
@@ -414,6 +420,7 @@ async def roll(pool: Executor, ds: DataSet, args: Mapping[str, Any], attempt: in
         'mincost': args.get('mincost', 0),
         'maxcost': args.get('maxcost', float('inf')),
     }
+    ret: Any = None
 
     if attempt >= MAX_REROLLS:
         logger.warning(f'Recursion limit hit while rolling magic item: { args }')
@@ -457,11 +464,14 @@ async def roll(pool: Executor, ds: DataSet, args: Mapping[str, Any], attempt: in
                     match await agent.random_base():
                         case types.Ret.NOT_READY:
                             item = (types.Ret.NOT_READY, NOT_READY)
-                        case base_item:
-                            masterwork, bonus_cost = await agent.get_bonus_costs(base_item)
-                            item = await _assemble_magic_item(
-                                agent, base_item, pattern, masterwork, bonus_cost
-                            )
+                        case types.item.OrdnanceBaseItem() as base_item:
+                            match await agent.get_bonus_costs(base_item):
+                                case types.Ret.NOT_READY:
+                                    item = (types.Ret.NOT_READY, NOT_READY)
+                                case (masterwork, bonus_cost):
+                                    item = await _assemble_magic_item(
+                                        agent, base_item, pattern, masterwork, bonus_cost
+                                    )
         case {'rank': rank, 'subrank': subrank, 'category': category, 'base': base} if category in ordnance:
             agent = cast(OrdnanceAgent, ds[category])
             pattern = await agent.random_pattern(rank=rank, subrank=subrank, allow_specific=False, mincost=mincost, maxcost=maxcost)
@@ -469,37 +479,39 @@ async def roll(pool: Executor, ds: DataSet, args: Mapping[str, Any], attempt: in
             match await agent.get_base(pool, base):
                 case types.Ret.NOT_READY:
                     item = (types.Ret.NOT_READY, NOT_READY)
-                case (ret, msg) if ret is not types.Ret.OK:
-                    item = (ret, msg)
-                case (types.Ret.OK, base_item):
-                    masterwork, bonus_cost = await agent.get_bonus_costs(base_item)
-                    item = await _assemble_magic_item(
-                        agent, base_item, pattern, masterwork, bonus_cost
-                    )
+                case (types.Ret() as r1, str() as msg) if r1 is not types.Ret.OK:
+                    item = (r1, msg)
+                case (types.Ret.OK, types.item.OrdnanceBaseItem() as base_item):
+                    match await agent.get_bonus_costs(base_item):
+                        case types.Ret.NOT_READY:
+                            item = (types.Ret.NOT_READY, NOT_READY)
+                        case (masterwork, bonus_cost):
+                            item = await _assemble_magic_item(
+                                agent, base_item, pattern, masterwork, bonus_cost
+                            )
                 case ret:
                     logger.error(bad_return(ret))
                     item = (types.Ret.FAILED, 'Unknown internal error.')
         case {'rank': _, 'subrank': subrank, 'category': category} if category in compound and subrank is not None:
             item = (types.Ret.INVALID, f'Invalid parmeters specified, { category } does not take a subrank.')
         case {'rank': rank, 'subrank': subrank, 'category': category, 'cls': cls} if cls is not None:
-            classes = await cast(ClassesAgent, ds['classes']).classes()
+            match await cast(ClassesAgent, ds['classes']).classes():
+                case types.Ret.NOT_READY:
+                    item = (types.Ret.NOT_READY, NOT_READY)
+                case classes:
+                    valid = set(cast(set[ClassEntry], classes)) | cast(SpellAgent, ds['spell']).EXTRA_CLASS_NAMES
 
-            if not classes:
-                item = (types.Ret.NOT_READY, NOT_READY)
-            else:
-                classes = set(classes) | cast(SpellAgent, ds['spell']).EXTRA_CLASS_NAMES
-
-                if cls in classes:
-                    match await cast(CompoundAgent, ds[category]).random(rank=rank, cls=cls, mincost=mincost, maxcost=maxcost):
-                        case types.item.BaseItem() as i1:
-                            item = (types.Ret.OK, i1)
-                        case types.Ret.NOT_READY:
-                            item = (types.Ret.NOT_READY, NOT_READY)
-                        case ret:
-                            logger.error(bad_return(ret))
-                            item = (types.Ret.FAILED, 'Unknown internal error.')
-                else:
-                    item = (types.Ret.FAILED, f'Unknown spellcasting class { cls }. For a list of known classes, use the `classes` command.')
+                    if cls in valid:
+                        match await cast(CompoundAgent, ds[category]).random(rank=rank, cls=cls, mincost=mincost, maxcost=maxcost):
+                            case types.item.BaseItem() as i1:
+                                item = (types.Ret.OK, i1)
+                            case types.Ret.NOT_READY:
+                                item = (types.Ret.NOT_READY, NOT_READY)
+                            case ret:
+                                logger.error(bad_return(ret))
+                                item = (types.Ret.FAILED, 'Unknown internal error.')
+                    else:
+                        item = (types.Ret.FAILED, f'Unknown spellcasting class { cls }. For a list of known classes, use the `classes` command.')
         case {'rank': rank, 'category': category} if category in compound:
             item = await cast(CompoundAgent, ds[category]).random(rank=rank, mincost=mincost, maxcost=maxcost)
         case {'rank': rank, 'subrank': subrank, 'category': category} if category in ranked:
@@ -521,11 +533,11 @@ async def roll(pool: Executor, ds: DataSet, args: Mapping[str, Any], attempt: in
                         continue
                     case (types.Ret.NOT_READY, _):
                         item = (types.Ret.NOT_READY, NOT_READY)
-                    case (types.Ret.INVALID, msg) if isinstance(msg, str):
+                    case (types.Ret.INVALID, str() as msg):
                         item = (types.Ret.INVALID, msg)
-                    case (types.Ret.LIMITED, msg) if isinstance(msg, str):
+                    case (types.Ret.LIMITED, str() as msg):
                         item = (types.Ret.LIMITED, msg)
-                    case (types.Ret.FAILED, msg) if isinstance(msg, str):
+                    case (types.Ret.FAILED, str() as msg):
                         item = (types.Ret.FAILED, msg)
                     case ret:
                         logger.error(bad_return(ret))
@@ -545,11 +557,11 @@ async def roll(pool: Executor, ds: DataSet, args: Mapping[str, Any], attempt: in
                         continue
                     case (types.Ret.NOT_READY, _):
                         item = (types.Ret.NOT_READY, NOT_READY)
-                    case (types.Ret.INVALID, msg) if isinstance(msg, str):
+                    case (types.Ret.INVALID, str() as msg):
                         item = (types.Ret.INVALID, msg)
-                    case (types.Ret.LIMITED, msg) if isinstance(msg, str):
+                    case (types.Ret.LIMITED, str() as msg):
                         item = (types.Ret.LIMITED, msg)
-                    case (types.Ret.FAILED, msg) if isinstance(msg, str):
+                    case (types.Ret.FAILED, str() as msg):
                         item = (types.Ret.FAILED, msg)
                     case ret:
                         logger.error(bad_return(ret))
@@ -581,7 +593,7 @@ async def roll(pool: Executor, ds: DataSet, args: Mapping[str, Any], attempt: in
                 return await roll(pool, ds, args, attempt+1)
             else:
                 return (types.Ret.OK, cast(types.Item, i2))
-        case (r1, msg) if isinstance(r1, types.Ret) and r1 is not types.Ret.OK and isinstance(msg, str):
+        case (types.Ret() as r1, str() as msg) if r1 is not types.Ret.OK:
             return (r1, msg)
         case r2:
             logger.error(bad_return(r2))

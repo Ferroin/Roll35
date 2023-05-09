@@ -6,14 +6,14 @@ from __future__ import annotations
 import asyncio
 import logging
 
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, Literal, cast
 
 from nextcord.ext import commands
 
 from ..common import bad_return
 from ..data.spell import SpellAgent
 from ..data.classes import ClassesAgent
-from ..log import log_call_async
+from ..log import log_call
 from ..parser import Parser, ParserEntry
 from ..types import R35Cog, Ret, Result
 from ..types.item import SpellEntry
@@ -158,11 +158,14 @@ class Spell(R35Cog):
                 await ctx.send(NOT_READY)
             case Ret.NO_MATCH:
                 await ctx.send('No tags found for spells.')
-            case tags:
+            case list() as tags:
                 await ctx.send(
                     'The following spell tags are recognized: ' +
                     f'`{ "`, `".join(sorted(tags)) }`'
                 )
+            case ret:
+                logger.warning(bad_return(ret))
+                await ctx.send('Unknown internal error.')
 
     @commands.command()
     async def spelltags(self, ctx):
@@ -175,7 +178,7 @@ class Spell(R35Cog):
                 await ctx.send(NOT_READY)
             case Ret.NO_MATCH:
                 await ctx.send('No classes found for spells.')
-            case classes:
+            case list() as classes:
                 await ctx.send(
                     'The following spellcasting classes are recognized: ' +
                     f'`{ "`, `".join(sorted(classes)) }`\n\n' +
@@ -188,6 +191,9 @@ class Spell(R35Cog):
                     '- `spellpage_arcane`: Same as `spellpage`, but only consider arcane classes.\n' +
                     '- `spellpage_divine`: Same as `spellpage`, but only consider divine classes.\n'
                 )
+            case ret:
+                logger.warning(bad_return(ret))
+                await ctx.send('Unknown internal error.')
 
     @commands.command()
     async def classes(self, ctx):
@@ -195,7 +201,7 @@ class Spell(R35Cog):
         await self._classes(ctx)
 
 
-@log_call_async(logger, 'roll spell')
-def roll_spell(ds: DataSet, args: Mapping[str, Any]) -> Awaitable[Result[SpellEntry]]:
+@log_call(logger, 'roll spell')
+def roll_spell(ds: DataSet, args: Mapping[str, Any]) -> Awaitable[Result[SpellEntry] | Literal[Ret.NOT_READY]]:
     '''Return a coroutine that will return a spell.'''
     return cast(SpellAgent, ds['spell']).random(**args)

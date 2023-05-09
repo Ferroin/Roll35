@@ -21,7 +21,7 @@ from . import agent
 from . import constants
 from .classes import ClassesAgent, ClassMap, ClassEntry
 from .. import types
-from ..common import check_ready, chunk, flatten, yaml
+from ..common import chunk, flatten, yaml, bad_return
 from ..log import log_call_async, LogRun
 
 MAX_SPELL_LEVEL = 9
@@ -253,13 +253,17 @@ class SpellAgent(agent.Agent):
         )
 
     async def _level_in_cls(self: SpellAgent, level: Level, cls: Cls) -> bool:
-        classes = await cast(ClassesAgent, self._ds['classes']).get_class(cls)
-        levels = classes.levels
-
         if level is None:
             return True
 
-        return len(levels) > level and levels[level]
+        classes = await cast(ClassesAgent, self._ds['classes']).get_class(cls)
+
+        if classes is types.Ret.NOT_READY:
+            return False
+
+        levels = classes.levels
+
+        return len(levels) > level and levels[level] is not None
 
     @staticmethod
     def _process_data(_):
@@ -378,7 +382,7 @@ class SpellAgent(agent.Agent):
         return types.Ret.OK
 
     @log_call_async(logger, 'roll random spell')
-    @check_ready
+    @types.check_ready(logger)
     async def random(
             self: SpellAgent,
             level: Level | None = None,
@@ -389,8 +393,11 @@ class SpellAgent(agent.Agent):
         match await cast(ClassesAgent, self._ds['classes']).classdata():
             case types.Ret.NOT_READY:
                 return (types.Ret.NOT_READY, 'Failed to fetch class data.')
-            case ret:
-                classes = ret
+            case dict() as r1:
+                classes = r1
+            case r2:
+                logger.warning(bad_return(r2))
+                return (types.Ret.FAILED, 'Unknown internal error.')
 
         valid_classes = set(classes.keys()) | {
             'minimum',
@@ -412,11 +419,11 @@ class SpellAgent(agent.Agent):
                     'spellpage_divine',
                 ])
             case ('arcane', None):
-                valid = [k for (k, v) in classes.enumerate()
+                valid = [k for (k, v) in classes.items()
                          if v.type == 'arcane']
                 cls = random.choice(valid)
             case ('arcane', level):
-                valid = [k for (k, v) in classes.enumerate()
+                valid = [k for (k, v) in classes.items()
                          if await self._level_in_cls(cast(int, level), k)
                          and v.type == 'arcane']
                 cls = random.choice(valid)
@@ -430,7 +437,7 @@ class SpellAgent(agent.Agent):
                          and v.type == 'divine']
                 cls = random.choice(valid)
             case ('random', None):
-                cls = random.choice(classes.keys())
+                cls = random.choice(list(classes.keys()))
             case ('random', level):
                 valid = [k for (k, v) in classes.items()
                          if await self._level_in_cls(cast(int, level), k)]
@@ -537,7 +544,7 @@ class SpellAgent(agent.Agent):
         )
 
     @log_call_async(logger, 'get spell tags')
-    @check_ready
+    @types.check_ready(logger)
     async def tags(self: SpellAgent) -> Sequence[str] | types.Ret:
         '''Return a list of recognized tags.'''
         if self._data.tags:

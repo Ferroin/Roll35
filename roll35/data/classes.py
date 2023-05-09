@@ -12,7 +12,8 @@ from dataclasses import dataclass, KW_ONLY
 from typing import TYPE_CHECKING, Literal
 
 from . import agent
-from ..common import check_ready, ismapping
+from .. import types
+from ..common import ismapping
 from ..log import log_call_async
 
 if TYPE_CHECKING:
@@ -73,19 +74,19 @@ class ClassesAgent(agent.Agent):
         return self._data.classes
 
     @log_call_async(logger, 'get class data')
-    @check_ready
+    @types.check_ready(logger)
     async def classdata(self: ClassesAgent) -> ClassMap:
         '''Return the bulk data.'''
         return self._data.classes
 
     @log_call_async(logger, 'get class list')
-    @check_ready
+    @types.check_ready(logger)
     async def classes(self: ClassesAgent) -> Sequence[str]:
         '''Return the list of classes.'''
         return list(self._data.classes.keys())
 
     @log_call_async(logger, 'get class')
-    @check_ready
+    @types.check_ready(logger)
     async def get_class(self: ClassesAgent, cls: str) -> ClassEntry:
         '''Return the data for a specific class, by name.'''
         return self._data.classes[cls]

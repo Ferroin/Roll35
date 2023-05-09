@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 
 from . import agent
 from .. import types
-from ..common import check_ready, make_weighted_entry, ismapping
+from ..common import make_weighted_entry, ismapping
 from ..log import log_call_async
 
 if TYPE_CHECKING:
@@ -61,7 +61,7 @@ class CategoryAgent(agent.Agent):
         return await super().random_compound(rank=rank)
 
     @log_call_async(logger, 'get categories')
-    @check_ready
+    @types.check_ready(logger)
     async def categories(self: CategoryAgent) -> set[str]:
         '''Return a list of valid categories.'''
         return self._data.categories

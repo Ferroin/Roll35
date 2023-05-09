@@ -41,7 +41,7 @@ class SpellEntry:
     name: str
     level: int
     cls: str
-    caster_level: int | None = None
+    caster_level: int
     tags: set[str] = field(default_factory=set)
 
 

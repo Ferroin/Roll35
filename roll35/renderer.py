@@ -8,14 +8,15 @@ from __future__ import annotations
 import asyncio
 import logging
 
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Literal, cast
 
 import jinja2
 
 from . import types
-from .common import check_ready, bad_return
+from .common import bad_return
 from .data.spell import SpellAgent
 from .types.renderdata import RenderData
+from .types.readystate import ReadyState, check_ready
 from .log import LogRun, log_call_async
 
 if TYPE_CHECKING:
@@ -28,7 +29,7 @@ logger = logging.getLogger(__name__)
 MAX_TEMPLATE_RECURSION = 5
 
 
-class Renderer:
+class Renderer(ReadyState):
     '''Encapsulates the state required for rendering items.'''
     def __init__(self: Renderer, dataset: DataSet) -> None:
         self.env = jinja2.Environment(
@@ -40,6 +41,8 @@ class Renderer:
         self._data: RenderData = RenderData(dict())
         self._ready = asyncio.Event()
         self._ds = dataset
+
+        super().__init__()
 
     @staticmethod
     def _loader(name: str) -> RenderData:
@@ -64,15 +67,20 @@ class Renderer:
     async def get_spell(self: Renderer, item: types.item.SpellItem) -> types.Result[types.item.SpellEntry]:
         '''Get a random spell for the given item.'''
         match await cast(SpellAgent, self._ds['spell']).random(**item.spell):
-            case (types.Ret.OK, spell):
+            case (types.Ret.OK, types.item.SpellEntry() as spell):
                 return (types.Ret.OK, spell)
-            case (ret, msg) if ret is not types.Ret.OK:
-                return (ret, msg)
+            case (types.Ret() as r1, str() as msg) if r1 is not types.Ret.OK:
+                return (r1, msg)
             case types.Ret.NOT_READY:
                 return (types.Ret.NOT_READY, 'Unable to get spell for item.')
             case ret:
                 logger.error(bad_return(ret))
                 return (types.Ret.FAILED, 'Unknown internal error.')
+
+        # The below line should never actually be run, as the above match clauses are (theoretically) exhaustive.
+        #
+        # However, mypy thinks this function is missing a return statement, and this line convinces it otherwise.
+        raise RuntimeError
 
     @log_call_async(logger, 'render item')
     async def render(self: Renderer, item: types.item.Item | types.item.SpellEntry | str) -> types.Result[str]:
@@ -86,11 +94,11 @@ class Renderer:
         match await self._render(item):
             case types.Ret.NOT_READY:
                 return (types.Ret.NOT_READY, 'Unable to render item as renderer is not yet fully initilized.')
-            case ret:
-                return ret
+            case r2:
+                return cast(types.Result[str], r2)
 
-    @check_ready
-    async def _render(self: Renderer, item: types.item.Item | types.item.SpellEntry | str) -> types.Result[str]:
+    @check_ready(logger)
+    async def _render(self: Renderer, /, item: types.item.Item | types.item.SpellEntry | str) -> types.Result[str] | Literal[types.Ret.NOT_READY]:
         match item:
             case types.item.SpellEntry(name=name, cls=c, caster_level=cl, level=l) if c is not None and cl is not None and l is not None:
                 t = '{{ item.name }} ({{ item.cls.capitalize() }} {{ item.level }}, CL {{ item.caster_level }})'
