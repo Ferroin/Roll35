@@ -19,7 +19,7 @@ from typing import Any, Callable, cast, TYPE_CHECKING
 
 from . import constants
 from .. import types
-from ..common import check_ready, rnd, make_weighted_entry, yaml
+from ..common import rnd, make_weighted_entry, yaml
 from ..log import log_call_async
 
 if TYPE_CHECKING:
@@ -179,7 +179,7 @@ class AgentData:
     compound: types.CompoundItemList | Mapping[types.Rank, Sequence[types.WeightedEntry]] | None = None
 
 
-class Agent(abc.ABC):
+class Agent(types.ReadyState, abc.ABC):
     '''Abstract base class for data agents.'''
     def __init__(self: Agent, dataset: DataSet, name: str) -> None:
         self._ds = dataset
@@ -239,7 +239,7 @@ class Agent(abc.ABC):
 
     @ensure_costs
     @log_call_async(logger, 'roll random rank')
-    @check_ready
+    @types.check_ready(logger)
     async def random_rank(self: Agent, mincost: types.RangeMember = None, maxcost: types.RangeMember = None) -> types.Rank | types.Ret:
         '''Return a random rank, possibly within the cost limits.'''
         if self._data.ranked is not None:
@@ -265,7 +265,7 @@ class Agent(abc.ABC):
 
     @ensure_costs
     @log_call_async(logger, 'roll random subrank')
-    @check_ready
+    @types.check_ready(logger)
     async def random_subrank(self: Agent, rank: types.Rank, mincost: types.RangeMember = None, maxcost: types.RangeMember = None) -> \
             types.Subrank | types.Ret:
         '''Return a random subrank for the given rank, possibly within the cost limits.'''
@@ -283,7 +283,7 @@ class Agent(abc.ABC):
 
     @ensure_costs
     @log_call_async(logger, 'roll random ranked item')
-    @check_ready
+    @types.check_ready(logger)
     async def random_ranked(self: Agent, rank: types.Rank | None = None, subrank: types.Subrank | None = None,
                             mincost: types.RangeMember = None, maxcost: types.RangeMember = None) -> types.Item | types.Ret:
         '''Roll a random item for the given rank and subrank, possibly within the specified cost range.'''
@@ -309,7 +309,7 @@ class Agent(abc.ABC):
 
     @ensure_costs
     @log_call_async(logger, 'roll random compound item')
-    @check_ready
+    @types.check_ready(logger)
     async def random_compound(
             self: Agent,
             rank: types.Rank | None = None,

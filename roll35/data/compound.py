@@ -82,17 +82,22 @@ class CompoundAgent(agent.Agent):
                 match await cast(SpellAgent, self._ds['spell']).random(**spell):
                     case types.Ret.NOT_READY:
                         return types.Ret.NOT_READY
-                    case (ret, msg) if ret is not types.Ret.OK:
-                        logger.warning(f'Failed to roll random spell for item using parameters: { spell }, recieved: { msg }')
-                        return ret
-                    case (types.Ret.OK, spell):
+                    case (types.Ret.OK, types.item.SpellEntry() as s1):
                         if hasattr(item, 'costmult') and item.costmult is not None:
-                            item.cost = item.costmult * spell.caster_level
+                            item.cost = item.costmult * s1.caster_level
 
-                        item.rolled_spell = spell
+                        item.rolled_spell = s1
                         return item
+                    case (types.Ret() as r1, msg) if r1 is not types.Ret.OK:
+                        logger.warning(f'Failed to roll random spell for item using parameters: { spell }, recieved: { msg }')
+                        return r1
                     case ret:
                         logger.error(bad_return(ret))
                         return types.Ret.FAILED
             case item:
                 return item
+
+        # The below line should never actually be run, as the above match clauses are (theoretically) exhaustive.
+        #
+        # However, mypy thinks this function is missing a return statement, and this line convinces it otherwise.
+        raise RuntimeError

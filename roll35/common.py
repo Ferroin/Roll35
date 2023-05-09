@@ -235,27 +235,3 @@ def did_you_mean(items: list[str], name: str) -> types.Result[str]:
         )
     else:
         return (types.Ret.NO_MATCH, 'No matching items found.')
-
-
-# TODO: Fix typing.
-def check_ready(func: Callable) -> Callable:
-    '''Decorate an async method to wait for it’s instance to be ready.
-
-       This expects the instance to have an asyncio.Event() object under
-       the _ready property that will be set when the instance is ready
-       for methods with this decorator to run.
-
-       The decorated method will wait up to
-       `roll35.common.READINESS_TIMEOUT` seconds for the event to be
-       set before running the method. If it times out while waiting,
-       it will log a warning and return `False`.'''
-    async def f(self, *args, **kwargs):
-        try:
-            await asyncio.wait_for(self._ready.wait(), timeout=READINESS_TIMEOUT)
-        except asyncio.TimeoutError:
-            self.logger.warning('Timed out waiting for data to be ready.')
-            return types.Ret.NOT_READY
-
-        return await func(self, *args, **kwargs)
-
-    return f

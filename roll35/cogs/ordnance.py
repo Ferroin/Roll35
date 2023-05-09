@@ -3,15 +3,21 @@
 
 from __future__ import annotations
 
+import logging
+
 from typing import TYPE_CHECKING, cast
 
 from nextcord.ext import commands
 
+from ..common import bad_return
 from ..types import R35Cog, Ret
+from ..types.item import OrdnanceBaseItem
 from ..data.ordnance import OrdnanceAgent
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+
+logger = logging.getLogger(__name__)
 
 NOT_READY = 'Item data is not yet available, please try again later.'
 
@@ -25,9 +31,12 @@ class Ordnance(R35Cog):
                 await ctx.send(NOT_READY)
             case Ret.NO_MATCH:
                 await ctx.send('No item found matching requested tags.')
-            case item:
+            case OrdnanceBaseItem() as item:
                 _ret, msg = await self.renderer.render(item)
                 await ctx.send(msg)
+            case ret:
+                logger.warning(bad_return(ret))
+                await ctx.send('Unknown internal error.')
 
     async def get_tags(self: Ordnance, ctx: commands.Context, typ: str) -> None:
         match await cast(OrdnanceAgent, self.ds[typ]).tags():
@@ -35,11 +44,14 @@ class Ordnance(R35Cog):
                 await ctx.send(NOT_READY)
             case Ret.NO_MATCH:
                 await ctx.send('No tags found.')
-            case tags:
+            case list() as tags:
                 await ctx.send(
                     f'The following { typ } tags are recognized: ' +
                     f'`{ "`, `".join(sorted(tags)) }`'
                 )
+            case ret:
+                logger.warning(bad_return(ret))
+                await ctx.send('Unknown internal error.')
 
     @commands.command()
     async def armor(self, ctx, *tags):
