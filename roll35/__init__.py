@@ -16,7 +16,7 @@
    `roll35.cogs`.
 
    Note that many parts of this package use values from
-   `roll35.retcode.Ret` as return codes in preference to raising special
+   `roll35.types.Ret` as return codes in preference to raising special
    exception types.
 
    This package requires Python 3.10 as it makes extensive use of PEP
