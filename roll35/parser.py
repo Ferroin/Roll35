@@ -3,11 +3,27 @@
 
 '''Provides basic command parameter parsing functionality.'''
 
+from __future__ import annotations
+
 import shlex
 
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 from io import StringIO
+from typing import Any, Callable, TypeVar, Generic
 
-from .retcode import Ret
+from .types import Ret, Result
+
+
+T = TypeVar('T')
+
+
+@dataclass
+class ParserEntry(Generic[T]):
+    '''Describes a parameter for a parser schema.'''
+    type: Callable[[str], T]
+    names: Sequence[str]
+    default: T | None
 
 
 class Parser:
@@ -23,15 +39,15 @@ class Parser:
        - `names`: A list of strings which are used to indicate the
          specified token.
        '''
-    def __init__(self, schema):
+    def __init__(self, schema: Mapping[str, ParserEntry]):
         self._schema = schema
         self._rindex = dict()
 
         for key in schema.keys():
-            for name in schema[key]['names']:
+            for name in schema[key].names:
                 self._rindex[name] = key
 
-    def parse(self, data):
+    def parse(self, data: str) -> Result[dict[str, Any]]:
         '''Parse a string using the schema.
 
            Returns either a tuple of True and the dictionary produced
@@ -39,10 +55,7 @@ class Parser:
         if data is None:
             return (True, dict())
 
-        ret = dict()
-
-        for key in self._schema:
-            ret[key] = None
+        ret: dict[str, Any] = {k: v.default for k, v in self._schema.items()}
 
         lexer = shlex.shlex(StringIO(data), posix=True)
 
@@ -58,12 +71,9 @@ class Parser:
                     if value == lexer.eof:
                         return (Ret.FAILED, f'Unexpected end of arguments after `{ token }`.')
 
-                    if 'type' in schema:
-                        try:
-                            ret[key] = schema['type'](value.casefold())
-                        except Exception:
-                            return (Ret.FAILED, f'Failed to parse `{ value }` as value for `{ token }`.')
-                    else:
-                        ret[key] = value.casefold()
+                    try:
+                        ret[key] = schema.type(value.casefold())
+                    except Exception:
+                        return (Ret.FAILED, f'Failed to parse `{ value }` as value for `{ token }`.')
                 case token:
                     return (Ret.FAILED, f'Unrecognized token `{ token }`.')
