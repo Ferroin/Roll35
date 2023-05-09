@@ -3,41 +3,76 @@
 
 '''Data handling for armor, shields, and weapons.'''
 
+from __future__ import annotations
+
 import logging
 import random
 
+from collections.abc import Mapping, Sequence, Iterable
+from dataclasses import dataclass
+from functools import reduce
+from typing import TYPE_CHECKING, Callable, cast
+
 from . import agent
-from . import constants
 from .. import types
-from ..common import make_weighted_entry, check_ready, norm_string, did_you_mean, bad_return
-from ..retcode import Ret
+from ..common import make_weighted_entry, check_ready, norm_string, did_you_mean, bad_return, rnd, ismapping
+from ..log import log_call_async
 
 logger = logging.getLogger(__name__)
 
+if TYPE_CHECKING:
+    from concurrent.futures import Executor
 
-def process_enchantment_table(items, basevalue):
+    from . import DataSet
+
+    EnchantmentTable = types.R35Map[str, dict[int, Sequence[types.WeightedEntry]]]
+    SpecificItemList = types.RankedItemList | types.R35Map[str, types.RankedItemList]
+    TagData = set[str]
+    Bonus = int
+
+
+@dataclass
+class OrdnanceData(agent.AgentData):
+    '''Data handled by an OrdnanceAgent.'''
+    base: Sequence[types.item.OrdnanceBaseItem]
+    tags: TagData
+    enchantments: EnchantmentTable
+    specific: SpecificItemList
+    masterwork: int | float
+    enchant_base_cost: int | float
+
+
+def process_enchantment_table(items: Mapping, basevalue: types.item.Cost) -> EnchantmentTable:
     '''Process an armor or weapon enchantment table.'''
-    ret = types.R35Map()
+    ret: EnchantmentTable = types.R35Map()
 
     for group in items:
-        groupdata = dict()
+        groupdata: dict[int, Sequence[types.WeightedEntry]] = dict()
 
         for value in items[group]:
-            groupdata[value] = list(map(make_weighted_entry, items[group][value]))
+            groupdata[value] = list(
+                map(
+                    make_weighted_entry,
+                    map(
+                        lambda x: types.item.OrdnanceEnchant(**x),
+                        items[group][value]
+                    )
+                )
+            )
 
         ret[group] = groupdata
 
     return ret
 
 
-def get_enchant_bonus_costs(data, base):
-    '''Compute the enchantment bonus costs for the specified ase item.'''
-    if 'double' in base['tags']:
-        masterwork = data['masterwork'] * 2
-        enchant_base_cost = data['enchant_base_cost'] * 2
+def get_enchant_bonus_costs(data: OrdnanceData, base: types.item.OrdnanceBaseItem) -> tuple[types.item.Cost, types.item.Cost]:
+    '''Compute the enchantment bonus costs for the specified base item.'''
+    if 'double' in base.tags:
+        masterwork = data.masterwork * 2
+        enchant_base_cost = data.enchant_base_cost * 2
     else:
-        masterwork = data['masterwork']
-        enchant_base_cost = data['enchant_base_cost']
+        masterwork = data.masterwork
+        enchant_base_cost = data.enchant_base_cost
 
     return (
         masterwork,
@@ -45,26 +80,29 @@ def get_enchant_bonus_costs(data, base):
     )
 
 
-def get_costs_and_bonus(enchants):
+def get_costs_and_bonus(enchants: Iterable[types.WeightedEntry]) -> tuple[types.item.Cost, types.item.Cost, Bonus, Bonus]:
     '''Figure out the range of extra costs that a given list of enchantments might have.'''
-    min_cost = -1
-    max_cost = 0
-    min_bonus = 0
-    max_bonus = 0
+    min_cost: types.item.Cost = -1
+    max_cost: types.item.Cost = 0
+    min_bonus: Bonus = 0
+    max_bonus: Bonus = 0
     has_non_bonus = False
 
     for item in enchants:
-        match item:
-            case {'bonuscost': _, 'bonus': _}:
-                raise ValueError(f'{ item } has both bonuscost and bonus keys.')
-            case {'bonuscost': c}:
+        match item.value:
+            case types.item.OrdnanceEnchant(bonuscost=None, bonus=None):
+                min_cost = 0
+                has_non_bonus = True
+            case types.item.OrdnanceEnchant(bonuscost=c, bonus=None):
+                assert c is not None
                 if min_cost == -1:
                     min_cost = c
                 else:
                     min_cost = min(min_cost, c)
                 max_cost = max(max_cost, c)
                 has_non_bonus = True
-            case {'bonus': b}:
+            case types.item.OrdnanceEnchant(bonuscost=None, bonus=b):
+                assert b is not None
                 min_cost = 0
                 if min_bonus == 0:
                     min_bonus = b
@@ -72,8 +110,7 @@ def get_costs_and_bonus(enchants):
                     min_bonus = min(min_bonus, b)
                 max_bonus = max(max_bonus, b)
             case _:
-                min_cost = 0
-                has_non_bonus = True
+                raise ValueError(f'{ item } has both bonuscost and bonus keys.')
 
     if has_non_bonus:
         min_bonus = 0
@@ -81,173 +118,237 @@ def get_costs_and_bonus(enchants):
     return (min_cost, max_cost, min_bonus, max_bonus)
 
 
-def get_costs(bonus, base, enchants, enchantments):
+def get_costs(bonus: Bonus, base: types.item.Cost, enchants: list[Bonus], enchantments: EnchantmentTable) -> tuple[types.item.Cost, types.item.Cost]:
     '''Determine the range of possible costs for a set of enchantments.'''
-    if isinstance(list(enchantments.values())[0], dict):
-        min_cost = float('inf')
-        max_cost = 0
+    min_cost: types.item.Cost = float('inf')
+    max_cost: types.item.Cost = 0
 
-        for group in enchantments:
-            c1, c2 = get_costs(bonus, base, enchants, enchantments[group])
-            min_cost = min(min_cost, c1)
-            max_cost = max(max_cost, c2)
-    else:
-        epossible = []
+    if isinstance(base, str):
+        raise ValueError
+
+    for group in enchantments.values():
+        minc_possible = []
+        maxc_possible = []
+        minb_possible = []
+        maxb_possible = []
 
         for e in enchants:
-            c1, c2, b1, b2 = get_costs_and_bonus(enchantments[e])
-            epossible.append((
-                c1,
-                c2,
-                max([b1, e]),
-                max([b2, e]),
-            ))
+            c1, c2, b1, b2 = get_costs_and_bonus(group[e])
+            minc_possible.append(0 if c1 == 'varies' else c1)
+            maxc_possible.append(0 if c2 == 'varies' else c2)
+            minb_possible.append(max([b1, e]))
+            maxb_possible.append(max([b2, e]))
 
-        min_cost = sum([
-            sum(map(lambda x: x[0], epossible)),
-            ((sum(map(lambda x: x[2], epossible)) + bonus) ** 2) * base,
-        ])
+        min_cost = min(
+            min_cost,
+            min(minc_possible) + (((min(minb_possible) + bonus) ** 2) * base),
+        )
 
-        max_cost = sum([
-            sum(map(lambda x: x[1], epossible)),
-            ((sum(map(lambda x: x[3], epossible)) + bonus) ** 2) * base,
-        ])
+        max_cost = max(
+            max_cost,
+            min(maxc_possible) + (((min(maxb_possible) + bonus) ** 2) * base),
+        )
 
     return min_cost, max_cost
 
 
-def create_xform(base, enchantments, specific):
+def create_xform(base: int | float, enchantments: EnchantmentTable, specific: SpecificItemList) -> \
+        Callable[[types.item.OrdnancePattern], types.item.OrdnancePattern]:
     '''Produce a mapping function for adding costs to enchantment combos.'''
-    def xform(x):
+    def xform(x: types.item.OrdnancePattern) -> types.item.OrdnancePattern:
+        min_cost: types.item.Cost = 0
+        max_cost: types.item.Cost = float('inf')
         match x:
-            case {'specific': [group, rank, subrank]}:
-                min_cost = specific[group][rank][subrank].costs.min
-                max_cost = specific[group][rank][subrank].costs.max
-            case {'specific': [rank, subrank]}:
-                min_cost = specific[rank][subrank].costs.min
-                max_cost = specific[rank][subrank].costs.max
-            case {'bonus': bonus, 'enchants': []}:
+            case types.item.OrdnancePattern(bonus=bonus, enchants=[]) if bonus is not None:
                 min_cost = (bonus ** 2) * base
                 max_cost = (bonus ** 2) * base
-            case {'bonus': bonus, 'enchants': [*enchants]}:
+            case types.item.OrdnancePattern(bonus=bonus, enchants=[*enchants]) if bonus is not None:
                 min_cost, max_cost = get_costs(bonus, base, enchants, enchantments)
+            case types.item.OrdnancePattern(specific=[group, rank, subrank]):
+                min_cost = cast(Mapping[str, types.RankedItemList], specific)[group][types.Rank(rank)][types.Subrank(subrank)].costs.min
+                max_cost = cast(Mapping[str, types.RankedItemList], specific)[group][types.Rank(rank)][types.Subrank(subrank)].costs.max
+            case types.item.OrdnancePattern(specific=[rank, subrank]):
+                min_cost = cast(types.RankedItemList, specific)[types.Rank(rank)][types.Subrank(subrank)].costs.min
+                max_cost = cast(types.RankedItemList, specific)[types.Rank(rank)][types.Subrank(subrank)].costs.max
             case _:
                 ValueError(f'{ x } is not a valid enchantment combination entry.')
 
-        x['costrange'] = [
+        if min_cost == 'varies':
+            min_cost = 0
+
+        if max_cost == 'varies':
+            max_cost = float('inf')
+
+        x.costrange = (
             min_cost,
             max_cost,
-        ]
+        )
 
         return x
 
     return xform
 
 
-def generate_tags_entry(items):
+def generate_tags_entry(items: Sequence[types.item.OrdnanceBaseItem]) -> set[str]:
     '''Generate a list of tags based on a list of items.'''
-    tags = map(lambda x: set(x['tags']), items)
-    tags = set.union(*tags)
-    return tags | {x['type'] for x in items}
+    taglist = list(map(lambda x: set(x.tags), items))
+    tags = reduce(lambda x, y: x | y, taglist)
+    return tags | {x.type for x in items}
 
 
 class OrdnanceAgent(agent.Agent):
     '''Data agent for weapon or armor item data.'''
+    def __init__(self: OrdnanceAgent, dataset: DataSet, name: str) -> None:
+        super().__init__(dataset, name)
+        self._data: OrdnanceData = OrdnanceData(
+            base=[],
+            tags=set(),
+            specific=cast(types.RankedItemList, types.R35Map()),
+            enchantments=types.R35Map(),
+            masterwork=0,
+            enchant_base_cost=0,
+        )
+
     @staticmethod
-    def _process_data(data):
+    def _process_data(data: Mapping | Sequence) -> OrdnanceData:
+        if not ismapping(data):
+            raise ValueError('Ordnance data must be a mapping.')
+
         enchantments = process_enchantment_table(data['enchantments'], data['enchant_base_cost'])
 
-        if constants.RANK[1] in data['specific']:
-            specific = agent.process_ranked_itemlist(data['specific'])
+        d_specific = data['specific']
+
+        if types.Rank.MEDIUM.value not in d_specific:
+            specific: SpecificItemList = types.R35Map({
+                k: agent.process_ranked_itemlist(v, typ=lambda x: types.item.OrdnanceSpecific(**x)) for k, v in d_specific.items()
+            })
         else:
-            specific = types.R35Map()
+            specific = agent.process_ranked_itemlist(d_specific, typ=lambda x: types.item.OrdnanceSpecific(**x))
 
-            for key in data['specific']:
-                specific[key] = agent.process_ranked_itemlist(data['specific'][key])
-
-        ret = agent.process_ranked_itemlist(
+        patterns = agent.process_ranked_itemlist(
             data,
-            create_xform(
+            typ=lambda x: types.item.OrdnancePattern(**x),
+            xform=create_xform(
                 data['enchant_base_cost'],
                 enchantments,
                 specific,
             ),
         )
 
-        ret['base'] = types.R35List(data['base'])
-        ret['tags'] = generate_tags_entry(data['base'])
-        ret['enchantments'] = enchantments
-        ret['specific'] = specific
-        ret['masterwork'] = data['masterwork']
-        ret['enchant_base_cost'] = data['enchant_base_cost']
+        base: types.R35List[types.item.OrdnanceBaseItem] = types.R35List()
 
-        return ret
+        for item in data['base']:
+            try:
+                base.append(types.item.OrdnanceBaseItem(**item))
+            except TypeError:
+                raise RuntimeError(f'Invalid ordnance base item entry: { item }')
 
-    async def random(self, **kwargs):
+        tags = generate_tags_entry(base)
+
+        return OrdnanceData(
+            base=base,
+            tags=tags,
+            specific=specific,
+            enchantments=enchantments,
+            ranked=patterns,
+            masterwork=data['masterwork'],
+            enchant_base_cost=data['enchant_base_cost'],
+        )
+
+    async def random(self: OrdnanceAgent, **kwargs) -> types.item.OrdnancePattern | types.Ret:
         return await self.random_pattern(**kwargs)
 
-    @check_ready
     @agent.ensure_costs
-    async def random_pattern(self, rank, subrank, allow_specific=True, mincost=None, maxcost=None):
+    @log_call_async(logger, 'roll random ordnance pattern')
+    @check_ready
+    async def random_pattern(
+            self: OrdnanceAgent,
+            rank: types.Rank,
+            subrank: types.Subrank,
+            allow_specific: bool = True,
+            mincost: types.item.Cost | None = None,
+            maxcost: types.item.Cost | None = None) -> \
+            types.item.OrdnancePattern | types.Ret:
         '''Return a random item pattern to use to generate a random item from.'''
         match rank:
             case None:
-                rank = random.choice(constants.RANK)
+                match await self.random_rank(mincost=mincost, maxcost=maxcost):
+                    case ret if isinstance(ret, types.Ret):
+                        return ret
+                    case r:
+                        rank = r
             case rank if self._valid_rank(rank):
                 pass
             case _:
                 raise ValueError(f'Invalid rank for { self.name }: { rank }')
 
         if subrank is None:
-            subrank = random.choice(constants.SUBRANK)
+            match await self.random_subrank(rank, mincost=mincost, maxcost=maxcost):
+                case ret if isinstance(ret, types.Ret):
+                    return ret
+                case r:
+                    subrank = r
+        elif not self._valid_subrank(rank, subrank):
+            raise ValueError(f'Invalid subrank for { self.name }: { subrank }')
 
-        items = agent.costfilter(self._data[rank][subrank], mincost, maxcost)
+        items = agent.costfilter(
+            cast(types.RankedItemList, self._data.ranked)[rank][subrank],
+            mincost,
+            maxcost,
+        )
 
         if allow_specific:
             if items:
-                return random.choice(items)['value']
+                return rnd(items)
             else:
-                return Ret.NO_MATCH
+                return types.Ret.NO_MATCH
         else:
-            match list(filter(lambda x: 'specific' not in x['value'], items)):
+            match list(filter(lambda x: 'specific' not in x.value, items)):
                 case []:
-                    return Ret.NO_MATCH
+                    return types.Ret.NO_MATCH
                 case [*items]:
-                    return random.choice(items)['value']
+                    return rnd(items)
+                case ret:
+                    logger.error(bad_return(ret))
+                    return types.Ret.FAILED
 
+    @log_call_async(logger, 'get base ordnance item')
     @check_ready
-    async def get_base(self, pool, name):
+    async def get_base(self: OrdnanceAgent, pool: Executor, name: str) -> \
+            types.Result[types.item.OrdnanceBaseItem]:
         '''Get a base item by name.
 
            On a mismatch, returns a list of possible names that might
            have been intended.'''
-        items = self._data['base']
+        items = self._data.base
         norm_name = norm_string(name)
 
-        match next((x for x in items if norm_string(x['name']) == norm_name), None):
-            case None:
-                match await self._process_async(
-                    pool,
-                    did_you_mean,
-                    [items, norm_name],
-                ):
-                    case (Ret.OK, msg):
+        match next((x for x in items if norm_string(x.name) == norm_name), None):
+            case item if item is not None:
+                return (types.Ret.OK, item)
+            case _:
+                match await self._process_async(pool, did_you_mean, [[x.name for x in items], norm_name]):
+                    case (types.dRet.OK, msg):
                         return (
-                            Ret.FAILED,
+                            types.dRet.FAILED,
                             f'{ name } is not a recognized item.\n { msg }'
                         )
-                    case (ret, msg) if ret is not Ret.OK:
+                    case (ret, msg) if ret is not types.Ret.OK:
                         return (ret, msg)
                     case ret:
                         logger.error(bad_return(ret))
-                        return (Ret.FAILED, 'Unknown internal error.')
-            case item:
-                return (Ret.OK, item)
+                        return (types.Ret.FAILED, 'Unknown internal error.')
 
+        # The below line should never actually be run, as the above match clauses are (theoretically) exhaustive.
+        #
+        # However, mypy thinks this function is missing a return statement, and this line convinces it otherwise.
+        raise RuntimeError
+
+    @log_call_async(logger, 'roll random base ordnance item')
     @check_ready
-    async def random_base(self, tags=[]):
+    async def random_base(self: OrdnanceAgent, tags: Sequence[str] = []) -> types.item.OrdnanceBaseItem | types.Ret:
         '''Get a base item at random.'''
-        items = self._data['base']
+        items = self._data.base
 
         match tags:
             case []:
@@ -256,7 +357,7 @@ class OrdnanceAgent(agent.Agent):
                 items = list(filter(
                     lambda x: all(
                         map(
-                            lambda y: y == x['type'] or y in x['tags'],
+                            lambda y: y == x.type or y in x.tags,
                             tags
                         )
                     ), items
@@ -267,12 +368,19 @@ class OrdnanceAgent(agent.Agent):
         if items:
             return random.choice(items)
         else:
-            return Ret.NO_MATCH
+            return types.Ret.NO_MATCH
 
+    @log_call_async(logger, 'roll random ordnance enchantment')
     @check_ready
-    async def random_enchant(self, group, bonus, enchants=[], tags=[]):
+    async def random_enchant(
+            self: OrdnanceAgent,
+            group: str,
+            bonus: Bonus,
+            enchants: Sequence[types.item.OrdnanceEnchant] = [],
+            tags: Sequence[str] = []) -> \
+            types.item.OrdnanceEnchant | types.Ret:
         '''Roll a random enchantment.'''
-        items = self._data['enchantments'][group][bonus]
+        items = self._data.enchantments[group][bonus]
 
         def _efilter(x):
             result = True
@@ -291,61 +399,85 @@ class OrdnanceAgent(agent.Agent):
 
         match list(filter(_efilter, items)):
             case []:
-                return Ret.NO_MATCH
+                return types.Ret.NO_MATCH
             case [*opts]:
-                return random.choice(opts)['value']
+                return cast(types.item.OrdnanceEnchant | types.Ret, rnd(opts))
+            case _:
+                raise ValueError
 
-    @check_ready
     @agent.ensure_costs
-    async def random_specific(self, *args, mincost=None, maxcost=None):
+    @log_call_async(logger, 'roll random specific ordnance item.')
+    @check_ready
+    async def random_specific(
+            self: OrdnanceAgent,
+            args: Sequence[str],
+            mincost: types.item.Cost | None = None,
+            maxcost: types.item.Cost | None = None) -> \
+            types.item.OrdnanceSpecific | types.Ret:
         '''Roll a random specific item.'''
         match args:
             case [_, _, _]:
                 group = args[0]
-                rank = args[1]
-                subrank = args[2]
+                rank = types.Rank(args[1])
+                subrank = types.Subrank(args[2])
             case [_, _]:
-                group = False
-                rank = args[0]
-                subrank = args[1]
+                group = ''
+                rank = types.Rank(args[0])
+                subrank = types.Subrank(args[1])
             case _:
                 raise ValueError(f'Invalid arguments for { self.name }.random_specific: { args }')
 
         match rank:
             case None:
-                rank = random.choice(constants.RANK)
+                match await self.random_rank(mincost=mincost, maxcost=maxcost):
+                    case ret if isinstance(ret, types.Ret):
+                        return ret
+                    case r:
+                        rank = r
             case rank if self._valid_rank(rank):
                 pass
             case _:
                 raise ValueError(f'Invalid rank for { self.name }: { rank }')
 
         if subrank is None:
-            subrank = random.choice(constants.SUBRANK)
+            match await self.random_subrank(rank, mincost=mincost, maxcost=maxcost):
+                case ret if isinstance(ret, types.Ret):
+                    return ret
+                case r:
+                    subrank = r
+        elif not self._valid_subrank(rank, subrank):
+            raise ValueError(f'Invalid subrank for { self.name }: { subrank }')
 
-        items = self._data['specific']
+        items = self._data.specific
 
         if group:
             if group not in items:
                 raise ValueError(f'Unrecognized item type for { self.name }: { rank }')
 
-            items = items[group]
+            items = cast(Mapping[str, types.RankedItemList], items)[group]
 
-        items = agent.costfilter(items[rank][subrank], mincost, maxcost)
+        possible = agent.costfilter(
+            cast(types.RankedItemList, items)[rank][subrank],
+            mincost if mincost is not None else 0,
+            maxcost if maxcost is not None else float('inf'),
+        )
 
-        if items:
-            return random.choice(items)['value']
+        if possible:
+            return rnd(possible)
         else:
-            return Ret.NO_MATCH
+            return types.Ret.NO_MATCH
 
+    @log_call_async(logger, 'get ordnance bonus costs')
     @check_ready
-    async def get_bonus_costs(self, base):
+    async def get_bonus_costs(self: OrdnanceAgent, base: types.item.OrdnanceBaseItem) -> tuple[types.item.Cost, types.item.Cost]:
         '''Get the bonus costs associated with the given item.'''
         return get_enchant_bonus_costs(self._data, base)
 
+    @log_call_async(logger, 'get ordnance tags')
     @check_ready
-    async def tags(self):
+    async def tags(self: OrdnanceAgent) -> Sequence[str] | types.Ret:
         '''Get a list of recognized tags.'''
-        if 'tags' in self._data:
-            return list(self._data['tags'])
+        if self._data.tags:
+            return list(self._data.tags)
         else:
-            return Ret.NO_MATCH
+            return types.Ret.NO_MATCH

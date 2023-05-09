@@ -3,27 +3,42 @@
 
 '''Data agent for handling of spells.'''
 
+from __future__ import annotations
+
 import asyncio
 import logging
 import random
 
+from dataclasses import dataclass, field
 from functools import reduce
 from itertools import repeat
 from pathlib import Path
+from typing import TYPE_CHECKING, Any, cast
 
 import aiosqlite
 
 from . import agent
 from . import constants
+from .classes import ClassesAgent, ClassMap, ClassEntry
+from .. import types
 from ..common import check_ready, chunk, flatten, yaml
-from ..retcode import Ret
+from ..log import log_call_async, LogRun
 
 MAX_SPELL_LEVEL = 9
 
 logger = logging.getLogger(__name__)
 
+if TYPE_CHECKING:
+    from collections.abc import Mapping, Iterable, Sequence
+    from concurrent.futures import Executor
 
-def _eval_minimum(level, cls, minimum, minimum_cls):
+    from . import DataSet
+
+Cls = str
+Level = int
+
+
+def _eval_minimum(level: Level | None, cls: Cls, minimum: Level | None, minimum_cls: Cls) -> tuple[Level | None, Cls]:
     '''Used to figure out the minimum level and class of a spell.
 
        This is intended to be used with functools.reduce().'''
@@ -36,8 +51,8 @@ def _eval_minimum(level, cls, minimum, minimum_cls):
     return (minimum, minimum_cls)
 
 
-def _eval_spellpage(level, cls, spellpage, spellpage_cls,
-                    spellpage_fixed, cls_match):
+def _eval_spellpage(level: Level | None, cls: Cls, spellpage: Level | None, spellpage_cls: Cls,
+                    spellpage_fixed: bool, cls_match: Cls) -> tuple[Level | None, Cls, bool]:
     '''Used to figure out the spellpage class and level for a spell.
 
        This is intended to be used with functools.reduce().'''
@@ -54,125 +69,163 @@ def _eval_spellpage(level, cls, spellpage, spellpage_cls,
     return (spellpage, spellpage_cls, spellpage_fixed)
 
 
-def _gen_spell_fields(acc, cls):
+@dataclass
+class SpellFileEntry:
+    '''Represents the data about a spell from the spell data file.'''
+    classes: Mapping[Cls, Level]
+    descriptor: str
+    domains: Mapping[Cls, Level]
+    name: str
+    school: str
+    subschool: str
+
+
+def make_spell_file_entry(data: Mapping[str, Any]) -> SpellFileEntry:
+    '''Convert a spell file entry to the correct data class.'''
+    try:
+        return SpellFileEntry(**data)
+    except TypeError:
+        raise RuntimeError(f'Invalid spell entry: { data }')
+
+
+@dataclass
+class SpellFields:
+    '''Used to represent fields for a spell.'''
+    spell: SpellFileEntry
+    clsdata: ClassMap
+    levels: dict[Cls, Level | None] = field(default_factory=dict)
+    minimum: Level | None = MAX_SPELL_LEVEL
+    minimum_cls: Cls = ''
+    spellpage_arcane: Level | None = None
+    spellpage_arcane_cls: Cls = ''
+    spellpage_arcane_fixed: bool = False
+    spellpage_divine: Level | None = None
+    spellpage_divine_cls: Cls = ''
+    spellpage_divine_fixed: bool = False
+
+
+def _gen_spell_fields(acc: SpellFields, cls: Cls) -> SpellFields:
     '''Generate the SQL fields for a spell.'''
-    spell = acc['spell']
-    clsdata = acc['clsdata']
+    spell = acc.spell
+    clsdata = acc.clsdata
 
     match clsdata[cls]:
-        case {'copy': copy}:
-            if copy in spell['classes']:
-                level = spell['classes'][copy]
+        case ClassEntry(copy=copy) if copy is not None:
+            if copy in spell.classes:
+                level: Level | None = spell.classes[copy]
 
-                if level >= len(clsdata[cls]['levels']):
+                if cast(Level, level) >= len(clsdata[cls].levels):
                     level = None
             else:
                 level = None
-        case {'merge': [*classes]}:
-            valid = list(set(classes) & set(spell['classes'].keys()))
+        case ClassEntry(merge=merge) if merge is not None:
+            valid = list(set(merge) & set(spell.classes.keys()))
 
             match len(valid):
                 case 0:
                     level = None
                 case 1:
-                    level = spell['classes'][valid[0]]
+                    level = spell.classes[valid[0]]
 
-                    if level >= len(clsdata[cls]['levels']):
+                    if level >= len(clsdata[cls].levels):
                         level = None
                 case _:
-                    level = min(map(lambda x: spell['classes'][x], valid))
+                    level = min(map(lambda x: spell.classes[x], valid))
 
-                    if level >= len(clsdata[cls]['levels']):
+                    if level >= len(clsdata[cls].levels):
                         level = None
         case _:
-            if cls in spell['classes']:
-                level = spell['classes'][cls]
+            if cls in spell.classes:
+                level = spell.classes[cls]
             else:
                 level = None
 
-    if level is not None and level >= len(clsdata[cls]['levels']):
+    if level is not None and level >= len(clsdata[cls].levels):
         logger.warning(f'{ spell.name } has invalid spell level for class { cls }, ignoring.')
 
-    acc['minimum'], acc['minimum_cls'] = _eval_minimum(
+    acc.minimum, acc.minimum_cls = _eval_minimum(
         level,
         cls,
-        acc['minimum'],
-        acc['minimum_cls'],
+        acc.minimum,
+        acc.minimum_cls,
     )
 
-    if clsdata[cls]['type'] == 'arcane':
+    if clsdata[cls].type == 'arcane':
         spellpage_arcane, spellpage_arcane_cls, spellpage_arcane_fixed = _eval_spellpage(
             level,
             cls,
-            acc['spellpage_arcane'],
-            acc['spellpage_arcane_cls'],
-            acc['spellpage_arcane_fixed'],
-            cls == 'wizard',
+            acc.spellpage_arcane,
+            acc.spellpage_arcane_cls,
+            acc.spellpage_arcane_fixed,
+            'wizard',
         )
 
-        acc['spellpage_arcane'] = spellpage_arcane
-        acc['spellpage_arcane_cls'] = spellpage_arcane_cls
-        acc['spellpage_arcane_fixed'] = spellpage_arcane_fixed
-    elif clsdata[cls]['type'] == 'divine':
+        acc.spellpage_arcane = spellpage_arcane
+        acc.spellpage_arcane_cls = spellpage_arcane_cls
+        acc.spellpage_arcane_fixed = spellpage_arcane_fixed
+    elif clsdata[cls].type == 'divine':
         spellpage_divine, spellpage_divine_cls, spellpage_divine_fixed = _eval_spellpage(
             level,
             cls,
-            acc['spellpage_divine'],
-            acc['spellpage_divine_cls'],
-            acc['spellpage_divine_fixed'],
-            cls == 'cleric',
+            acc.spellpage_divine,
+            acc.spellpage_divine_cls,
+            acc.spellpage_divine_fixed,
+            'cleric',
         )
 
-        acc['spellpage_divine'] = spellpage_divine
-        acc['spellpage_divine_cls'] = spellpage_divine_cls
-        acc['spellpage_divine_fixed'] = spellpage_divine_fixed
+        acc.spellpage_divine = spellpage_divine
+        acc.spellpage_divine_cls = spellpage_divine_cls
+        acc.spellpage_divine_fixed = spellpage_divine_fixed
 
-    return acc | {
-        'levels': acc['levels'] | {cls: level},
-    }
+    acc.levels = acc.levels | {cls: level}
+
+    return acc
 
 
-def process_spell(data):
+def process_spell(data: tuple[SpellFileEntry, ClassMap]) -> tuple[dict[str, Any], set[str]]:
     '''Process a spell entry.
 
        Returns a tuple of the column values for the spell to be added
        to the main spell table and a set of tags.'''
     spell, classes = data[0], data[1]
 
-    fields = reduce(_gen_spell_fields, classes.keys(), {
-        'spell': spell,
-        'clsdata': classes,
-        'levels': dict(),
-        'minimum': MAX_SPELL_LEVEL,
-        'minimum_cls': '',
-        'spellpage_arcane': None,
-        'spellpage_arcane_cls': None,
-        'spellpage_arcane_fixed': False,
-        'spellpage_divine': None,
-        'spellpage_divine_cls': None,
-        'spellpage_divine_fixed': False,
-    })
+    fields = reduce(_gen_spell_fields, classes.keys(), SpellFields(
+        spell=spell,
+        clsdata=classes,
+    ))
 
-    ret = fields['levels']
-    ret['name'] = spell['name']
+    ret: dict[str, Any] = fields.levels
+    ret['name'] = spell.name
 
     for f in ['minimum', 'spellpage_arcane', 'spellpage_divine',
               'minimum_cls', 'spellpage_arcane_cls', 'spellpage_divine_cls']:
-        ret[f] = fields[f]
+        ret[f] = getattr(fields, f)
 
     tags = {
-        spell['school'],
-        spell['subschool'],
+        spell.school,
+        spell.subschool,
     }
 
-    tags = tags | set(spell['descriptor'].split(', '))
+    tags = tags | set(spell.descriptor.split(', '))
 
     return (ret, tags)
 
 
-def process_spell_chunk(items):
+def process_spell_chunk(items: Iterable[tuple[SpellFileEntry, ClassMap]], idx: int) -> Iterable[tuple[dict[str, Any], set[str]]]:
     '''Map a list of spell items into a list of SQL fields.'''
-    return map(process_spell, items)
+    ret = []
+
+    with LogRun(logger, logging.DEBUG, f'processing spell chunk { idx }'):
+        for spell in items:
+            ret.append(process_spell(spell))
+
+    return ret
+
+
+@dataclass
+class SpellData(agent.AgentData):
+    '''Data handled by a SpellAgent.'''
+    tags: set[str]
 
 
 class SpellAgent(agent.Agent):
@@ -192,13 +245,16 @@ class SpellAgent(agent.Agent):
         'minimum',
     }
 
-    def __init__(self, dataset, name='spell', db_path=(Path.cwd() / 'spells.db')):
-        self._db_path = db_path
+    def __init__(self: SpellAgent, dataset: DataSet, name: str, db_path: Path = (Path.cwd() / 'spells.db')) -> None:
         super().__init__(dataset, name)
+        self._db_path = db_path
+        self._data: SpellData = SpellData(
+            tags=set()
+        )
 
-    async def _level_in_cls(self, level, cls):
-        levels = await self._ds['classes'].get_class(cls)
-        levels = levels['levels']
+    async def _level_in_cls(self: SpellAgent, level: Level, cls: Cls) -> bool:
+        classes = await cast(ClassesAgent, self._ds['classes']).get_class(cls)
+        levels = classes.levels
 
         if level is None:
             return True
@@ -209,7 +265,7 @@ class SpellAgent(agent.Agent):
     def _process_data(_):
         return None
 
-    async def load_data(self, pool):
+    async def load_data(self: SpellAgent, pool: Executor) -> types.Ret:
         '''Load the data for this agent, using the specified executor pool.
 
            This requires a specific overide as it involves a large amount
@@ -221,7 +277,14 @@ class SpellAgent(agent.Agent):
         if not self._ready.is_set():
             logger.info('Fetching class data.')
 
-            classes = await self._ds['classes'].W_classdata()
+            classes = await cast(ClassesAgent, self._ds['classes']).W_classdata()
+
+            logger.info('Reading spell data.')
+
+            with open(constants.DATA_ROOT / f'{ self.name }.yaml') as f:
+                data = yaml.load(f)
+
+            spell_list = zip(map(make_spell_file_entry, data), repeat(classes, len(data)))
 
             async with aiosqlite.connect(self._db_path) as db:
                 db.row_factory = aiosqlite.Row
@@ -247,23 +310,19 @@ class SpellAgent(agent.Agent):
                     VACUUM;
                 ''')
 
-                logger.info('Reading spell data.')
-
-                with open(constants.DATA_ROOT / f'{ self.name }.yaml') as f:
-                    spells = yaml.load(f)
-
                 logger.info('Processing spells to add to DB.')
-
-                spells = zip(spells, repeat(classes, len(spells)))
 
                 coros = []
 
-                for spell_chunk in chunk(spells, 100):
+                for idx, spell_chunk in enumerate(chunk(spell_list, 100)):
                     coros.append(loop.run_in_executor(
                         pool,
                         process_spell_chunk,
-                        spell_chunk
+                        spell_chunk,
+                        idx,
                     ))
+
+                # TODO: Improve parallelism and memory usage.
 
                 spells = list(flatten(await asyncio.gather(*coros)))
 
@@ -304,7 +363,7 @@ class SpellAgent(agent.Agent):
 
                 logger.info('Storing tag list.')
 
-                self._data['tags'] = ' '.join(filter(lambda x: x, set.union(*map(lambda x: x[1], spells))))
+                self._data.tags = reduce(set.union, map(lambda x: x[1], spells))
 
                 logger.info('Optimizing DB.')
 
@@ -316,52 +375,20 @@ class SpellAgent(agent.Agent):
 
             self._ready.set()
 
-        return True
+        return types.Ret.OK
 
+    @log_call_async(logger, 'roll random spell')
     @check_ready
-    async def get_spell(self, name):
-        '''Look up a spell by name.'''
-        async with aiosqlite.connect(self._db_path) as db:
-            db.row_factory = aiosqlite.Row
-
-            spellrow = await db.execute_fetchall('''
-                SELECT *
-                FROM spells
-                WHERE name = ':name';
-            ''', {'name': name})
-
-            if not spellrow:
-                return Ret.NO_MATCH
-            else:
-                spellrow = spellrow[0]
-
-            tagsrow = await db.execute_fetchall('''
-                SELECT *
-                FROM tagmap
-                WHERE name = ':name';
-            ''', {'name': name})
-
-        if not tagsrow:
-            tagsrow = {'data': ''}
-        else:
-            tagsrow = tagsrow[0]
-
-        tags = tagsrow['data'].split(' ')
-        spell = {
-            'tags': tags
-        }
-
-        for k in spellrow.keys():
-            spell[k] = spellrow[k]
-
-        return spell
-
-    @check_ready
-    async def random(self, level=None, cls=None, tag=None):
+    async def random(
+            self: SpellAgent,
+            level: Level | None = None,
+            cls: Cls | None = None,
+            tag: str | None = None) -> \
+            types.Result[types.item.SpellEntry]:
         '''Get a random spell, optionally limited by level, class, or tag.'''
-        match await self._ds['classes'].classdata():
-            case Ret.NOT_READY:
-                return (Ret.NOT_READY, 'Failed to fetch class data.')
+        match await cast(ClassesAgent, self._ds['classes']).classdata():
+            case types.Ret.NOT_READY:
+                return (types.Ret.NOT_READY, 'Failed to fetch class data.')
             case ret:
                 classes = ret
 
@@ -373,7 +400,7 @@ class SpellAgent(agent.Agent):
 
         if level is not None and level not in range(0, MAX_SPELL_LEVEL + 1):
             return (
-                Ret.INVALID,
+                types.Ret.INVALID,
                 'Level must be an integer between ' +
                 f'0 and { MAX_SPELL_LEVEL }.'
             )
@@ -390,7 +417,7 @@ class SpellAgent(agent.Agent):
                 cls = random.choice(valid)
             case ('arcane', level):
                 valid = [k for (k, v) in classes.enumerate()
-                         if await self._level_in_cls(level, k)
+                         if await self._level_in_cls(cast(int, level), k)
                          and v.type == 'arcane']
                 cls = random.choice(valid)
             case ('divine', None):
@@ -399,21 +426,21 @@ class SpellAgent(agent.Agent):
                 cls = random.choice(valid)
             case ('divine', level):
                 valid = [k for (k, v) in classes.items()
-                         if await self._level_in_cls(level, k)
+                         if await self._level_in_cls(cast(int, level), k)
                          and v.type == 'divine']
                 cls = random.choice(valid)
             case ('random', None):
                 cls = random.choice(classes.keys())
             case ('random', level):
                 valid = [k for (k, v) in classes.items()
-                         if await self._level_in_cls(level, k)]
+                         if await self._level_in_cls(cast(int, level), k)]
                 cls = random.choice(valid)
             case (None, _):
                 cls = 'minimum'
             case (cls, level) if cls in valid_classes and \
-                    not await self._level_in_cls(level, cls):
+                    not await self._level_in_cls(cast(int, level), cls):
                 return (
-                    Ret.INVALID,
+                    types.Ret.INVALID,
                     f'Class { cls } does not have access to ' +
                     f'level { level } spells.'
                 )
@@ -421,7 +448,7 @@ class SpellAgent(agent.Agent):
                 pass
             case _:
                 return (
-                    Ret.INVALID,
+                    types.Ret.INVALID,
                     'Invalid class name. ' +
                     'Must be one of: random, spellpage, ' +
                     f'{ ", ".join(valid_classes) }'
@@ -482,7 +509,7 @@ class SpellAgent(agent.Agent):
 
         if not spell:
             return (
-                Ret.NO_MATCH,
+                types.Ret.NO_MATCH,
                 'No spells found matching the requested parameters.'
             )
         else:
@@ -499,11 +526,21 @@ class SpellAgent(agent.Agent):
         if level is None:
             level = spell[cls]
 
-        spell = {
-            'name': spell['name'],
-            'level': spell[cls],
-            'cls': cls,
-            'caster_level': classes[cls]['levels'][level],
-        }
+        return (
+            types.Ret.OK,
+            types.item.SpellEntry(
+                name=spell['name'],
+                level=spell[cls],
+                cls=cast(str, cls),
+                caster_level=classes[cls].levels[level],
+            )
+        )
 
-        return (Ret.OK, spell)
+    @log_call_async(logger, 'get spell tags')
+    @check_ready
+    async def tags(self: SpellAgent) -> Sequence[str] | types.Ret:
+        '''Return a list of recognized tags.'''
+        if self._data.tags:
+            return list(self._data.tags)
+        else:
+            return types.Ret.NO_MATCH
