@@ -1,12 +1,18 @@
 # Copyright (c) 2023 Austin S. Hemmelgarn
 # SPDX-License-Identifier: MITNFA
 
-import collections.abc
+from __future__ import annotations
+
+from collections.abc import MutableSequence, Iterable
+from typing import TypeVar, Generic, overload, cast
 
 from .container import R35Container
+from .item import Item
+
+T = TypeVar('T')
 
 
-class R35List(R35Container, collections.abc.MutableSequence):
+class R35List(R35Container, MutableSequence, Generic[T]):
     '''A simple cost-tracking list class.
 
        Costs are only updated for contained items that are one of:
@@ -20,65 +26,79 @@ class R35List(R35Container, collections.abc.MutableSequence):
        This class is (intentionally) optimized for WORM access
        patterns. In-place replacement of items is expensive as it requires
        re-scanning the entire container again to recompute costs.'''
-    def __init__(self, data=None):
+    def __init__(self: R35List, data: Iterable[T] | None = None):
         super().__init__()
-        self._data = list()
+        self._data: list = list()
 
-        if data:
+        if data is not None:
             for i in data:
                 self.append(i)
 
-    def __repr__(self):
+    def __repr__(self: R35List) -> str:
         return f'R35List({ self.costs }, { self._data })'
 
-    def __getitem__(self, index):
-        if not isinstance(index, int):
-            raise IndexError(f'{ index } is not a supported index for R35List objects.')
+    @overload
+    def __getitem__(self: R35List, index: int) -> T:
+        pass
 
-        if index < -len(self._data) or index >= len(self._data):
-            raise IndexError('R35List index out of range')
+    @overload
+    def __getitem__(self: R35List, index: slice) -> MutableSequence[T]:
+        pass
+
+    def __getitem__(self, index):
+        match index:
+            case int():
+                if index < -len(self._data) or index >= len(self._data):
+                    raise IndexError('R35List index out of range')
+            case slice():
+                pass
+            case _:
+                raise IndexError(f'{ index } is not a supported index for R35List objects.')
 
         return self._data[index]
 
+    @overload
+    def __setitem__(self: R35List, index: int, value: T) -> None:
+        pass
+
+    @overload
+    def __setitem__(self: R35List, index: slice, value: Iterable[T]) -> None:
+        pass
+
     def __setitem__(self, index, value):
-        if not isinstance(index, int):
-            raise IndexError(f'{ index } is not a supported index for R35List objects.')
-
-        if index < -len(self._data) or index >= len(self._data):
-            raise IndexError('R35List assignment index out of range')
-
         self._data[index] = value
         self._recompute_costs()
 
+    @overload
+    def __delitem__(self: R35List, index: int) -> None:
+        pass
+
+    @overload
+    def __delitem__(self: R35List, index: slice) -> None:
+        pass
+
     def __delitem__(self, index):
-        if not isinstance(index, int):
-            raise IndexError(f'{ index } is not a supported index for R35List objects.')
-
-        if index < -len(self._data) or index >= len(self._data):
-            raise IndexError('R35List assignment index out of range')
-
         del self._data[index]
         self._recompute_costs()
 
-    def _recompute_costs(self):
+    def _recompute_costs(self: R35List) -> None:
         self._costs.reset()
 
         for item in self._data:
-            match self._get_costs(item):
+            match self._get_costs(cast(Item, item)):
                 case None:
                     pass
                 case (cost_min, cost_max):
-                    self._costs.add(cost_min)
-                    self._costs.add(cost_max)
+                    self._costs.add([cost_min])
+                    self._costs.add([cost_max])
 
-    def insert(self, index, item):
+    def insert(self: R35List, index: int, item: T) -> None:
         '''Add item to the list at index.'''
-
         self._data.insert(index, item)
 
-        match self._get_costs(item):
+        match self._get_costs(cast(Item, item)):
             case None:
                 pass
             case (cost_min, cost_max):
-                self._costs.add(cost_min)
-                self._costs.add(cost_max)
+                self._costs.add([cost_min])
+                self._costs.add([cost_max])

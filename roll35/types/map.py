@@ -1,12 +1,20 @@
 # Copyright (c) 2023 Austin S. Hemmelgarn
 # SPDX-License-Identifier: MITNFA
 
-import collections.abc
+from __future__ import annotations
+
+from collections.abc import MutableMapping, Mapping, ItemsView, KeysView, ValuesView
+from enum import Enum
+from typing import TypeVar, Generic, cast
 
 from .container import R35Container
+from .item import Item
+
+K = TypeVar('K')
+V = TypeVar('V')
 
 
-class R35Map(R35Container, collections.abc.MutableMapping):
+class R35Map(R35Container, MutableMapping, Generic[K, V]):
     '''A simple cost-tracking mapping class.
 
        Costs are only updated for contained items that are one of:
@@ -23,28 +31,28 @@ class R35Map(R35Container, collections.abc.MutableMapping):
        patterns. In-place replacement of existing keys is expensive
        as it requires rescanning the contained items to recompute the
        `costs` property.'''
-    def __init__(self, data=None):
+    def __init__(self: R35Map, data: Mapping[K, V] | None = None):
         super().__init__()
-        self._data = dict()
+        self._data: dict[K, V] = dict()
 
-        if data:
+        if data is not None:
             for k, v in data.items():
                 self[k] = v
 
-    def __repr__(self):
+    def __repr__(self: R35Map) -> str:
         return f'R35Map({ self.costs }, { self._data })'
 
-    def __getitem__(self, key):
+    def __getitem__(self: R35Map, key: K) -> V:
         if key in self._data:
             return self._data[key]
         else:
             raise KeyError(key)
 
-    def __setitem__(self, key, value):
-        if not (isinstance(key, str) or isinstance(key, int)):
-            raise KeyError('Only string and integer keys are supported by R35Map objects.')
+    def __setitem__(self: R35Map, key: K, value: V) -> None:
+        if not (isinstance(key, str) or isinstance(key, int) or isinstance(key, Enum)):
+            raise KeyError('Only string, integer, and Enum keys are supported by R35Map objects.')
 
-        match self._get_costs(value):
+        match self._get_costs(cast(Item, value)):
             case None:
                 if key in self:
                     del self[key]
@@ -55,10 +63,10 @@ class R35Map(R35Container, collections.abc.MutableMapping):
                     del self[key]
 
                 self._data[key] = value
-                self._costs.add(cost_min)
-                self._costs.add(cost_max)
+                self._costs.add([cost_min])
+                self._costs.add([cost_max])
 
-    def __delitem__(self, key):
+    def __delitem__(self: R35Map, key: K) -> None:
         if key in self._data:
             del self._data[key]
 
@@ -66,7 +74,7 @@ class R35Map(R35Container, collections.abc.MutableMapping):
         else:
             raise KeyError(key)
 
-    def _recompute_costs(self):
+    def _recompute_costs(self: R35Map) -> None:
         self._costs.reset()
 
         for item in self._data.values():
@@ -74,17 +82,17 @@ class R35Map(R35Container, collections.abc.MutableMapping):
                 case None:
                     pass
                 case (cost_min, cost_max):
-                    self._costs.add(cost_min)
-                    self._costs.add(cost_max)
+                    self._costs.add([cost_min])
+                    self._costs.add([cost_max])
 
-    def items(self):
+    def items(self: R35Map) -> ItemsView:
         '''Return a view of the keys and values of the mapping.'''
         return self._data.items()
 
-    def keys(self):
+    def keys(self: R35Map) -> KeysView:
         '''Return a view of the keys of the mapping.'''
         return self._data.keys()
 
-    def values(self):
+    def values(self: R35Map) -> ValuesView:
         '''Return a view of the values of the mapping.'''
         return self._data.values()

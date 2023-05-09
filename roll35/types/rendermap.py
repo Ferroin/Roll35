@@ -1,25 +1,32 @@
 # Copyright (c) 2023 Austin S. Hemmelgarn
 # SPDX-License-Identifier: MITNFA
 
-import collections.abc
+from __future__ import annotations
 
-from ..common import rnd
+from collections.abc import Mapping, Sequence, Iterator
+from typing import Any, NoReturn, cast
+
+from .base import WeightedEntry
+from .retcode import Ret
+from ..common import rnd, make_weighted_entry
 
 
-class RenderMap(collections.abc.Mapping):
+class RenderMap(Mapping):
     '''Immutable mapping used for grouped render data types.
 
        Keys must be strings that are valid Python identifiers.
 
-       Values must be lists.
+       Values must be lists of strings.
 
        Each key is also exposed as an attribute. When accessing that
        attribute, a random item from the value for that key will be
        returned.'''
-    def __init__(self, data):
+    def __init__(self: RenderMap, data: Mapping[str, Sequence[str | dict]]) -> None:
         if not (isinstance(data, dict) or
-                isinstance(data, collections.abc.Mapping)):
+                isinstance(data, Mapping)):
             raise TypeError('Initializer must be a mapping.')
+
+        self._data: dict[str, Sequence[str | WeightedEntry]] = dict()
 
         for k, v in data.items():
             try:
@@ -31,27 +38,35 @@ class RenderMap(collections.abc.Mapping):
                 raise KeyError('RenderMap keys must be strings.')
 
             if not (isinstance(v, list) or
-                    isinstance(v, collections.abc.Sequence)):
+                    isinstance(v, Sequence)):
                 raise ValueError('RenderMap values must be valid sequences.')
 
-        self._data = data
+            if all(map(lambda x: isinstance(x, str), v)):
+                self._data[k] = cast(Sequence[str], v)
+            else:
+                self._data[k] = list(map(lambda x: make_weighted_entry(x), cast(Sequence[dict[str, str]], v)))
 
-    def __getattr__(self, key):
+    def __getattr__(self: RenderMap, key: str) -> str | Mapping | NoReturn:
         data = object.__getattribute__(self, '_data')
 
         if key in data:
-            return rnd(data[key])
+            ret = rnd(data[key])
+
+            if isinstance(ret, Ret):
+                raise AttributeError
+            else:
+                return ret
         else:
             raise AttributeError
 
-    def __len__(self):
+    def __len__(self: RenderMap) -> int:
         return len(self._data)
 
-    def __getitem__(self, key):
+    def __getitem__(self: RenderMap, key: str) -> Sequence[str | WeightedEntry]:
         return self._data[key]
 
-    def __iter__(self):
-        return list(self._data)
+    def __iter__(self: RenderMap) -> Iterator[str]:
+        return iter(self._data)
 
-    def __contains__(self, key):
+    def __contains__(self: RenderMap, key: Any) -> bool:
         return key in self._data
