@@ -7,141 +7,192 @@
    files, as well as providing the baasic functions needed by the bot
    code to work with that data. '''
 
+from __future__ import annotations
+
 import abc
 import asyncio
 import logging
 
+from collections.abc import Iterable, Mapping, Sequence
+from dataclasses import dataclass, KW_ONLY
+from typing import Any, Callable, cast, TYPE_CHECKING
+
 from . import constants
 from .. import types
 from ..common import check_ready, rnd, make_weighted_entry, yaml
-from ..retcode import Ret
+from ..log import log_call_async
+
+if TYPE_CHECKING:
+    from concurrent.futures import Executor
+
+    from . import DataSet
+    from .classes import ClassMap
 
 logger = logging.getLogger(__name__)
 
 
-def ensure_costs(func):
+def ensure_costs(func: Callable) -> Callable:
     '''Decorate an async method to ensure that the mincost and maxcost arguments are valid.'''
-    async def f(self, *args, mincost=None, maxcost=None, **kwargs):
-        if mincost is None:
-            mincost = 0
+    async def f(*args, **kwargs):
+        if getattr(kwargs, 'mincost', None) is None:
+            kwargs['mincost'] = 0
 
-        if maxcost is None:
-            maxcost = float('inf')
+        if getattr(kwargs, 'maxcost', None) is None:
+            kwargs['maxcost'] = float('inf')
 
-        return await func(self, *args, mincost=mincost, maxcost=maxcost, **kwargs)
+        return await func(*args, **kwargs)
 
     return f
 
 
-def process_compound_itemlist(items, costmult_handler=lambda x: x):
+def process_compound_itemlist(items: Iterable[types.Item], typ: Callable[[Any], Any] = lambda x: x, xform=lambda x: x) -> \
+        types.CompoundItemList:
     '''Process a compound list of weighted values.
 
        Each list entry must be a dict with keys coresponding to the
-       possible values for `roll35.data.constants.RANK` with each such key
-       bearing a weight to use for the entry when rolling a random item
-       of the corresponding rank.'''
-    ret = types.R35Map()
+       possible values for `roll35.types.Rank` with each such key bearing
+       a weight to use for the entry when rolling a random item of the
+       corresponding rank.'''
+    ret: types.CompoundItemList = types.R35Map()
 
-    for rank in constants.RANK:
-        ilist = types.R35List()
+    for rank in types.Rank:
+        ilist: types.R35List[types.WeightedEntry] = types.R35List()
 
         for item in items:
-            if item[rank]:
-                ilist.append({
-                    'weight': item[rank],
-                    'value': costmult_handler({k: v for k, v in item.items() if k != 'weight'})
-                })
+            try:
+                entry = typ(item)
+            except TypeError:
+                raise RuntimeError(f'Failed to process entry for compound item list: { item }')
+
+            if getattr(entry, rank.value):
+                ilist.append(make_weighted_entry(
+                    entry,
+                    key=rank.value,
+                    costmult_handler=xform,
+                ))
 
         ret[rank] = ilist
 
     return ret
 
 
-def process_ranked_itemlist(items, xform=lambda x: x):
+def process_ranked_itemlist(items: Mapping[str, Mapping[str, Iterable[types.Item]]], typ: Callable[[Any], Any] = lambda x: x, xform=lambda x: x) -> \
+        types.RankedItemList:
     '''Process ranked list of weighted values.
 
        This takes a dict of ranks to dicts of subranks to lists of dicts
        of weighted items, and processes them into the format used by
        our weighted random selection in various data agent modules.'''
-    ret = types.R35Map()
-    ranks = constants.RANK
+    ret: types.RankedItemList = types.R35Map()
 
-    if constants.RANK[0] not in items:
-        ranks = constants.LIMITED_RANK
-
-    for rank in ranks:
-        ret[rank] = process_subranked_itemlist(items[rank], xform)
+    for rank in [x for x in types.Rank if x.value in items]:
+        ret[rank] = process_subranked_itemlist(items[rank.value], typ, xform)
 
     return ret
 
 
-def process_subranked_itemlist(items, xform=lambda x: x):
+def process_subranked_itemlist(items: Mapping[str, Iterable[types.Item]], typ: Callable[[Any], Any] = lambda x: x, xform=lambda x: x) -> \
+        types.SubrankedItemList:
     '''Process a subranked list of weighted values.
 
        This takes a dict of subranks to lists of dicts of weighted items
        and processes them into the format used by our weighted random
        selection in various data agent modules.'''
-    ret = types.R35Map()
-    subranks = constants.SUBRANK
+    ret: types.SubrankedItemList = types.R35Map()
 
-    if constants.SLOTLESS_SUBRANK[0] in items:
-        subranks = constants.SLOTLESS_SUBRANK
+    for subrank in [x for x in types.Subrank if x.value in items]:
+        ret[subrank] = types.R35List()
 
-    for rank in subranks:
-        ret[rank] = types.R35List(
-            map(
-                lambda x: make_weighted_entry(xform(x)),
-                items[rank]
-            )
-        )
+        for item in items[subrank.value]:
+            try:
+                ret[subrank].append(make_weighted_entry(xform(typ(item))))
+            except TypeError:
+                raise RuntimeError(f'Failed to process entry for ranked item list: { item }')
 
     return ret
 
 
-def _cost_in_range(item, mincost, maxcost):
-    match maxcost:
-        case float('inf'):
-            return 'cost' in item and item['cost'] >= mincost
-        case _:
-            return 'cost' in item and item['cost'] in types.R35Range([mincost, maxcost])
+def _cost_in_range(item: types.Item, mincost: types.RangeMember, maxcost: types.RangeMember) -> bool:
+    return item.cost is not None and item.cost in types.R35Range([mincost, maxcost])
 
 
-def _costrange_in_range(item, mincost, maxcost):
-    return 'costrange' in item and types.R35Range(item['costrange']).overlaps(types.R35Range([mincost, maxcost]))
+def _costrange_in_range(item: types.Item, mincost: types.RangeMember, maxcost: types.RangeMember) -> bool:
+    return item.costrange is not None and types.R35Range(item.costrange).overlaps(types.R35Range([mincost, maxcost]))
 
 
-def costfilter(items, mincost, maxcost):
+def create_spellmult_xform(classes: ClassMap) -> Callable[[types.item.SpellItem], types.item.SpellItem]:
+    '''Create a costmult handler function based on spell levels.'''
+    def xform(x: types.item.SpellItem) -> types.item.SpellItem:
+        levels = map(lambda x: x.levels, classes.values())
+
+        match x:
+            case types.item.SpellItem(spell={'level': level, 'class': 'minimum'}, costmult=costmult) if costmult is not None:
+                filtered = filter(lambda x: len(x) > level and x[level] is not None, levels)
+                mapped = set(map(lambda x: cast(int, x[level]), filtered))
+                minlevel = min(mapped)
+                x.cost = minlevel * costmult
+            case types.item.SpellItem(spell={'level': level}, costmult=costmult) if costmult is not None:
+                filtered = filter(lambda x: len(x) > level and x[level] is not None, levels)
+                mapped = set(map(lambda x: cast(int, x[level]), filtered))
+                minlevel = min(mapped)
+                maxlevel = max(mapped)
+                x.costrange = (
+                    minlevel * costmult,
+                    maxlevel * costmult,
+                )
+            case _:
+                pass
+
+        return x
+
+    return xform
+
+
+def costfilter(items: Iterable[types.ItemEntry], mincost: types.RangeMember, maxcost: types.RangeMember) -> list[types.ItemEntry]:
     '''Filter a list of items by cost.'''
-    ret = []
+    ret: list[types.ItemEntry] = []
 
     for item in items:
-        match item:
-            case {'weight': _, 'value': v}:
-                value = v
-            case {'weight': _, **v}:
-                value = v
-            case v:
-                value = v
+        if isinstance(item, types.WeightedEntry):
+            value = item.value
 
-        if _cost_in_range(value, mincost, maxcost) or \
-           _costrange_in_range(value, mincost, maxcost) or \
-           ('cost' not in value and 'costrange' not in value):
+            if isinstance(value, str):
+                ret.append(item)
+            elif (_cost_in_range(value, mincost, maxcost) or
+                  _costrange_in_range(value, mincost, maxcost) or
+                  (value.cost is None and value.costrange is None)):
+                ret.append(item)
+
+        elif (_cost_in_range(item, mincost, maxcost) or
+              _costrange_in_range(item, mincost, maxcost) or
+              (item.cost is None and item.costrange is None)):
             ret.append(item)
 
     return ret
 
 
+@dataclass
+class AgentData:
+    '''Base class for agent data entries.'''
+    _: KW_ONLY
+    ranked: types.RankedItemList | None = None
+    compound: types.CompoundItemList | Mapping[types.Rank, Sequence[types.WeightedEntry]] | None = None
+
+
 class Agent(abc.ABC):
     '''Abstract base class for data agents.'''
-    def __init__(self, dataset, name):
+    def __init__(self: Agent, dataset: DataSet, name: str) -> None:
         self._ds = dataset
-        self._data = dict()
+        self._data = AgentData()
         self._ready = asyncio.Event()
         self.name = name
 
+    def __repr__(self: Agent) -> str:
+        return f'roll35.data.Agent[{ self.name }, ready: { self._ready.is_set() }]'
+
     @staticmethod
     @abc.abstractmethod
-    def _process_data(data):
+    def _process_data(data: Mapping | Sequence) -> AgentData:
         '''Callback to take the raw data for the agent and make it usable.
 
            Must be overridden by subclasses.
@@ -152,88 +203,131 @@ class Agent(abc.ABC):
            be assigned to the agent’s `_data` attribute.'''
         return NotImplemented
 
-    def _valid_rank(self, rank):
-        return rank in self._data
+    def _valid_rank(self: Agent, rank: types.Rank) -> bool:
+        if self._data.ranked is not None:
+            return rank in self._data.ranked
+        elif self._data.compound is not None:
+            return rank in self._data.compound
+        else:
+            return False
 
-    def _valid_subrank(self, rank, subrank):
-        return rank in self._data and subrank in self._data[rank]
+    def _valid_subrank(self: Agent, rank: types.Rank, subrank: types.Subrank) -> bool:
+        if self._data.ranked is not None:
+            return rank in self._data.ranked and subrank in self._data.ranked[rank]
+        else:
+            return False
 
-    async def _process_async(self, pool, func, args):
+    async def _process_async(self: Agent, pool: Executor, func: Callable, args: Iterable) -> Any:
         loop = asyncio.get_running_loop()
         return await loop.run_in_executor(pool, func, *args)
 
-    async def load_data(self, pool):
+    async def load_data(self: Agent, pool: Executor) -> types.Ret:
         '''Load data for this agent.'''
         if not self._ready.is_set():
-            logger.info(f'Loading { self.name } data.')
+            logger.info(f'Loading { self.name } data')
 
             with open(constants.DATA_ROOT / f'{ self.name }.yaml') as f:
                 data = yaml.load(f)
 
             self._data = await self._process_async(pool, self._process_data, [data])
-            logger.info(f'Finished loading { self.name } data.')
+
+            logger.info(f'Finished loading { self.name } data')
 
             self._ready.set()
 
-        return Ret.OK
+        return types.Ret.OK
 
+    @ensure_costs
+    @log_call_async(logger, 'roll random rank')
     @check_ready
-    async def random_rank(self, mincost, maxcost):
+    async def random_rank(self: Agent, mincost: types.RangeMember = None, maxcost: types.RangeMember = None) -> types.Rank | types.Ret:
         '''Return a random rank, possibly within the cost limits.'''
-        d = self._data
-        match [x for x in d if d[x].costs.min >= mincost and d[x].costs.max <= maxcost]:
-            case []:
-                return Ret.NO_MATCH
-            case [*ranks]:
-                return rnd(ranks)
+        if self._data.ranked is not None:
+            if isinstance(self._data.ranked, types.R35Map):
+                d1 = cast(types.RankedItemList, self._data.ranked)
+                match [x for x in d1 if d1[x].costs.overlaps(types.R35Range([mincost, maxcost]))]:
+                    case [*ranks]:
+                        return cast(types.Rank, rnd(ranks))
+            else:
+                d2 = [x for x in self._data.ranked if x in {y for y in types.Rank}]
+                return rnd(d2)
+        elif self._data.compound is not None:
+            if isinstance(self._data.compound, types.R35Map):
+                d3 = cast(types.CompoundItemList, self._data.compound)
+                match [x for x in d3 if d3[x].costs.overlaps(types.R35Range([mincost, maxcost]))]:
+                    case [*ranks]:
+                        return cast(types.Rank, rnd(ranks))
+            else:
+                d4 = [x for x in self._data.compound if x in {y for y in types.Rank}]
+                return rnd(d4)
 
+        return types.Ret.NO_MATCH
+
+    @ensure_costs
+    @log_call_async(logger, 'roll random subrank')
     @check_ready
-    async def random_subrank(self, rank, mincost, maxcost):
+    async def random_subrank(self: Agent, rank: types.Rank, mincost: types.RangeMember = None, maxcost: types.RangeMember = None) -> \
+            types.Subrank | types.Ret:
         '''Return a random subrank for the given rank, possibly within the cost limits.'''
-        d = self._data[rank]
-        match [x for x in d if d[x].costs.min >= mincost and d[x].costs.max <= maxcost]:
-            case []:
-                return Ret.NO_MATCH
+        if self._data.ranked is not None:
+            data = self._data.ranked
+        else:
+            return types.Ret.NO_MATCH
+
+        d = {k: v for k, v in data[rank].items() if k in {x for x in types.Subrank}}
+        match [x for x in d if d[x].costs.overlaps(types.R35Range([mincost, maxcost]))]:
             case [*subranks]:
-                return rnd(subranks)
+                return cast(types.Subrank, rnd(subranks))
 
-    @check_ready
+        return types.Ret.NO_MATCH
+
     @ensure_costs
-    async def random_ranked(self, rank=None, subrank=None, mincost=None, maxcost=None):
+    @log_call_async(logger, 'roll random ranked item')
+    @check_ready
+    async def random_ranked(self: Agent, rank: types.Rank | None = None, subrank: types.Subrank | None = None,
+                            mincost: types.RangeMember = None, maxcost: types.RangeMember = None) -> types.Item | types.Ret:
         '''Roll a random item for the given rank and subrank, possibly within the specified cost range.'''
-        match (rank, subrank):
-            case (None, None):
-                rank = await self.random_rank(mincost, maxcost)
-                if rank is Ret.NO_MATCH:
-                    return Ret.NO_MATCH
-                subrank = await self.random_subrank(rank, mincost, maxcost)
-                if subrank is Ret.NO_MATCH:
-                    return Ret.NO_MATCH
-            case (rank, None) if self._valid_rank(rank):
-                subrank = await self.random_subrank(rank, mincost, maxcost)
-                if subrank is Ret.NO_MATCH:
-                    return Ret.NO_MATCH
-            case (rank, subrank) if self._valid_subrank(rank, subrank):
-                pass
-            case (rank, subrank) if self._valid_rank(rank):
-                raise ValueError(f'Invalid subrank for { self.name }: { subrank }')
-            case (rank, _):
-                raise ValueError(f'Invalid rank for { self.name }: { rank }')
+        if self._data.ranked is None:
+            return types.Ret.NO_MATCH
 
-        return rnd(costfilter(self._data[rank][subrank], mincost, maxcost))
+        if rank is None:
+            rank = await self.random_rank(mincost=mincost, maxcost=maxcost)
+            if rank is types.Ret.NO_MATCH:
+                return types.Ret.NO_MATCH
 
-    @check_ready
+        if subrank is None and self._valid_rank(rank):
+            subrank = await self.random_subrank(rank, mincost=mincost, maxcost=maxcost)
+            if subrank is types.Ret.NO_MATCH:
+                return types.Ret.NO_MATCH
+        else:
+            raise ValueError(f'Invalid rank for { self.name }: { rank }')
+
+        if not self._valid_subrank(rank, subrank):
+            raise ValueError(f'Invalid subrank for { self.name }: { subrank }')
+
+        return rnd(costfilter(self._data.ranked[rank][subrank], mincost, maxcost))
+
     @ensure_costs
-    async def random_compound(self, rank=None, mincost=None, maxcost=None):
+    @log_call_async(logger, 'roll random compound item')
+    @check_ready
+    async def random_compound(
+            self: Agent,
+            rank: types.Rank | None = None,
+            mincost: types.RangeMember = None,
+            maxcost: types.RangeMember = None) -> \
+            types.Item | str | types.Ret:
         '''Roll a random item for the given rank, possibly within the specified cost range.'''
+        if self._data.compound is None:
+            return types.Ret.NO_MATCH
+
         match rank:
             case None:
-                rank = await self.random_rank(mincost, maxcost)
-                if rank is Ret.NO_MATCH:
-                    return Ret.NO_MATCH
+                rank = await self.random_rank(mincost=mincost, maxcost=maxcost)
+                if rank is types.Ret.NO_MATCH:
+                    return types.Ret.NO_MATCH
             case rank if self._valid_rank(rank):
                 pass
             case _:
                 raise ValueError(f'Invalid rank for { self.name }: { rank }')
 
-        return rnd(costfilter(self._data[rank], mincost, maxcost))
+        return rnd(costfilter(self._data.compound[rank], mincost, maxcost))

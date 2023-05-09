@@ -6,25 +6,3 @@
 from pathlib import Path
 
 DATA_ROOT = Path(__file__).parent / 'files'
-
-RANK = [
-    'minor',
-    'medium',
-    'major',
-]
-
-LIMITED_RANK = [
-    'medium',
-    'major',
-]
-
-SUBRANK = [
-    'lesser',
-    'greater',
-]
-
-SLOTLESS_SUBRANK = [
-    'least',
-    'lesser',
-    'greater',
-]

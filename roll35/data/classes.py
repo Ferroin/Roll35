@@ -3,32 +3,89 @@
 
 '''Data handling for spell classes.'''
 
+from __future__ import annotations
+
+import logging
+
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass, KW_ONLY
+from typing import TYPE_CHECKING, Literal
+
 from . import agent
-from ..common import check_ready
+from ..common import check_ready, ismapping
+from ..log import log_call_async
+
+if TYPE_CHECKING:
+    from . import DataSet
+
+logger = logging.getLogger(__name__)
+
+
+@dataclass
+class ClassEntry:
+    '''A spellcasting class entry.'''
+    _: KW_ONLY
+    name: str
+    type: Literal['arcane' | 'divine']
+    levels: list[int | None]
+    copy: str | None = None
+    merge: Sequence[str] | None = None
+
+
+ClassMap = Mapping[str, ClassEntry]
+
+
+@dataclass
+class ClassesData(agent.AgentData):
+    '''Data managed by a ClassesAgent.'''
+    classes: ClassMap
 
 
 class ClassesAgent(agent.Agent):
     '''A data agent for spellcasting class data.'''
-    @staticmethod
-    def _process_data(data):
-        return data
+    def __init__(self: ClassesAgent, dataset: DataSet, name: str) -> None:
+        super().__init__(dataset, name)
+        self._data: ClassesData = ClassesData(
+            classes=dict()
+        )
 
-    async def W_classdata(self):
+    @staticmethod
+    def _process_data(data: Mapping | Sequence) -> ClassesData:
+        if not ismapping(data):
+            raise TypeError('Class data must be a mapping.')
+
+        classes = dict()
+
+        for k, v in data.items():
+            try:
+                classes[k] = ClassEntry(name=k, **v)
+            except TypeError:
+                raise RuntimeError(f'Invalid class entry: { k }: { v }')
+
+        return ClassesData(
+            classes=classes
+        )
+
+    @log_call_async(logger, 'blocking get class data')
+    async def W_classdata(self: ClassesAgent) -> ClassMap:
         '''Return the bulk data, but wait until the agent is ready.'''
         await self._ready.wait()
-        return self._data
+        return self._data.classes
 
+    @log_call_async(logger, 'get class data')
     @check_ready
-    async def classdata(self):
+    async def classdata(self: ClassesAgent) -> ClassMap:
         '''Return the bulk data.'''
-        return self._data
+        return self._data.classes
 
+    @log_call_async(logger, 'get class list')
     @check_ready
-    async def classes(self):
+    async def classes(self: ClassesAgent) -> Sequence[str]:
         '''Return the list of classes.'''
-        return list(self._data.keys())
+        return list(self._data.classes.keys())
 
+    @log_call_async(logger, 'get class')
     @check_ready
-    async def get_class(self, cls):
+    async def get_class(self: ClassesAgent, cls: str) -> ClassEntry:
         '''Return the data for a specific class, by name.'''
-        return self._data[cls]
+        return self._data.classes[cls]

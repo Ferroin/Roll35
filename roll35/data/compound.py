@@ -3,71 +3,57 @@
 
 '''Data handling for compound item lists.'''
 
+from __future__ import annotations
+
 import logging
+
+from typing import Any, TYPE_CHECKING, cast
 
 from . import agent
 from . import constants
-from ..common import yaml, bad_return
-from ..retcode import Ret
+from .classes import ClassMap, ClassesAgent
+from .spell import SpellAgent
+from .. import types
+from ..common import yaml, bad_return, ismapping
+from ..log import log_call_async
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping, Sequence
+    from concurrent.futures import Executor
 
 logger = logging.getLogger(__name__)
 
 
-def create_spellmult_xform(classes):
-    '''Create a costmult handler function based on spell levels.'''
-    def xform(x):
-        levels = map(lambda x: x['levels'], classes.values())
-
-        match x:
-            case {'spell': {'level': level, 'class': 'minimum'}, 'costmult': costmult}:
-                levels = filter(lambda x: len(x) > level and x[level] is not None, levels)
-                levels = set(map(lambda x: x[level], levels))
-                minlevel = min(levels)
-                x['cost'] = minlevel * costmult
-            case {'spell': {'level': level}, 'costmult': costmult}:
-                levels = filter(lambda x: len(x) > level and x[level] is not None, levels)
-                levels = set(map(lambda x: x[level], levels))
-                minlevel = min(levels)
-                maxlevel = max(levels)
-                x['costrange'] = [
-                    minlevel * costmult,
-                    maxlevel * costmult,
-                ]
-            case _:
-                raise ValueError(f'Invalid compound spell entry { x }')
-
-        return x
-
-    return xform
+def convert_compound_item(item: Mapping[str, Any]) -> types.item.CompoundItem:
+    '''Convert a compound item entry to the appropriate dataclass.'''
+    match item:
+        case {'spell': _}:
+            return types.item.CompoundSpellItem(**item)
+        case _:
+            return types.item.CompoundItem(**item)
 
 
 class CompoundAgent(agent.Agent):
     '''Basic data agent for compound item lists.'''
     @staticmethod
-    def _process_data(data):
-        return agent.process_compound_itemlist(data)
+    def _process_data(data: Mapping | Sequence, classes: ClassMap = dict()) -> agent.AgentData:
+        if ismapping(data):
+            raise ValueError('Compound Spell data must be a sequence')
 
-    async def random(self, **kwargs):
-        return await super().random_compound(**kwargs)
-
-
-class CompoundSpellAgent(CompoundAgent):
-    '''A compound agent for handling spell-based items.'''
-    @staticmethod
-    def _process_data(data, classes):
-        ret = agent.process_compound_itemlist(
-            data,
-            create_spellmult_xform(classes)
+        return agent.AgentData(
+            compound=agent.process_compound_itemlist(
+                data,
+                typ=convert_compound_item,
+                xform=agent.create_spellmult_xform(classes),
+            )
         )
 
-        return ret
-
-    async def load_data(self, pool):
+    async def load_data(self: CompoundAgent, pool: Executor) -> types.Ret:
         '''Load data for this agent.'''
         if not self._ready.is_set():
             logger.info('Fetching class data.')
 
-            classes = await self._ds['classes'].W_classdata()
+            classes = await cast(ClassesAgent, self._ds['classes']).W_classdata()
 
             logger.info(f'Loading { self.name } data.')
 
@@ -79,29 +65,34 @@ class CompoundSpellAgent(CompoundAgent):
 
             self._ready.set()
 
-        return Ret.OK
+        return types.Ret.OK
 
-    async def random(self, cls=None, **kwargs):
+    @log_call_async(logger, 'roll compound item')
+    async def random(self: CompoundAgent, cls: str | None = None, **kwargs) -> types.Item | types.Ret:
         '''Roll a random item, then roll a spell for it if needed.'''
-        match await super().random_compound(**kwargs):
-            case Ret.NO_MATCH:
-                return (Ret.NO_MATCH, 'No items match specified cost range.')
-            case {'spell': spell, **item}:
-                match await self._ds['spell'].random(**spell):
-                    case Ret.NOT_READY:
-                        return (Ret.NOT_READY, 'Failed to roll random spell for item: spell data not ready.')
-                    case (ret, msg) if ret is not Ret.OK:
-                        logger.warning(f'Failed to roll random spell for item using parameters: { msg }, recieved: { msg }')
-                        return (ret, f'Failed to roll random spell for item: { msg }')
-                    case (Ret.OK, spell):
-                        if 'costmult' in item:
-                            item['cost'] = item['costmult'] * spell['caster_level']
+        item = await super().random_compound(**kwargs)
 
-                        item['rolled_spell'] = spell
-                        item['spell'] = spell
-                        return (Ret.OK, item)
+        match item:
+            case types.Ret.NO_MATCH:
+                return types.Ret.NO_MATCH
+            case types.item.SpellItem(spell=spell):
+                if ('cls' not in spell or spell['cls'] is None) and cls is not None:
+                    spell['cls'] = cls
+
+                match await cast(SpellAgent, self._ds['spell']).random(**spell):
+                    case types.Ret.NOT_READY:
+                        return types.Ret.NOT_READY
+                    case (ret, msg) if ret is not types.Ret.OK:
+                        logger.warning(f'Failed to roll random spell for item using parameters: { spell }, recieved: { msg }')
+                        return ret
+                    case (types.Ret.OK, spell):
+                        if hasattr(item, 'costmult') and item.costmult is not None:
+                            item.cost = item.costmult * spell.caster_level
+
+                        item.rolled_spell = spell
+                        return item
                     case ret:
                         logger.error(bad_return(ret))
-                        return (Ret.FAILED, 'Unknown internal error.')
+                        return types.Ret.FAILED
             case item:
-                return (Ret.OK, item)
+                return item
