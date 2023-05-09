@@ -1,17 +1,61 @@
 # Copyright (c) 2023 Austin S. Hemmelgarn
 # SPDX-License-Identifier: MITNFA
 
-import collections.abc
+from __future__ import annotations
 
+from collections.abc import Mapping, Sequence, Iterator
+from typing import TypedDict, Literal, Union, Dict, Any, cast
+
+from .base import WeightedEntry
 from .rendermap import RenderMap
+from ..common import rnd, make_weighted_entry
 
-from ..common import rnd
+
+class TFlatEntry(TypedDict):
+    '''A type definition for a flat list entry in the render data.'''
+    type: Literal['flat']
+    data: Sequence[str]
 
 
-class RenderData(collections.abc.Mapping):
-    '''Top level type for data used to render templates.'''
-    def __init__(self, data):
-        self._data = dict()
+class TFlatProportionalEntry(TypedDict):
+    '''A type definition for a flat proportional list entry in the render data.'''
+    type: Literal['flat_proportional']
+    data: Sequence[WeightedEntry]
+
+
+class TGroupedEntry(TypedDict):
+    '''A type definition for a grouped list entry in the render data.'''
+    type: Literal['grouped']
+    data: Dict[str, Sequence[str]]
+
+
+class TGroupedProportionalEntry(TypedDict):
+    '''A type definition for a grouped proportional list entry in the render data.'''
+    type: Literal['grouped_proportional']
+    data: Dict[str, Sequence[WeightedEntry]]
+
+
+TRenderEntry = Union[
+    TFlatEntry,
+    TFlatProportionalEntry,
+    TGroupedEntry,
+    TGroupedProportionalEntry,
+]
+
+
+class RenderData(Mapping):
+    '''Top level type for data used to render templates.
+
+       This is a relatively simple immutable mapping with some extra
+       logic added in.
+
+       Keys must be strings that are valid Python identifiers.
+
+       Each key is also exposed as an attribute. When accessing that
+       attribute, a random item from the value for that key will be
+       returned.'''
+    def __init__(self: RenderData, data: Mapping[str, TRenderEntry]) -> None:
+        self._data: Dict[str, RenderMap | Sequence[str] | Sequence[WeightedEntry]] = dict()
 
         for k, v in data.items():
             try:
@@ -22,35 +66,46 @@ class RenderData(collections.abc.Mapping):
             except TypeError:
                 raise KeyError('RenderData keys must be strings.')
 
+            # The casts below are needed to make some type checkers behave
+            # correctly as they incorrectly assume that `d` is the same
+            # type as `data`, even though it should not be interpreted
+            # as such per the typing of `data`.
             match v:
-                case {'type': 'grouped_proportional', 'data': data}:
-                    self._data[k] = RenderMap(data)
-                case {'type': 'grouped', 'data': data}:
-                    self._data[k] = RenderMap(data)
-                case {'type': 'flat_proportional', 'data': data}:
-                    self._data[k] = data
-                case {'type': 'flat', 'data': data}:
-                    self._data[k] = data
+                case {'type': 'grouped_proportional', 'data': d}:
+                    self._data[k] = RenderMap(cast(Mapping[str, Sequence[Dict]], d))
+                case {'type': 'grouped', 'data': d}:
+                    self._data[k] = RenderMap(cast(Mapping[str, Sequence[str]], d))
+                case {'type': 'flat_proportional', 'data': d}:
+                    self._data[k] = list(map(lambda x: make_weighted_entry(x), cast(Sequence[Dict], d)))
+                case {'type': 'flat', 'data': d}:
+                    self._data[k] = cast(Sequence[str], d)
+                case _:
+                    raise ValueError(f'{ v } is not a valid value for RenderData.')
 
-    def __getattr__(self, key):
+    def __getattr__(self: RenderData, key: str) -> RenderMap | str:
         data = object.__getattribute__(self, '_data')
 
         if key in data:
             if isinstance(data[key], RenderMap):
                 return data[key]
             else:
-                return rnd(data[key])
+                ret = rnd(data[key])
+
+                if isinstance(ret, str):
+                    return ret
+                else:
+                    raise AttributeError
         else:
             raise AttributeError
 
-    def __len__(self):
+    def __len__(self: RenderData) -> int:
         return len(self._data)
 
-    def __getitem__(self, key):
+    def __getitem__(self: RenderData, key: str) -> RenderMap | Sequence[str | WeightedEntry]:
         return self._data[key]
 
-    def __iter__(self):
-        return list(self._data)
+    def __iter__(self: RenderData) -> Iterator:
+        return iter(self._data)
 
-    def __contains__(self, key):
+    def __contains__(self: RenderData, key: Any) -> bool:
         return key in self._data
