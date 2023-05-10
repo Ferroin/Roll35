@@ -58,7 +58,7 @@ class PopulationMap(Sequence):
        Internally, this only stores a single instance of each item in
        the initial data set, and then constructs a lookup table to map
        from the population to the actual item. '''
-    def __init__(self: PopulationMap, data: Sequence[SettlementEntry]) -> None:
+    def __init__(self: PopulationMap, /, data: Sequence[SettlementEntry]) -> None:
         if not data:
             return
 
@@ -84,14 +84,14 @@ class PopulationMap(Sequence):
         )[0]
 
     @overload
-    def __getitem__(self: PopulationMap, v: int) -> SettlementEntry:
+    def __getitem__(self: PopulationMap, v: int, /) -> SettlementEntry:
         pass
 
     @overload
-    def __getitem__(self: PopulationMap, v: slice) -> Sequence[SettlementEntry]:
+    def __getitem__(self: PopulationMap, v: slice, /) -> Sequence[SettlementEntry]:
         pass
 
-    def __getitem__(self: PopulationMap, v):
+    def __getitem__(self: PopulationMap, v, /):
         if isinstance(v, slice):
             ret: list[SettlementEntry] = []
 
@@ -106,7 +106,7 @@ class PopulationMap(Sequence):
         else:
             return self._data[self._lookup[v]]
 
-    def __len__(self: PopulationMap) -> int:
+    def __len__(self: PopulationMap, /) -> int:
         return len(self._lookup) + 1
 
 
@@ -119,7 +119,7 @@ class SettlementData(agent.AgentData):
 
 class SettlementAgent(agent.Agent):
     '''Data agent for settlement data.'''
-    def __init__(self: SettlementAgent, dataset: DataSet, name: str) -> None:
+    def __init__(self: SettlementAgent, /, dataset: DataSet, name: str) -> None:
         super().__init__(dataset, name)
         self._data: SettlementData = SettlementData(
             name=dict(),
@@ -127,7 +127,7 @@ class SettlementAgent(agent.Agent):
         )
 
     @staticmethod
-    def _process_data(data: Mapping | Sequence) -> SettlementData:
+    def _process_data(data: Mapping | Sequence, /) -> SettlementData:
         if ismapping(data):
             raise ValueError('Settlement data must be a sequence')
 
@@ -146,7 +146,7 @@ class SettlementAgent(agent.Agent):
 
     @log_call_async(logger, 'get settlement by name')
     @types.check_ready(logger)
-    async def get_by_name(self: SettlementAgent, name: str) -> SettlementEntry | types.Ret:
+    async def get_by_name(self: SettlementAgent, /, name: str) -> SettlementEntry | types.Ret:
         '''Look up a settlement category by name.'''
         if name in self._data.name:
             return self._data.name[name]
@@ -155,6 +155,6 @@ class SettlementAgent(agent.Agent):
 
     @log_call_async(logger, 'get settlement by population')
     @types.check_ready(logger)
-    async def get_by_population(self: SettlementAgent, population: int) -> SettlementEntry:
+    async def get_by_population(self: SettlementAgent, /, population: int) -> SettlementEntry:
         '''Look up a settlement category by population.'''
         return self._data.population[population]

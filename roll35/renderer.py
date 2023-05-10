@@ -31,7 +31,7 @@ MAX_TEMPLATE_RECURSION = 5
 
 class Renderer(ReadyState):
     '''Encapsulates the state required for rendering items.'''
-    def __init__(self: Renderer, dataset: DataSet) -> None:
+    def __init__(self: Renderer, /, dataset: DataSet) -> None:
         self.env = jinja2.Environment(
             loader=jinja2.FunctionLoader(lambda x: None),
             autoescape=False,
@@ -45,14 +45,14 @@ class Renderer(ReadyState):
         super().__init__()
 
     @staticmethod
-    def _loader(name: str) -> RenderData:
+    def _loader(name: str, /) -> RenderData:
         from .common import yaml
         from .data import DATA_ROOT
 
         with open(DATA_ROOT / f'{ name }.yaml') as f:
             return RenderData(yaml.load(f))
 
-    async def load_data(self: Renderer, pool: Executor) -> types.Ret:
+    async def load_data(self: Renderer, pool: Executor, /) -> types.Ret:
         '''Load required data.'''
         if not self._ready.is_set():
             loop = asyncio.get_running_loop()
@@ -64,7 +64,7 @@ class Renderer(ReadyState):
 
         return types.Ret.OK
 
-    async def get_spell(self: Renderer, item: types.item.SpellItem) -> types.Result[types.item.SpellEntry]:
+    async def get_spell(self: Renderer, /, item: types.item.SpellItem) -> types.Result[types.item.SpellEntry]:
         '''Get a random spell for the given item.'''
         match await cast(SpellAgent, self._ds['spell']).random(**item.spell):
             case (types.Ret.OK, types.item.SpellEntry() as spell):
@@ -83,7 +83,7 @@ class Renderer(ReadyState):
         raise RuntimeError
 
     @log_call_async(logger, 'render item')
-    async def render(self: Renderer, item: types.item.Item | types.item.SpellEntry | str) -> types.Result[str]:
+    async def render(self: Renderer, /, item: types.item.Item | types.item.SpellEntry | str) -> types.Result[str]:
         '''Render an item.
 
            This recursively evaluates the item name as a jinja2 template,

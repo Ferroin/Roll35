@@ -10,7 +10,7 @@ _RangeMember = int | float
 RangeMember = _RangeMember | None
 
 
-def israngemember(v: Any) -> TypeGuard[_RangeMember]:
+def israngemember(v: Any, /) -> TypeGuard[_RangeMember]:
     return isinstance(v, int) or isinstance(v, float)
 
 
@@ -25,7 +25,7 @@ class R35Range(Container):
     MIN_VALUE = float('-inf')
     MAX_VALUE = float('inf')
 
-    def __init__(self: R35Range, values: Sequence[RangeMember] = []) -> None:
+    def __init__(self: R35Range, /, values: Sequence[RangeMember] = []) -> None:
         self._min: RangeMember = None
         self._max: RangeMember = None
         self._empty = True
@@ -47,10 +47,10 @@ class R35Range(Container):
                 self._max = None
                 self._empty = True
 
-    def __repr__(self: R35Range) -> str:
+    def __repr__(self: R35Range, /) -> str:
         return f'R35Range({ self.min }, { self.max }, empty={ self._empty })'
 
-    def __contains__(self: R35Range, v: Any) -> bool:
+    def __contains__(self: R35Range, v: Any, /) -> bool:
         if self._empty:
             return False
         elif israngemember(v):
@@ -61,13 +61,13 @@ class R35Range(Container):
             raise ValueError(f'{ type(v) } is not supported by R35Range objects.')
 
     @classmethod
-    def _rangecheck(cls, v: RangeMember) -> bool:
+    def _rangecheck(cls, v: RangeMember, /) -> bool:
         if v is None:
             return False
 
         return cls.MIN_VALUE <= v <= cls.MAX_VALUE
 
-    def add(self: R35Range, v: Sequence[R35Range | RangeMember]) -> None:
+    def add(self: R35Range, v: Sequence[R35Range | RangeMember], /) -> None:
         '''Add a sequence of values to the range.'''
         for e in v:
             match e:
@@ -95,13 +95,13 @@ class R35Range(Container):
                 case e:
                     raise TypeError(f'{ type(e) } is not supported by R35Range objects.')
 
-    def reset(self: R35Range) -> None:
+    def reset(self: R35Range, /) -> None:
         '''Reset the cost range to the default values.'''
         self._min = None
         self._max = None
         self._empty = True
 
-    def overlaps(self: R35Range, other: R35Range) -> bool:
+    def overlaps(self: R35Range, other: R35Range, /) -> bool:
         '''Return true if this cost range overlaps with other.'''
         if not isinstance(other, R35Range):
             raise ValueError('Must specify a R35Range object.')
@@ -109,7 +109,7 @@ class R35Range(Container):
         return (self.min in other) or (self.max in other) or (other.min in self) or (other.max in self)
 
     @property
-    def min(self: R35Range) -> _RangeMember:
+    def min(self: R35Range, /) -> _RangeMember:
         '''The lowest value that has been added to the range.'''
         if self._min is None:
             return self.MIN_VALUE
@@ -117,7 +117,7 @@ class R35Range(Container):
             return self._min
 
     @property
-    def max(self: R35Range) -> _RangeMember:
+    def max(self: R35Range, /) -> _RangeMember:
         '''The highest value that has been added to the range.'''
         if self._max is None:
             return self.MAX_VALUE

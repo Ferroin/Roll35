@@ -25,7 +25,7 @@ class LogRun(contextlib.AbstractContextManager, contextlib.AbstractAsyncContextM
 
        This is usable as either a regular context manager, or an async
        context manager.'''
-    def __init__(self: LogRun, logger: logging.Logger, level: int, msg: str) -> None:
+    def __init__(self: LogRun, /, logger: logging.Logger, level: int, msg: str) -> None:
         self.level = level
         self.logger = logger
         self.msg = msg
@@ -45,7 +45,7 @@ class LogRun(contextlib.AbstractContextManager, contextlib.AbstractAsyncContextM
         return self.__exit__()
 
 
-def log_call(logger: logging.Logger, msg: str) -> Callable[[Callable[P, T]], Callable[P, T]]:
+def log_call(logger: logging.Logger, msg: str, /) -> Callable[[Callable[P, T]], Callable[P, T]]:
     '''Decorate a function to log calls to that function.
 
        Function arguments are logged on entry, and the return value is
@@ -63,7 +63,7 @@ def log_call(logger: logging.Logger, msg: str) -> Callable[[Callable[P, T]], Cal
     return decorator
 
 
-def log_call_async(logger: logging.Logger, msg: str) -> Callable[[Callable[P, Awaitable[T]]], Callable[P, Awaitable[T]]]:
+def log_call_async(logger: logging.Logger, msg: str, /) -> Callable[[Callable[P, Awaitable[T]]], Callable[P, Awaitable[T]]]:
     '''Decorate an async function to log calls to that function.
 
        Function arguments are logged on entry, and the return value is

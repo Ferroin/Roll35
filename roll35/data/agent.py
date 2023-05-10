@@ -34,7 +34,7 @@ T = TypeVar('T')
 P = ParamSpec('P')
 
 
-def ensure_costs(func: Callable[P, Awaitable[T]]) -> Callable[P, Awaitable[T]]:
+def ensure_costs(func: Callable[P, Awaitable[T]], /) -> Callable[P, Awaitable[T]]:
     '''Decorate an async method to ensure that the mincost and maxcost arguments are valid.'''
     async def inner(*args: P.args, **kwargs: P.kwargs) -> T:
         if getattr(kwargs, 'mincost', None) is None:
@@ -48,7 +48,7 @@ def ensure_costs(func: Callable[P, Awaitable[T]]) -> Callable[P, Awaitable[T]]:
     return inner
 
 
-def process_compound_itemlist(items: Iterable[types.Item], typ: Callable[[Any], Any] = lambda x: x, xform=lambda x: x) -> \
+def process_compound_itemlist(items: Iterable[types.Item], /, *, typ: Callable[[Any], Any] = lambda x: x, xform=lambda x: x) -> \
         types.CompoundItemList:
     '''Process a compound list of weighted values.
 
@@ -79,7 +79,11 @@ def process_compound_itemlist(items: Iterable[types.Item], typ: Callable[[Any], 
     return ret
 
 
-def process_ranked_itemlist(items: Mapping[str, Mapping[str, Iterable[types.Item]]], typ: Callable[[Any], Any] = lambda x: x, xform=lambda x: x) -> \
+def process_ranked_itemlist(
+        items: Mapping[str, Mapping[str, Iterable[types.Item]]],
+        /, *,
+        typ: Callable[[Any], Any] = lambda x: x,
+        xform: Callable[[Any], Any] = lambda x: x) -> \
         types.RankedItemList:
     '''Process ranked list of weighted values.
 
@@ -89,12 +93,12 @@ def process_ranked_itemlist(items: Mapping[str, Mapping[str, Iterable[types.Item
     ret: types.RankedItemList = types.R35Map()
 
     for rank in [x for x in types.Rank if x.value in items]:
-        ret[rank] = process_subranked_itemlist(items[rank.value], typ, xform)
+        ret[rank] = process_subranked_itemlist(items[rank.value], typ=typ, xform=xform)
 
     return ret
 
 
-def process_subranked_itemlist(items: Mapping[str, Iterable[types.Item]], typ: Callable[[Any], Any] = lambda x: x, xform=lambda x: x) -> \
+def process_subranked_itemlist(items: Mapping[str, Iterable[types.Item]], /, *, typ: Callable[[Any], Any] = lambda x: x, xform=lambda x: x) -> \
         types.SubrankedItemList:
     '''Process a subranked list of weighted values.
 
@@ -115,15 +119,15 @@ def process_subranked_itemlist(items: Mapping[str, Iterable[types.Item]], typ: C
     return ret
 
 
-def _cost_in_range(item: types.Item, mincost: types.RangeMember, maxcost: types.RangeMember) -> bool:
+def _cost_in_range(item: types.Item, /, *, mincost: types.RangeMember, maxcost: types.RangeMember) -> bool:
     return item.cost is not None and item.cost in types.R35Range([mincost, maxcost])
 
 
-def _costrange_in_range(item: types.Item, mincost: types.RangeMember, maxcost: types.RangeMember) -> bool:
+def _costrange_in_range(item: types.Item, /, *, mincost: types.RangeMember, maxcost: types.RangeMember) -> bool:
     return item.costrange is not None and types.R35Range(item.costrange).overlaps(types.R35Range([mincost, maxcost]))
 
 
-def create_spellmult_xform(classes: ClassMap) -> Callable[[types.item.SpellItem], types.item.SpellItem]:
+def create_spellmult_xform(classes: ClassMap, /) -> Callable[[types.item.SpellItem], types.item.SpellItem]:
     '''Create a costmult handler function based on spell levels.'''
     def xform(x: types.item.SpellItem) -> types.item.SpellItem:
         levels = map(lambda x: x.levels, classes.values())
@@ -151,7 +155,7 @@ def create_spellmult_xform(classes: ClassMap) -> Callable[[types.item.SpellItem]
     return xform
 
 
-def costfilter(items: Iterable[types.ItemEntry], mincost: types.RangeMember, maxcost: types.RangeMember) -> list[types.ItemEntry]:
+def costfilter(items: Iterable[types.ItemEntry], /, *, mincost: types.RangeMember, maxcost: types.RangeMember) -> list[types.ItemEntry]:
     '''Filter a list of items by cost.'''
     ret: list[types.ItemEntry] = []
 
@@ -161,13 +165,13 @@ def costfilter(items: Iterable[types.ItemEntry], mincost: types.RangeMember, max
 
             if isinstance(value, str):
                 ret.append(item)
-            elif (_cost_in_range(value, mincost, maxcost) or
-                  _costrange_in_range(value, mincost, maxcost) or
+            elif (_cost_in_range(value, mincost=mincost, maxcost=maxcost) or
+                  _costrange_in_range(value, mincost=mincost, maxcost=maxcost) or
                   (value.cost is None and value.costrange is None)):
                 ret.append(item)
 
-        elif (_cost_in_range(item, mincost, maxcost) or
-              _costrange_in_range(item, mincost, maxcost) or
+        elif (_cost_in_range(item, mincost=mincost, maxcost=maxcost) or
+              _costrange_in_range(item, mincost=mincost, maxcost=maxcost) or
               (item.cost is None and item.costrange is None)):
             ret.append(item)
 
@@ -184,18 +188,18 @@ class AgentData:
 
 class Agent(types.ReadyState, abc.ABC):
     '''Abstract base class for data agents.'''
-    def __init__(self: Agent, dataset: DataSet, name: str) -> None:
+    def __init__(self: Agent, /, dataset: DataSet, name: str) -> None:
         self._ds = dataset
         self._data = AgentData()
         self._ready = asyncio.Event()
         self.name = name
 
-    def __repr__(self: Agent) -> str:
+    def __repr__(self: Agent, /) -> str:
         return f'roll35.data.Agent[{ self.name }, ready: { self._ready.is_set() }]'
 
     @staticmethod
     @abc.abstractmethod
-    def _process_data(data: Mapping | Sequence) -> AgentData:
+    def _process_data(data: Mapping | Sequence, /) -> AgentData:
         '''Callback to take the raw data for the agent and make it usable.
 
            Must be overridden by subclasses.
@@ -206,7 +210,7 @@ class Agent(types.ReadyState, abc.ABC):
            be assigned to the agent’s `_data` attribute.'''
         return NotImplemented
 
-    def _valid_rank(self: Agent, rank: types.Rank) -> bool:
+    def _valid_rank(self: Agent, rank: types.Rank, /) -> bool:
         if self._data.ranked is not None:
             return rank in self._data.ranked
         elif self._data.compound is not None:
@@ -214,17 +218,17 @@ class Agent(types.ReadyState, abc.ABC):
         else:
             return False
 
-    def _valid_subrank(self: Agent, rank: types.Rank, subrank: types.Subrank) -> bool:
+    def _valid_subrank(self: Agent, rank: types.Rank, subrank: types.Subrank, /) -> bool:
         if self._data.ranked is not None:
             return rank in self._data.ranked and subrank in self._data.ranked[rank]
         else:
             return False
 
-    async def _process_async(self: Agent, pool: Executor, func: Callable, args: Iterable) -> Any:
+    async def _process_async(self: Agent, pool: Executor, func: Callable, args: Iterable, /) -> Any:
         loop = asyncio.get_running_loop()
         return await loop.run_in_executor(pool, func, *args)
 
-    async def load_data(self: Agent, pool: Executor) -> types.Ret:
+    async def load_data(self: Agent, pool: Executor, /) -> types.Ret:
         '''Load data for this agent.'''
         if not self._ready.is_set():
             logger.info(f'Loading { self.name } data')
@@ -243,7 +247,7 @@ class Agent(types.ReadyState, abc.ABC):
     @ensure_costs
     @log_call_async(logger, 'roll random rank')
     @types.check_ready(logger)
-    async def random_rank(self: Agent, mincost: types.RangeMember = None, maxcost: types.RangeMember = None) -> types.Rank | types.Ret:
+    async def random_rank(self: Agent, /, *, mincost: types.RangeMember = None, maxcost: types.RangeMember = None) -> types.Rank | types.Ret:
         '''Return a random rank, possibly within the cost limits.'''
         if self._data.ranked is not None:
             if isinstance(self._data.ranked, types.R35Map):
@@ -269,7 +273,7 @@ class Agent(types.ReadyState, abc.ABC):
     @ensure_costs
     @log_call_async(logger, 'roll random subrank')
     @types.check_ready(logger)
-    async def random_subrank(self: Agent, rank: types.Rank, mincost: types.RangeMember = None, maxcost: types.RangeMember = None) -> \
+    async def random_subrank(self: Agent, /, rank: types.Rank, *, mincost: types.RangeMember = None, maxcost: types.RangeMember = None) -> \
             types.Subrank | types.Ret:
         '''Return a random subrank for the given rank, possibly within the cost limits.'''
         if self._data.ranked is not None:
@@ -289,6 +293,7 @@ class Agent(types.ReadyState, abc.ABC):
     @types.check_ready(logger)
     async def random_ranked(
             self: Agent,
+            /, *,
             rank: types.Rank | None = None,
             subrank: types.Subrank | None = None,
             mincost: types.RangeMember = None,
@@ -321,13 +326,14 @@ class Agent(types.ReadyState, abc.ABC):
         if not self._valid_subrank(rank, subrank):
             raise ValueError(f'Invalid subrank for { self.name }: { subrank }')
 
-        return rnd(costfilter(self._data.ranked[rank][subrank], mincost, maxcost))
+        return rnd(costfilter(self._data.ranked[rank][subrank], mincost=mincost, maxcost=maxcost))
 
     @ensure_costs
     @log_call_async(logger, 'roll random compound item')
     @types.check_ready(logger)
     async def random_compound(
             self: Agent,
+            /, *,
             rank: types.Rank | None = None,
             mincost: types.RangeMember = None,
             maxcost: types.RangeMember = None) -> \
@@ -350,4 +356,4 @@ class Agent(types.ReadyState, abc.ABC):
 
         assert rank is not None
 
-        return rnd(costfilter(self._data.compound[rank], mincost, maxcost))
+        return rnd(costfilter(self._data.compound[rank], mincost=mincost, maxcost=maxcost))

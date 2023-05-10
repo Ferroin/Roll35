@@ -31,14 +31,14 @@ class CategoryData(agent.AgentData):
 
 class CategoryAgent(agent.Agent):
     '''Data agent for handling item categories.'''
-    def __init__(self: CategoryAgent, dataset: DataSet, name: str) -> None:
+    def __init__(self: CategoryAgent, dataset: DataSet, name: str, /) -> None:
         super().__init__(dataset, name)
         self._data: CategoryData = CategoryData(
             categories=set()
         )
 
     @staticmethod
-    def _process_data(data: Mapping | Sequence) -> CategoryData:
+    def _process_data(data: Mapping | Sequence, /) -> CategoryData:
         if not ismapping(data):
             raise TypeError('Category data must be a mapping.')
 
@@ -57,7 +57,7 @@ class CategoryAgent(agent.Agent):
         )
 
     @log_call_async(logger, 'roll random category')
-    async def random(self: CategoryAgent, rank: types.Rank | None = None) -> str | types.Ret:
+    async def random(self: CategoryAgent, /, rank: types.Rank | None = None) -> str | types.Ret:
         match await super().random_compound(rank=rank):
             case types.Ret() as r:
                 return r
@@ -69,6 +69,6 @@ class CategoryAgent(agent.Agent):
 
     @log_call_async(logger, 'get categories')
     @types.check_ready(logger)
-    async def categories(self: CategoryAgent) -> set[str]:
+    async def categories(self: CategoryAgent, /) -> set[str]:
         '''Return a list of valid categories.'''
         return self._data.categories

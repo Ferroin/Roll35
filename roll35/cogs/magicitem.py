@@ -224,7 +224,7 @@ class MagicItem(types.R35Cog):
         '''Alias for `magicitem`.'''
         await self._roll_magic_item(ctx, *args)
 
-    async def _categories(self: MagicItem, ctx: commands.Context) -> None:
+    async def _categories(self: MagicItem, ctx: commands.Context, /) -> None:
         match await cast(CategoryAgent, self.ds['category']).categories():
             case types.Ret.NOT_READY:
                 await ctx.send(NOT_READY)
@@ -238,11 +238,11 @@ class MagicItem(types.R35Cog):
                 await ctx.send('Unknown internal error.')
 
     @commands.command()
-    async def categories(self, ctx):
+    async def categories(self, ctx, /):
         '''List known magic item categories.'''
         await self._categories(ctx)
 
-    async def _slots(self: MagicItem, ctx: commands.Context) -> None:
+    async def _slots(self: MagicItem, ctx: commands.Context, /) -> None:
         match await cast(WondrousAgent, self.ds['wondrous']).slots():
             case types.Ret.NOT_READY:
                 await ctx.send(NOT_READY)
@@ -258,16 +258,18 @@ class MagicItem(types.R35Cog):
                 await ctx.send('Unknown internal error.')
 
     @commands.command()
-    async def slots(self, ctx) -> None:
+    async def slots(self, ctx, /) -> None:
         '''List known wondrous item slots.'''
         await self._slots(ctx)
 
 
 async def _reroll(
         pool: Executor,
+        /,
         ds: DataSet,
-        attempt: int,
         path: Sequence[str],
+        *,
+        attempt: int,
         mincost: int | float | None,
         maxcost: int | float | None) -> \
         MIResult:
@@ -285,7 +287,7 @@ async def _reroll(
                     'mincost': mincost,
                     'maxcost': maxcost,
                 },
-                attempt+1
+                attempt=attempt+1
             )
         case [category, rank, subrank]:
             return await roll(
@@ -298,7 +300,7 @@ async def _reroll(
                     'mincost': mincost,
                     'maxcost': maxcost,
                 },
-                attempt+1
+                attempt=attempt+1
             )
         case _:
             logger.warning('Invalid reroll directive found while rolling for magic item: { path }.')
@@ -310,10 +312,12 @@ async def _reroll(
 
 async def _assemble_magic_item(
         agent: OrdnanceAgent,
+        /,
         base_item: types.item.OrdnanceBaseItem,
         pattern: types.item.OrdnancePattern,
         masterwork: int | float,
         bonus_cost: int | float,
+        *,
         attempt: int = 0) -> \
         types.Result[types.item.SimpleItem]:
     '''Assemble a magic weapon or armor item.'''
@@ -388,7 +392,7 @@ async def _assemble_magic_item(
         )
 
 
-def roll_many(pool: Executor, ds: DataSet, count: int, args: Mapping[str, Any]) -> Sequence[Awaitable[MIResult]]:
+def roll_many(pool: Executor, ds: DataSet, /, count: int, args: Mapping[str, Any]) -> Sequence[Awaitable[MIResult]]:
     '''Roll a number of magic items.
 
        Returns a list of coroutines that can be awaited to get the
@@ -408,7 +412,7 @@ def roll_many(pool: Executor, ds: DataSet, count: int, args: Mapping[str, Any]) 
 
 
 @log_call_async(logger, 'roll magic item')
-async def roll(pool: Executor, ds: DataSet, args: Mapping[str, Any], attempt: int = 0) -> MIResult:
+async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attempt: int = 0) -> MIResult:
     '''Roll a magic item.'''
     args = {
         'rank': args.get('rank', None),
@@ -548,7 +552,7 @@ async def roll(pool: Executor, ds: DataSet, args: Mapping[str, Any], attempt: in
                 args['rank'] = (await ds['category'].random_rank(mincost=mincost, maxcost=maxcost))
                 attempt += 1
 
-                match await roll(pool, ds, args, attempt):
+                match await roll(pool, ds, args, attempt=attempt):
                     case (types.Ret.OK, types.item.BaseItem() as i1):
                         item = i1
                     case (types.Ret.NO_MATCH, _):
@@ -572,7 +576,7 @@ async def roll(pool: Executor, ds: DataSet, args: Mapping[str, Any], attempt: in
 
                 attempt += 1
 
-                match await roll(pool, ds, args, attempt):
+                match await roll(pool, ds, args, attempt=attempt):
                     case (types.Ret.OK, types.item.BaseItem() as i1):
                         item = i1
                     case (types.Ret.NO_MATCH, _):
@@ -599,20 +603,20 @@ async def roll(pool: Executor, ds: DataSet, args: Mapping[str, Any], attempt: in
             return (types.Ret.NOT_READY, NOT_READY)
         case (types.Ret.OK, types.item.BaseItem() as i1):
             if i1.reroll is not None:
-                return await _reroll(pool, ds, attempt, i1.reroll, mincost, maxcost)
+                return await _reroll(pool, ds, i1.reroll, mincost=mincost, maxcost=maxcost, attempt=attempt)
             elif mincost is not None and i1.cost < mincost:
-                return await roll(pool, ds, args, attempt+1)
+                return await roll(pool, ds, args, attempt=attempt+1)
             elif maxcost is not None and i1.cost > maxcost:
-                return await roll(pool, ds, args, attempt+1)
+                return await roll(pool, ds, args, attempt=attempt+1)
             else:
                 return (types.Ret.OK, i1)
         case types.item.BaseItem() as i2:
             if i2.reroll is not None:
-                return await _reroll(pool, ds, attempt, i2.reroll, mincost, maxcost)
+                return await _reroll(pool, ds, i2.reroll, mincost=mincost, maxcost=maxcost, attempt=attempt)
             elif mincost is not None and i2.cost < mincost:
-                return await roll(pool, ds, args, attempt+1)
+                return await roll(pool, ds, args, attempt=attempt+1)
             elif maxcost is not None and i2.cost > maxcost:
-                return await roll(pool, ds, args, attempt+1)
+                return await roll(pool, ds, args, attempt=attempt+1)
             else:
                 return (types.Ret.OK, cast(types.Item, i2))
         case (types.Ret() as r1, str() as msg) if r1 is not types.Ret.OK:

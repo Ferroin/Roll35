@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 class Settlement(R35Cog):
     '''Roll35 cog for handling settlements.'''
-    async def _settlement(self: Settlement, ctx: commands.ctx, population: int) -> None:
+    async def _settlement(self: Settlement, ctx: commands.ctx, /, population: int) -> None:
         try:
             pop = int(population)
         except ValueError:
@@ -47,13 +47,13 @@ class Settlement(R35Cog):
                 await ctx.send(msg)
 
     @commands.command()
-    async def settlement(self, ctx, population: int):
+    async def settlement(self, ctx, population: int, /):
         '''Roll magic items for a settlement with the given population.'''
         await self._settlement(ctx, population)
 
 
 @log_call_async(logger, 'roll settlement items')
-async def roll_settlement(population: int, ds: DataSet, renderer: Renderer) -> Result[str]:
+async def roll_settlement(population: int, ds: DataSet, renderer: Renderer, /) -> Result[str]:
     '''Roll magic items for a settlement of the given population.'''
     match await cast(SettlementAgent, ds['settlement']).get_by_population(population):
         case Ret.NOT_READY:

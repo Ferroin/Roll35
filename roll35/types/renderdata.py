@@ -54,7 +54,7 @@ class RenderData(Mapping):
        Each key is also exposed as an attribute. When accessing that
        attribute, a random item from the value for that key will be
        returned.'''
-    def __init__(self: RenderData, data: Mapping[str, TRenderEntry]) -> None:
+    def __init__(self: RenderData, /, data: Mapping[str, TRenderEntry]) -> None:
         self._data: Dict[str, RenderMap | Sequence[str] | Sequence[WeightedEntry]] = dict()
 
         for k, v in data.items():
@@ -82,7 +82,7 @@ class RenderData(Mapping):
                 case _:
                     raise ValueError(f'{ v } is not a valid value for RenderData.')
 
-    def __getattr__(self: RenderData, key: str) -> RenderMap | str:
+    def __getattr__(self: RenderData, key: str, /) -> RenderMap | str:
         data = object.__getattribute__(self, '_data')
 
         if key in data:
@@ -98,14 +98,14 @@ class RenderData(Mapping):
         else:
             raise AttributeError
 
-    def __len__(self: RenderData) -> int:
+    def __len__(self: RenderData, /) -> int:
         return len(self._data)
 
-    def __getitem__(self: RenderData, key: str) -> RenderMap | Sequence[str | WeightedEntry]:
+    def __getitem__(self: RenderData, key: str, /) -> RenderMap | Sequence[str | WeightedEntry]:
         return self._data[key]
 
-    def __iter__(self: RenderData) -> Iterator:
+    def __iter__(self: RenderData, /) -> Iterator:
         return iter(self._data)
 
-    def __contains__(self: RenderData, key: Any) -> bool:
+    def __contains__(self: RenderData, key: Any, /) -> bool:
         return key in self._data

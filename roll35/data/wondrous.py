@@ -31,14 +31,14 @@ class WondrousData(agent.AgentData):
 
 class WondrousAgent(agent.Agent):
     '''Data agent for wondrous item data.'''
-    def __init__(self: WondrousAgent, dataset: DataSet, name: str) -> None:
+    def __init__(self: WondrousAgent, /, dataset: DataSet, name: str) -> None:
         super().__init__(dataset, name)
         self._data: WondrousData = WondrousData(
             slots=[]
         )
 
     @staticmethod
-    def _process_data(data: Mapping | Sequence) -> WondrousData:
+    def _process_data(data: Mapping | Sequence, /) -> WondrousData:
         if ismapping(data):
             raise ValueError('Wondrous data must be a sequence.')
 
@@ -57,12 +57,12 @@ class WondrousAgent(agent.Agent):
     @agent.ensure_costs
     @log_call_async(logger, 'roll random wondrous item slot')
     @types.check_ready(logger)
-    async def random(self: WondrousAgent, mincost=None, maxcost=None) -> str | types.Ret:
+    async def random(self: WondrousAgent, /, *, mincost=None, maxcost=None) -> str | types.Ret:
         '''Return a random slot, possibly limited by cost.'''
-        return cast(str | types.Ret, rnd(agent.costfilter(self._data.slots, mincost, maxcost)))
+        return cast(str | types.Ret, rnd(agent.costfilter(self._data.slots, mincost=mincost, maxcost=maxcost)))
 
     @log_call_async(logger, 'get wondrous item slots')
     @types.check_ready(logger)
-    async def slots(self: WondrousAgent) -> list[str]:
+    async def slots(self: WondrousAgent, /) -> list[str]:
         '''Return a list of known slots.'''
         return list(map(lambda x: cast(str, x.value), self._data.slots))

@@ -152,7 +152,7 @@ class Spell(R35Cog):
            - `count`: Roll this many spells at once.'''
         await self._spell(ctx, *args)
 
-    async def _spelltags(self: Spell, ctx: commands.Context) -> None:
+    async def _spelltags(self: Spell, ctx: commands.Context, /) -> None:
         match await cast(SpellAgent, self.ds['spell']).tags():
             case Ret.NOT_READY:
                 await ctx.send(NOT_READY)
@@ -168,11 +168,11 @@ class Spell(R35Cog):
                 await ctx.send('Unknown internal error.')
 
     @commands.command()
-    async def spelltags(self, ctx):
+    async def spelltags(self, ctx, /):
         '''List known spell tags.'''
         await self._spelltags(ctx)
 
-    async def _classes(self: Spell, ctx: commands.Context) -> None:
+    async def _classes(self: Spell, ctx: commands.Context, /) -> None:
         match await cast(ClassesAgent, self.ds['classes']).classes():
             case Ret.NOT_READY:
                 await ctx.send(NOT_READY)
@@ -196,12 +196,12 @@ class Spell(R35Cog):
                 await ctx.send('Unknown internal error.')
 
     @commands.command()
-    async def classes(self, ctx):
+    async def classes(self, ctx, /):
         '''List known classes for spells.'''
         await self._classes(ctx)
 
 
 @log_call(logger, 'roll spell')
-def roll_spell(ds: DataSet, args: Mapping[str, Any]) -> Awaitable[Result[SpellEntry] | Literal[Ret.NOT_READY]]:
+def roll_spell(ds: DataSet, /, args: Mapping[str, Any]) -> Awaitable[Result[SpellEntry] | Literal[Ret.NOT_READY]]:
     '''Return a coroutine that will return a spell.'''
     return cast(SpellAgent, ds['spell']).random(**args)

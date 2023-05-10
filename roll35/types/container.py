@@ -17,35 +17,35 @@ T = TypeVar('T')
 
 class R35Container(abc.ABC, Collection):
     '''Base class used by roll35 container types.'''
-    def __init__(self: R35Container) -> None:
+    def __init__(self: R35Container, /) -> None:
         self._data: Collection | None = None
         self._costs = R35Range()
 
-    def __len__(self: R35Container) -> int:
+    def __len__(self: R35Container, /) -> int:
         if self._data is not None:
             return len(self._data)
         else:
             return 0
 
-    def __iter__(self: R35Container) -> Iterator:
+    def __iter__(self: R35Container, /) -> Iterator:
         if self._data is not None:
             return self._data.__iter__()
         else:
             return iter(())
 
-    def __contains__(self: R35Container, key: Any) -> bool:
+    def __contains__(self: R35Container, key: Any, /) -> bool:
         if self._data is not None:
             return key in self._data
         else:
             return False
 
     @property
-    def costs(self: R35Container) -> R35Range:
+    def costs(self: R35Container, /) -> R35Range:
         '''A R35Range instance that tracks the costs of items added to the container.'''
         return self._costs
 
     @staticmethod
-    def _get_costs(item: Item | R35Container | WeightedEntry) -> tuple[RangeMember, RangeMember] | None:
+    def _get_costs(item: Item | R35Container | WeightedEntry, /) -> tuple[RangeMember, RangeMember] | None:
         match item:
             case R35Container(costs=R35Range()):
                 item.sync()
@@ -56,10 +56,10 @@ class R35Container(abc.ABC, Collection):
                 return (cost, cost)
         return None
 
-    def sync(self: R35Container) -> None:
+    def sync(self: R35Container, /) -> None:
         '''Recompute the costs for this container.'''
         self._recompute_costs()
 
     @abc.abstractmethod
-    def _recompute_costs(self: R35Container) -> None:
+    def _recompute_costs(self: R35Container, /) -> None:
         return None
