@@ -13,9 +13,9 @@ import abc
 import asyncio
 import logging
 
-from collections.abc import Iterable, Mapping, Sequence
+from collections.abc import Iterable, Mapping, Sequence, Awaitable
 from dataclasses import dataclass, KW_ONLY
-from typing import Any, Callable, cast, TYPE_CHECKING
+from typing import Any, Callable, TypeVar, ParamSpec, cast, TYPE_CHECKING
 
 from . import constants
 from .. import types
@@ -30,10 +30,13 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+T = TypeVar('T')
+P = ParamSpec('P')
 
-def ensure_costs(func: Callable) -> Callable:
+
+def ensure_costs(func: Callable[P, Awaitable[T]]) -> Callable[P, Awaitable[T]]:
     '''Decorate an async method to ensure that the mincost and maxcost arguments are valid.'''
-    async def f(*args, **kwargs):
+    async def inner(*args: P.args, **kwargs: P.kwargs) -> T:
         if getattr(kwargs, 'mincost', None) is None:
             kwargs['mincost'] = 0
 
@@ -42,7 +45,7 @@ def ensure_costs(func: Callable) -> Callable:
 
         return await func(*args, **kwargs)
 
-    return f
+    return inner
 
 
 def process_compound_itemlist(items: Iterable[types.Item], typ: Callable[[Any], Any] = lambda x: x, xform=lambda x: x) -> \
@@ -291,16 +294,24 @@ class Agent(types.ReadyState, abc.ABC):
             return types.Ret.NO_MATCH
 
         if rank is None:
-            rank = await self.random_rank(mincost=mincost, maxcost=maxcost)
-            if rank is types.Ret.NO_MATCH:
-                return types.Ret.NO_MATCH
+            match await self.random_rank(mincost=mincost, maxcost=maxcost):
+                case types.Ret.NO_MATCH:
+                    return types.Ret.NO_MATCH
+                case types.Rank() as r:
+                    rank = r
+
+        assert rank is not None
 
         if subrank is None and self._valid_rank(rank):
-            subrank = await self.random_subrank(rank, mincost=mincost, maxcost=maxcost)
-            if subrank is types.Ret.NO_MATCH:
-                return types.Ret.NO_MATCH
+            match await self.random_subrank(rank, mincost=mincost, maxcost=maxcost):
+                case types.Ret.NO_MATCH:
+                    return types.Ret.NO_MATCH
+                case types.Subrank() as s:
+                    subrank = s
         else:
             raise ValueError(f'Invalid rank for { self.name }: { rank }')
+
+        assert subrank is not None
 
         if not self._valid_subrank(rank, subrank):
             raise ValueError(f'Invalid subrank for { self.name }: { subrank }')
@@ -322,12 +333,16 @@ class Agent(types.ReadyState, abc.ABC):
 
         match rank:
             case None:
-                rank = await self.random_rank(mincost=mincost, maxcost=maxcost)
-                if rank is types.Ret.NO_MATCH:
-                    return types.Ret.NO_MATCH
+                match await self.random_rank(mincost=mincost, maxcost=maxcost):
+                    case types.Ret.NO_MATCH:
+                        return types.Ret.NO_MATCH
+                    case types.Rank() as r:
+                        rank = r
             case rank if self._valid_rank(rank):
                 pass
             case _:
                 raise ValueError(f'Invalid rank for { self.name }: { rank }')
+
+        assert rank is not None
 
         return rnd(costfilter(self._data.compound[rank], mincost, maxcost))

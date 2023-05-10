@@ -449,8 +449,14 @@ async def roll(pool: Executor, ds: DataSet, args: Mapping[str, Any], attempt: in
         case {'rank': rank, 'subrank': subrank, 'slot': slot} if slot in slots:
             item = await cast(RankedAgent, ds[slot]).random(rank=rank, subrank=subrank, mincost=mincost, maxcost=maxcost)
         case {'rank': rank, 'subrank': subrank, 'category': 'wondrous'}:
-            slot = await cast(WondrousAgent, ds['wondrous']).random()
-            item = await cast(RankedAgent, ds[slot]).random(rank=rank, subrank=subrank, mincost=mincost, maxcost=maxcost)
+            match await cast(WondrousAgent, ds['wondrous']).random():
+                case types.Ret.NOT_READY:
+                    item = (types.Ret.NOT_READY, NOT_READY)
+                case str() as slot:
+                    item = await cast(RankedAgent, ds[slot]).random(rank=rank, subrank=subrank, mincost=mincost, maxcost=maxcost)
+                case ret:
+                    logger.warning(bad_return(ret))
+                    item = (types.Ret.FAILED, 'Unknown internal error.')
         case {'rank': rank, 'subrank': subrank, 'category': category, 'base': None} if category in ordnance:
             agent = cast(OrdnanceAgent, ds[category])
             match await agent.random_pattern(rank=rank, subrank=subrank, allow_specific=True, mincost=mincost, maxcost=maxcost):
@@ -460,7 +466,7 @@ async def roll(pool: Executor, ds: DataSet, args: Mapping[str, Any], attempt: in
                     item = types.Ret.NO_MATCH
                 case types.item.OrdnancePattern(specific=specific) if specific is not None:
                     item = await agent.random_specific(specific, mincost=mincost, maxcost=maxcost)
-                case pattern:
+                case types.item.OrdnancePattern() as pattern:
                     match await agent.random_base():
                         case types.Ret.NOT_READY:
                             item = (types.Ret.NOT_READY, NOT_READY)
@@ -472,9 +478,11 @@ async def roll(pool: Executor, ds: DataSet, args: Mapping[str, Any], attempt: in
                                     item = await _assemble_magic_item(
                                         agent, base_item, pattern, masterwork, bonus_cost
                                     )
+                case ret:
+                    logger.warning(bad_return(ret))
+                    item = (types.Ret.FAILED, 'Unknown internal error.')
         case {'rank': rank, 'subrank': subrank, 'category': category, 'base': base} if category in ordnance:
             agent = cast(OrdnanceAgent, ds[category])
-            pattern = await agent.random_pattern(rank=rank, subrank=subrank, allow_specific=False, mincost=mincost, maxcost=maxcost)
 
             match await agent.get_base(pool, base):
                 case types.Ret.NOT_READY:
@@ -482,13 +490,22 @@ async def roll(pool: Executor, ds: DataSet, args: Mapping[str, Any], attempt: in
                 case (types.Ret() as r1, str() as msg) if r1 is not types.Ret.OK:
                     item = (r1, msg)
                 case (types.Ret.OK, types.item.OrdnanceBaseItem() as base_item):
-                    match await agent.get_bonus_costs(base_item):
+                    match await agent.random_pattern(rank=rank, subrank=subrank, allow_specific=False, mincost=mincost, maxcost=maxcost):
                         case types.Ret.NOT_READY:
                             item = (types.Ret.NOT_READY, NOT_READY)
-                        case (masterwork, bonus_cost):
-                            item = await _assemble_magic_item(
-                                agent, base_item, pattern, masterwork, bonus_cost
-                            )
+                        case types.Ret.NO_MATCH:
+                            item = types.Ret.NO_MATCH
+                        case types.item.OrdnancePattern() as pattern:
+                            match await agent.get_bonus_costs(base_item):
+                                case types.Ret.NOT_READY:
+                                    item = (types.Ret.NOT_READY, NOT_READY)
+                                case (masterwork, bonus_cost):
+                                    item = await _assemble_magic_item(
+                                        agent, base_item, pattern, masterwork, bonus_cost
+                                    )
+                        case ret:
+                            logger.error(bad_return(ret))
+                            item = (types.Ret.FAILED, 'Unknown internal error.')
                 case ret:
                     logger.error(bad_return(ret))
                     item = (types.Ret.FAILED, 'Unknown internal error.')

@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 
 from . import agent
 from .. import types
-from ..common import make_weighted_entry, ismapping
+from ..common import make_weighted_entry, ismapping, bad_return
 from ..log import log_call_async
 
 if TYPE_CHECKING:
@@ -58,7 +58,14 @@ class CategoryAgent(agent.Agent):
 
     @log_call_async(logger, 'roll random category')
     async def random(self: CategoryAgent, rank: types.Rank | None = None) -> str | types.Ret:
-        return await super().random_compound(rank=rank)
+        match await super().random_compound(rank=rank):
+            case types.Ret() as r:
+                return r
+            case str() as s:
+                return s
+            case ret:
+                logger.warning(bad_return(ret))
+                return types.Ret.FAILED
 
     @log_call_async(logger, 'get categories')
     @types.check_ready(logger)
