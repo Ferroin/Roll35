@@ -33,15 +33,18 @@ logger = logging.getLogger(__name__)
 T = TypeVar('T')
 P = ParamSpec('P')
 
+DEFAULT_MINCOST = 0
+DEFAULT_MAXCOST = float('inf')
+
 
 def ensure_costs(func: Callable[P, Awaitable[T]], /) -> Callable[P, Awaitable[T]]:
     '''Decorate an async method to ensure that the mincost and maxcost arguments are valid.'''
     async def inner(*args: P.args, **kwargs: P.kwargs) -> T:
         if getattr(kwargs, 'mincost', None) is None:
-            kwargs['mincost'] = 0
+            kwargs['mincost'] = DEFAULT_MINCOST
 
         if getattr(kwargs, 'maxcost', None) is None:
-            kwargs['maxcost'] = float('inf')
+            kwargs['maxcost'] = DEFAULT_MAXCOST
 
         return await func(*args, **kwargs)
 
@@ -119,11 +122,11 @@ def process_subranked_itemlist(items: Mapping[str, Iterable[types.Item]], /, *, 
     return ret
 
 
-def _cost_in_range(item: types.Item, /, *, mincost: types.RangeMember, maxcost: types.RangeMember) -> bool:
+def _cost_in_range(item: types.Item, /, *, mincost: types.Cost, maxcost: types.Cost) -> bool:
     return item.cost is not None and item.cost in types.R35Range([mincost, maxcost])
 
 
-def _costrange_in_range(item: types.Item, /, *, mincost: types.RangeMember, maxcost: types.RangeMember) -> bool:
+def _costrange_in_range(item: types.Item, /, *, mincost: types.Cost, maxcost: types.Cost) -> bool:
     return item.costrange is not None and types.R35Range(item.costrange).overlaps(types.R35Range([mincost, maxcost]))
 
 
@@ -155,9 +158,15 @@ def create_spellmult_xform(classes: ClassMap, /) -> Callable[[types.item.SpellIt
     return xform
 
 
-def costfilter(items: Iterable[types.ItemEntry], /, *, mincost: types.RangeMember, maxcost: types.RangeMember) -> list[types.ItemEntry]:
+def costfilter(items: Iterable[types.ItemEntry], /, *, mincost: types.Cost | None, maxcost: types.Cost | None) -> list[types.ItemEntry]:
     '''Filter a list of items by cost.'''
     ret: list[types.ItemEntry] = []
+
+    if mincost is None:
+        mincost = DEFAULT_MINCOST
+
+    if maxcost is None:
+        maxcost = DEFAULT_MAXCOST
 
     for item in items:
         if isinstance(item, types.WeightedEntry):
@@ -247,7 +256,7 @@ class Agent(types.ReadyState, abc.ABC):
     @ensure_costs
     @log_call_async(logger, 'roll random rank')
     @types.check_ready(logger)
-    async def random_rank(self: Agent, /, *, mincost: types.RangeMember = None, maxcost: types.RangeMember = None) -> types.Rank | types.Ret:
+    async def random_rank(self: Agent, /, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> types.Rank | types.Ret:
         '''Return a random rank, possibly within the cost limits.'''
         if self._data.ranked is not None:
             if isinstance(self._data.ranked, types.R35Map):
@@ -273,7 +282,7 @@ class Agent(types.ReadyState, abc.ABC):
     @ensure_costs
     @log_call_async(logger, 'roll random subrank')
     @types.check_ready(logger)
-    async def random_subrank(self: Agent, /, rank: types.Rank, *, mincost: types.RangeMember = None, maxcost: types.RangeMember = None) -> \
+    async def random_subrank(self: Agent, /, rank: types.Rank, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> \
             types.Subrank | types.Ret:
         '''Return a random subrank for the given rank, possibly within the cost limits.'''
         if self._data.ranked is not None:
@@ -296,8 +305,8 @@ class Agent(types.ReadyState, abc.ABC):
             /, *,
             rank: types.Rank | None = None,
             subrank: types.Subrank | None = None,
-            mincost: types.RangeMember = None,
-            maxcost: types.RangeMember = None) -> \
+            mincost: types.Cost | None = None,
+            maxcost: types.Cost | None = None) -> \
             types.Item | types.Ret:
         '''Roll a random item for the given rank and subrank, possibly within the specified cost range.'''
         if self._data.ranked is None:
@@ -335,8 +344,8 @@ class Agent(types.ReadyState, abc.ABC):
             self: Agent,
             /, *,
             rank: types.Rank | None = None,
-            mincost: types.RangeMember = None,
-            maxcost: types.RangeMember = None) -> \
+            mincost: types.Cost | None = None,
+            maxcost: types.Cost | None = None) -> \
             types.Item | str | types.Ret:
         '''Roll a random item for the given rank, possibly within the specified cost range.'''
         if self._data.compound is None:
