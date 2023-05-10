@@ -68,13 +68,16 @@ class RankedAgent(agent.Agent):
         return types.Ret.OK
 
     @log_call_async(logger, 'roll random ranked item')
-    async def random(self: RankedAgent, **kwargs) -> types.Item | types.Ret:
+    async def random(self: RankedAgent, cls: str | None = None, **kwargs) -> types.Item | types.Ret:
         item = await super().random_ranked(**kwargs)
 
         match item:
             case types.Ret.NO_MATCH:
                 return types.Ret.NO_MATCH
             case types.item.SpellItem(spell=spell):
+                if ('cls' not in spell or spell['cls'] is None) and cls is not None:
+                    spell['cls'] = cls
+
                 match await cast(SpellAgent, self._ds['spell']).random(**spell):
                     case types.Ret.NOT_READY:
                         return types.Ret.NOT_READY
@@ -90,8 +93,11 @@ class RankedAgent(agent.Agent):
                     case ret:
                         logger.error(bad_return(ret))
                         return types.Ret.FAILED
-            case item:
+            case types.BaseItem() as item:
                 return item
+            case ret:
+                logger.warning(bad_return(ret))
+                return types.Ret.FAILED
 
         # The below line should never actually be run, as the above match clauses are (theoretically) exhaustive.
         #

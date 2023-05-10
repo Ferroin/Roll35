@@ -94,8 +94,11 @@ class CompoundAgent(agent.Agent):
                     case ret:
                         logger.error(bad_return(ret))
                         return types.Ret.FAILED
-            case item:
+            case types.BaseItem() as item:
                 return item
+            case ret:
+                logger.warning(bad_return(ret))
+                return types.Ret.FAILED
 
         # The below line should never actually be run, as the above match clauses are (theoretically) exhaustive.
         #
