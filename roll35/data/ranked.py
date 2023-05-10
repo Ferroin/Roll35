@@ -73,8 +73,8 @@ class RankedAgent(agent.Agent):
             rank: types.Rank | None = None,
             subrank: types.Subrank | None = None,
             cls: str | None = None,
-            mincost: types.RangeMember = None,
-            maxcost: types.RangeMember = None) -> \
+            mincost: types.Cost | None = None,
+            maxcost: types.Cost | None = None) -> \
             types.Item | types.Ret:
         '''Roll a random ranked item.'''
         item = await super().random_ranked(

@@ -6,7 +6,9 @@ from __future__ import annotations
 from collections.abc import Container, Sequence
 from typing import Any, TypeGuard, cast
 
-_RangeMember = int | float
+from .item import Cost
+
+_RangeMember = Cost
 RangeMember = _RangeMember | None
 
 
