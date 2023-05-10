@@ -287,8 +287,13 @@ class Agent(types.ReadyState, abc.ABC):
     @ensure_costs
     @log_call_async(logger, 'roll random ranked item')
     @types.check_ready(logger)
-    async def random_ranked(self: Agent, rank: types.Rank | None = None, subrank: types.Subrank | None = None,
-                            mincost: types.RangeMember = None, maxcost: types.RangeMember = None) -> types.Item | types.Ret:
+    async def random_ranked(
+            self: Agent,
+            rank: types.Rank | None = None,
+            subrank: types.Subrank | None = None,
+            mincost: types.RangeMember = None,
+            maxcost: types.RangeMember = None) -> \
+            types.Item | types.Ret:
         '''Roll a random item for the given rank and subrank, possibly within the specified cost range.'''
         if self._data.ranked is None:
             return types.Ret.NO_MATCH

@@ -441,7 +441,12 @@ async def roll(pool: Executor, ds: DataSet, args: Mapping[str, Any], attempt: in
 
     match args:
         case {'rank': types.Rank.MINOR, 'subrank': types.Subrank.LEAST, 'category': 'wondrous', 'slot': 'slotless'}:
-            item = await cast(RankedAgent, ds['slotless']).random(rank='minor', subrank='least', mincost=mincost, maxcost=maxcost)
+            item = await cast(RankedAgent, ds['slotless']).random(
+                rank=types.Rank.MINOR,
+                subrank=types.Subrank.LEAST,
+                mincost=mincost,
+                maxcost=maxcost,
+            )
         case {'subrank': types.Subrank.LEAST}:
             item = (types.Ret.INVALID, 'Only slotless wondrous items have a least subrank.')
         case {'rank': rank, 'subrank': subrank, 'category': 'wondrous', 'slot': slot} if slot in slots:
