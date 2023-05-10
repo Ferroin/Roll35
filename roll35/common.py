@@ -20,7 +20,7 @@ from ruamel.yaml import YAML
 from . import types
 from .log import log_call
 
-VERSION = (4, 0, 1)
+VERSION = (5, 0, 0)
 
 READINESS_TIMEOUT = 5.0
 
