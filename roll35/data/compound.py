@@ -68,9 +68,19 @@ class CompoundAgent(agent.Agent):
         return types.Ret.OK
 
     @log_call_async(logger, 'roll compound item')
-    async def random(self: CompoundAgent, cls: str | None = None, **kwargs) -> types.Item | types.Ret:
+    async def random(
+            self: CompoundAgent,
+            rank: types.Rank | None = None,
+            cls: str | None = None,
+            mincost: types.item.Cost | None = None,
+            maxcost: types.item.Cost | None = None) -> \
+            types.Item | types.Ret:
         '''Roll a random item, then roll a spell for it if needed.'''
-        item = await super().random_compound(**kwargs)
+        item = await super().random_compound(
+            rank=rank,
+            mincost=mincost,
+            maxcost=maxcost,
+        )
 
         match item:
             case types.Ret.NO_MATCH:

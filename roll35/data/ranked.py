@@ -68,8 +68,21 @@ class RankedAgent(agent.Agent):
         return types.Ret.OK
 
     @log_call_async(logger, 'roll random ranked item')
-    async def random(self: RankedAgent, cls: str | None = None, **kwargs) -> types.Item | types.Ret:
-        item = await super().random_ranked(**kwargs)
+    async def random(
+            self: RankedAgent,
+            rank: types.Rank | None = None,
+            subrank: types.Subrank | None = None,
+            cls: str | None = None,
+            mincost: types.RangeMember = None,
+            maxcost: types.RangeMember = None) -> \
+            types.Item | types.Ret:
+        '''Roll a random ranked item.'''
+        item = await super().random_ranked(
+            rank=rank,
+            subrank=subrank,
+            mincost=mincost,
+            maxcost=maxcost,
+        )
 
         match item:
             case types.Ret.NO_MATCH:

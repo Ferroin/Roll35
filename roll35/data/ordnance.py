@@ -255,8 +255,22 @@ class OrdnanceAgent(agent.Agent):
             enchant_base_cost=data['enchant_base_cost'],
         )
 
-    async def random(self: OrdnanceAgent, **kwargs) -> types.item.OrdnancePattern | types.Ret:
-        return await self.random_pattern(**kwargs)
+    async def random(
+            self: OrdnanceAgent,
+            rank: types.Rank,
+            subrank: types.Subrank,
+            allow_specific: bool = True,
+            mincost: types.item.Cost | None = None,
+            maxcost: types.item.Cost | None = None) -> \
+            types.item.OrdnancePattern | types.Ret:
+        '''Alias of random_pattern.'''
+        return await self.random_pattern(
+            rank=rank,
+            subrank=subrank,
+            allow_specific=allow_specific,
+            mincost=mincost,
+            maxcost=maxcost,
+        )
 
     @agent.ensure_costs
     @log_call_async(logger, 'roll random ordnance pattern')
