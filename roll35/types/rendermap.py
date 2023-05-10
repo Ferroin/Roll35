@@ -21,7 +21,7 @@ class RenderMap(Mapping):
        Each key is also exposed as an attribute. When accessing that
        attribute, a random item from the value for that key will be
        returned.'''
-    def __init__(self: RenderMap, data: Mapping[str, Sequence[str | dict]]) -> None:
+    def __init__(self: RenderMap, /, data: Mapping[str, Sequence[str | dict]]) -> None:
         if not (isinstance(data, dict) or
                 isinstance(data, Mapping)):
             raise TypeError('Initializer must be a mapping.')
@@ -46,7 +46,7 @@ class RenderMap(Mapping):
             else:
                 self._data[k] = list(map(lambda x: make_weighted_entry(x), cast(Sequence[dict[str, str]], v)))
 
-    def __getattr__(self: RenderMap, key: str) -> str | Mapping | NoReturn:
+    def __getattr__(self: RenderMap, key: str, /) -> str | Mapping | NoReturn:
         data = object.__getattribute__(self, '_data')
 
         if key in data:
@@ -59,14 +59,14 @@ class RenderMap(Mapping):
         else:
             raise AttributeError
 
-    def __len__(self: RenderMap) -> int:
+    def __len__(self: RenderMap, /) -> int:
         return len(self._data)
 
-    def __getitem__(self: RenderMap, key: str) -> Sequence[str | WeightedEntry]:
+    def __getitem__(self: RenderMap, key: str, /) -> Sequence[str | WeightedEntry]:
         return self._data[key]
 
-    def __iter__(self: RenderMap) -> Iterator[str]:
+    def __iter__(self: RenderMap, /) -> Iterator[str]:
         return iter(self._data)
 
-    def __contains__(self: RenderMap, key: Any) -> bool:
+    def __contains__(self: RenderMap, key: Any, /) -> bool:
         return key in self._data

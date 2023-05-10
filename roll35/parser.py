@@ -39,7 +39,7 @@ class Parser:
        - `names`: A list of strings which are used to indicate the
          specified token.
        '''
-    def __init__(self, schema: Mapping[str, ParserEntry]):
+    def __init__(self: Parser, schema: Mapping[str, ParserEntry], /):
         self._schema = schema
         self._rindex = dict()
 
@@ -47,7 +47,7 @@ class Parser:
             for name in schema[key].names:
                 self._rindex[name] = key
 
-    def parse(self, data: str) -> Result[dict[str, Any]]:
+    def parse(self: Parser, data: str, /) -> Result[dict[str, Any]]:
         '''Parse a string using the schema.
 
            Returns either a tuple of True and the dictionary produced

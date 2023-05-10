@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-def convert_compound_item(item: Mapping[str, Any]) -> types.item.CompoundItem:
+def convert_compound_item(item: Mapping[str, Any], /) -> types.item.CompoundItem:
     '''Convert a compound item entry to the appropriate dataclass.'''
     match item:
         case {'spell': _}:
@@ -36,7 +36,7 @@ def convert_compound_item(item: Mapping[str, Any]) -> types.item.CompoundItem:
 class CompoundAgent(agent.Agent):
     '''Basic data agent for compound item lists.'''
     @staticmethod
-    def _process_data(data: Mapping | Sequence, classes: ClassMap = dict()) -> agent.AgentData:
+    def _process_data(data: Mapping | Sequence, /, classes: ClassMap = dict()) -> agent.AgentData:
         if ismapping(data):
             raise ValueError('Compound Spell data must be a sequence')
 
@@ -48,7 +48,7 @@ class CompoundAgent(agent.Agent):
             )
         )
 
-    async def load_data(self: CompoundAgent, pool: Executor) -> types.Ret:
+    async def load_data(self: CompoundAgent, pool: Executor, /) -> types.Ret:
         '''Load data for this agent.'''
         if not self._ready.is_set():
             logger.info('Fetching class data.')
@@ -70,7 +70,9 @@ class CompoundAgent(agent.Agent):
     @log_call_async(logger, 'roll compound item')
     async def random(
             self: CompoundAgent,
+            /,
             rank: types.Rank | None = None,
+            *,
             cls: str | None = None,
             mincost: types.item.Cost | None = None,
             maxcost: types.item.Cost | None = None) -> \

@@ -58,7 +58,7 @@ class DataSet:
 
        Individual categories within the data set are accessed by name
        via subscripting.'''
-    def __init__(self: DataSet):
+    def __init__(self: DataSet, /):
         self._agents: Mapping[str, AnyAgent] = dict()
         self.ready = False
 
@@ -72,15 +72,15 @@ class DataSet:
             self._agents[item['name']] = agents[item['type']](self, item['name'])
             self._types[item['type']].add(item['name'])
 
-    def __getitem__(self: DataSet, key: str) -> AnyAgent:
+    def __getitem__(self: DataSet, key: str, /) -> AnyAgent:
         return self._agents[key]
 
     @property
-    def types(self: DataSet) -> Mapping[str, set[str]]:
+    def types(self: DataSet, /) -> Mapping[str, set[str]]:
         '''A list of the categories within the data set, grouped by type.'''
         return self._types
 
-    async def load_data(self: DataSet, pool: Executor) -> Ret:
+    async def load_data(self: DataSet, pool: Executor, /) -> Ret:
         '''Load the data for this dataset.'''
         if not self.ready:
             loaders = []

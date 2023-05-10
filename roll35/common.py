@@ -5,7 +5,6 @@
 
 from __future__ import annotations
 
-import asyncio
 import itertools
 import logging
 import random
@@ -13,7 +12,7 @@ import unicodedata
 
 from collections.abc import Mapping, Iterable
 from functools import lru_cache
-from typing import Any, Generator, Callable, TypeVar, TypeGuard, cast, overload
+from typing import Any, Generator, TypeVar, TypeGuard, cast, overload
 
 from jaro import jaro_winkler_metric as jwm
 from ruamel.yaml import YAML
@@ -40,7 +39,7 @@ async def ret_async(value: T) -> T:
     return value
 
 
-def ismapping(item: Any) -> TypeGuard[Mapping]:
+def ismapping(item: Any, /) -> TypeGuard[Mapping]:
     '''Quick type guard to check if something appears to be a mapping.
 
        This is not exhaustive, but is good enough for the type checking
@@ -55,7 +54,7 @@ def ismapping(item: Any) -> TypeGuard[Mapping]:
     return True
 
 
-def bad_return(value: Any) -> str:
+def bad_return(value: Any, /) -> str:
     '''Produce a log message indicating a bad return code, including call site info.'''
     import inspect
     frame = inspect.getframeinfo(inspect.stack()[1][0])
@@ -63,7 +62,7 @@ def bad_return(value: Any) -> str:
 
 
 @lru_cache(maxsize=256)
-def norm_string(string: str) -> str:
+def norm_string(string: str, /) -> str:
     '''Normalize a string.
 
        This utilizes a LRU cache to speed up repeated operations.'''
@@ -80,7 +79,7 @@ def expand_weighted_list(items: Iterable[types.WeightedEntry]) -> list[types.Ite
         raise ValueError
 
 
-def _expand_weighted_items(items: Iterable[types.WeightedEntry]) -> list[types.Item]:
+def _expand_weighted_items(items: Iterable[types.WeightedEntry], /) -> list[types.Item]:
     ret: list[types.Item] = []
 
     for item in items:
@@ -92,7 +91,7 @@ def _expand_weighted_items(items: Iterable[types.WeightedEntry]) -> list[types.I
     return ret
 
 
-def _expand_weighted_strs(items: Iterable[types.WeightedEntry]) -> list[str]:
+def _expand_weighted_strs(items: Iterable[types.WeightedEntry], /) -> list[str]:
     ret: list[str] = []
 
     for item in items:
@@ -104,7 +103,7 @@ def _expand_weighted_strs(items: Iterable[types.WeightedEntry]) -> list[str]:
     return ret
 
 
-def make_weighted_entry(entry: Mapping[str, Any] | types.Item, key: str = 'weight', costmult_handler=lambda x: x) -> types.WeightedEntry:
+def make_weighted_entry(entry: Mapping[str, Any] | types.Item, *, key: str = 'weight', costmult_handler=lambda x: x) -> types.WeightedEntry:
     '''Create a weighted item entry understandable by expand_weighted_list().
 
        costmult_handler is an optional callback that adds an appropriate
@@ -130,31 +129,31 @@ def make_weighted_entry(entry: Mapping[str, Any] | types.Item, key: str = 'weigh
 
 
 @overload
-def rnd(items: Iterable[types.WeightedEntry]) -> types.Item | str | types.Ret:
+def rnd(items: Iterable[types.WeightedEntry], /) -> types.Item | str | types.Ret:
     pass
 
 
 @overload
-def rnd(items: Iterable[types.Item]) -> types.Item | types.Ret:
+def rnd(items: Iterable[types.Item], /) -> types.Item | types.Ret:
     pass
 
 
 @overload
-def rnd(items: Iterable[str]) -> str | types.Ret:
+def rnd(items: Iterable[str], /) -> str | types.Ret:
     pass
 
 
 @overload
-def rnd(items: Iterable[types.Rank]) -> types.Rank | types.Ret:
+def rnd(items: Iterable[types.Rank], /) -> types.Rank | types.Ret:
     pass
 
 
 @overload
-def rnd(items: Iterable[types.Subrank]) -> types.Subrank | types.Ret:
+def rnd(items: Iterable[types.Subrank], /) -> types.Subrank | types.Ret:
     pass
 
 
-def rnd(items):
+def rnd(items, /):
     '''Select a random item from items.
 
        If the items are types.WeightedEntry instances, return one of
@@ -168,7 +167,7 @@ def rnd(items):
         return random.choice(list(items))
 
 
-def chunk(items: Iterable[T], size: int) -> Generator[list[T], None, None]:
+def chunk(items: Iterable[T], /, *, size: int) -> Generator[list[T], None, None]:
     '''Split a list into chunks of a given size.
 
        The final chunk will be less than the requested size if the total
@@ -186,7 +185,7 @@ def chunk(items: Iterable[T], size: int) -> Generator[list[T], None, None]:
         yield data
 
 
-def flatten(items: Iterable[Iterable[T]]) -> Generator[T, None, None]:
+def flatten(items: Iterable[Iterable[T]], /) -> Generator[T, None, None]:
     '''Flatten a list of lists.'''
     for i in items:
         for j in i:

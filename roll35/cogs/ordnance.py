@@ -24,7 +24,7 @@ NOT_READY = 'Item data is not yet available, please try again later.'
 
 class Ordnance(R35Cog):
     '''Roll35 cog for handling mundane armor and weapons.'''
-    async def get_item(self: Ordnance, ctx: commands.Context, typ: str, tags: Sequence[str]) -> None:
+    async def get_item(self: Ordnance, ctx: commands.Context, typ: str, /, tags: Sequence[str]) -> None:
         '''Get a mundane item.'''
         match await cast(OrdnanceAgent, self.ds[typ]).random_base(tags):
             case Ret.NOT_READY:
@@ -38,7 +38,7 @@ class Ordnance(R35Cog):
                 logger.warning(bad_return(ret))
                 await ctx.send('Unknown internal error.')
 
-    async def get_tags(self: Ordnance, ctx: commands.Context, typ: str) -> None:
+    async def get_tags(self: Ordnance, ctx: commands.Context, typ: str, /) -> None:
         match await cast(OrdnanceAgent, self.ds[typ]).tags():
             case Ret.NOT_READY:
                 await ctx.send(NOT_READY)
@@ -63,7 +63,7 @@ class Ordnance(R35Cog):
         await self.get_item(ctx, 'armor', tags)
 
     @commands.command()
-    async def armortags(self, ctx):
+    async def armortags(self, ctx, /):
         '''List known armor tags.'''
         await self.get_tags(ctx, 'armor')
 
@@ -77,6 +77,6 @@ class Ordnance(R35Cog):
         await self.get_item(ctx, 'weapon', tags)
 
     @commands.command()
-    async def weapontags(self, ctx):
+    async def weapontags(self, ctx, /):
         '''List known weapon tags.'''
         await self.get_tags(ctx, 'weapon')

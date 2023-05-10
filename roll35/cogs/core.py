@@ -15,15 +15,15 @@ from ..common import VERSION
 
 class Core(R35Cog):
     '''Roll35 core bot commands.'''
-    async def _ping(self: Core, ctx: commands.Context) -> None:
+    async def _ping(self: Core, ctx: commands.Context, /) -> None:
         await ctx.send('pong')
 
     @commands.command()
-    async def ping(self, ctx):
+    async def ping(self, ctx, /):
         '''Check if the bot is alive'''
         await self._ping(ctx)
 
-    async def _version(self: Core, ctx: commands.Context) -> None:
+    async def _version(self: Core, ctx: commands.Context, /) -> None:
         await ctx.send(
             f'\nRoll35 version: { VERSION[0] }.{ VERSION[1] }.{ VERSION[2] }\n' +
             f'Running on Python { platform.python_version() } ({ platform.python_implementation() })\n' +
@@ -31,6 +31,6 @@ class Core(R35Cog):
         )
 
     @commands.command()
-    async def version(self, ctx):
+    async def version(self, ctx, /):
         '''Check the version of the bot'''
         await self._version(ctx)

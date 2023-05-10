@@ -42,7 +42,7 @@ class OrdnanceData(agent.AgentData):
     enchant_base_cost: int | float
 
 
-def process_enchantment_table(items: Mapping, basevalue: types.item.Cost) -> EnchantmentTable:
+def process_enchantment_table(items: Mapping, /, basevalue: types.item.Cost) -> EnchantmentTable:
     '''Process an armor or weapon enchantment table.'''
     ret: EnchantmentTable = types.R35Map()
 
@@ -65,7 +65,7 @@ def process_enchantment_table(items: Mapping, basevalue: types.item.Cost) -> Enc
     return ret
 
 
-def get_enchant_bonus_costs(data: OrdnanceData, base: types.item.OrdnanceBaseItem) -> tuple[types.item.Cost, types.item.Cost]:
+def get_enchant_bonus_costs(data: OrdnanceData, base: types.item.OrdnanceBaseItem, /) -> tuple[types.item.Cost, types.item.Cost]:
     '''Compute the enchantment bonus costs for the specified base item.'''
     if 'double' in base.tags:
         masterwork = data.masterwork * 2
@@ -80,7 +80,7 @@ def get_enchant_bonus_costs(data: OrdnanceData, base: types.item.OrdnanceBaseIte
     )
 
 
-def get_costs_and_bonus(enchants: Iterable[types.WeightedEntry]) -> tuple[types.item.Cost, types.item.Cost, Bonus, Bonus]:
+def get_costs_and_bonus(enchants: Iterable[types.WeightedEntry], /) -> tuple[types.item.Cost, types.item.Cost, Bonus, Bonus]:
     '''Figure out the range of extra costs that a given list of enchantments might have.'''
     min_cost: types.item.Cost = -1
     max_cost: types.item.Cost = 0
@@ -118,7 +118,8 @@ def get_costs_and_bonus(enchants: Iterable[types.WeightedEntry]) -> tuple[types.
     return (min_cost, max_cost, min_bonus, max_bonus)
 
 
-def get_costs(bonus: Bonus, base: types.item.Cost, enchants: list[Bonus], enchantments: EnchantmentTable) -> tuple[types.item.Cost, types.item.Cost]:
+def get_costs(bonus: Bonus, base: types.item.Cost, enchants: list[Bonus], enchantments: EnchantmentTable, /) -> \
+        tuple[types.item.Cost, types.item.Cost]:
     '''Determine the range of possible costs for a set of enchantments.'''
     min_cost: types.item.Cost = float('inf')
     max_cost: types.item.Cost = 0
@@ -152,7 +153,7 @@ def get_costs(bonus: Bonus, base: types.item.Cost, enchants: list[Bonus], enchan
     return min_cost, max_cost
 
 
-def create_xform(base: int | float, enchantments: EnchantmentTable, specific: SpecificItemList) -> \
+def create_xform(base: int | float, enchantments: EnchantmentTable, specific: SpecificItemList, /) -> \
         Callable[[types.item.OrdnancePattern], types.item.OrdnancePattern]:
     '''Produce a mapping function for adding costs to enchantment combos.'''
     def xform(x: types.item.OrdnancePattern) -> types.item.OrdnancePattern:
@@ -189,7 +190,7 @@ def create_xform(base: int | float, enchantments: EnchantmentTable, specific: Sp
     return xform
 
 
-def generate_tags_entry(items: Sequence[types.item.OrdnanceBaseItem]) -> set[str]:
+def generate_tags_entry(items: Sequence[types.item.OrdnanceBaseItem], /) -> set[str]:
     '''Generate a list of tags based on a list of items.'''
     taglist = list(map(lambda x: set(x.tags), items))
     tags = reduce(lambda x, y: x | y, taglist)
@@ -198,7 +199,7 @@ def generate_tags_entry(items: Sequence[types.item.OrdnanceBaseItem]) -> set[str
 
 class OrdnanceAgent(agent.Agent):
     '''Data agent for weapon or armor item data.'''
-    def __init__(self: OrdnanceAgent, dataset: DataSet, name: str) -> None:
+    def __init__(self: OrdnanceAgent, /, dataset: DataSet, name: str) -> None:
         super().__init__(dataset, name)
         self._data: OrdnanceData = OrdnanceData(
             base=[],
@@ -210,7 +211,7 @@ class OrdnanceAgent(agent.Agent):
         )
 
     @staticmethod
-    def _process_data(data: Mapping | Sequence) -> OrdnanceData:
+    def _process_data(data: Mapping | Sequence, /) -> OrdnanceData:
         if not ismapping(data):
             raise ValueError('Ordnance data must be a mapping.')
 
@@ -257,8 +258,10 @@ class OrdnanceAgent(agent.Agent):
 
     async def random(
             self: OrdnanceAgent,
+            /,
             rank: types.Rank,
             subrank: types.Subrank,
+            *,
             allow_specific: bool = True,
             mincost: types.item.Cost | None = None,
             maxcost: types.item.Cost | None = None) -> \
@@ -277,8 +280,10 @@ class OrdnanceAgent(agent.Agent):
     @types.check_ready(logger)
     async def random_pattern(
             self: OrdnanceAgent,
+            /,
             rank: types.Rank,
             subrank: types.Subrank,
+            *,
             allow_specific: bool = True,
             mincost: types.item.Cost | None = None,
             maxcost: types.item.Cost | None = None) -> \
@@ -305,11 +310,7 @@ class OrdnanceAgent(agent.Agent):
         elif not self._valid_subrank(rank, subrank):
             raise ValueError(f'Invalid subrank for { self.name }: { subrank }')
 
-        items = agent.costfilter(
-            cast(types.RankedItemList, self._data.ranked)[rank][subrank],
-            mincost,
-            maxcost,
-        )
+        items = agent.costfilter(cast(types.RankedItemList, self._data.ranked)[rank][subrank], mincost=mincost, maxcost=maxcost)
 
         if allow_specific:
             if items:
@@ -328,7 +329,7 @@ class OrdnanceAgent(agent.Agent):
 
     @log_call_async(logger, 'get base ordnance item')
     @types.check_ready(logger)
-    async def get_base(self: OrdnanceAgent, pool: Executor, name: str) -> \
+    async def get_base(self: OrdnanceAgent, pool: Executor, /, name: str) -> \
             types.Result[types.item.OrdnanceBaseItem]:
         '''Get a base item by name.
 
@@ -360,7 +361,7 @@ class OrdnanceAgent(agent.Agent):
 
     @log_call_async(logger, 'roll random base ordnance item')
     @types.check_ready(logger)
-    async def random_base(self: OrdnanceAgent, tags: Sequence[str] = []) -> types.item.OrdnanceBaseItem | types.Ret:
+    async def random_base(self: OrdnanceAgent, /, tags: Sequence[str] = []) -> types.item.OrdnanceBaseItem | types.Ret:
         '''Get a base item at random.'''
         items = self._data.base
 
@@ -388,6 +389,7 @@ class OrdnanceAgent(agent.Agent):
     @types.check_ready(logger)
     async def random_enchant(
             self: OrdnanceAgent,
+            /,
             group: str,
             bonus: Bonus,
             enchants: Sequence[str] = [],
@@ -424,7 +426,9 @@ class OrdnanceAgent(agent.Agent):
     @types.check_ready(logger)
     async def random_specific(
             self: OrdnanceAgent,
+            /,
             args: Sequence[str],
+            *,
             mincost: types.item.Cost | None = None,
             maxcost: types.item.Cost | None = None) -> \
             types.item.OrdnanceSpecific | types.Ret:
@@ -470,11 +474,7 @@ class OrdnanceAgent(agent.Agent):
 
             items = cast(Mapping[str, types.RankedItemList], items)[group]
 
-        possible = agent.costfilter(
-            cast(types.RankedItemList, items)[rank][subrank],
-            mincost if mincost is not None else 0,
-            maxcost if maxcost is not None else float('inf'),
-        )
+        possible = agent.costfilter(cast(types.RankedItemList, items)[rank][subrank], mincost=mincost, maxcost=maxcost)
 
         if possible:
             return rnd(possible)
@@ -483,13 +483,13 @@ class OrdnanceAgent(agent.Agent):
 
     @log_call_async(logger, 'get ordnance bonus costs')
     @types.check_ready(logger)
-    async def get_bonus_costs(self: OrdnanceAgent, base: types.item.OrdnanceBaseItem) -> tuple[types.item.Cost, types.item.Cost]:
+    async def get_bonus_costs(self: OrdnanceAgent, /, base: types.item.OrdnanceBaseItem) -> tuple[types.item.Cost, types.item.Cost]:
         '''Get the bonus costs associated with the given item.'''
         return get_enchant_bonus_costs(self._data, base)
 
     @log_call_async(logger, 'get ordnance tags')
     @types.check_ready(logger)
-    async def tags(self: OrdnanceAgent) -> Sequence[str] | types.Ret:
+    async def tags(self: OrdnanceAgent, /) -> Sequence[str] | types.Ret:
         '''Get a list of recognized tags.'''
         if self._data.tags:
             return list(self._data.tags)

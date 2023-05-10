@@ -38,7 +38,7 @@ Cls = str
 Level = int
 
 
-def _eval_minimum(level: Level | None, cls: Cls, minimum: Level | None, minimum_cls: Cls) -> tuple[Level | None, Cls]:
+def _eval_minimum(level: Level | None, cls: Cls, minimum: Level | None, minimum_cls: Cls, /) -> tuple[Level | None, Cls]:
     '''Used to figure out the minimum level and class of a spell.
 
        This is intended to be used with functools.reduce().'''
@@ -51,8 +51,8 @@ def _eval_minimum(level: Level | None, cls: Cls, minimum: Level | None, minimum_
     return (minimum, minimum_cls)
 
 
-def _eval_spellpage(level: Level | None, cls: Cls, spellpage: Level | None, spellpage_cls: Cls,
-                    spellpage_fixed: bool, cls_match: Cls) -> tuple[Level | None, Cls, bool]:
+def _eval_spellpage(level: Level | None, cls: Cls, spellpage: Level | None, spellpage_cls: Cls, spellpage_fixed: bool, cls_match: Cls, /) -> \
+        tuple[Level | None, Cls, bool]:
     '''Used to figure out the spellpage class and level for a spell.
 
        This is intended to be used with functools.reduce().'''
@@ -80,7 +80,7 @@ class SpellFileEntry:
     subschool: str
 
 
-def make_spell_file_entry(data: Mapping[str, Any]) -> SpellFileEntry:
+def make_spell_file_entry(data: Mapping[str, Any], /) -> SpellFileEntry:
     '''Convert a spell file entry to the correct data class.'''
     try:
         return SpellFileEntry(**data)
@@ -104,7 +104,7 @@ class SpellFields:
     spellpage_divine_fixed: bool = False
 
 
-def _gen_spell_fields(acc: SpellFields, cls: Cls) -> SpellFields:
+def _gen_spell_fields(acc: SpellFields, cls: Cls, /) -> SpellFields:
     '''Generate the SQL fields for a spell.'''
     spell = acc.spell
     clsdata = acc.clsdata
@@ -182,7 +182,7 @@ def _gen_spell_fields(acc: SpellFields, cls: Cls) -> SpellFields:
     return acc
 
 
-def process_spell(data: tuple[SpellFileEntry, ClassMap]) -> tuple[dict[str, Any], set[str]]:
+def process_spell(data: tuple[SpellFileEntry, ClassMap], /) -> tuple[dict[str, Any], set[str]]:
     '''Process a spell entry.
 
        Returns a tuple of the column values for the spell to be added
@@ -211,7 +211,7 @@ def process_spell(data: tuple[SpellFileEntry, ClassMap]) -> tuple[dict[str, Any]
     return (ret, tags)
 
 
-def process_spell_chunk(items: Iterable[tuple[SpellFileEntry, ClassMap]], idx: int) -> Iterable[tuple[dict[str, Any], set[str]]]:
+def process_spell_chunk(items: Iterable[tuple[SpellFileEntry, ClassMap]], /, idx: int) -> Iterable[tuple[dict[str, Any], set[str]]]:
     '''Map a list of spell items into a list of SQL fields.'''
     ret = []
 
@@ -245,14 +245,14 @@ class SpellAgent(agent.Agent):
         'minimum',
     }
 
-    def __init__(self: SpellAgent, dataset: DataSet, name: str, db_path: Path = (Path.cwd() / 'spells.db')) -> None:
+    def __init__(self: SpellAgent, /, dataset: DataSet, name: str, db_path: Path = (Path.cwd() / 'spells.db')) -> None:
         super().__init__(dataset, name)
         self._db_path = db_path
         self._data: SpellData = SpellData(
             tags=set()
         )
 
-    async def _level_in_cls(self: SpellAgent, level: Level, cls: Cls) -> bool:
+    async def _level_in_cls(self: SpellAgent, level: Level, cls: Cls, /) -> bool:
         if level is None:
             return True
 
@@ -269,7 +269,7 @@ class SpellAgent(agent.Agent):
     def _process_data(_):
         return None
 
-    async def load_data(self: SpellAgent, pool: Executor) -> types.Ret:
+    async def load_data(self: SpellAgent, pool: Executor, /) -> types.Ret:
         '''Load the data for this agent, using the specified executor pool.
 
            This requires a specific overide as it involves a large amount
@@ -318,7 +318,7 @@ class SpellAgent(agent.Agent):
 
                 coros = []
 
-                for idx, spell_chunk in enumerate(chunk(spell_list, 100)):
+                for idx, spell_chunk in enumerate(chunk(spell_list, size=100)):
                     coros.append(loop.run_in_executor(
                         pool,
                         process_spell_chunk,
@@ -385,6 +385,7 @@ class SpellAgent(agent.Agent):
     @types.check_ready(logger)
     async def random(
             self: SpellAgent,
+            /,
             level: Level | None = None,
             cls: Cls | None = None,
             tag: str | None = None) -> \
@@ -545,7 +546,7 @@ class SpellAgent(agent.Agent):
 
     @log_call_async(logger, 'get spell tags')
     @types.check_ready(logger)
-    async def tags(self: SpellAgent) -> Sequence[str] | types.Ret:
+    async def tags(self: SpellAgent, /) -> Sequence[str] | types.Ret:
         '''Return a list of recognized tags.'''
         if self._data.tags:
             return list(self._data.tags)

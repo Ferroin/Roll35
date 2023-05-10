@@ -24,15 +24,15 @@ class ReadyState:
     '''Mixin to add infrastructure to track readiness state for an object.'''
     READY_TIMEOUT: float | int = 5.0
 
-    def __init__(self: ReadyState) -> None:
+    def __init__(self: ReadyState, /) -> None:
         self._ready = asyncio.Event()
 
     @property
-    def ready(self: ReadyState) -> bool:
+    def ready(self: ReadyState, /) -> bool:
         return self._ready.is_set()
 
     @ready.setter
-    def ready(self: ReadyState, state: bool) -> None:
+    def ready(self: ReadyState, state: bool, /) -> None:
         match state:
             case True:
                 self._ready.set()
@@ -42,7 +42,7 @@ class ReadyState:
                 raise ValueError
 
 
-def check_ready(logger: logging.Logger) -> \
+def check_ready(logger: logging.Logger, /) -> \
         Callable[
             [Callable[Concatenate[RS, P], Coroutine[Any, Any, T]]],
             Callable[Concatenate[RS, P], Coroutine[Any, Any, T | Literal[Ret.NOT_READY]]]

@@ -31,7 +31,7 @@ class R35Map(R35Container, MutableMapping, Generic[K, V]):
        patterns. In-place replacement of existing keys is expensive
        as it requires rescanning the contained items to recompute the
        `costs` property.'''
-    def __init__(self: R35Map, data: Mapping[K, V] | None = None):
+    def __init__(self: R35Map, /, data: Mapping[K, V] | None = None):
         super().__init__()
         self._data: dict[K, V] = dict()
 
@@ -39,16 +39,16 @@ class R35Map(R35Container, MutableMapping, Generic[K, V]):
             for k, v in data.items():
                 self[k] = v
 
-    def __repr__(self: R35Map) -> str:
+    def __repr__(self: R35Map, /) -> str:
         return f'R35Map({ self.costs }, { self._data })'
 
-    def __getitem__(self: R35Map, key: K) -> V:
+    def __getitem__(self: R35Map, key: K, /) -> V:
         if key in self._data:
             return self._data[key]
         else:
             raise KeyError(key)
 
-    def __setitem__(self: R35Map, key: K, value: V) -> None:
+    def __setitem__(self: R35Map, key: K, value: V, /) -> None:
         if not (isinstance(key, str) or isinstance(key, int) or isinstance(key, Enum)):
             raise KeyError('Only string, integer, and Enum keys are supported by R35Map objects.')
 
@@ -66,7 +66,7 @@ class R35Map(R35Container, MutableMapping, Generic[K, V]):
                 self._costs.add([cost_min])
                 self._costs.add([cost_max])
 
-    def __delitem__(self: R35Map, key: K) -> None:
+    def __delitem__(self: R35Map, key: K, /) -> None:
         if key in self._data:
             del self._data[key]
 
@@ -74,7 +74,7 @@ class R35Map(R35Container, MutableMapping, Generic[K, V]):
         else:
             raise KeyError(key)
 
-    def _recompute_costs(self: R35Map) -> None:
+    def _recompute_costs(self: R35Map, /) -> None:
         self._costs.reset()
 
         for item in self._data.values():
@@ -85,14 +85,14 @@ class R35Map(R35Container, MutableMapping, Generic[K, V]):
                     self._costs.add([cost_min])
                     self._costs.add([cost_max])
 
-    def items(self: R35Map) -> ItemsView:
+    def items(self: R35Map, /) -> ItemsView:
         '''Return a view of the keys and values of the mapping.'''
         return self._data.items()
 
-    def keys(self: R35Map) -> KeysView:
+    def keys(self: R35Map, /) -> KeysView:
         '''Return a view of the keys of the mapping.'''
         return self._data.keys()
 
-    def values(self: R35Map) -> ValuesView:
+    def values(self: R35Map, /) -> ValuesView:
         '''Return a view of the values of the mapping.'''
         return self._data.values()
