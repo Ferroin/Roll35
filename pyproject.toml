@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "roll35"
+version = "5.0.0"
+description = "A Python module and Discord bot for rolling random items for Pathfinder 1e."
+authors = ["Austin S. Hemmelgarn <ahferroin7@gmail.com>"]
+license = "MITNFA"
+readme = "README.md"
+repository = "https://github.com/Ferroin/Roll35/"
+
+[tool.poetry.scripts]
+run = "roll35.bot:main"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+aiosqlite = "^0.19.0"
+jaro-winkler = "^2.0"
+Jinja2 = "^3.1.2"
+"nextcord[speed]" = "^2.4.2"
+"ruamel.yaml" = "^0.17.24"
+"ruamel.yaml.clib" = "^0.2.6"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
