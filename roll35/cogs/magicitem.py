@@ -95,6 +95,15 @@ ITEM_PARSER = Parser({
         ],
         default=None,
     ),
+    'level': ParserEntry(
+        type=int,
+        names=[
+            'level',
+            'lvl',
+            'l',
+        ],
+        default=None,
+    ),
     'mincost': ParserEntry(
         type=int,
         names=[
@@ -205,6 +214,8 @@ class MagicItem(types.R35Cog):
              rolling wands or scrolls. For a list of recognized classes,
              run `/r35 classes`. Only accepted if `category wand` or
              `category scroll` is specified.
+           - `level`: Specify the spell level to use when rolling wands
+             or scrolls.
            - `base`: Specify the base item to use when rolling magic
              armor or a magic weapon. Base items should be quoted
              if their names contain spaces (for example: `‘studded
@@ -421,6 +432,7 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
         'slot': args.get('slot', None),
         'base': args.get('base', None),
         'cls': args.get('cls', None),
+        'level': args.get('level', None),
         'mincost': args.get('mincost', 0),
         'maxcost': args.get('maxcost', float('inf')),
     }
@@ -520,17 +532,19 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
                     item = (types.Ret.FAILED, 'Unknown internal error.')
         case {'rank': _, 'subrank': subrank, 'category': category} if category in compound and subrank is not None:
             item = (types.Ret.INVALID, f'Invalid parmeters specified, { category } does not take a subrank.')
-        case {'rank': rank, 'subrank': subrank, 'category': category, 'cls': cls} if cls is not None:
+        case {'rank': rank, 'subrank': subrank, 'category': category, 'cls': cls, 'level': level} if cls is not None or level is not None:
             match await cast(ClassesAgent, ds['classes']).classes():
                 case types.Ret.NOT_READY:
                     item = (types.Ret.NOT_READY, NOT_READY)
                 case classes:
                     valid = set(cast(set[ClassEntry], classes)) | cast(SpellAgent, ds['spell']).EXTRA_CLASS_NAMES
 
-                    if cls in valid:
-                        match await cast(CompoundAgent, ds[category]).random(rank=rank, cls=cls, mincost=mincost, maxcost=maxcost):
+                    if cls in valid or cls is None:
+                        match await cast(CompoundAgent, ds[category]).random(rank=rank, cls=cls, level=level, mincost=mincost, maxcost=maxcost):
                             case types.item.BaseItem() as i1:
                                 item = (types.Ret.OK, i1)
+                            case types.Ret.NO_MATCH:
+                                item = types.Ret.NO_MATCH
                             case types.Ret.NOT_READY:
                                 item = (types.Ret.NOT_READY, NOT_READY)
                             case ret:
