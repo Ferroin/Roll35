@@ -14,11 +14,11 @@ from . import constants
 from .classes import ClassMap, ClassesAgent
 from .spell import SpellAgent
 from .. import types
-from ..common import yaml, bad_return, ismapping
+from ..common import yaml, bad_return, ismapping, rnd, flatten
 from ..log import log_call_async
 
 if TYPE_CHECKING:
-    from collections.abc import Mapping, Sequence
+    from collections.abc import Mapping, Sequence, Iterable
     from concurrent.futures import Executor
 
 logger = logging.getLogger(__name__)
@@ -74,15 +74,46 @@ class CompoundAgent(agent.Agent):
             rank: types.Rank | None = None,
             *,
             cls: str | None = None,
+            level: int | None = None,
             mincost: types.item.Cost | None = None,
             maxcost: types.item.Cost | None = None) -> \
             types.Item | types.Ret:
         '''Roll a random item, then roll a spell for it if needed.'''
-        item = await super().random_compound(
-            rank=rank,
-            mincost=mincost,
-            maxcost=maxcost,
-        )
+        match level:
+            case None:
+                item = await super().random_compound(
+                    rank=rank,
+                    mincost=mincost,
+                    maxcost=maxcost,
+                )
+            case int():
+                if self._data.compound is None:
+                    return types.Ret.NO_MATCH
+
+                match rank:
+                    case None:
+                        searchitems: Iterable[types.WeightedEntry] = flatten(self._data.compound.values())
+                    case rank if self._valid_rank(rank):
+                        searchitems = self._data.compound[rank]
+                    case _:
+                        raise ValueError(f'Invalid rank for { self.name }: { rank }')
+
+                possible = []
+
+                for i1 in searchitems:
+                    match i1:
+                        case types.WeightedEntry(value=types.item.SpellItem(spell={'level': int() as l1})) if l1 == level:
+                            possible.append(i1)
+
+                items = agent.costfilter(possible, mincost=mincost, maxcost=maxcost)
+
+                match rnd(items):
+                    case types.Ret.NO_MATCH:
+                        return types.Ret.NO_MATCH
+                    case i2:
+                        item = i2
+            case _:
+                raise ValueError
 
         match item:
             case types.Ret.NO_MATCH:

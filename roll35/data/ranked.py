@@ -14,17 +14,17 @@ from . import constants
 from .classes import ClassMap, ClassesAgent
 from .spell import SpellAgent
 from .. import types
-from ..common import yaml, bad_return, ismapping
+from ..common import yaml, bad_return, ismapping, rnd, flatten
 from ..log import log_call_async
 
 if TYPE_CHECKING:
-    from collections.abc import Mapping, Sequence
+    from collections.abc import Mapping, Sequence, Iterable
     from concurrent.futures import Executor
 
 logger = logging.getLogger(__name__)
 
 
-def convert_ranked_item(item: Mapping[str, Any]) -> types.item.SimpleItem:
+def convert_ranked_item(item: Mapping[str, Any], /) -> types.item.SimpleItem:
     '''Convert a ranked item entry to the appropriate dataclass.'''
     match item:
         case {'spell': _}:
@@ -36,7 +36,7 @@ def convert_ranked_item(item: Mapping[str, Any]) -> types.item.SimpleItem:
 class RankedAgent(agent.Agent):
     '''Data agent for ranked item lists.'''
     @staticmethod
-    def _process_data(data: Mapping | Sequence, classes: ClassMap = dict()) -> agent.AgentData:
+    def _process_data(data: Mapping | Sequence, /, classes: ClassMap = dict()) -> agent.AgentData:
         if not ismapping(data):
             raise ValueError('Ranked data must be a mapping')
 
@@ -48,7 +48,7 @@ class RankedAgent(agent.Agent):
             )
         )
 
-    async def load_data(self: RankedAgent, pool: Executor) -> types.Ret:
+    async def load_data(self: RankedAgent, pool: Executor, /) -> types.Ret:
         '''Load data for this agent.'''
         if not self._ready.is_set():
             logger.info('Fetching class data.')
@@ -70,19 +70,62 @@ class RankedAgent(agent.Agent):
     @log_call_async(logger, 'roll random ranked item')
     async def random(
             self: RankedAgent,
+            /,
             rank: types.Rank | None = None,
             subrank: types.Subrank | None = None,
+            *,
+            level: int | None = None,
             cls: str | None = None,
             mincost: types.Cost | None = None,
             maxcost: types.Cost | None = None) -> \
             types.Item | types.Ret:
-        '''Roll a random ranked item.'''
-        item = await super().random_ranked(
-            rank=rank,
-            subrank=subrank,
-            mincost=mincost,
-            maxcost=maxcost,
-        )
+        '''Roll a random ranked item, then roll a spell for it if needed.'''
+        match level:
+            case None:
+                item = await super().random_ranked(
+                    rank=rank,
+                    subrank=subrank,
+                    mincost=mincost,
+                    maxcost=maxcost,
+                )
+            case int():
+                if self._data.ranked is None:
+                    return types.Ret.NO_MATCH
+
+                match rank:
+                    case None:
+                        searchitems: Iterable[types.Item] = []
+
+                        for si1 in self._data.ranked.values():
+                            for si2 in si1.values():
+                                cast(list, searchitems).append(si2)
+                    case rank if self._valid_rank(rank):
+                        match subrank:
+                            case None:
+                                searchitems = flatten(self._data.ranked[rank].values())
+                            case subrank if self._valid_subrank(rank, subrank):
+                                searchitems = self._data.ranked[rank][subrank]
+                            case _:
+                                raise ValueError(f'Invalid sub-rank for { self.name }: { rank }')
+                    case _:
+                        raise ValueError(f'Invalid rank for { self.name }: { rank }')
+
+                possible = []
+
+                for i1 in searchitems:
+                    match i1:
+                        case types.WeightedEntry(value=types.item.SpellItem(spell={'level': int() as l1})) if l1 == level:
+                            possible.append(i1)
+                        case types.item.SpellItem(spell={'level': int() as l1}) if l1 == level:
+                            possible.append(i1)
+
+                match rnd(agent.costfilter(possible, mincost=mincost, maxcost=maxcost)):
+                    case types.Ret.NO_MATCH:
+                        return types.Ret.NO_MATCH
+                    case i2:
+                        item = i2
+            case _:
+                raise ValueError
 
         match item:
             case types.Ret.NO_MATCH:
