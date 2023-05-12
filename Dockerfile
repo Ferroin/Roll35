@@ -1,43 +1,26 @@
-FROM alpine:3.17 AS builder
+FROM alpine:3.17
 
 ARG VERSION=dev
+ARG BUILD_PKGS="alpine-sdk libffi-dev py3-setuptools-rust python3-dev"
 
 RUN apk update && \
-    apk add --no-cache alpine-sdk \
-                       libffi-dev \
-                       py3-setuptools-rust \
-                       py3-virtualenv \
-                       python3-dev
+    apk upgrade --no-cache && \
+    apk add --no-cache poetry \
+                       libffi
 
-RUN virtualenv /app/venv
+RUN poetry config virtualenvs.create false
 
 WORKDIR /app
 
-COPY /requirements.txt /app
+COPY / /app
 
-RUN . /app/venv/bin/activate && MAKEOPTS="-j$(nproc)" pip install -r /app/requirements.txt
+RUN apk add --no-cache ${BUILD_PKGS} && \
+    poetry install --only main && \
+    apk del --no-cache ${BUILD_PKGS}
 
-COPY /roll35 /app/roll35
-COPY /scripts/version-check.sh /app/scripts/version-check.sh
+RUN poetry run /app/scripts/version-check.sh ${VERSION}
 
-RUN . /app/venv/bin/activate && /app/scripts/version-check.sh ${VERSION}
-
-FROM alpine:3.17 AS runtime
-
-ARG VERSION=dev
-
-RUN mkdir -p /app
-
-COPY /*.md /app
-COPY /scripts/run.sh /app/scripts/run.sh
-
-RUN apk update && \
-    apk add --no-cache libffi \
-                       python3
-
-COPY --from=builder /app /app
-
-CMD [ "/app/scripts/run.sh" ]
+CMD [ "/usr/bin/roll35-bot" ]
 
 LABEL org.opencontainers.image.title="Roll35"
 LABEL org.opencontainers.image.description="A Discord bot for rolling magic items for Pathfinder 1e."
