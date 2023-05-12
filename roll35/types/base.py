@@ -6,16 +6,18 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TypeVar
+from typing import TypeVar, Generic
 
 from .item import Item
 
+T = TypeVar('T')
+
 
 @dataclass
-class WeightedEntry:
+class WeightedEntry(Generic[T]):
     '''Data class for entries in weighted lists.'''
     weight: int
-    value: Item | str
+    value: T
 
 
-ItemEntry = TypeVar('ItemEntry', Item, WeightedEntry)
+ItemEntry = TypeVar('ItemEntry', Item, WeightedEntry[Item])

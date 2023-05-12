@@ -253,9 +253,6 @@ class SpellAgent(agent.Agent):
         )
 
     async def _level_in_cls(self: SpellAgent, level: Level, cls: Cls, /) -> bool:
-        if level is None:
-            return True
-
         classes = await cast(ClassesAgent, self._ds['classes']).get_class(cls)
 
         if classes is types.Ret.NOT_READY:
@@ -266,7 +263,7 @@ class SpellAgent(agent.Agent):
         return len(levels) > level and levels[level] is not None
 
     @staticmethod
-    def _process_data(_):
+    def _process_data(_: Any) -> Any:
         return None
 
     async def load_data(self: SpellAgent, pool: Executor, /) -> types.Ret:
@@ -330,7 +327,7 @@ class SpellAgent(agent.Agent):
 
                 spells = list(flatten(await asyncio.gather(*coros)))
 
-                spell_params = map(lambda x: x[0], spells)
+                spell_params = map(lambda x: cast(dict[str, Any], x[0]), spells)
                 tag_params = map(
                     lambda x: {
                         'name': x[0]['name'],
@@ -367,7 +364,7 @@ class SpellAgent(agent.Agent):
 
                 logger.info('Storing tag list.')
 
-                self._data.tags = reduce(set.union, map(lambda x: x[1], spells))
+                self._data.tags = reduce(set.union, map(lambda x: cast(set[str], x[1]), spells))
 
                 logger.info('Optimizing DB.')
 
@@ -413,6 +410,9 @@ class SpellAgent(agent.Agent):
                 f'0 and { MAX_SPELL_LEVEL }.'
             )
 
+        if cls is None:
+            cls = 'minimum'
+
         match (cls, level):
             case ('spellpage', _):
                 cls = random.choice([
@@ -443,10 +443,7 @@ class SpellAgent(agent.Agent):
                 valid = [k for (k, v) in classes.items()
                          if await self._level_in_cls(cast(int, level), k)]
                 cls = random.choice(valid)
-            case (None, _):
-                cls = 'minimum'
-            case (cls, level) if cls in valid_classes and \
-                    not await self._level_in_cls(cast(int, level), cls):
+            case (cls, level) if cls in valid_classes and not await self._level_in_cls(cast(int, level), cls):
                 return (
                     types.Ret.INVALID,
                     f'Class { cls } does not have access to ' +
@@ -521,7 +518,7 @@ class SpellAgent(agent.Agent):
                 'No spells found matching the requested parameters.'
             )
         else:
-            spell = spell[0]
+            spell = [x for x in spell][0]
 
         match cls:
             case 'minimum':
@@ -531,6 +528,8 @@ class SpellAgent(agent.Agent):
             case 'spellpage_divine':
                 cls = spell['spellpage_divine_cls']
 
+        assert cls is not None
+
         if level is None:
             level = spell[cls]
 
@@ -539,7 +538,7 @@ class SpellAgent(agent.Agent):
             types.item.SpellEntry(
                 name=spell['name'],
                 level=spell[cls],
-                cls=cast(str, cls),
+                cls=cls,
                 caster_level=classes[cls].levels[level],
             )
         )

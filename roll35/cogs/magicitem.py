@@ -144,7 +144,7 @@ class MagicItem(types.R35Cog):
     async def _roll_magic_item(self: MagicItem, ctx: commands.Context, *args: str) -> None:
         match ITEM_PARSER.parse(' '.join(args)):
             case (types.Ret.FAILED, msg):
-                return await ctx.send(
+                await ctx.send(
                     'Invalid arguments for command `magicitem`: ' +
                     f'{ msg }\n' +
                     'See `/r35 help magicitem` for supported arguments.'
@@ -153,11 +153,11 @@ class MagicItem(types.R35Cog):
                 parsed = cast(dict[str, Any], a)
             case ret:
                 logger.error(bad_return(ret))
-                return await ctx.send('Unknown internal error.')
+                await ctx.send('Unknown internal error.')
 
         match parsed:
             case {'count': c} if isinstance(c, int) and c > 0:
-                items = roll_many(self.bot.pool, self.ds, c, {
+                items = roll_many(self.pool, self.ds, c, {
                     k: v for k, v in parsed.items() if k != 'count'
                 })
 
@@ -196,7 +196,7 @@ class MagicItem(types.R35Cog):
             case _:
                 await ctx.send('Unrecognized value for count.')
 
-    @commands.command()
+    @commands.command()  # type: ignore
     async def magicitem(self, ctx, *args):
         '''Roll a random magic item.
 
@@ -230,7 +230,7 @@ class MagicItem(types.R35Cog):
            Parameters which are not specified are generated randomly.'''
         await self._roll_magic_item(ctx, *args)
 
-    @commands.command()
+    @commands.command()  # type: ignore
     async def mi(self, ctx, *args):
         '''Alias for `magicitem`.'''
         await self._roll_magic_item(ctx, *args)
@@ -248,7 +248,7 @@ class MagicItem(types.R35Cog):
                 logger.warning(bad_return(ret))
                 await ctx.send('Unknown internal error.')
 
-    @commands.command()
+    @commands.command()  # type: ignore
     async def categories(self, ctx, /):
         '''List known magic item categories.'''
         await self._categories(ctx)
@@ -257,9 +257,7 @@ class MagicItem(types.R35Cog):
         match await cast(WondrousAgent, self.ds['wondrous']).slots():
             case types.Ret.NOT_READY:
                 await ctx.send(NOT_READY)
-            case types.Ret.NO_MATCH:
-                await ctx.send('No slots found for wondrous items.')
-            case set() as slots:
+            case list() as slots:
                 await ctx.send(
                     'The following wobndrous item slots are recognized: ' +
                     f'`{ "`, `".join(sorted(slots)) }`'
@@ -268,7 +266,7 @@ class MagicItem(types.R35Cog):
                 logger.warning(bad_return(ret))
                 await ctx.send('Unknown internal error.')
 
-    @commands.command()
+    @commands.command()  # type: ignore
     async def slots(self, ctx, /) -> None:
         '''List known wondrous item slots.'''
         await self._slots(ctx)

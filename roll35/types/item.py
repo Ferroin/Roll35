@@ -90,7 +90,7 @@ class OrdnanceBaseItem(BaseItem):
     count: int | None = None
 
 
-EnchantLimits = TypedDict('EnchantLimits', {'only': Union[Tag, list[Tag]], 'not': Union[Tag, list[Tag]]}, total=False)
+EnchantLimits = TypedDict('EnchantLimits', {'only': Union[list[Tag]], 'not': Union[list[Tag]]}, total=False)
 
 
 @dataclass

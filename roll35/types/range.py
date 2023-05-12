@@ -27,7 +27,7 @@ class R35Range(Container):
     MIN_VALUE = float('-inf')
     MAX_VALUE = float('inf')
 
-    def __init__(self: R35Range, /, values: Sequence[RangeMember] = []) -> None:
+    def __init__(self: R35Range, /, values: Sequence[RangeMember] | R35Range = []) -> None:
         self._min: RangeMember = None
         self._max: RangeMember = None
         self._empty = True
@@ -39,7 +39,8 @@ class R35Range(Container):
             self._max = values._max
             self._empty = values._empty
         else:
-            v = [x for x in values if israngemember(x)]
+            v = [x for x in cast(Sequence[RangeMember], values) if israngemember(x)]
+
             if v:
                 self._min = min(cast(Sequence[_RangeMember], values))
                 self._max = max(cast(Sequence[_RangeMember], values))

@@ -137,7 +137,7 @@ class Spell(R35Cog):
             case _:
                 await ctx.send('Unrecognized value for count.')
 
-    @commands.command()
+    @commands.command()  # type: ignore
     async def spell(self, ctx, *args):
         '''Roll a random spell.
 
@@ -167,7 +167,7 @@ class Spell(R35Cog):
                 logger.warning(bad_return(ret))
                 await ctx.send('Unknown internal error.')
 
-    @commands.command()
+    @commands.command()  # type: ignore
     async def spelltags(self, ctx, /):
         '''List known spell tags.'''
         await self._spelltags(ctx)
@@ -176,8 +176,6 @@ class Spell(R35Cog):
         match await cast(ClassesAgent, self.ds['classes']).classes():
             case Ret.NOT_READY:
                 await ctx.send(NOT_READY)
-            case Ret.NO_MATCH:
-                await ctx.send('No classes found for spells.')
             case list() as classes:
                 await ctx.send(
                     'The following spellcasting classes are recognized: ' +
@@ -195,7 +193,7 @@ class Spell(R35Cog):
                 logger.warning(bad_return(ret))
                 await ctx.send('Unknown internal error.')
 
-    @commands.command()
+    @commands.command()  # type: ignore
     async def classes(self, ctx, /):
         '''List known classes for spells.'''
         await self._classes(ctx)

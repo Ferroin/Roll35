@@ -26,7 +26,7 @@ class RenderMap(Mapping):
                 isinstance(data, Mapping)):
             raise TypeError('Initializer must be a mapping.')
 
-        self._data: dict[str, Sequence[str | WeightedEntry]] = dict()
+        self._data: dict[str, Sequence[str] | Sequence[WeightedEntry[str]]] = dict()
 
         for k, v in data.items():
             try:
@@ -46,11 +46,14 @@ class RenderMap(Mapping):
             else:
                 self._data[k] = list(map(lambda x: make_weighted_entry(x), cast(Sequence[dict[str, str]], v)))
 
-    def __getattr__(self: RenderMap, key: str, /) -> str | Mapping | NoReturn:
-        data = object.__getattribute__(self, '_data')
+    def __getattr__(self: RenderMap, key: str, /) -> str | NoReturn:
+        data = cast(dict[str, Sequence[str] | Sequence[WeightedEntry[str]]], object.__getattribute__(self, '_data'))
 
         if key in data:
-            ret = rnd(data[key])
+            if all(map(lambda x: isinstance(WeightedEntry, x), data[key])):
+                ret = rnd(cast(Sequence[WeightedEntry[str]], data[key]))
+            else:
+                ret = rnd(cast(Sequence[str], data[key]))
 
             if isinstance(ret, Ret):
                 raise AttributeError

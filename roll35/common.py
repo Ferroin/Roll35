@@ -10,7 +10,7 @@ import logging
 import random
 import unicodedata
 
-from collections.abc import Mapping, Iterable
+from collections.abc import Mapping, Iterable, Callable
 from functools import lru_cache
 from typing import Any, Generator, TypeVar, TypeGuard, cast, overload
 
@@ -69,41 +69,25 @@ def norm_string(string: str, /) -> str:
     return unicodedata.normalize('NFD', string).casefold()
 
 
-def expand_weighted_list(items: Iterable[types.WeightedEntry]) -> list[types.Item] | list[str]:
+def expand_weighted_list(items: Iterable[types.WeightedEntry[T]]) -> list[T]:
     '''Transform a list of items with weights into a list of items usable with random.choice().'''
-    if all(map(lambda x: isinstance(x.value, types.item.BaseItem), items)):
-        return _expand_weighted_items(items)
-    elif all(map(lambda x: isinstance(x.value, str), items)):
-        return _expand_weighted_strs(items)
-    else:
-        raise ValueError
-
-
-def _expand_weighted_items(items: Iterable[types.WeightedEntry], /) -> list[types.Item]:
-    ret: list[types.Item] = []
+    ret: list[T] = []
 
     for item in items:
         ret.extend(itertools.repeat(
-            cast(types.Item, item.value),
+            item.value,
             item.weight,
         ))
 
     return ret
 
 
-def _expand_weighted_strs(items: Iterable[types.WeightedEntry], /) -> list[str]:
-    ret: list[str] = []
-
-    for item in items:
-        ret.extend(itertools.repeat(
-            cast(str, item.value),
-            item.weight,
-        ))
-
-    return ret
-
-
-def make_weighted_entry(entry: Mapping[str, Any] | types.Item, *, key: str = 'weight', costmult_handler=lambda x: x) -> types.WeightedEntry:
+def make_weighted_entry(
+        entry: Mapping[str, Any] | types.Item,
+        *,
+        key: str = 'weight',
+        costmult_handler: Callable[[types.Item], types.Item] = lambda x: x) -> \
+        types.WeightedEntry:
     '''Create a weighted item entry understandable by expand_weighted_list().
 
        costmult_handler is an optional callback that adds an appropriate
@@ -129,42 +113,31 @@ def make_weighted_entry(entry: Mapping[str, Any] | types.Item, *, key: str = 'we
 
 
 @overload
-def rnd(items: Iterable[types.WeightedEntry], /) -> types.Item | str | types.Ret:
-    pass
+def rnd(items: Iterable[types.WeightedEntry[T]], /) -> T | types.Ret: ...
 
 
 @overload
-def rnd(items: Iterable[types.Item], /) -> types.Item | types.Ret:
-    pass
+def rnd(items: Iterable[T], /) -> T | types.Ret: ...
 
 
-@overload
-def rnd(items: Iterable[str], /) -> str | types.Ret:
-    pass
-
-
-@overload
-def rnd(items: Iterable[types.Rank], /) -> types.Rank | types.Ret:
-    pass
-
-
-@overload
-def rnd(items: Iterable[types.Subrank], /) -> types.Subrank | types.Ret:
-    pass
-
-
-def rnd(items, /):
+def rnd(items: Iterable[types.WeightedEntry[T]] | Iterable[T], /) -> T | types.Ret:
     '''Select a random item from items.
 
        If the items are types.WeightedEntry instances, return one of
        their values based on their weights. Otherwise, act like
        random.choice(items).'''
+    ret: T | types.Ret = types.Ret.NO_MATCH
+
     if not list(items):
-        return types.Ret.NO_MATCH
+        pass
     elif all(map(lambda x: isinstance(x, types.WeightedEntry), items)):
-        return random.choice(expand_weighted_list(items))
+        i1 = expand_weighted_list(cast(Iterable[types.WeightedEntry[T]], items))
+        ret = random.choice(i1)
     else:
-        return random.choice(list(items))
+        i2 = cast(list[T], list(items))
+        ret = random.choice(i2)
+
+    return ret
 
 
 def chunk(items: Iterable[T], /, *, size: int) -> Generator[list[T], None, None]:

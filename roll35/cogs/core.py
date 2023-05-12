@@ -18,7 +18,7 @@ class Core(R35Cog):
     async def _ping(self: Core, ctx: commands.Context, /) -> None:
         await ctx.send('pong')
 
-    @commands.command()
+    @commands.command()  # type: ignore
     async def ping(self, ctx, /):
         '''Check if the bot is alive'''
         await self._ping(ctx)
@@ -30,7 +30,7 @@ class Core(R35Cog):
             f'Using Nextcord { nextcord.__version__ }'
         )
 
-    @commands.command()
+    @commands.command()  # type: ignore
     async def version(self, ctx, /):
         '''Check the version of the bot'''
         await self._version(ctx)

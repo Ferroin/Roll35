@@ -24,6 +24,7 @@
 
 import sys
 
+from . import cogs, common, data, parser, renderer, types
 from .common import VERSION
 
 BOT_HELP = '''Roll items and spells for first-edition Pathfinder.
@@ -52,7 +53,6 @@ __all__ = [
     'data',
     'parser',
     'renderer',
-    'retcode',
     'types',
 ]
 

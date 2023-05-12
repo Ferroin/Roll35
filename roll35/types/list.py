@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from collections.abc import MutableSequence, Iterable
-from typing import TypeVar, Generic, overload, cast
+from typing import TypeVar, Generic, SupportsIndex, overload, cast
 
 from .container import R35Container
 from .item import Item
@@ -28,7 +28,7 @@ class R35List(R35Container, MutableSequence, Generic[T]):
        re-scanning the entire container again to recompute costs.'''
     def __init__(self: R35List, /, data: Iterable[T] | None = None):
         super().__init__()
-        self._data: list = list()
+        self._data: list[T] = list()
 
         if data is not None:
             for i in data:
@@ -38,17 +38,16 @@ class R35List(R35Container, MutableSequence, Generic[T]):
         return f'R35List({ self.costs }, { self._data })'
 
     @overload
-    def __getitem__(self: R35List, index: int, /) -> T:
-        pass
+    def __getitem__(self: R35List, index: SupportsIndex, /) -> T: ...
 
     @overload
-    def __getitem__(self: R35List, index: slice, /) -> MutableSequence[T]:
-        pass
+    def __getitem__(self: R35List, index: slice, /) -> MutableSequence[T]: ...
 
-    def __getitem__(self, index, /):
+    def __getitem__(self: R35List, index: SupportsIndex | slice, /) -> T | MutableSequence[T]:
         match index:
-            case int():
-                if index < -len(self._data) or index >= len(self._data):
+            case SupportsIndex():
+                idx = index.__index__()
+                if idx < -len(self._data) or idx >= len(self._data):
                     raise IndexError('R35List index out of range')
             case slice():
                 pass
@@ -58,26 +57,27 @@ class R35List(R35Container, MutableSequence, Generic[T]):
         return self._data[index]
 
     @overload
-    def __setitem__(self: R35List, index: int, value: T, /) -> None:
-        pass
+    def __setitem__(self: R35List, index: SupportsIndex, value: T, /) -> None: ...
 
     @overload
-    def __setitem__(self: R35List, index: slice, value: Iterable[T], /) -> None:
-        pass
+    def __setitem__(self: R35List, index: slice, value: Iterable[T], /) -> None: ...
 
-    def __setitem__(self, index, value, /):
-        self._data[index] = value
+    def __setitem__(self: R35List, index: SupportsIndex | slice, value: T | Iterable[T], /) -> None:
+        match index:
+            case SupportsIndex():
+                self._data[index] = value
+            case slice():
+                self._data[index] = cast(Iterable[T], value)
+
         self._recompute_costs()
 
     @overload
-    def __delitem__(self: R35List, index: int, /) -> None:
-        pass
+    def __delitem__(self: R35List, index: SupportsIndex, /) -> None: ...
 
     @overload
-    def __delitem__(self: R35List, index: slice, /) -> None:
-        pass
+    def __delitem__(self: R35List, index: slice, /) -> None: ...
 
-    def __delitem__(self, index, /):
+    def __delitem__(self: R35List, index: SupportsIndex | slice, /) -> None:
         del self._data[index]
         self._recompute_costs()
 

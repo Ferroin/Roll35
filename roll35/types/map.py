@@ -44,7 +44,7 @@ class R35Map(R35Container, MutableMapping, Generic[K, V]):
 
     def __getitem__(self: R35Map, key: K, /) -> V:
         if key in self._data:
-            return self._data[key]
+            return cast(V, self._data[key])
         else:
             raise KeyError(key)
 

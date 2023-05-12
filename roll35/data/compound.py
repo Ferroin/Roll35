@@ -14,11 +14,11 @@ from . import constants
 from .classes import ClassMap, ClassesAgent
 from .spell import SpellAgent
 from .. import types
-from ..common import yaml, bad_return, ismapping, rnd, flatten
+from ..common import yaml, bad_return, ismapping, rnd, flatten, make_weighted_entry
 from ..log import log_call_async
 
 if TYPE_CHECKING:
-    from collections.abc import Mapping, Sequence, Iterable
+    from collections.abc import Mapping, Sequence, Iterable, Callable
     from concurrent.futures import Executor
 
 logger = logging.getLogger(__name__)
@@ -33,6 +33,41 @@ def convert_compound_item(item: Mapping[str, Any], /) -> types.item.CompoundItem
             return types.item.CompoundItem(**item)
 
 
+def process_compound_itemlist(
+        items: Iterable[types.Item],
+        /, *,
+        typ: Callable[[Any], types.Item],
+        xform: Callable[[types.Item], types.Item] = lambda x: x) -> \
+        types.CompoundItemList:
+    '''Process a compound list of weighted values.
+
+       Each list entry must be a dict with keys coresponding to the
+       possible values for `roll35.types.Rank` with each such key bearing
+       a weight to use for the entry when rolling a random item of the
+       corresponding rank.'''
+    ret: types.CompoundItemList = types.R35Map()
+
+    for rank in types.Rank:
+        ilist: types.R35List[types.WeightedEntry] = types.R35List()
+
+        for item in items:
+            try:
+                entry = typ(item)
+            except TypeError:
+                raise RuntimeError(f'Failed to process entry for compound item list: { item }')
+
+            if getattr(entry, rank.value):
+                ilist.append(make_weighted_entry(
+                    entry,
+                    key=rank.value,
+                    costmult_handler=xform,
+                ))
+
+        ret[rank] = ilist
+
+    return ret
+
+
 class CompoundAgent(agent.Agent):
     '''Basic data agent for compound item lists.'''
     @staticmethod
@@ -41,7 +76,7 @@ class CompoundAgent(agent.Agent):
             raise ValueError('Compound Spell data must be a sequence')
 
         return agent.AgentData(
-            compound=agent.process_compound_itemlist(
+            compound=process_compound_itemlist(
                 data,
                 typ=convert_compound_item,
                 xform=agent.create_spellmult_xform(classes),
@@ -137,7 +172,7 @@ class CompoundAgent(agent.Agent):
                     case ret:
                         logger.error(bad_return(ret))
                         return types.Ret.FAILED
-            case types.BaseItem() as item:
+            case types.item.BaseItem() as item:
                 return item
             case ret:
                 logger.warning(bad_return(ret))
