@@ -132,7 +132,7 @@ def main():
         cog = entry(bot, ds, renderer)
         bot.add_cog(cog)
 
-    logger.info(f'Starting bot with token: { token }')
+    logger.info(f'Starting bot with token: { TOKEN }')
 
     try:
         bot.run(TOKEN, ds=ds, renderer=renderer)
