@@ -8,16 +8,20 @@ readme = "README.md"
 repository = "https://github.com/Ferroin/Roll35/"
 
 [tool.poetry.scripts]
-run = "roll35.bot:main"
+roll35-bot = "roll35.bot:main"
 
 [tool.poetry.dependencies]
 python = "^3.10"
 aiosqlite = "^0.19.0"
 jaro-winkler = "^2.0"
 Jinja2 = "^3.1.2"
-"nextcord[speed]" = "^2.4.2"
+nextcord = {version = "^2.4.2", extras = ["speed"]}
 "ruamel.yaml" = "^0.17.24"
 "ruamel.yaml.clib" = "^0.2.6"
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.3.0"
+flake8 = "^6.0.0"
 
 [build-system]
 requires = ["poetry-core"]
