@@ -14,11 +14,13 @@ from nextcord.ext import commands
 from .magicitem import roll_many
 
 from ..common import bad_return
-from ..data.settlement import SettlementAgent, SettlementEntry
+from ..data.settlement import SettlementAgent, SettlementEntry, ItemSlots
 from ..log import log_call_async
-from ..types import R35Cog, Rank, Ret, Result
+from .. import types
 
 if TYPE_CHECKING:
+    from concurrent.futures import Executor
+
     from ..data import DataSet
     from ..renderer import Renderer
 
@@ -27,9 +29,9 @@ NOT_READY = 'Settlement data is not yet available, please try again later.'
 logger = logging.getLogger(__name__)
 
 
-class Settlement(R35Cog):
+class Settlement(types.R35Cog):
     '''Roll35 cog for handling settlements.'''
-    async def _settlement(self: Settlement, ctx: commands.ctx, /, population: int) -> None:
+    async def _settlement(self: Settlement, ctx: commands.Context, /, population: int) -> None:
         try:
             pop = int(population)
         except ValueError:
@@ -40,30 +42,32 @@ class Settlement(R35Cog):
             await ctx.send('Population value must be an integer greater than 0.')
             return
 
-        match await roll_settlement(pop, self.ds, self.renderer):
-            case (Ret.OK, msg):
+        match await roll_settlement(pop, self.pool, self.ds, self.renderer):
+            case (types.Ret.OK, str() as msg):
                 await ctx.send(msg)
-            case (ret, msg) if ret is not Ret.OK:
+            case (types.Ret() as ret, str() as msg) if ret is not types.Ret.OK:
                 await ctx.send(msg)
 
-    @commands.command()
+        raise RuntimeError
+
+    @commands.command()  # type: ignore
     async def settlement(self, ctx, population: int, /):
         '''Roll magic items for a settlement with the given population.'''
         await self._settlement(ctx, population)
 
 
 @log_call_async(logger, 'roll settlement items')
-async def roll_settlement(population: int, ds: DataSet, renderer: Renderer, /) -> Result[str]:
+async def roll_settlement(population: int, pool: Executor, ds: DataSet, renderer: Renderer, /) -> types.Result[str]:
     '''Roll magic items for a settlement of the given population.'''
     match await cast(SettlementAgent, ds['settlement']).get_by_population(population):
-        case Ret.NOT_READY:
-            return (Ret.NOT_READY, NOT_READY)
+        case types.Ret.NOT_READY:
+            return (types.Ret.NOT_READY, NOT_READY)
         case SettlementEntry() as settlement:
             response = f'Settlement Category: { settlement.name }\n'
             response += f'Each item with a cost { settlement.base } gp or less has a 75% chance of being available, rerolled weekly.\n'
 
-            for rank in Rank:
-                match getattr(settlement, rank.value):
+            for rank in types.Rank:
+                match cast(ItemSlots, getattr(settlement, rank.value)):
                     case 'all':
                         response += f'\nAll { rank.value } items are available irrespective of cost.\n'
                     case None:
@@ -71,24 +75,24 @@ async def roll_settlement(population: int, ds: DataSet, renderer: Renderer, /) -
                     case [low, high]:
                         slots = random.randint(low, high)
                         response += f'\nThe following { slots } additional { rank.value } items are available irrespective of cost:\n'
-                        for item in asyncio.as_completed(roll_many(ds, slots, {'rank': rank, 'mincost': settlement.base + 1})):
+                        for item in asyncio.as_completed(roll_many(pool, ds, slots, {'rank': rank, 'mincost': settlement.base + 1})):
                             match await item:
-                                case (Ret.OK, item):
-                                    match await renderer.render(item):
-                                        case (Ret.OK, msg):
+                                case (types.Ret.OK, types.item.BaseItem() as i1):
+                                    match await renderer.render(i1):
+                                        case (types.Ret.OK, str() as msg):
                                             response += f'- { msg }\n'
-                                        case (ret, msg) if ret is not Ret.OK:
-                                            return (Ret.FAILED, f'Failed to generate items for settlement: { msg }')
-                                        case ret:
-                                            logger.error(bad_return(ret))
-                                            return (Ret.FAILED, 'Failed to generate items for settlement.')
-                                case (ret, msg) if ret is not Ret.OK:
-                                    return (Ret.FAILED, f'Failed to generate items for settlement: { msg }')
-                                case ret:
-                                    logger.error(bad_return(ret))
-                                    return (Ret.FAILED, 'Failed to generate items for settlement.')
+                                        case (types.Ret() as r1, str() as msg) if r1 is not types.Ret.OK:
+                                            return (types.Ret.FAILED, f'Failed to generate items for settlement: { msg }')
+                                        case r2:
+                                            logger.error(bad_return(r2))
+                                            return (types.Ret.FAILED, 'Failed to generate items for settlement.')
+                                case (types.Ret() as r3, str() as msg) if r3 is not types.Ret.OK:
+                                    return (types.Ret.FAILED, f'Failed to generate items for settlement: { msg }')
+                                case r4:
+                                    logger.error(bad_return(r4))
+                                    return (types.Ret.FAILED, 'Failed to generate items for settlement.')
 
-            return (Ret.OK, response)
+            return (types.Ret.OK, response)
         case ret:
             logger.error(bad_return(ret))
-            return (Ret.FAILED, 'Unknown internal error.')
+            return (types.Ret.FAILED, 'Unknown internal error.')

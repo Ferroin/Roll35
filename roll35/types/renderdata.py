@@ -87,7 +87,7 @@ class RenderData(Mapping):
 
         if key in data:
             if isinstance(data[key], RenderMap):
-                return data[key]
+                return cast(RenderMap, data[key])
             else:
                 ret = rnd(data[key])
 

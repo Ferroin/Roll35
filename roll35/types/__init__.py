@@ -20,9 +20,9 @@ from .retcode import Ret, Result
 
 from .readystate import ReadyState, check_ready
 
-SubrankedItemList = R35Map[Subrank, R35List[Item]] | R35Map[Subrank, R35List[WeightedEntry]]
+SubrankedItemList = R35Map[Subrank, R35List[Item]] | R35Map[Subrank, R35List[WeightedEntry[Item]]]
 RankedItemList = R35Map[Rank, SubrankedItemList]
-CompoundItemList = R35Map[Rank, R35List[WeightedEntry]]
+CompoundItemList = R35Map[Rank, R35List[WeightedEntry[Item]]]
 
 __all__ = (
     'R35Cog',

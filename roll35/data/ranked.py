@@ -7,21 +7,23 @@ from __future__ import annotations
 
 import logging
 
-from typing import TYPE_CHECKING, Any, cast
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from . import agent
 from . import constants
 from .classes import ClassMap, ClassesAgent
 from .spell import SpellAgent
 from .. import types
-from ..common import yaml, bad_return, ismapping, rnd, flatten
+from ..common import yaml, bad_return, ismapping, rnd, flatten, make_weighted_entry
 from ..log import log_call_async
 
 if TYPE_CHECKING:
-    from collections.abc import Mapping, Sequence, Iterable
+    from collections.abc import Mapping, Sequence, Iterable, Callable
     from concurrent.futures import Executor
 
 logger = logging.getLogger(__name__)
+
+T = TypeVar('T')
 
 
 def convert_ranked_item(item: Mapping[str, Any], /) -> types.item.SimpleItem:
@@ -33,6 +35,50 @@ def convert_ranked_item(item: Mapping[str, Any], /) -> types.item.SimpleItem:
             return types.item.SimpleItem(**item)
 
 
+def process_ranked_itemlist(
+        items: Mapping[str, Mapping[str, Iterable[types.Item]]],
+        /, *,
+        typ: Callable[[Any], Any] = lambda x: x,
+        xform: Callable[[T], T] = lambda x: x) -> \
+        types.RankedItemList:
+    '''Process ranked list of weighted values.
+
+       This takes a dict of ranks to dicts of subranks to lists of dicts
+       of weighted items, and processes them into the format used by
+       our weighted random selection in various data agent modules.'''
+    ret: types.RankedItemList = types.R35Map()
+
+    for rank in [x for x in types.Rank if x.value in items]:
+        ret[rank] = process_subranked_itemlist(items[rank.value], typ=typ, xform=xform)
+
+    return ret
+
+
+def process_subranked_itemlist(
+        items: Mapping[str, Iterable[types.Item]],
+        /, *,
+        typ: Callable[[Any], Any] = lambda x: x,
+        xform: Callable[[T], T] = lambda x: x) -> \
+        types.SubrankedItemList:
+    '''Process a subranked list of weighted values.
+
+       This takes a dict of subranks to lists of dicts of weighted items
+       and processes them into the format used by our weighted random
+       selection in various data agent modules.'''
+    ret: types.SubrankedItemList = types.R35Map()
+
+    for subrank in [x for x in types.Subrank if x.value in items]:
+        ret[subrank] = types.R35List()
+
+        for item in items[subrank.value]:
+            try:
+                ret[subrank].append(make_weighted_entry(cast(types.Item, xform(typ(item)))))
+            except TypeError:
+                raise RuntimeError(f'Failed to process entry for ranked item list: { item }')
+
+    return ret
+
+
 class RankedAgent(agent.Agent):
     '''Data agent for ranked item lists.'''
     @staticmethod
@@ -41,7 +87,7 @@ class RankedAgent(agent.Agent):
             raise ValueError('Ranked data must be a mapping')
 
         return agent.AgentData(
-            ranked=agent.process_ranked_itemlist(
+            ranked=process_ranked_itemlist(
                 data,
                 typ=convert_ranked_item,
                 xform=agent.create_spellmult_xform(classes),
@@ -114,8 +160,6 @@ class RankedAgent(agent.Agent):
 
                 for i1 in searchitems:
                     match i1:
-                        case types.WeightedEntry(value=types.item.SpellItem(spell={'level': int() as l1})) if l1 == level:
-                            possible.append(i1)
                         case types.item.SpellItem(spell={'level': int() as l1}) if l1 == level:
                             possible.append(i1)
 
@@ -149,7 +193,7 @@ class RankedAgent(agent.Agent):
                     case ret:
                         logger.error(bad_return(ret))
                         return types.Ret.FAILED
-            case types.BaseItem() as item:
+            case types.item.BaseItem() as item:
                 return item
             case ret:
                 logger.warning(bad_return(ret))

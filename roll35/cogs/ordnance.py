@@ -53,7 +53,7 @@ class Ordnance(R35Cog):
                 logger.warning(bad_return(ret))
                 await ctx.send('Unknown internal error.')
 
-    @commands.command()
+    @commands.command()  # type: ignore
     async def armor(self, ctx, *tags):
         '''Roll a random mundane armor item.
 
@@ -62,12 +62,12 @@ class Ordnance(R35Cog):
            `/r35 armortags`.'''
         await self.get_item(ctx, 'armor', tags)
 
-    @commands.command()
+    @commands.command()  # type: ignore
     async def armortags(self, ctx, /):
         '''List known armor tags.'''
         await self.get_tags(ctx, 'armor')
 
-    @commands.command()
+    @commands.command()  # type: ignore
     async def weapon(self, ctx, *tags):
         '''Roll a random mundane weapon item.
 
@@ -76,7 +76,7 @@ class Ordnance(R35Cog):
            `/r35 weapontags`'''
         await self.get_item(ctx, 'weapon', tags)
 
-    @commands.command()
+    @commands.command()  # type: ignore
     async def weapontags(self, ctx, /):
         '''List known weapon tags.'''
         await self.get_tags(ctx, 'weapon')

@@ -14,6 +14,7 @@ from functools import reduce
 from typing import TYPE_CHECKING, Callable, cast
 
 from . import agent
+from .ranked import process_ranked_itemlist
 from .. import types
 from ..common import make_weighted_entry, norm_string, did_you_mean, bad_return, rnd, ismapping
 from ..log import log_call_async
@@ -124,9 +125,6 @@ def get_costs(bonus: Bonus, base: types.item.Cost, enchants: list[Bonus], enchan
     min_cost: types.item.Cost = float('inf')
     max_cost: types.item.Cost = 0
 
-    if isinstance(base, str):
-        raise ValueError
-
     for group in enchantments.values():
         minc_possible = []
         maxc_possible = []
@@ -221,12 +219,12 @@ class OrdnanceAgent(agent.Agent):
 
         if types.Rank.MEDIUM.value not in d_specific:
             specific: SpecificItemList = types.R35Map({
-                k: agent.process_ranked_itemlist(v, typ=lambda x: types.item.OrdnanceSpecific(**x)) for k, v in d_specific.items()
+                k: process_ranked_itemlist(v, typ=lambda x: types.item.OrdnanceSpecific(**x)) for k, v in d_specific.items()
             })
         else:
-            specific = agent.process_ranked_itemlist(d_specific, typ=lambda x: types.item.OrdnanceSpecific(**x))
+            specific = process_ranked_itemlist(d_specific, typ=lambda x: types.item.OrdnanceSpecific(**x))
 
-        patterns = agent.process_ranked_itemlist(
+        patterns = process_ranked_itemlist(
             data,
             typ=lambda x: types.item.OrdnancePattern(**x),
             xform=create_xform(
@@ -281,8 +279,8 @@ class OrdnanceAgent(agent.Agent):
     async def random_pattern(
             self: OrdnanceAgent,
             /,
-            rank: types.Rank,
-            subrank: types.Subrank,
+            rank: types.Rank | None,
+            subrank: types.Subrank | None,
             *,
             allow_specific: bool = True,
             mincost: types.item.Cost | None = None,
@@ -292,23 +290,27 @@ class OrdnanceAgent(agent.Agent):
         match rank:
             case None:
                 match await self.random_rank(mincost=mincost, maxcost=maxcost):
-                    case ret if isinstance(ret, types.Ret):
-                        return ret
-                    case r:
-                        rank = r
+                    case r1 if isinstance(r1, types.Ret):
+                        return r1
+                    case r2:
+                        rank = cast(types.Rank, r2)
             case rank if self._valid_rank(rank):
                 pass
             case _:
                 raise ValueError(f'Invalid rank for { self.name }: { rank }')
 
+        assert rank is not None
+
         if subrank is None:
             match await self.random_subrank(rank, mincost=mincost, maxcost=maxcost):
-                case ret if isinstance(ret, types.Ret):
-                    return ret
-                case r:
-                    subrank = r
+                case r3 if isinstance(r3, types.Ret):
+                    return r3
+                case r4:
+                    subrank = cast(types.Subrank, r4)
         elif not self._valid_subrank(rank, subrank):
             raise ValueError(f'Invalid subrank for { self.name }: { subrank }')
+
+        assert subrank is not None
 
         items = agent.costfilter(cast(types.RankedItemList, self._data.ranked)[rank][subrank], mincost=mincost, maxcost=maxcost)
 
@@ -343,12 +345,12 @@ class OrdnanceAgent(agent.Agent):
                 return (types.Ret.OK, item)
             case _:
                 match await self._process_async(pool, did_you_mean, [[x.name for x in items], norm_name]):
-                    case (types.dRet.OK, msg):
+                    case (types.Ret.OK, msg):
                         return (
-                            types.dRet.FAILED,
+                            types.Ret.FAILED,
                             f'{ name } is not a recognized item.\n { msg }'
                         )
-                    case (ret, msg) if ret is not types.Ret.OK:
+                    case (types.Ret() as ret, str() as msg) if ret is not types.Ret.OK:
                         return (ret, msg)
                     case ret:
                         logger.error(bad_return(ret))
@@ -398,17 +400,17 @@ class OrdnanceAgent(agent.Agent):
         '''Roll a random enchantment.'''
         items = self._data.enchantments[group][bonus]
 
-        def _efilter(x):
+        def _efilter(x: types.WeightedEntry[types.item.OrdnanceEnchant]) -> bool:
             result = True
 
-            match x:
-                case {'exclude': excluded}:
-                    result = result and not any(lambda y: y in excluded, enchants)
+            match x.value:
+                case types.item.OrdnanceEnchant(exclude=list() as excluded):
+                    result = result and not any(map(lambda y: y in excluded, enchants))
 
-            match x:
-                case {'limit': {'only': limit}}:
+            match x.value:
+                case types.item.OrdnanceEnchant(limit={'only': list() as limit}):
                     result = result and bool(set(limit) & tags)
-                case {'limit': {'not': limit}}:
+                case types.item.OrdnanceEnchant(limit={'not': list() as limit}):
                     result = result and not bool(set(limit) & tags)
 
             return result
@@ -446,24 +448,12 @@ class OrdnanceAgent(agent.Agent):
                 raise ValueError(f'Invalid arguments for { self.name }.random_specific: { args }')
 
         match rank:
-            case None:
-                match await self.random_rank(mincost=mincost, maxcost=maxcost):
-                    case ret if isinstance(ret, types.Ret):
-                        return ret
-                    case r:
-                        rank = r
             case rank if self._valid_rank(rank):
                 pass
             case _:
                 raise ValueError(f'Invalid rank for { self.name }: { rank }')
 
-        if subrank is None:
-            match await self.random_subrank(rank, mincost=mincost, maxcost=maxcost):
-                case ret if isinstance(ret, types.Ret):
-                    return ret
-                case r:
-                    subrank = r
-        elif not self._valid_subrank(rank, subrank):
+        if not self._valid_subrank(rank, subrank):
             raise ValueError(f'Invalid subrank for { self.name }: { subrank }')
 
         items = self._data.specific

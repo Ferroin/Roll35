@@ -52,9 +52,6 @@ class Parser:
 
            Returns either a tuple of True and the dictionary produced
            by the parser, or False and an error message.'''
-        if data is None:
-            return (True, dict())
-
         ret: dict[str, Any] = {k: v.default for k, v in self._schema.items()}
 
         lexer = shlex.shlex(StringIO(data), posix=True)
@@ -63,13 +60,15 @@ class Parser:
             match lexer.get_token():
                 case lexer.eof:
                     return (Ret.OK, ret)
-                case token if token.casefold() in self._rindex:
+                case token if token is not None and token.casefold() in self._rindex:
                     key = self._rindex[token]
                     value = lexer.get_token()
                     schema = self._schema[key]
 
                     if value == lexer.eof:
                         return (Ret.FAILED, f'Unexpected end of arguments after `{ token }`.')
+                    elif value is None:
+                        return (Ret.FAILED, 'Failed to parse arguments, Unknown internal error.')
 
                     try:
                         ret[key] = schema.type(value.casefold())

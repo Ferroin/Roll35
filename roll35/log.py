@@ -10,6 +10,7 @@ import logging
 import time
 
 from typing import Callable, TypeVar, ParamSpec, Awaitable
+from types import TracebackType
 
 T = TypeVar('T')
 P = ParamSpec('P')
@@ -34,15 +35,15 @@ class LogRun(contextlib.AbstractContextManager, contextlib.AbstractAsyncContextM
         self.logger.log(self.level, f'Starting: { self.msg }')
         return self
 
-    def __exit__(self: LogRun, *_args) -> None:
+    def __exit__(self: LogRun, _exc_type: type | None, _exc_value: BaseException | None, _traceback: TracebackType | None) -> None:
         self.logger.log(self.level, f'Finished: { self.msg }')
         return None
 
     async def __aenter__(self: LogRun) -> LogRun:
         return self.__enter__()
 
-    async def __aexit__(self: LogRun, *_args) -> None:
-        return self.__exit__()
+    async def __aexit__(self: LogRun, exc_type: type | None, exc_value: BaseException | None, traceback: TracebackType | None) -> None:
+        return self.__exit__(exc_type, exc_value, traceback)
 
 
 def log_call(logger: logging.Logger, msg: str, /) -> Callable[[Callable[P, T]], Callable[P, T]]:
@@ -51,7 +52,7 @@ def log_call(logger: logging.Logger, msg: str, /) -> Callable[[Callable[P, T]], 
        Function arguments are logged on entry, and the return value is
        logged on exit.'''
     def decorator(func: Callable[P, T]) -> Callable[P, T]:
-        def inner(*args, **kwargs) -> T:
+        def inner(*args: P.args, **kwargs: P.kwargs) -> T:
             seq = time.monotonic_ns()
             logger.debug(f'{ msg }, seq: { seq }, called with: { args } and { kwargs }')
             ret = func(*args, **kwargs)
@@ -69,7 +70,7 @@ def log_call_async(logger: logging.Logger, msg: str, /) -> Callable[[Callable[P,
        Function arguments are logged on entry, and the return value is
        logged on exit.'''
     def decorator(func: Callable[P, Awaitable[T]]) -> Callable[P, Awaitable[T]]:
-        async def inner(*args, **kwargs) -> T:
+        async def inner(*args: P.args, **kwargs: P.kwargs) -> T:
             seq = time.monotonic_ns()
             logger.debug(f'{ msg }, seq: { seq }, called with: { args } and { kwargs }')
             ret = await func(*args, **kwargs)

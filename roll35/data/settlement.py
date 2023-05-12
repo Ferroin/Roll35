@@ -20,7 +20,8 @@ from ..log import log_call_async
 if TYPE_CHECKING:
     from . import DataSet
 
-    ItemSlots = Sequence[int] | Literal['any']
+
+ItemSlots = Sequence[int] | Literal['all'] | None
 
 logger = logging.getLogger(__name__)
 
@@ -91,7 +92,7 @@ class PopulationMap(Sequence):
     def __getitem__(self: PopulationMap, v: slice, /) -> Sequence[SettlementEntry]:
         pass
 
-    def __getitem__(self: PopulationMap, v, /):
+    def __getitem__(self: PopulationMap, v: int | slice, /) -> SettlementEntry | Sequence[SettlementEntry]:
         if isinstance(v, slice):
             ret: list[SettlementEntry] = []
 

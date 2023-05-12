@@ -105,7 +105,7 @@ def _inspect_dataset() -> DataSet:
     pool = ProcessPoolExecutor()
     ds = DataSet()
 
-    async def setup():
+    async def setup() -> None:
         await ds.load_data(pool)
 
     asyncio.run(setup())

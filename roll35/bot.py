@@ -6,6 +6,8 @@
    This handles setup of logging, the data set, the renderer, and the
    bot itself.'''
 
+from __future__ import annotations
+
 import asyncio
 import concurrent.futures
 import logging
@@ -13,7 +15,8 @@ import logging.config
 import os
 import sys
 
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, Executor
+from typing import Any
 
 import nextcord
 
@@ -34,29 +37,35 @@ class Bot(commands.Bot):
 
        This overrides a few specific methods of the base class to get
        desired behavior.'''
-    def __init__(self, *args, pool=None, **kwargs):
-        self.pool = pool
+    def __init__(self: Bot, *args: Any, pool: Executor | None = None, **kwargs: Any) -> None:
+        assert isinstance(pool, Executor)
+        self.pool: Executor = pool
         super().__init__(*args, **kwargs)
 
-    async def start(self, token, *args, reconnect=True, ds=None, renderer=None):
+    async def start(
+            self: Bot,
+            token: str,
+            *args: tuple[Any],
+            reconnect: bool = True,
+            ds: DataSet | None = None,
+            renderer: Renderer | None = None) -> \
+            Any:
         '''Overridden to schedule data loads in parallel with bot startup.'''
+        assert ds is not None
+        assert renderer is not None
+
         return await asyncio.gather(
             ds.load_data(self.pool),
             renderer.load_data(self.pool),
             super().start(token, *args, reconnect=reconnect),
         )
 
-    async def on_command_error(self, ctx, exception):
+    async def on_command_error(self: Bot, ctx: commands.Context, exception: commands.CommandError) -> Any:
         '''Overridden to provide useful feedback to users on bad commands.'''
         if isinstance(exception, commands.errors.CommandNotFound):
             loop = asyncio.get_running_loop()
 
-            match await loop.run_in_executor(
-                self.pool,
-                did_you_mean,
-                [x.name for x in self.walk_commands()],
-                exception.command_name,
-            ):
+            match await loop.run_in_executor(self.pool, did_you_mean, [x.name for x in self.walk_commands()], exception.command_name):
                 case (Ret.OK, msg):
                     return await ctx.send(f'{ exception.command_name } is not a recognized command. { msg }')
                 case (Ret.NO_MATCH, _):
@@ -67,7 +76,7 @@ class Bot(commands.Bot):
 
         await super().on_command_error(ctx, exception)
 
-    async def on_error(self, event_method, *args, **kwargs):
+    async def on_error(self: Bot, event_method: str, *args: Any, **kwargs: Any) -> None:
         '''Overridden to explicitly bail on specific error types.'''
         match sys.exc_info():
             case (concurrent.futures.BrokenExecutor, _, _):
@@ -76,7 +85,7 @@ class Bot(commands.Bot):
                 await super().on_error(event_method, *args, **kwargs)
 
 
-def main():
+def main() -> None:
     TOKEN = os.environ['DISCORD_TOKEN']
     LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO')
 
@@ -122,14 +131,10 @@ def main():
     ds = DataSet()
     renderer = Renderer(ds)
 
-    @bot.event
-    async def on_ready():
-        logger.info(f'Successfully logged in as { bot.user }')
-
     logger.info('Loading cogs.')
 
     for entry in COGS:
-        cog = entry(bot, ds, renderer)
+        cog = entry(pool, ds, renderer)
         bot.add_cog(cog)
 
     logger.info(f'Starting bot with token: { TOKEN }')
