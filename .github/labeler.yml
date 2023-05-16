@@ -3,6 +3,7 @@
 
 area/bot:
   - roll35/__main__.py
+  - roll35/bot.py
   - roll35/cogs/*.py
   - roll35/cogs/**/*.py
 
@@ -53,4 +54,5 @@ infra/ci:
 
 infra/packaging:
   - Dockerfile
-  - requirements.txt
+  - poetry.lock
+  - pyproject.toml
