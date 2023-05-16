@@ -16,7 +16,7 @@ jobs:
       actions: ${{ steps.actions.outputs.run }}
       python: ${{ steps.python.outputs.run }}
       markdown: ${{ steps.markdown.outputs.run }}
-      shel: ${{ steps.shell.outputs.run }}
+      shell: ${{ steps.shell.outputs.run }}
       yaml: ${{ steps.yaml.outputs.run }}
     steps:
       - name: Clone repository
@@ -107,7 +107,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install Poetry
-        run: apt install -y python3-poetry
+        run: sudo apt-get install -y python3-poetry
       - name: Run flake8
         uses: reviewdog/action-flake8@v3
         with:
@@ -128,7 +128,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install Poetry
-        run: apt install -y python3-poetry
+        run: sudo apt-get install -y python3-poetry
       - name: Run mypy
         uses: tsuyoshicho/action-mypy@v3
         with:
