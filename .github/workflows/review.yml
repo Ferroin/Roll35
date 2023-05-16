@@ -126,6 +126,8 @@ jobs:
           python-version: "3.11"
       - name: Install Poetry
         uses: snok/install-poetry@v1
+      - name: Install dependencies
+        run: poetry install
       - name: Run mypy
         uses: tsuyoshicho/action-mypy@v3
         with:
