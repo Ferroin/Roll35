@@ -8,8 +8,6 @@ RUN apk update && \
     apk add --no-cache poetry \
                        libffi
 
-RUN poetry config virtualenvs.create false
-
 WORKDIR /app
 
 COPY / /app
@@ -20,7 +18,7 @@ RUN apk add --no-cache ${BUILD_PKGS} && \
 
 RUN poetry run /app/scripts/version-check.sh ${VERSION}
 
-CMD [ "/usr/bin/roll35-bot" ]
+CMD [ "/usr/bin/poetry", "run", "roll35-bot" ]
 
 LABEL org.opencontainers.image.title="Roll35"
 LABEL org.opencontainers.image.description="A Discord bot for rolling magic items for Pathfinder 1e."
