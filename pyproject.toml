@@ -3,7 +3,7 @@ name = "roll35"
 version = "5.0.0"
 description = "A Python module and Discord bot for rolling random items for Pathfinder 1e."
 authors = ["Austin S. Hemmelgarn <ahferroin7@gmail.com>"]
-license = "MITNFA"
+license = {"file" = "LICENSE.md"}
 readme = "README.md"
 repository = "https://github.com/Ferroin/Roll35/"
 
