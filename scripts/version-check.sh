@@ -28,5 +28,12 @@ case "${VERSION}" in
             echo "!!! ${VERSION} does not match version in Python module (${pyversion})"
             exit 1
         fi
+
+        poetryversion="v$(poetry version | cut -f 2 -d ' ')"
+
+        if [ "${VERSION}" != "${poetryversion}" ]; then
+            echo "!!! ${VERSION} does not match version in pyproject.toml (${poetryversion})"
+            exit 1
+        fi
         ;;
 esac
