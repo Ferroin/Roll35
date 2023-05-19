@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import logging
 
-from typing import Any, TYPE_CHECKING, cast
+from typing import Any, TypeVar, TYPE_CHECKING, cast
 
 from . import agent
 from . import constants
@@ -23,6 +23,8 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+T = TypeVar('T')
+
 
 def convert_compound_item(item: Mapping[str, Any], /) -> types.item.CompoundItem:
     '''Convert a compound item entry to the appropriate dataclass.'''
@@ -36,8 +38,8 @@ def convert_compound_item(item: Mapping[str, Any], /) -> types.item.CompoundItem
 def process_compound_itemlist(
         items: Iterable[types.Item],
         /, *,
-        typ: Callable[[Any], types.Item],
-        xform: Callable[[types.Item], types.Item] = lambda x: x) -> \
+        typ: Callable[[Any], types.CompoundItem],
+        xform: Callable[[types.CompoundItem], types.CompoundItem] = lambda x: x) -> \
         types.CompoundItemList:
     '''Process a compound list of weighted values.
 
@@ -48,7 +50,7 @@ def process_compound_itemlist(
     ret: types.CompoundItemList = types.R35Map()
 
     for rank in types.Rank:
-        ilist: types.R35List[types.WeightedEntry] = types.R35List()
+        ilist: types.R35List[types.CompoundItem] = types.R35List()
 
         for item in items:
             try:
@@ -57,9 +59,9 @@ def process_compound_itemlist(
                 raise RuntimeError(f'Failed to process entry for compound item list: { item }')
 
             if getattr(entry, rank.value):
+                entry.weight = getattr(entry, rank.value)
                 ilist.append(make_weighted_entry(
                     entry,
-                    key=rank.value,
                     costmult_handler=xform,
                 ))
 
@@ -112,24 +114,24 @@ class CompoundAgent(agent.Agent):
             level: int | None = None,
             mincost: types.item.Cost | None = None,
             maxcost: types.item.Cost | None = None) -> \
-            types.Item | types.Ret:
+            types.CompoundItem | types.item.CompoundSpellItem | types.Ret:
         '''Roll a random item, then roll a spell for it if needed.'''
         match level:
             case None:
-                item = await super().random_compound(
+                item: types.CompoundItem | types.item.CompoundSpellItem | types.Ret = cast(types.CompoundItem, await super().random_compound(
                     rank=rank,
                     mincost=mincost,
                     maxcost=maxcost,
-                )
+                ))
             case int():
                 if self._data.compound is None:
                     return types.Ret.NO_MATCH
 
                 match rank:
                     case None:
-                        searchitems: Iterable[types.WeightedEntry] = flatten(self._data.compound.values())
+                        searchitems: Iterable[types.CompoundItem] = flatten(cast(Sequence[Sequence[types.CompoundItem]], self._data.compound.values()))
                     case rank if self._valid_rank(rank):
-                        searchitems = self._data.compound[rank]
+                        searchitems = cast(Sequence[types.CompoundItem], self._data.compound[rank])
                     case _:
                         raise ValueError(f'Invalid rank for { self.name }: { rank }')
 
@@ -137,10 +139,10 @@ class CompoundAgent(agent.Agent):
 
                 for i1 in searchitems:
                     match i1:
-                        case types.WeightedEntry(value=types.item.SpellItem(spell={'level': int() as l1})) if l1 == level:
+                        case types.item.CompoundSpellItem(spell={'level': int() as l1}) if l1 == level:
                             possible.append(i1)
 
-                items = agent.costfilter(possible, mincost=mincost, maxcost=maxcost)
+                items = cast(Sequence[types.item.CompoundSpellItem], agent.costfilter(possible, mincost=mincost, maxcost=maxcost))
 
                 match rnd(items):
                     case types.Ret.NO_MATCH:
@@ -153,7 +155,7 @@ class CompoundAgent(agent.Agent):
         match item:
             case types.Ret.NO_MATCH:
                 return types.Ret.NO_MATCH
-            case types.item.SpellItem(spell=spell):
+            case types.item.CompoundSpellItem(spell=spell):
                 if ('cls' not in spell or spell['cls'] is None) and cls is not None:
                     spell['cls'] = cls
 
@@ -172,7 +174,7 @@ class CompoundAgent(agent.Agent):
                     case ret:
                         logger.error(bad_return(ret))
                         return types.Ret.FAILED
-            case types.item.BaseItem() as item:
+            case types.item.CompoundItem() as item:
                 return item
             case ret:
                 logger.warning(bad_return(ret))

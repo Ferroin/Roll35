@@ -8,9 +8,8 @@ import abc
 from collections.abc import Collection, Iterator
 from typing import Any, TypeVar
 
-from .range import R35Range, RangeMember
-from .base import WeightedEntry
-from .item import Item, BaseItem
+from .range import R35Range
+from .item import Item, BaseItem, Cost
 
 T = TypeVar('T')
 
@@ -45,14 +44,14 @@ class R35Container(abc.ABC, Collection):
         return self._costs
 
     @staticmethod
-    def _get_costs(item: Item | R35Container | WeightedEntry, /) -> tuple[RangeMember, RangeMember] | None:
+    def _get_costs(item: Item | R35Container | Any, /) -> tuple[Cost, Cost] | None:
         match item:
             case R35Container(costs=R35Range()):
                 item.sync()
                 return (item.costs.min, item.costs.max)
-            case BaseItem(costrange=[low, high]) | WeightedEntry(value=BaseItem(costrange=[low, high])):
+            case BaseItem(costrange=[low, high]):
                 return (low, high)
-            case BaseItem(cost=cost) | WeightedEntry(value=BaseItem(cost=cost)) if cost is not None and cost != 'varies':
+            case BaseItem(cost=cost) if cost is not None and cost != 'varies':
                 return (cost, cost)
         return None
 

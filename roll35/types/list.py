@@ -7,7 +7,6 @@ from collections.abc import MutableSequence, Iterable
 from typing import TypeVar, Generic, SupportsIndex, overload, cast
 
 from .container import R35Container
-from .item import Item
 
 T = TypeVar('T')
 
@@ -85,7 +84,7 @@ class R35List(R35Container, MutableSequence, Generic[T]):
         self._costs.reset()
 
         for item in self._data:
-            match self._get_costs(cast(Item, item)):
+            match self._get_costs(item):
                 case None:
                     pass
                 case (cost_min, cost_max):
@@ -96,7 +95,7 @@ class R35List(R35Container, MutableSequence, Generic[T]):
         '''Add item to the list at index.'''
         self._data.insert(index, item)
 
-        match self._get_costs(cast(Item, item)):
+        match self._get_costs(item):
             case None:
                 pass
             case (cost_min, cost_max):

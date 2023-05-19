@@ -67,25 +67,37 @@ def norm_string(string: str, /) -> str:
     return unicodedata.normalize('NFD', string).casefold()
 
 
-def expand_weighted_list(items: Iterable[types.WeightedEntry[T]]) -> list[T]:
+@overload
+def expand_weighted_list(items: Iterable[types.WeightedValue]) -> list[str]: ...
+
+
+@overload
+def expand_weighted_list(items: Iterable[types.Item]) -> list[types.Item]: ...
+
+
+def expand_weighted_list(items: Iterable[types.WeightedValue] | Iterable[types.Item]) -> list[str] | list[types.Item]:
     '''Transform a list of items with weights into a list of items usable with random.choice().'''
-    ret: list[T] = []
+    if all(map(lambda x: isinstance(x, types.WeightedValue), items)):
+        return list(flatten([itertools.repeat(x.value, x.weight) for x in cast(Iterable[types.WeightedValue], items)]))
+    elif all(map(lambda x: isinstance(x, types.item.BaseItem), items)):
+        return list(flatten([itertools.repeat(x, x.weight) for x in cast(Iterable[types.Item], items)]))
+    else:
+        raise ValueError(items)
 
-    for item in items:
-        ret.extend(itertools.repeat(
-            item.value,
-            item.weight,
-        ))
 
-    return ret
+@overload
+def make_weighted_entry(entry: Mapping[str, Any], *, costmult_handler: Callable[[types.Item], types.Item] = lambda x: x) -> types.WeightedValue: ...
+
+
+@overload
+def make_weighted_entry(entry: types.Item, *, costmult_handler: Callable[[types.Item], types.Item] = lambda x: x) -> types.Item: ...
 
 
 def make_weighted_entry(
         entry: Mapping[str, Any] | types.Item,
         *,
-        key: str = 'weight',
         costmult_handler: Callable[[types.Item], types.Item] = lambda x: x) -> \
-        types.WeightedEntry:
+        types.WeightedValue | types.Item:
     '''Create a weighted item entry understandable by expand_weighted_list().
 
        costmult_handler is an optional callback that adds an appropriate
@@ -94,42 +106,51 @@ def make_weighted_entry(
         entry = costmult_handler(entry)
 
     match entry:
-        case {'weight': weight, 'value': value}:
-            ret = types.WeightedEntry(
-                weight=weight,
-                value=value,
-            )
+        case {'weight': int(), 'value': str()}:
+            return types.WeightedValue(**cast(Mapping[str, Any], entry))
         case item if isinstance(item, types.item.BaseItem):
-            ret = types.WeightedEntry(
-                weight=getattr(item, key),
-                value=item,
-            )
+            return item
         case _:
             raise ValueError(entry)
 
-    return ret
+    # The below line should never actually be run, as the above match clauses are (theoretically) exhaustive.
+    #
+    # However, mypy thinks this function is missing a return statement, and this line convinces it otherwise.
+    raise RuntimeError
 
 
 @overload
-def rnd(items: Iterable[types.WeightedEntry[T]], /) -> T | types.Ret: ...
+def rnd(items: Iterable[types.WeightedValue], /) -> str | types.Ret: ...
 
 
 @overload
-def rnd(items: Iterable[T], /) -> T | types.Ret: ...
+def rnd(items: Iterable[types.Item], /) -> types.Item | types.Ret: ...
 
 
-def rnd(items: Iterable[types.WeightedEntry[T]] | Iterable[T], /) -> T | types.Ret:
+@overload
+def rnd(items: Iterable[types.Rank], /) -> types.Rank | types.Ret: ...
+
+
+@overload
+def rnd(items: Iterable[types.Subrank], /) -> types.Subrank | types.Ret: ...
+
+
+@overload
+def rnd(items: Iterable[str], /) -> str | types.Ret: ...
+
+
+def rnd(items: Iterable[types.WeightedValue] | Iterable[T], /) -> str | T | types.Ret:
     '''Select a random item from items.
 
-       If the items are types.WeightedEntry instances, return one of
-       their values based on their weights. Otherwise, act like
-       random.choice(items).'''
-    ret: T | types.Ret = types.Ret.NO_MATCH
+       If the items are types.WeightedValue or types.Item instances,
+       return one of their values based on their weights. Otherwise,
+       act like random.choice(items).'''
+    ret: str | T | types.Ret = types.Ret.NO_MATCH
 
     if not list(items):
         pass
-    elif all(map(lambda x: isinstance(x, types.WeightedEntry), items)):
-        i1 = expand_weighted_list(cast(Iterable[types.WeightedEntry[T]], items))
+    elif all(map(lambda x: isinstance(x, types.WeightedValue), items)):
+        i1 = expand_weighted_list(cast(Iterable[types.WeightedValue], items))
         ret = random.choice(i1)
     else:
         i2 = cast(list[T], list(items))

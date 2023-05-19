@@ -19,8 +19,7 @@ from .classes import ClassesAgent
 from .. import types
 from ..common import chunk, flatten, yaml, bad_return
 from ..log import log_call_async, LogRun
-
-MAX_SPELL_LEVEL = 9
+from ..types.item import MAX_SPELL_LEVEL
 
 logger = logging.getLogger(__name__)
 
@@ -204,6 +203,8 @@ class SpellAgent(agent.Agent):
                 valid = [k for (k, v) in classes.items()
                          if await self._level_in_cls(cast(int, level), k)]
                 cls = random.choice(valid)
+            case ('minimum', _):
+                pass
             case (cls, level) if cls in valid_classes and not await self._level_in_cls(cast(int, level), cls):
                 return (
                     types.Ret.INVALID,

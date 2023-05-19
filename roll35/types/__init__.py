@@ -12,17 +12,16 @@ from .map import R35Map
 from .list import R35List
 from .range import R35Range
 
-from .base import WeightedEntry, ItemEntry
-from .item import Item, Cost, Spell
+from .item import Item, CompoundItem, Cost, WeightedValue, Spell
 from .ranks import Rank, Subrank
 
 from .retcode import Ret, Result
 
 from .readystate import ReadyState, check_ready
 
-SubrankedItemList = R35Map[Subrank, R35List[Item]] | R35Map[Subrank, R35List[WeightedEntry[Item]]]
+SubrankedItemList = R35Map[Subrank, R35List[Item]]
 RankedItemList = R35Map[Rank, SubrankedItemList]
-CompoundItemList = R35Map[Rank, R35List[WeightedEntry[Item]]]
+CompoundItemList = R35Map[Rank, R35List[CompoundItem]]
 
 __all__ = (
     'R35Cog',
@@ -30,11 +29,11 @@ __all__ = (
     'R35Map',
     'R35List',
     'R35Range',
-    'WeightedEntry',
-    'ItemEntry',
     'Item',
+    'CompoundItem',
     'Cost',
     'Spell',
+    'WeightedValue',
     'Rank',
     'Subrank',
     'Ret',

@@ -6,7 +6,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence, Iterator
 from typing import Any, NoReturn, cast
 
-from .base import WeightedEntry
+from .item import WeightedValue
 from .retcode import Ret
 from ..common import rnd, make_weighted_entry
 
@@ -26,7 +26,7 @@ class RenderMap(Mapping):
                 isinstance(data, Mapping)):
             raise TypeError('Initializer must be a mapping.')
 
-        self._data: dict[str, Sequence[str] | Sequence[WeightedEntry[str]]] = dict()
+        self._data: dict[str, Sequence[str] | Sequence[WeightedValue]] = dict()
 
         for k, v in data.items():
             try:
@@ -44,14 +44,14 @@ class RenderMap(Mapping):
             if all(map(lambda x: isinstance(x, str), v)):
                 self._data[k] = cast(Sequence[str], v)
             else:
-                self._data[k] = list(map(lambda x: make_weighted_entry(x), cast(Sequence[dict[str, str]], v)))
+                self._data[k] = [make_weighted_entry(x) for x in cast(Sequence[Mapping[str, Any]], v)]
 
     def __getattr__(self: RenderMap, key: str, /) -> str | NoReturn:
-        data = cast(dict[str, Sequence[str] | Sequence[WeightedEntry[str]]], object.__getattribute__(self, '_data'))
+        data = cast(dict[str, Sequence[str] | Sequence[WeightedValue]], object.__getattribute__(self, '_data'))
 
         if key in data:
-            if all(map(lambda x: isinstance(WeightedEntry, x), data[key])):
-                ret = rnd(cast(Sequence[WeightedEntry[str]], data[key]))
+            if all(map(lambda x: isinstance(x, WeightedValue), data[key])):
+                ret = rnd(cast(Sequence[WeightedValue], data[key]))
             else:
                 ret = rnd(cast(Sequence[str], data[key]))
 
@@ -65,7 +65,7 @@ class RenderMap(Mapping):
     def __len__(self: RenderMap, /) -> int:
         return len(self._data)
 
-    def __getitem__(self: RenderMap, key: str, /) -> Sequence[str | WeightedEntry]:
+    def __getitem__(self: RenderMap, key: str, /) -> Sequence[str | WeightedValue]:
         return self._data[key]
 
     def __iter__(self: RenderMap, /) -> Iterator[str]:
