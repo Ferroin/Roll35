@@ -9,6 +9,8 @@ from collections.abc import Sequence, Mapping, MutableMapping
 from dataclasses import dataclass, KW_ONLY, field
 from typing import Union, Literal, TypedDict, TypeVar
 
+from pydantic import BaseModel, validator
+
 from .ranks import RankWeights
 
 EnchantBonus = int
@@ -20,12 +22,20 @@ Tag = str
 MAX_SPELL_LEVEL = 9
 
 
-@dataclass
-class WeightedValue:
+def check_weight(w: int) -> int:
+    '''Ensure that a weight is within bounds.'''
+    if w < 1:
+        raise ValueError('Weight must be at least 1.')
+
+    return w
+
+
+class WeightedValue(BaseModel):
     '''Basic class for weighted value selection.'''
-    _: KW_ONLY
     weight: int
     value: str
+
+    _check_weight = validator('weight', allow_reuse=True)(check_weight)
 
 
 @dataclass
