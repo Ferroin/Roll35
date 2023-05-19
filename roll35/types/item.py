@@ -1,13 +1,13 @@
 # Copyright (c) 2023 Austin S. Hemmelgarn
 # SPDX-License-Identifier: MITNFA
 
-'''Data classes defining item formats.'''
+'''Classes defining item formats.'''
 
 from __future__ import annotations
 
 from collections.abc import Sequence, Mapping, MutableMapping
 from dataclasses import dataclass, KW_ONLY, field
-from typing import Union, Literal, TypedDict
+from typing import Union, Literal, TypedDict, TypeVar
 
 from .ranks import RankWeights
 
@@ -16,6 +16,16 @@ Cost = int | float
 _Cost = Cost | Literal['varies']
 CostRange = tuple[Cost, Cost]
 Tag = str
+
+MAX_SPELL_LEVEL = 9
+
+
+@dataclass
+class WeightedValue:
+    '''Basic class for weighted value selection.'''
+    _: KW_ONLY
+    weight: int
+    value: str
 
 
 @dataclass
@@ -36,7 +46,7 @@ ClassMap = Mapping[str, ClassEntry]
 class BaseItem:
     '''Base class for item entries.'''
     _: KW_ONLY
-    weight: int | None = None
+    weight: int = 1
     reroll: Sequence[str] | None = None
     cost: _Cost | None = None
     costrange: CostRange | None = None
@@ -113,7 +123,6 @@ class SimpleItem(BaseItem):
     '''A basic item entry.'''
     _: KW_ONLY
     name: str = ''
-    reroll: Sequence[str] | None = None
 
 
 @dataclass
@@ -172,4 +181,15 @@ class CompoundSpellItem(CompoundItem, SpellItem):
     pass
 
 
-Item = BaseItem | SimpleItem | SimpleSpellItem | OrdnanceItem | CompoundItem | CompoundSpellItem
+Item = TypeVar(
+    'Item',
+    BaseItem,
+    SimpleItem,
+    SimpleSpellItem,
+    CompoundItem,
+    CompoundSpellItem,
+    OrdnancePattern,
+    OrdnanceSpecific,
+    OrdnanceBaseItem,
+    OrdnanceEnchant,
+)

@@ -26,10 +26,10 @@ if TYPE_CHECKING:
 
     from . import DataSet
 
-    EnchantmentTable = types.R35Map[str, dict[int, Sequence[types.WeightedEntry]]]
-    SpecificItemList = types.RankedItemList | types.R35Map[str, types.RankedItemList]
     TagData = set[str]
     Bonus = int
+    EnchantmentTable = types.R35Map[str, dict[Bonus, Sequence[types.item.OrdnanceEnchant]]]
+    SpecificItemList = types.RankedItemList | types.R35Map[str, types.RankedItemList]
 
 
 @dataclass
@@ -39,8 +39,8 @@ class OrdnanceData(agent.AgentData):
     tags: TagData
     enchantments: EnchantmentTable
     specific: SpecificItemList
-    masterwork: int | float
-    enchant_base_cost: int | float
+    masterwork: types.Cost
+    enchant_base_cost: types.Cost
 
 
 def process_enchantment_table(items: Mapping, /, basevalue: types.item.Cost) -> EnchantmentTable:
@@ -48,16 +48,13 @@ def process_enchantment_table(items: Mapping, /, basevalue: types.item.Cost) -> 
     ret: EnchantmentTable = types.R35Map()
 
     for group in items:
-        groupdata: dict[int, Sequence[types.WeightedEntry]] = dict()
+        groupdata: dict[int, Sequence[types.item.OrdnanceEnchant]] = dict()
 
         for value in items[group]:
             groupdata[value] = list(
                 map(
-                    make_weighted_entry,
-                    map(
-                        lambda x: types.item.OrdnanceEnchant(**x),
-                        items[group][value]
-                    )
+                    lambda x: types.item.OrdnanceEnchant(**x),
+                    items[group][value]
                 )
             )
 
@@ -81,7 +78,7 @@ def get_enchant_bonus_costs(data: OrdnanceData, base: types.item.OrdnanceBaseIte
     )
 
 
-def get_costs_and_bonus(enchants: Iterable[types.WeightedEntry], /) -> tuple[types.item.Cost, types.item.Cost, Bonus, Bonus]:
+def get_costs_and_bonus(enchants: Iterable[types.item.OrdnanceEnchant], /) -> tuple[types.item.Cost, types.item.Cost, Bonus, Bonus]:
     '''Figure out the range of extra costs that a given list of enchantments might have.'''
     min_cost: types.item.Cost = -1
     max_cost: types.item.Cost = 0
@@ -90,7 +87,7 @@ def get_costs_and_bonus(enchants: Iterable[types.WeightedEntry], /) -> tuple[typ
     has_non_bonus = False
 
     for item in enchants:
-        match item.value:
+        match item:
             case types.item.OrdnanceEnchant(bonuscost=None, bonus=None):
                 min_cost = 0
                 has_non_bonus = True
@@ -312,7 +309,12 @@ class OrdnanceAgent(agent.Agent):
 
         assert subrank is not None
 
-        items = agent.costfilter(cast(types.RankedItemList, self._data.ranked)[rank][subrank], mincost=mincost, maxcost=maxcost)
+        assert self._data.ranked is not None
+
+        items = cast(
+            Sequence[types.item.OrdnancePattern],
+            agent.costfilter(self._data.ranked[rank][subrank], mincost=mincost, maxcost=maxcost)
+        )
 
         if allow_specific:
             if items:
@@ -320,7 +322,7 @@ class OrdnanceAgent(agent.Agent):
             else:
                 return types.Ret.NO_MATCH
         else:
-            match list(filter(lambda x: 'specific' not in x.value, items)):
+            match list(filter(lambda x: x.specific is None, items)):
                 case []:
                     return types.Ret.NO_MATCH
                 case [*items]:
@@ -400,14 +402,14 @@ class OrdnanceAgent(agent.Agent):
         '''Roll a random enchantment.'''
         items = self._data.enchantments[group][bonus]
 
-        def _efilter(x: types.WeightedEntry[types.item.OrdnanceEnchant]) -> bool:
+        def _efilter(x: types.item.OrdnanceEnchant) -> bool:
             result = True
 
-            match x.value:
+            match x:
                 case types.item.OrdnanceEnchant(exclude=list() as excluded):
                     result = result and not any(map(lambda y: y in excluded, enchants))
 
-            match x.value:
+            match x:
                 case types.item.OrdnanceEnchant(limit={'only': list() as limit}):
                     result = result and bool(set(limit) & tags)
                 case types.item.OrdnanceEnchant(limit={'not': list() as limit}):
@@ -464,7 +466,7 @@ class OrdnanceAgent(agent.Agent):
 
             items = cast(Mapping[str, types.RankedItemList], items)[group]
 
-        possible = agent.costfilter(cast(types.RankedItemList, items)[rank][subrank], mincost=mincost, maxcost=maxcost)
+        possible: Sequence[types.item.OrdnanceSpecific] = agent.costfilter(cast(types.RankedItemList, items)[rank][subrank], mincost=mincost, maxcost=maxcost)
 
         if possible:
             return rnd(possible)

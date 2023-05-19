@@ -83,7 +83,7 @@ class Renderer(ReadyState):
         raise RuntimeError
 
     @log_call_async(logger, 'render item')
-    async def render(self: Renderer, /, item: types.item.Item | types.item.Spell | str) -> types.Result[str]:
+    async def render(self: Renderer, /, item: types.item.BaseItem | types.item.Spell | str) -> types.Result[str]:
         '''Render an item.
 
            This recursively evaluates the item name as a jinja2 template,
@@ -98,7 +98,7 @@ class Renderer(ReadyState):
                 return cast(types.Result[str], r2)
 
     @check_ready(logger)
-    async def _render(self: Renderer, /, item: types.item.Item | types.item.Spell | str) -> types.Result[str] | Literal[types.Ret.NOT_READY]:
+    async def _render(self: Renderer, /, item: types.item.BaseItem | types.item.Spell | str) -> types.Result[str] | Literal[types.Ret.NOT_READY]:
         match item:
             case types.item.Spell(name=name, rolled_cls=c, rolled_caster_level=cl) if c is not None and cl is not None:
                 t = '{{ item.name }} ({{ item.rolled_cls.capitalize() }} {{ item.classes[item.rolled_cls] }}, CL {{ item.rolled_caster_level }})'

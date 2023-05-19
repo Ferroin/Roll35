@@ -168,7 +168,7 @@ class MagicItem(types.R35Cog):
                 for item in asyncio.as_completed(items):
                     match await item:
                         case (types.Ret.OK, msg):
-                            match await self.render(cast(types.item.Item, msg)):
+                            match await self.render(cast(types.item.BaseItem, msg)):
                                 case (r1, msg) if r1 is not types.Ret.OK:
                                     results.append(f'\nFailed to generate remaining items: { msg }')
                                     break
@@ -451,7 +451,7 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
     ranked = ds.types['ranked'] & categories
     mincost = args['mincost']
     maxcost = args['maxcost']
-    item: MIResult | types.Item | types.Ret = types.Ret.FAILED
+    item: MIResult | types.item.BaseItem | types.Ret = types.Ret.FAILED
 
     match args:
         case {'rank': types.Rank.MINOR, 'subrank': types.Subrank.LEAST, 'category': 'wondrous', 'slot': 'slotless'}:
@@ -630,7 +630,7 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
             elif maxcost is not None and i2.cost > maxcost:
                 return await roll(pool, ds, args, attempt=attempt+1)
             else:
-                return (types.Ret.OK, cast(types.Item, i2))
+                return (types.Ret.OK, i2)
         case (types.Ret() as r1, str() as msg) if r1 is not types.Ret.OK:
             return (r1, msg)
         case r2:

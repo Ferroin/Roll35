@@ -8,7 +8,6 @@ from enum import Enum
 from typing import TypeVar, Generic, cast
 
 from .container import R35Container
-from .item import Item
 
 K = TypeVar('K')
 V = TypeVar('V')
@@ -52,7 +51,7 @@ class R35Map(R35Container, MutableMapping, Generic[K, V]):
         if not (isinstance(key, str) or isinstance(key, int) or isinstance(key, Enum)):
             raise KeyError('Only string, integer, and Enum keys are supported by R35Map objects.')
 
-        match self._get_costs(cast(Item, value)):
+        match self._get_costs(value):
             case None:
                 if key in self:
                     del self[key]

@@ -12,14 +12,14 @@ from __future__ import annotations
 import asyncio
 import logging
 
-from collections.abc import Iterable, Mapping, Sequence, Awaitable
+from collections.abc import Iterable, Mapping, Sequence, Callable
 from dataclasses import dataclass, KW_ONLY
-from typing import Callable, TypeVar, ParamSpec, cast, TYPE_CHECKING
+from typing import TypeVar, ParamSpec, cast, TYPE_CHECKING
 
 from . import constants
 from .. import types
 from ..common import rnd, yaml
-from ..log import log_call_async
+from ..log import log_call
 
 if TYPE_CHECKING:
     from concurrent.futures import Executor
@@ -35,16 +35,16 @@ DEFAULT_MINCOST = 0
 DEFAULT_MAXCOST = float('inf')
 
 
-def ensure_costs(func: Callable[P, Awaitable[T]], /) -> Callable[P, Awaitable[T]]:
+def ensure_costs(func: Callable[P, T], /) -> Callable[P, T]:
     '''Decorate an async method to ensure that the mincost and maxcost arguments are valid.'''
-    async def inner(*args: P.args, **kwargs: P.kwargs) -> T:
+    def inner(*args: P.args, **kwargs: P.kwargs) -> T:
         if getattr(kwargs, 'mincost', None) is None:
             kwargs['mincost'] = DEFAULT_MINCOST
 
         if getattr(kwargs, 'maxcost', None) is None:
             kwargs['maxcost'] = DEFAULT_MAXCOST
 
-        return await func(*args, **kwargs)
+        return func(*args, **kwargs)
 
     return inner
 
@@ -85,9 +85,9 @@ def create_spellmult_xform(classes: types.item.ClassMap, /) -> Callable[[types.I
     return xform
 
 
-def costfilter(items: Iterable[types.ItemEntry], /, *, mincost: types.Cost | None, maxcost: types.Cost | None) -> list[types.ItemEntry]:
+def costfilter(items: Iterable[T], /, *, mincost: types.Cost | None, maxcost: types.Cost | None) -> list[T]:
     '''Filter a list of items by cost.'''
-    ret: list[types.ItemEntry] = []
+    ret: list[T] = []
 
     if mincost is None:
         mincost = DEFAULT_MINCOST
@@ -96,19 +96,12 @@ def costfilter(items: Iterable[types.ItemEntry], /, *, mincost: types.Cost | Non
         maxcost = DEFAULT_MAXCOST
 
     for item in items:
-        if isinstance(item, types.WeightedEntry):
-            value = item.value
-
-            if isinstance(value, str):
-                ret.append(item)
-            elif (_cost_in_range(value, mincost=mincost, maxcost=maxcost) or
-                  _costrange_in_range(value, mincost=mincost, maxcost=maxcost) or
-                  (value.cost is None and value.costrange is None)):
-                ret.append(item)
-
-        elif (_cost_in_range(item, mincost=mincost, maxcost=maxcost) or
-              _costrange_in_range(item, mincost=mincost, maxcost=maxcost) or
-              (item.cost is None and item.costrange is None)):
+        if isinstance(item, types.item.BaseItem):
+            if (_cost_in_range(item, mincost=mincost, maxcost=maxcost) or
+               _costrange_in_range(item, mincost=mincost, maxcost=maxcost) or
+               (item.cost is None and item.costrange is None)):
+                ret.append(cast(T, item))
+        else:
             ret.append(item)
 
     return ret
@@ -119,7 +112,7 @@ class AgentData:
     '''Base class for agent data entries.'''
     _: KW_ONLY
     ranked: types.RankedItemList | None = None
-    compound: types.CompoundItemList | Mapping[types.Rank, Sequence[types.WeightedEntry]] | None = None
+    compound: types.CompoundItemList | Mapping[types.Rank, Sequence[types.WeightedValue]] | None = None
 
 
 class Agent(types.ReadyState):
@@ -137,7 +130,8 @@ class Agent(types.ReadyState):
     def _process_data(data: Mapping | Sequence, /) -> AgentData:
         '''Callback to take the raw data for the agent and make it usable.
 
-           Must be overridden by subclasses.
+           Subclasses need to either override this, or provide their
+           own implementation of Agent.load_data().
 
            This will be called when loading data for the agent. It
            should be a static method that accepts a single argument,
@@ -180,7 +174,7 @@ class Agent(types.ReadyState):
         return types.Ret.OK
 
     @ensure_costs
-    @log_call_async(logger, 'roll random rank')
+    @log_call(logger, 'roll random rank')
     @types.check_ready(logger)
     async def random_rank(self: Agent, /, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> types.Rank | types.Ret:
         '''Return a random rank, possibly within the cost limits.'''
@@ -203,7 +197,7 @@ class Agent(types.ReadyState):
         return types.Ret.NO_MATCH
 
     @ensure_costs
-    @log_call_async(logger, 'roll random subrank')
+    @log_call(logger, 'roll random subrank')
     @types.check_ready(logger)
     async def random_subrank(self: Agent, /, rank: types.Rank, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> \
             types.Subrank | types.Ret:
@@ -221,7 +215,7 @@ class Agent(types.ReadyState):
         return types.Ret.NO_MATCH
 
     @ensure_costs
-    @log_call_async(logger, 'roll random ranked item')
+    @log_call(logger, 'roll random ranked item')
     @types.check_ready(logger)
     async def random_ranked(
             self: Agent,
@@ -230,7 +224,7 @@ class Agent(types.ReadyState):
             subrank: types.Subrank | None = None,
             mincost: types.Cost | None = None,
             maxcost: types.Cost | None = None) -> \
-            types.Item | types.Ret:
+            types.item.BaseItem | types.Ret:
         '''Roll a random item for the given rank and subrank, possibly within the specified cost range.'''
         if self._data.ranked is None:
             return types.Ret.NO_MATCH
@@ -258,10 +252,10 @@ class Agent(types.ReadyState):
         if not self._valid_subrank(rank, subrank):
             raise ValueError(f'Invalid subrank for { self.name }: { subrank }')
 
-        return cast(types.Item, rnd(costfilter(self._data.ranked[rank][subrank], mincost=mincost, maxcost=maxcost)))
+        return cast(types.item.BaseItem, rnd(costfilter(self._data.ranked[rank][subrank], mincost=mincost, maxcost=maxcost)))
 
     @ensure_costs
-    @log_call_async(logger, 'roll random compound item')
+    @log_call(logger, 'roll random compound item')
     @types.check_ready(logger)
     async def random_compound(
             self: Agent,
@@ -269,7 +263,7 @@ class Agent(types.ReadyState):
             rank: types.Rank | None = None,
             mincost: types.Cost | None = None,
             maxcost: types.Cost | None = None) -> \
-            types.Item | str | types.Ret:
+            types.item.CompoundItem | str | types.Ret:
         '''Roll a random item for the given rank, possibly within the specified cost range.'''
         if self._data.compound is None:
             return types.Ret.NO_MATCH
@@ -288,4 +282,4 @@ class Agent(types.ReadyState):
 
         assert rank is not None
 
-        return cast(types.Item | str, rnd(costfilter(self._data.compound[rank], mincost=mincost, maxcost=maxcost)))
+        return cast(types.item.CompoundItem | str, rnd(costfilter(self._data.compound[rank], mincost=mincost, maxcost=maxcost)))

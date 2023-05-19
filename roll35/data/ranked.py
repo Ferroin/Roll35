@@ -15,7 +15,7 @@ from .classes import ClassesAgent
 from .spell import SpellAgent
 from .. import types
 from ..common import yaml, bad_return, ismapping, rnd, flatten, make_weighted_entry
-from ..log import log_call_async
+from ..log import log_call
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence, Iterable, Callable
@@ -113,7 +113,7 @@ class RankedAgent(agent.Agent):
 
         return types.Ret.OK
 
-    @log_call_async(logger, 'roll random ranked item')
+    @log_call(logger, 'roll random ranked item')
     async def random(
             self: RankedAgent,
             /,
@@ -124,7 +124,7 @@ class RankedAgent(agent.Agent):
             cls: str | None = None,
             mincost: types.Cost | None = None,
             maxcost: types.Cost | None = None) -> \
-            types.Item | types.Ret:
+            types.item.BaseItem | types.Ret:
         '''Roll a random ranked item, then roll a spell for it if needed.'''
         match level:
             case None:
@@ -140,7 +140,7 @@ class RankedAgent(agent.Agent):
 
                 match rank:
                     case None:
-                        searchitems: Iterable[types.Item] = []
+                        searchitems: Iterable[types.item.BaseItem] = []
 
                         for si1 in self._data.ranked.values():
                             for si2 in si1.values():
@@ -166,8 +166,11 @@ class RankedAgent(agent.Agent):
                 match rnd(agent.costfilter(possible, mincost=mincost, maxcost=maxcost)):
                     case types.Ret.NO_MATCH:
                         return types.Ret.NO_MATCH
-                    case i2:
+                    case types.item.BaseItem() as i2:
                         item = i2
+                    case ret:
+                        logger.warning(bad_return(ret))
+                        return types.Ret.FAILED
             case _:
                 raise ValueError
 
@@ -190,13 +193,13 @@ class RankedAgent(agent.Agent):
                     case (types.Ret() as r1, msg) if r1 is not types.Ret.OK:
                         logger.warning(f'Failed to roll random spell for item using parameters: { spell }, recieved: { msg }')
                         return r1
-                    case ret:
-                        logger.error(bad_return(ret))
+                    case r1:
+                        logger.error(bad_return(r1))
                         return types.Ret.FAILED
             case types.item.BaseItem() as item:
                 return item
-            case ret:
-                logger.warning(bad_return(ret))
+            case r2:
+                logger.warning(bad_return(r2))
                 return types.Ret.FAILED
 
         # The below line should never actually be run, as the above match clauses are (theoretically) exhaustive.

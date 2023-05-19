@@ -8,7 +8,7 @@ from __future__ import annotations
 import logging
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 from . import agent
 from .. import types
@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 @dataclass
 class WondrousData(agent.AgentData):
     '''Data handled by a WondrousAgent.'''
-    slots: Sequence[types.WeightedEntry]
+    slots: Sequence[types.WeightedValue]
 
 
 class WondrousAgent(agent.Agent):
@@ -59,10 +59,10 @@ class WondrousAgent(agent.Agent):
     @types.check_ready(logger)
     async def random(self: WondrousAgent, /, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> str | types.Ret:
         '''Return a random slot, possibly limited by cost.'''
-        return cast(str | types.Ret, rnd(agent.costfilter(self._data.slots, mincost=mincost, maxcost=maxcost)))
+        return rnd(agent.costfilter(self._data.slots, mincost=mincost, maxcost=maxcost))
 
     @log_call_async(logger, 'get wondrous item slots')
     @types.check_ready(logger)
     async def slots(self: WondrousAgent, /) -> list[str]:
         '''Return a list of known slots.'''
-        return list(map(lambda x: cast(str, x.value), self._data.slots))
+        return list(map(lambda x: x.value, self._data.slots))

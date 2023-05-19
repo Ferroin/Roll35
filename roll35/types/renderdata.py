@@ -6,7 +6,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence, Iterator
 from typing import TypedDict, Literal, Union, Dict, Any, cast
 
-from .base import WeightedEntry
+from .item import WeightedValue
 from .rendermap import RenderMap
 from ..common import rnd, make_weighted_entry
 
@@ -20,7 +20,7 @@ class TFlatEntry(TypedDict):
 class TFlatProportionalEntry(TypedDict):
     '''A type definition for a flat proportional list entry in the render data.'''
     type: Literal['flat_proportional']
-    data: Sequence[WeightedEntry]
+    data: Sequence[WeightedValue]
 
 
 class TGroupedEntry(TypedDict):
@@ -32,7 +32,7 @@ class TGroupedEntry(TypedDict):
 class TGroupedProportionalEntry(TypedDict):
     '''A type definition for a grouped proportional list entry in the render data.'''
     type: Literal['grouped_proportional']
-    data: Dict[str, Sequence[WeightedEntry]]
+    data: Dict[str, Sequence[WeightedValue]]
 
 
 TRenderEntry = Union[
@@ -55,7 +55,7 @@ class RenderData(Mapping):
        attribute, a random item from the value for that key will be
        returned.'''
     def __init__(self: RenderData, /, data: Mapping[str, TRenderEntry]) -> None:
-        self._data: Dict[str, RenderMap | Sequence[str] | Sequence[WeightedEntry]] = dict()
+        self._data: dict[str, RenderMap | Sequence[str] | Sequence[WeightedValue]] = dict()
 
         for k, v in data.items():
             try:
@@ -76,7 +76,7 @@ class RenderData(Mapping):
                 case {'type': 'grouped', 'data': d}:
                     self._data[k] = RenderMap(cast(Mapping[str, Sequence[str]], d))
                 case {'type': 'flat_proportional', 'data': d}:
-                    self._data[k] = list(map(lambda x: make_weighted_entry(x), cast(Sequence[Dict], d)))
+                    self._data[k] = [make_weighted_entry(x) for x in cast(Sequence[Mapping[str, Any]], d)]
                 case {'type': 'flat', 'data': d}:
                     self._data[k] = cast(Sequence[str], d)
                 case _:
@@ -101,7 +101,7 @@ class RenderData(Mapping):
     def __len__(self: RenderData, /) -> int:
         return len(self._data)
 
-    def __getitem__(self: RenderData, key: str, /) -> RenderMap | Sequence[str | WeightedEntry]:
+    def __getitem__(self: RenderData, key: str, /) -> RenderMap | Sequence[str] | Sequence[WeightedValue]:
         return self._data[key]
 
     def __iter__(self: RenderData, /) -> Iterator:
