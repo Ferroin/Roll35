@@ -163,8 +163,18 @@ class Spell(BaseModel):
 
         return v
 
-    def set_derived_classes(self: Spell, classes: ClassMap) -> None:
-        '''Determine derived classes for this spell based on classes.'''
+    def process_classes(self: Spell, classes: ClassMap) -> None:
+        '''Determine derived classes for this spell based on classes and sanity check levels.'''
+        for cls, level in self.classes.items():
+            if cls in {'minimum', 'spellpage_arcane', 'spellpage_divine'}:
+                continue
+
+            if cls not in classes:
+                raise ValueError(f'Spell entry for { self.name } references non-existent class { cls }.')
+
+            if level > len(classes[cls].levels) - 1:
+                raise ValueError(f'Spell level for class { cls } in { self.name } is higher than the number of levels defined for that class.')
+
         self.minimum = min(self.classes, key=lambda x: self.classes[x])
         self.classes['minimum'] = self.classes[self.minimum]
 

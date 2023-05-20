@@ -36,7 +36,7 @@ def process_spell_chunk(spells: Iterable[Mapping], classes: types.item.ClassMap,
         tags = set()
 
         for spell in ret:
-            spell.set_derived_classes(classes)
+            spell.process_classes(classes)
             tags |= spell.tags
 
         return (
