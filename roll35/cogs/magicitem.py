@@ -13,7 +13,7 @@ from nextcord.ext import commands
 from .. import types
 from ..common import ret_async, bad_return
 from ..data.category import CategoryAgent
-from ..data.classes import ClassesAgent, ClassEntry
+from ..data.classes import ClassesAgent
 from ..data.compound import CompoundAgent
 from ..data.ordnance import OrdnanceAgent
 from ..data.ranked import RankedAgent
@@ -535,7 +535,7 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
                 case types.Ret.NOT_READY:
                     item = (types.Ret.NOT_READY, NOT_READY)
                 case classes:
-                    valid = set(cast(set[ClassEntry], classes)) | cast(SpellAgent, ds['spell']).EXTRA_CLASS_NAMES
+                    valid = set(cast(set[types.item.ClassEntry], classes)) | cast(SpellAgent, ds['spell']).EXTRA_CLASS_NAMES
 
                     if cls in valid or cls is None:
                         match await cast(CompoundAgent, ds[category]).random(rank=rank, cls=cls, level=level, mincost=mincost, maxcost=maxcost):

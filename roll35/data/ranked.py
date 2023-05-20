@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from . import agent
 from . import constants
-from .classes import ClassMap, ClassesAgent
+from .classes import ClassesAgent
 from .spell import SpellAgent
 from .. import types
 from ..common import yaml, bad_return, ismapping, rnd, flatten, make_weighted_entry
@@ -82,7 +82,7 @@ def process_subranked_itemlist(
 class RankedAgent(agent.Agent):
     '''Data agent for ranked item lists.'''
     @staticmethod
-    def _process_data(data: Mapping | Sequence, /, classes: ClassMap = dict()) -> agent.AgentData:
+    def _process_data(data: Mapping | Sequence, /, classes: types.item.ClassMap = dict()) -> agent.AgentData:
         if not ismapping(data):
             raise ValueError('Ranked data must be a mapping')
 

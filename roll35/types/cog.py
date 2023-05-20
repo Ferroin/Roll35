@@ -14,7 +14,7 @@ from typing import NoReturn, TYPE_CHECKING
 if TYPE_CHECKING:
     from concurrent.futures import Executor
 
-    from .item import Item, SpellEntry
+    from .item import Item, Spell
     from .retcode import Result
     from ..data import DataSet
     from ..renderer import Renderer
@@ -30,7 +30,7 @@ class R35Cog(commands.Cog):
         self.ds = dataset
         self.renderer = renderer
 
-    async def render(self: R35Cog, /, item: Item | SpellEntry) -> Result[str]:
+    async def render(self: R35Cog, /, item: Item | Spell) -> Result[str]:
         '''Render an item using the renderer passed on initialization.'''
         return await self.renderer.render(item)
 

@@ -64,10 +64,10 @@ class Renderer(ReadyState):
 
         return types.Ret.OK
 
-    async def get_spell(self: Renderer, /, item: types.item.SpellItem) -> types.Result[types.item.SpellEntry]:
+    async def get_spell(self: Renderer, /, item: types.item.SpellItem) -> types.Result[types.item.Spell]:
         '''Get a random spell for the given item.'''
         match await cast(SpellAgent, self._ds['spell']).random(**item.spell):
-            case (types.Ret.OK, types.item.SpellEntry() as spell):
+            case (types.Ret.OK, types.item.Spell() as spell):
                 return (types.Ret.OK, spell)
             case (types.Ret() as r1, str() as msg) if r1 is not types.Ret.OK:
                 return (r1, msg)
@@ -83,7 +83,7 @@ class Renderer(ReadyState):
         raise RuntimeError
 
     @log_call_async(logger, 'render item')
-    async def render(self: Renderer, /, item: types.item.Item | types.item.SpellEntry | str) -> types.Result[str]:
+    async def render(self: Renderer, /, item: types.item.Item | types.item.Spell | str) -> types.Result[str]:
         '''Render an item.
 
            This recursively evaluates the item name as a jinja2 template,
@@ -98,10 +98,10 @@ class Renderer(ReadyState):
                 return cast(types.Result[str], r2)
 
     @check_ready(logger)
-    async def _render(self: Renderer, /, item: types.item.Item | types.item.SpellEntry | str) -> types.Result[str] | Literal[types.Ret.NOT_READY]:
+    async def _render(self: Renderer, /, item: types.item.Item | types.item.Spell | str) -> types.Result[str] | Literal[types.Ret.NOT_READY]:
         match item:
-            case types.item.SpellEntry(name=name, cls=c, caster_level=cl, level=l) if c is not None and cl is not None and l is not None:
-                t = '{{ item.name }} ({{ item.cls.capitalize() }} {{ item.level }}, CL {{ item.caster_level }})'
+            case types.item.Spell(name=name, rolled_cls=c, rolled_caster_level=cl) if c is not None and cl is not None:
+                t = '{{ item.name }} ({{ item.rolled_cls.capitalize() }} {{ item.classes[item.rolled_cls] }}, CL {{ item.rolled_caster_level }})'
             case types.item.SimpleItem(name=name, cost=cost) if cost is not None:
                 if '{{ spell }}' in name:
                     t = '{{ item.name }} ({{ item.cls.capitalize() }} {{ item.level }}, CL {{ item.caster_level }}, {{ item.cost }} gp)'
@@ -137,15 +137,17 @@ class Renderer(ReadyState):
             if isinstance(item, types.item.SpellItem):
                 if item.rolled_spell is not None:
                     spell = item.rolled_spell.name
-                    item.cls = item.rolled_spell.cls
-                    item.caster_level = item.rolled_spell.caster_level
-                    item.level = item.rolled_spell.level
+                    item.cls = item.rolled_spell.rolled_cls
+                    assert item.cls is not None
+                    item.caster_level = item.rolled_spell.rolled_caster_level
+                    item.level = item.rolled_spell.classes[item.cls]
                 else:
                     match await self.get_spell(item):
-                        case (types.Ret.OK, types.item.SpellEntry() as s):
-                            item.cls = s.cls
-                            item.caster_level = s.caster_level
-                            item.level = s.level
+                        case (types.Ret.OK, types.item.Spell() as s):
+                            assert s.rolled_cls is not None
+                            item.cls = s.rolled_cls
+                            item.caster_level = s.rolled_caster_level
+                            item.level = s.classes[s.rolled_cls]
                             spell = s.name
                         case (types.Ret.NOT_READY, str() as msg):
                             return (types.Ret.NOT_READY, msg)

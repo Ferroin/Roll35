@@ -11,7 +11,7 @@ from typing import Any, TYPE_CHECKING, cast
 
 from . import agent
 from . import constants
-from .classes import ClassMap, ClassesAgent
+from .classes import ClassesAgent
 from .spell import SpellAgent
 from .. import types
 from ..common import yaml, bad_return, ismapping, rnd, flatten, make_weighted_entry
@@ -71,7 +71,7 @@ def process_compound_itemlist(
 class CompoundAgent(agent.Agent):
     '''Basic data agent for compound item lists.'''
     @staticmethod
-    def _process_data(data: Mapping | Sequence, /, classes: ClassMap = dict()) -> agent.AgentData:
+    def _process_data(data: Mapping | Sequence, /, classes: types.item.ClassMap = dict()) -> agent.AgentData:
         if ismapping(data):
             raise ValueError('Compound Spell data must be a sequence')
 

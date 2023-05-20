@@ -9,7 +9,6 @@
 
 from __future__ import annotations
 
-import abc
 import asyncio
 import logging
 
@@ -26,7 +25,6 @@ if TYPE_CHECKING:
     from concurrent.futures import Executor
 
     from . import DataSet
-    from .classes import ClassMap
 
 logger = logging.getLogger(__name__)
 
@@ -59,10 +57,10 @@ def _costrange_in_range(item: types.Item, /, *, mincost: types.Cost, maxcost: ty
     return item.costrange is not None and types.R35Range(item.costrange).overlaps(types.R35Range([mincost, maxcost]))
 
 
-def create_spellmult_xform(classes: ClassMap, /) -> Callable[[types.Item], types.Item]:
+def create_spellmult_xform(classes: types.item.ClassMap, /) -> Callable[[types.Item], types.Item]:
     '''Create a costmult handler function based on spell levels.'''
     def xform(x: types.Item) -> types.Item:
-        levels = map(lambda x: x.levels, classes.values())
+        levels = [x.levels for x in classes.values()]
 
         match x:
             case types.item.SpellItem(spell={'level': level, 'class': 'minimum'}, costmult=costmult) if costmult is not None:
@@ -124,7 +122,7 @@ class AgentData:
     compound: types.CompoundItemList | Mapping[types.Rank, Sequence[types.WeightedEntry]] | None = None
 
 
-class Agent(types.ReadyState, abc.ABC):
+class Agent(types.ReadyState):
     '''Abstract base class for data agents.'''
     def __init__(self: Agent, /, dataset: DataSet, name: str) -> None:
         self._ds = dataset
@@ -136,7 +134,6 @@ class Agent(types.ReadyState, abc.ABC):
         return f'roll35.data.Agent[{ self.name }, ready: { self._ready.is_set() }]'
 
     @staticmethod
-    @abc.abstractmethod
     def _process_data(data: Mapping | Sequence, /) -> AgentData:
         '''Callback to take the raw data for the agent and make it usable.
 

@@ -16,7 +16,7 @@ from ..data.classes import ClassesAgent
 from ..log import log_call
 from ..parser import Parser, ParserEntry
 from ..types import R35Cog, Ret, Result
-from ..types.item import SpellEntry
+from ..types import Spell as SpellEntry
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, Awaitable
@@ -110,7 +110,7 @@ class Spell(R35Cog):
                     match await item:
                         case (Ret.OK, SpellEntry() as msg):
                             match await self.render(msg):
-                                case (Ret.OK, msg) if isinstance(msg, str):
+                                case (Ret.OK, str() as msg):
                                     results.append(msg)
                                 case (r1, msg) if r1 is not Ret.OK:
                                     results.append(f'\nFailed to generate remaining items: { msg }')
