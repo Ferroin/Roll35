@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Sequence, Mapping, MutableMapping
 from dataclasses import dataclass, KW_ONLY, field
 from typing import Union, Literal, TypedDict
 
@@ -16,6 +16,20 @@ Cost = int | float
 _Cost = Cost | Literal['varies']
 CostRange = tuple[Cost, Cost]
 Tag = str
+
+
+@dataclass
+class ClassEntry:
+    '''A spellcasting class entry.'''
+    _: KW_ONLY
+    name: str
+    type: Literal['arcane' | 'divine']
+    levels: list[int | None]
+    copy: str | None = None
+    merge: Sequence[str] | None = None
+
+
+ClassMap = Mapping[str, ClassEntry]
 
 
 @dataclass
@@ -36,13 +50,51 @@ class SpellParams(TypedDict, total=False):
 
 
 @dataclass
-class SpellEntry:
-    '''Data class representing a specific spell.'''
+class Spell:
+    '''Data class representing a spell.'''
     name: str
-    level: int
-    cls: str
-    caster_level: int
+    classes: MutableMapping[str, int]
+    domains: Mapping[str, int]
+    descriptor: str
+    school: str
+    subschool: str
     tags: set[str] = field(default_factory=set)
+    minimum: str | None = None
+    spellpage_arcane: str | None = None
+    spellpage_divine: str | None = None
+    rolled_cls: str | None = None
+    rolled_caster_level: int | None = None
+
+    def __post_init__(self: Spell) -> None:
+        self.tags.add(self.school)
+        self.tags.add(self.subschool)
+        self.tags |= set(self.descriptor.split(', '))
+        self.minimum = min(self.classes, key=lambda x: self.classes[x])
+        self.classes['minimum'] = self.classes[self.minimum]
+
+    def set_spellpages(self: Spell, classes: ClassMap) -> None:
+        '''Determine spellpage classes for this spell based on classes.'''
+        if 'wizard' in self.classes:
+            self.spellpage_arcane = 'wizard'
+        else:
+            possible = [x for x in classes if x in self.classes and classes[x].type == 'arcane']
+
+            if possible:
+                self.spellpage_arcane = min(possible, key=lambda x: self.classes[x])
+
+        if self.spellpage_arcane is not None:
+            self.classes['spellpage_arcane'] = self.classes[self.spellpage_arcane]
+
+        if 'cleric' in self.classes:
+            self.spellpage_divine = 'cleric'
+        else:
+            possible = [x for x in classes if x in self.classes and classes[x].type == 'divine']
+
+            if possible:
+                self.spellpage_divine = min(possible, key=lambda x: self.classes[x])
+
+        if self.spellpage_divine is not None:
+            self.classes['spellpage_divine'] = self.classes[self.spellpage_divine]
 
 
 @dataclass
@@ -50,7 +102,7 @@ class SpellItem(BaseItem):
     '''Base class for an item with an embedded spell.'''
     _: KW_ONLY
     spell: SpellParams
-    rolled_spell: SpellEntry | None = None
+    rolled_spell: Spell | None = None
     cls: str | None = None
     level: int | None = None
     caster_level: int | None = None

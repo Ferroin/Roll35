@@ -13,7 +13,7 @@ from .list import R35List
 from .range import R35Range
 
 from .base import WeightedEntry, ItemEntry
-from .item import Item, Cost
+from .item import Item, Cost, Spell
 from .ranks import Rank, Subrank
 
 from .retcode import Ret, Result
@@ -34,6 +34,7 @@ __all__ = (
     'ItemEntry',
     'Item',
     'Cost',
+    'Spell',
     'Rank',
     'Subrank',
     'Ret',

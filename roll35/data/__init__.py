@@ -15,6 +15,8 @@ from ..types import Ret
 
 from .constants import DATA_ROOT
 
+from .agent import Agent
+
 from .category import CategoryAgent
 from .classes import ClassesAgent
 from .compound import CompoundAgent
@@ -59,7 +61,7 @@ class DataSet:
        Individual categories within the data set are accessed by name
        via subscripting.'''
     def __init__(self: DataSet, /):
-        self._agents: Mapping[str, AnyAgent] = dict()
+        self._agents: Mapping[str, Agent] = dict()
         self.ready = False
 
         with open(DATA_ROOT / 'structure.yaml') as f:
@@ -72,7 +74,7 @@ class DataSet:
             self._agents[item['name']] = agents[item['type']](self, item['name'])
             self._types[item['type']].add(item['name'])
 
-    def __getitem__(self: DataSet, key: str, /) -> AnyAgent:
+    def __getitem__(self: DataSet, key: str, /) -> Agent:
         return self._agents[key]
 
     @property
