@@ -28,7 +28,7 @@ antipaladin:
     - 14
 arcanist:
   type: arcane
-  copy: wizard
+  duplicate: wizard
   levels: &full_spontaneous_caster_levels
     - 1
     - 1
@@ -76,7 +76,7 @@ inquisitor:
   levels: *half_caster_levels
 investigator:
   type: arcane
-  copy: alchemist
+  duplicate: alchemist
   levels: *half_caster_levels
 magus:
   type: arcane
@@ -92,11 +92,11 @@ occultist:
   levels: *half_caster_levels
 omdura:
   type: divine
-  copy: cleric
+  duplicate: cleric
   levels: *half_caster_levels
 oracle:
   type: divine
-  copy: cleric
+  duplicate: cleric
   levels: *full_spontaneous_caster_levels
 paladin:
   type: divine
@@ -112,11 +112,11 @@ shaman:
   levels: *full_caster_levels
 skald:
   type: arcane
-  copy: bard
+  duplicate: bard
   levels: *half_caster_levels
 sorceror:
   type: arcane
-  copy: wizard
+  duplicate: wizard
   levels: *full_spontaneous_caster_levels
 spiritualist:
   type: occult
@@ -126,11 +126,11 @@ summoner:
   levels: *half_caster_levels
 vampire_hunter:
   type: divine
-  copy: inquisitor
+  duplicate: inquisitor
   levels: *third_offset_caster_levels
 warpriest:
   type: divine
-  copy: cleric
+  duplicate: cleric
   levels: *half_caster_levels
 witch:
   type: arcane

@@ -185,6 +185,7 @@ class Spell(R35Cog):
                     '- `random`: Select a class at random.\n' +
                     '- `arcane`: Select a random arcane class.\n' +
                     '- `divine`: Select a random divine class.\n' +
+                    '- `occult`: Select a random occult class.\n' +
                     '- `spellpage`: Use spellpage evaluation rules when determining level.\n' +
                     '- `spellpage_arcane`: Same as `spellpage`, but only consider arcane classes.\n' +
                     '- `spellpage_divine`: Same as `spellpage`, but only consider divine classes.\n'

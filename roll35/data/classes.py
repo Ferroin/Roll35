@@ -44,10 +44,16 @@ class ClassesAgent(agent.Agent):
         classes = dict()
 
         for k, v in data.items():
-            try:
-                classes[k] = types.item.ClassEntry(name=k, **v)
-            except TypeError:
-                raise RuntimeError(f'Invalid class entry: { k }: { v }')
+            classes[k] = types.item.ClassEntry(name=k, **v)
+
+        for cls in classes.values():
+            if cls.duplicate is not None:
+                if cls.duplicate not in classes.keys():
+                    raise ValueError(f'{ cls.name }’s `duplicate` key references non-existent class { cls.duplicate }')
+            elif cls.merge is not None:
+                for mcls in cls.merge:
+                    if mcls not in classes.keys():
+                        raise ValueError(f'{ cls.name }’s `merge` key references non-existent class { mcls }')
 
         return ClassesData(
             classes=classes
