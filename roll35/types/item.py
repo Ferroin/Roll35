@@ -9,7 +9,7 @@ from collections.abc import Sequence, Mapping, MutableMapping
 from dataclasses import dataclass, KW_ONLY
 from typing import Union, Literal, TypedDict, TypeVar, Type, Any, cast
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, validator, root_validator
 
 from .ranks import RankWeights
 
@@ -38,15 +38,46 @@ class WeightedValue(BaseModel):
     _check_weight = validator('weight', allow_reuse=True)(check_weight)
 
 
-@dataclass
-class ClassEntry:
+class ClassEntry(BaseModel):
     '''A spellcasting class entry.'''
-    _: KW_ONLY
     name: str
-    type: Literal['arcane' | 'divine']
+    type: Literal['arcane'] | Literal['divine'] | Literal['occult']
     levels: list[int | None]
-    copy: str | None = None
+    duplicate: str | None = None
     merge: Sequence[str] | None = None
+
+    @validator('levels')
+    @classmethod
+    def check_levels(cls: Type[ClassEntry], v: list[int | None], values: dict[str, Any]) -> list[int | None]:
+        if len(v) > MAX_SPELL_LEVEL + 1:
+            raise ValueError(f'Too many spell levels in { values["name"] } class entry, no more than { MAX_SPELL_LEVEL + 1 } may be specified.')
+
+        last = v[0]
+
+        if last is not None and last < 1:
+            raise ValueError(f'Spell level 0 level is less than 1 in { values["name"] } class entry.')
+
+        for idx, level in enumerate(v[1:]):
+            if last is not None:
+                if level is None:
+                    raise ValueError('Sparse spell lists are not supported.')
+                elif level < last:
+                    raise ValueError(f'Spell level { idx } level is lower than spell level { idx } level in { values["name"] } class entry.')
+                elif level < 1:
+                    raise ValueError(f'Spell level { idx } level is less than 1 in { values["name"] } class entry.')
+
+            last = level
+
+        return v
+
+    @root_validator
+    @classmethod
+    def mutex_duplicate_merge(cls: Type[ClassEntry], values: dict[str, Any]) -> dict[str, Any]:
+        '''Duplicate and merge keys are mutually exclusive.'''
+        if values.get('duplicate') is not None and values.get('merge') is not None:
+            raise ValueError('Only one of duplicate or merge key may be defined on a class entry.')
+
+        return values
 
 
 ClassMap = Mapping[str, ClassEntry]

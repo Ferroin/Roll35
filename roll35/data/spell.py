@@ -63,6 +63,7 @@ class SpellAgent(agent.Agent):
         'random',
         'arcane',
         'divine',
+        'occult',
         'spellpage',
         'spellpage_arcane',
         'spellpage_divine',
@@ -188,11 +189,11 @@ class SpellAgent(agent.Agent):
                     'spellpage_arcane',
                     'spellpage_divine',
                 ])
-            case ('arcane' | 'divine' as typ, None):
+            case ('arcane' | 'divine' | 'occult' as typ, None):
                 valid = [k for (k, v) in classes.items()
                          if v.type == typ]
                 cls = random.choice(valid)
-            case ('arcane' | 'divine' as typ, level):
+            case ('arcane' | 'divine' | 'occult' as typ, level):
                 valid = [k for (k, v) in classes.items()
                          if await self._level_in_cls(cast(int, level), k)
                          and v.type == typ]
