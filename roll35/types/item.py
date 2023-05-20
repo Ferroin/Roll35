@@ -116,7 +116,7 @@ class Spell(BaseModel):
     rolled_caster_level: int | None = None
 
     @validator('tags', always=True)
-    @staticmethod
+    @classmethod
     def populate_tags(cls: Type[Spell], v: set[str], values: dict[str, Any]) -> set[str]:
         if not v:
             t = {x for x in cast(str, values['descriptor']).split(', ') if x}
@@ -132,7 +132,7 @@ class Spell(BaseModel):
         return t
 
     @validator('classes')
-    @staticmethod
+    @classmethod
     def check_classes(cls: Type[Spell], v: MutableMapping[str, int], values: dict[str, Any]) -> MutableMapping[str, int]:
         for c, l in v.items():
             if l < 0:
@@ -144,7 +144,7 @@ class Spell(BaseModel):
         return v
 
     @validator('domains')
-    @staticmethod
+    @classmethod
     def check_domains(cls: Type[Spell], v: MutableMapping[str, int], values: dict[str, Any]) -> MutableMapping[str, int]:
         for c, l in v.items():
             if l < 0:
@@ -156,7 +156,7 @@ class Spell(BaseModel):
         return v
 
     @validator('school')
-    @staticmethod
+    @classmethod
     def check_school(cls: Type[Spell], v: str, values: dict[str, Any]) -> str:
         if not v:
             raise ValueError(f'Missing school for { values["name"] }.')
