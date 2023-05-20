@@ -6,10 +6,10 @@
 from __future__ import annotations
 
 from collections.abc import Sequence, Mapping, MutableMapping
-from dataclasses import dataclass, KW_ONLY, field
-from typing import Union, Literal, TypedDict, TypeVar
+from dataclasses import dataclass, KW_ONLY
+from typing import Union, Literal, TypedDict, TypeVar, Type, Any, cast
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, Field, validator
 
 from .ranks import RankWeights
 
@@ -69,31 +69,74 @@ class SpellParams(TypedDict, total=False):
     cls: str
 
 
-@dataclass
-class Spell:
-    '''Data class representing a spell.'''
+class Spell(BaseModel):
+    '''Data model representing a spell.'''
     name: str
     classes: MutableMapping[str, int]
-    domains: Mapping[str, int]
+    domains: Mapping[str, int] = Field(default_factory=dict)
     descriptor: str
     school: str
     subschool: str
-    tags: set[str] = field(default_factory=set)
+    tags: set[str] = Field(default_factory=set)
     minimum: str | None = None
     spellpage_arcane: str | None = None
     spellpage_divine: str | None = None
     rolled_cls: str | None = None
     rolled_caster_level: int | None = None
 
-    def __post_init__(self: Spell) -> None:
-        self.tags.add(self.school)
-        self.tags.add(self.subschool)
-        self.tags |= set(self.descriptor.split(', '))
+    @validator('tags', always=True)
+    @staticmethod
+    def populate_tags(cls: Type[Spell], v: set[str], values: dict[str, Any]) -> set[str]:
+        if not v:
+            t = {x for x in cast(str, values['descriptor']).split(', ') if x}
+
+            if values['school']:
+                t.add(cast(str, values['school']))
+
+            if values['subschool']:
+                t.add(cast(str, values['subschool']))
+        else:
+            t = v
+
+        return t
+
+    @validator('classes')
+    @staticmethod
+    def check_classes(cls: Type[Spell], v: MutableMapping[str, int], values: dict[str, Any]) -> MutableMapping[str, int]:
+        for c, l in v.items():
+            if l < 0:
+                raise ValueError(f'Spell level for class { c } in { values["name"] } must be at least 0.')
+
+            if l > MAX_SPELL_LEVEL:
+                raise ValueError(f'Spell level for class { c } in { values["name"] } must be less than or equal to { MAX_SPELL_LEVEL }.')
+
+        return v
+
+    @validator('domains')
+    @staticmethod
+    def check_domains(cls: Type[Spell], v: MutableMapping[str, int], values: dict[str, Any]) -> MutableMapping[str, int]:
+        for c, l in v.items():
+            if l < 0:
+                raise ValueError(f'Spell level for domain { c } in { values["name"] } must be at least 0.')
+
+            if l > MAX_SPELL_LEVEL:
+                raise ValueError(f'Spell level for domain { c } in { values["name"] } must be less than or equal to { MAX_SPELL_LEVEL }.')
+
+        return v
+
+    @validator('school')
+    @staticmethod
+    def check_school(cls: Type[Spell], v: str, values: dict[str, Any]) -> str:
+        if not v:
+            raise ValueError(f'Missing school for { values["name"] }.')
+
+        return v
+
+    def set_derived_classes(self: Spell, classes: ClassMap) -> None:
+        '''Determine derived classes for this spell based on classes.'''
         self.minimum = min(self.classes, key=lambda x: self.classes[x])
         self.classes['minimum'] = self.classes[self.minimum]
 
-    def set_spellpages(self: Spell, classes: ClassMap) -> None:
-        '''Determine spellpage classes for this spell based on classes.'''
         if 'wizard' in self.classes:
             self.spellpage_arcane = 'wizard'
         else:
