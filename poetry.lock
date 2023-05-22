@@ -142,6 +142,21 @@ files = [
 frozenlist = ">=1.1.0"
 
 [[package]]
+name = "astpretty"
+version = "2.1.0"
+description = "Pretty print the output of python stdlib `ast.parse`."
+category = "dev"
+optional = false
+python-versions = ">=3.6.1"
+files = [
+    {file = "astpretty-2.1.0-py2.py3-none-any.whl", hash = "sha256:f81f14b5636f7af81fadb1e3c09ca7702ce4615500d9cc6d6829befb2dec2e3c"},
+    {file = "astpretty-2.1.0.tar.gz", hash = "sha256:8a801fcda604ec741f010bb36d7cbadc3ec8a182ea6fb83e20ab663463e75ff6"},
+]
+
+[package.extras]
+typed = ["typed-ast"]
+
+[[package]]
 name = "async-timeout"
 version = "4.0.2"
 description = "Timeout context manager for asyncio programs"
@@ -442,6 +457,84 @@ files = [
 mccabe = ">=0.7.0,<0.8.0"
 pycodestyle = ">=2.10.0,<2.11.0"
 pyflakes = ">=3.0.0,<3.1.0"
+
+[[package]]
+name = "flake8-2020"
+version = "1.8.0"
+description = "flake8 plugin which checks for misuse of `sys.version` or `sys.version_info`"
+category = "dev"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "flake8_2020-1.8.0-py2.py3-none-any.whl", hash = "sha256:1553b2b3638135b276f7a3252301e81376901e7b6a5eaccb07a969771f178375"},
+    {file = "flake8_2020-1.8.0.tar.gz", hash = "sha256:f5312b3634266bd0f1957f64ecabeb62d67bbd9cee637e33a2651a80091f90aa"},
+]
+
+[package.dependencies]
+flake8 = ">=5"
+
+[[package]]
+name = "flake8-async"
+version = "22.11.14"
+description = "A flake8 plugin that checks bad async / asyncio practices"
+category = "dev"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "flake8-async-22.11.14.tar.gz", hash = "sha256:b4db2d55883653b47d4bfd946fdf506e8958bb4ca35974790b8c3e620fc1abff"},
+    {file = "flake8_async-22.11.14-py3-none-any.whl", hash = "sha256:317cf0f882a2f4a09c2250c451acff8358d7faec8a0aa54521b6e69336fe9d0b"},
+]
+
+[package.dependencies]
+flake8 = "*"
+
+[[package]]
+name = "flake8-debug"
+version = "0.2.0"
+description = "Flake8 plugin to forbid debug function usage"
+category = "dev"
+optional = false
+python-versions = "*"
+files = [
+    {file = "flake8-debug-0.2.0.tar.gz", hash = "sha256:6b5f61f983d8e1c079661b95c36cdf50369878b322a0fbbe8ce9bb6e288fa848"},
+    {file = "flake8_debug-0.2.0-py3-none-any.whl", hash = "sha256:f4d2f7c4804c93a4a67919a0cf26f66df950d4b40fd9121b9916f86852b02d2e"},
+]
+
+[package.dependencies]
+astpretty = "2.1.0"
+flake8 = ">=4.0.1"
+
+[[package]]
+name = "flake8-quotes"
+version = "3.3.2"
+description = "Flake8 lint for quotes."
+category = "dev"
+optional = false
+python-versions = "*"
+files = [
+    {file = "flake8-quotes-3.3.2.tar.gz", hash = "sha256:6e26892b632dacba517bf27219c459a8396dcfac0f5e8204904c5a4ba9b480e1"},
+]
+
+[package.dependencies]
+flake8 = "*"
+
+[[package]]
+name = "flake8-sfs"
+version = "0.0.4"
+description = "Python String Formatting Style (SFS) plugin for flake8"
+category = "dev"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "flake8-sfs-0.0.4.tar.gz", hash = "sha256:81414c8041531e173f3285f2c0552b8e25aaf3b973e17ea33c3b0719385c93b8"},
+    {file = "flake8_sfs-0.0.4-py2.py3-none-any.whl", hash = "sha256:0e10a363184aee3280643b76d4ae2109a7de7b51d8e3018a673138e8a9d2bc4e"},
+]
+
+[package.dependencies]
+flake8 = ">=3"
+
+[package.extras]
+develop = ["build", "twine"]
 
 [[package]]
 name = "frozenlist"
@@ -1200,4 +1293,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "effdae57e2a8e89a6d67e0a4dbc2dcad59f01261bb1e43d39847bb591fcab0e9"
+content-hash = "2148511d172d5f59af6d170afc03397b8c5b85bff798b7096014d300a8c9de43"

@@ -315,7 +315,7 @@ async def _reroll(
             logger.warning('Invalid reroll directive found while rolling for magic item: { path }.')
             return (
                 types.Ret.FAILED,
-                "Invalid reroll directive found while rolling for magic item."
+                'Invalid reroll directive found while rolling for magic item.'
             )
 
 
@@ -379,7 +379,7 @@ async def _assemble_magic_item(
 
     if failed:
         if attempt >= 6:
-            return (types.Ret.LIMITED, "Too many failed attempts to select enchantments.")
+            return (types.Ret.LIMITED, 'Too many failed attempts to select enchantments.')
         else:
             attempt += 1
             logger.debug(
