@@ -7,7 +7,9 @@ from __future__ import annotations
 
 import enum
 
-from dataclasses import dataclass
+from typing import Type
+
+from pydantic import BaseModel, validator
 
 
 @enum.unique
@@ -26,9 +28,16 @@ class Subrank(enum.Enum):
     GREATER = 'greater'
 
 
-@dataclass
-class RankWeights:
+class RankWeights(BaseModel):
     '''A set of weights for ranks for an item entry.'''
     minor: int
     medium: int
     major: int
+
+    @validator('minor', 'medium', 'major')
+    @classmethod
+    def check_weight(cls: Type[RankWeights], v: int) -> int:
+        if v < 0:
+            raise ValueError('Weight must be at least 0.')
+
+        return v

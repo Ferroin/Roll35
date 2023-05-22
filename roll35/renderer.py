@@ -66,7 +66,7 @@ class Renderer(ReadyState):
 
     async def get_spell(self: Renderer, /, item: types.item.SpellItem) -> types.Result[types.item.Spell]:
         '''Get a random spell for the given item.'''
-        match await cast(SpellAgent, self._ds['spell']).random(**item.spell):
+        match await cast(SpellAgent, self._ds['spell']).random(**item.spell.dict()):
             case (types.Ret.OK, types.item.Spell() as spell):
                 return (types.Ret.OK, spell)
             case (types.Ret() as r1, str() as msg) if r1 is not types.Ret.OK:

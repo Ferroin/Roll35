@@ -16,7 +16,7 @@ from typing import TYPE_CHECKING, Callable, cast
 from . import agent
 from .ranked import process_ranked_itemlist
 from .. import types
-from ..common import make_weighted_entry, norm_string, did_you_mean, bad_return, rnd, ismapping
+from ..common import norm_string, did_you_mean, bad_return, rnd, ismapping
 from ..log import log_call_async
 
 logger = logging.getLogger(__name__)
@@ -410,9 +410,9 @@ class OrdnanceAgent(agent.Agent):
                     result = result and not any(map(lambda y: y in excluded, enchants))
 
             match x:
-                case types.item.OrdnanceEnchant(limit={'only': list() as limit}):
+                case types.item.OrdnanceEnchant(limit=types.item.EnchantLimits(only=list() as limit)):
                     result = result and bool(set(limit) & tags)
-                case types.item.OrdnanceEnchant(limit={'not': list() as limit}):
+                case types.item.OrdnanceEnchant(limit=types.item.EnchantLimits(none=list() as limit)):
                     result = result and not bool(set(limit) & tags)
 
             return result
@@ -466,7 +466,8 @@ class OrdnanceAgent(agent.Agent):
 
             items = cast(Mapping[str, types.RankedItemList], items)[group]
 
-        possible: Sequence[types.item.OrdnanceSpecific] = agent.costfilter(cast(types.RankedItemList, items)[rank][subrank], mincost=mincost, maxcost=maxcost)
+        possible: Sequence[types.item.OrdnanceSpecific] = \
+            agent.costfilter(cast(types.RankedItemList, items)[rank][subrank], mincost=mincost, maxcost=maxcost)
 
         if possible:
             return rnd(possible)

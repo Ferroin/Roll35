@@ -178,15 +178,17 @@ class RankedAgent(agent.Agent):
             case types.Ret.NO_MATCH:
                 return types.Ret.NO_MATCH
             case types.item.SpellItem(spell=spell):
-                if ('cls' not in spell or spell['cls'] is None) and cls is not None:
-                    spell['cls'] = cls
+                if spell.cls is None and cls is not None:
+                    spell.cls = cls
 
-                match await cast(SpellAgent, self._ds['spell']).random(**spell):
+                match await cast(SpellAgent, self._ds['spell']).random(**spell.dict()):
                     case types.Ret.NOT_READY:
                         return types.Ret.NOT_READY
-                    case (types.Ret.OK, types.item.SpellEntry() as s1):
+                    case (types.Ret.OK, types.item.Spell() as s1):
                         if hasattr(item, 'costmult') and item.costmult is not None:
-                            item.cost = item.costmult * s1.caster_level
+                            assert s1.rolled_caster_level is not None
+
+                            item.cost = item.costmult * s1.rolled_caster_level
 
                         item.rolled_spell = s1
                         return item

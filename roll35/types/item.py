@@ -6,15 +6,14 @@
 from __future__ import annotations
 
 from collections.abc import Sequence, Mapping, MutableMapping
-from dataclasses import dataclass, KW_ONLY
-from typing import Union, Literal, TypedDict, TypeVar, Type, Any, cast
+from typing import Literal, TypeVar, Type, Any, cast
 
 from pydantic import BaseModel, Field, validator, root_validator
 
 from .ranks import RankWeights
 
 EnchantBonus = int
-Cost = int | float
+Cost = float
 _Cost = Cost | Literal['varies']
 CostRange = tuple[Cost, Cost]
 Tag = str
@@ -28,6 +27,27 @@ def check_weight(w: int) -> int:
         raise ValueError('Weight must be at least 1.')
 
     return w
+
+
+def check_spell_level(lvl: int | None) -> int | None:
+    '''Check a spell level.'''
+    if lvl is not None:
+        if lvl < 0:
+            raise ValueError('Spell level must be at least 0.')
+
+        if lvl > MAX_SPELL_LEVEL:
+            raise ValueError('Spell level must not be higher than { MAX_SPELL_LEVEL }.')
+
+    return lvl
+
+
+def check_enchant_bonus(b: int | None) -> int | None:
+    '''Ensure that an enchantment bonus is within bounds.'''
+    if b is not None:
+        if b < 1:
+            raise ValueError('Enchantment bonus must be at least 1.')
+
+    return b
 
 
 class WeightedValue(BaseModel):
@@ -83,21 +103,65 @@ class ClassEntry(BaseModel):
 ClassMap = Mapping[str, ClassEntry]
 
 
-@dataclass
-class BaseItem:
+class BaseItem(BaseModel):
     '''Base class for item entries.'''
-    _: KW_ONLY
     weight: int = 1
     reroll: Sequence[str] | None = None
     cost: _Cost | None = None
     costrange: CostRange | None = None
     costmult: Cost | None = None
 
+    _check_weight = validator('weight', allow_reuse=True)(check_weight)
 
-class SpellParams(TypedDict, total=False):
+    @validator('cost')
+    @classmethod
+    def check_cost(cls: Type[BaseItem], v: _Cost) -> _Cost:
+        if v is not None and v != 'varies':
+            if v < 0:
+                raise ValueError('Cost must be at least zero.')
+
+        return v
+
+    @validator('costrange')
+    @classmethod
+    def check_costrange(cls: Type[BaseItem], v: CostRange, values: dict[str, Any]) -> CostRange:
+        if v is not None:
+            if values.get('cost') is not None or values.get('costmult') is not None:
+                raise TypeError('If costrange is specified, cost and costmult may not be specified.')
+
+            if v[0] < 0:
+                raise ValueError('Lower cost limit must be greater than or equal to zero.')
+
+            if v[1] < 0:
+                raise ValueError('Upper cost limit must be greater than or equal to zero.')
+
+            if v[0] == float('inf'):
+                raise ValueError('Lower cost limit must not be infinite.')
+
+            if v[1] == float('inf'):
+                raise ValueError('Upper cost limit must not be infinite.')
+
+            if v[0] > v[1]:
+                raise ValueError('Upper cost limit must be less than or equal to lower cost limit.')
+
+        return v
+
+    @validator('costmult')
+    @classmethod
+    def check_costmult(cls: Type[BaseItem], v: Cost) -> Cost:
+        if v is not None:
+            if v < 1:
+                raise ValueError('Cost must be at least one.')
+
+        return v
+
+
+class SpellParams(BaseModel):
     '''Parameters for rolling a spell for an item.'''
-    level: int
-    cls: str
+    level: int | None = None
+    cls: str | None = None
+
+    _check_level = validator('level', allow_reuse=True)(check_spell_level)
 
 
 class Spell(BaseModel):
@@ -135,11 +199,10 @@ class Spell(BaseModel):
     @classmethod
     def check_classes(cls: Type[Spell], v: MutableMapping[str, int], values: dict[str, Any]) -> MutableMapping[str, int]:
         for c, l in v.items():
-            if l < 0:
-                raise ValueError(f'Spell level for class { c } in { values["name"] } must be at least 0.')
-
-            if l > MAX_SPELL_LEVEL:
-                raise ValueError(f'Spell level for class { c } in { values["name"] } must be less than or equal to { MAX_SPELL_LEVEL }.')
+            try:
+                check_spell_level(l)
+            except (ValueError, TypeError) as e:
+                raise ValueError(f'Invalid spell level for class { c } in { values["name"] }: { e }')
 
         return v
 
@@ -147,11 +210,10 @@ class Spell(BaseModel):
     @classmethod
     def check_domains(cls: Type[Spell], v: MutableMapping[str, int], values: dict[str, Any]) -> MutableMapping[str, int]:
         for c, l in v.items():
-            if l < 0:
-                raise ValueError(f'Spell level for domain { c } in { values["name"] } must be at least 0.')
-
-            if l > MAX_SPELL_LEVEL:
-                raise ValueError(f'Spell level for domain { c } in { values["name"] } must be less than or equal to { MAX_SPELL_LEVEL }.')
+            try:
+                check_spell_level(l)
+            except (ValueError, TypeError) as e:
+                raise ValueError(f'Invalid spell level for domain { c } in { values["name"] }: { e }')
 
         return v
 
@@ -201,42 +263,82 @@ class Spell(BaseModel):
             self.classes['spellpage_divine'] = self.classes[self.spellpage_divine]
 
 
-@dataclass
 class SpellItem(BaseItem):
     '''Base class for an item with an embedded spell.'''
-    _: KW_ONLY
     spell: SpellParams
     rolled_spell: Spell | None = None
     cls: str | None = None
     level: int | None = None
     caster_level: int | None = None
 
+    _check_level = validator('level', allow_reuse=True)(check_spell_level)
 
-@dataclass
+    @validator('caster_level')
+    @classmethod
+    def check_caster_level(cls: Type[SpellItem], v: int | None) -> int | None:
+        if v is not None:
+            if v < 1:
+                raise ValueError('Caster level must be at least 1.')
+
+        return v
+
+
 class SimpleItem(BaseItem):
     '''A basic item entry.'''
-    _: KW_ONLY
     name: str = ''
 
 
-@dataclass
 class SimpleSpellItem(SimpleItem, SpellItem):
     '''A basic item entry with an embedded spell.'''
     pass
 
 
-@dataclass
+class CompoundItem(SimpleItem, RankWeights):
+    '''An entry for an item in a compound item list.'''
+    pass
+
+
+class CompoundSpellItem(CompoundItem, SpellItem):
+    '''An entry for a compound item with an embedded spell.'''
+    pass
+
+
 class OrdnancePattern(BaseItem):
     '''A pattern entry for constructing an ordnance item.'''
     bonus: EnchantBonus | None = None
-    enchants: list[EnchantBonus] | None = None
-    specific: list[str] | None = None
+    enchants: Sequence[EnchantBonus] | None = None
+    specific: Sequence[str] | None = None
+
+    _check_bonus = validator('bonus', allow_reuse=True)(check_enchant_bonus)
+
+    @validator('enchants')
+    @classmethod
+    def check_enchants(cls: Type[OrdnancePattern], v: Sequence[EnchantBonus] | None) -> Sequence[EnchantBonus] | None:
+        if v is not None:
+            for i in v:
+                try:
+                    check_enchant_bonus(i)
+                except (ValueError, TypeError) as e:
+                    raise ValueError(f'Invalid enchantment bonus in enchantment list: { e }')
+
+        return v
+
+    @validator('specific')
+    @classmethod
+    def check_specific(cls: Type[OrdnancePattern], v: Sequence[str] | None, values: dict[str, Any]) -> Sequence[str] | None:
+        if v is not None:
+            if values.get('bonus') is not None or values.get('enchants') is not None:
+                raise TypeError('specific key is mutually exclusive with bonus and enchants keys.')
+
+            if len(v) not in {2, 3}:
+                raise TypeError('specific key should have exactly two or three items.')
+
+        return v
 
 
 OrdnanceSpecific = SimpleItem
 
 
-@dataclass
 class OrdnanceBaseItem(BaseItem):
     '''A base ordnance item entry.'''
     type: str
@@ -244,11 +346,22 @@ class OrdnanceBaseItem(BaseItem):
     name: str
     count: int | None = None
 
+    @validator('count')
+    @classmethod
+    def check_count(cls: Type[OrdnanceBaseItem], v: int | None) -> int | None:
+        if v is not None:
+            if v < 1:
+                raise ValueError('Count must be at least 1.')
 
-EnchantLimits = TypedDict('EnchantLimits', {'only': Union[list[Tag]], 'not': Union[list[Tag]]}, total=False)
+        return v
 
 
-@dataclass
+class EnchantLimits(BaseModel):
+    '''Information specifying tag limits for enchantments.'''
+    only: Sequence[Tag] | None = None
+    none: Sequence[Tag] | None = None
+
+
 class OrdnanceEnchant(BaseItem):
     '''An enchantment entry for ordnance items.'''
     name: str
@@ -259,20 +372,16 @@ class OrdnanceEnchant(BaseItem):
     add: list[str] | None = None
     limit: EnchantLimits | None = None
 
+    _check_bonus = validator('bonus', allow_reuse=True)(check_enchant_bonus)
 
-OrdnanceItem = Union[OrdnancePattern, OrdnanceSpecific, OrdnanceBaseItem, OrdnanceEnchant]
+    @validator('bonuscost')
+    @classmethod
+    def check_bonuscost(cls: Type[OrdnanceEnchant], v: Cost | None) -> Cost | None:
+        if v is not None:
+            if v < 0:
+                raise ValueError('Bonus cost for enchantment must be at least 0.')
 
-
-@dataclass
-class CompoundItem(SimpleItem, RankWeights):
-    '''An entry for an item in a compound item list.'''
-    pass
-
-
-@dataclass
-class CompoundSpellItem(CompoundItem, SpellItem):
-    '''An entry for a compound item with an embedded spell.'''
-    pass
+        return v
 
 
 Item = TypeVar(

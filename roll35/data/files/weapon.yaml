@@ -555,7 +555,7 @@ enchantments:
       - {weight:  6, name: 'Shock', exclude: ['Shocking Burst']}
       - {weight:  5, name: 'Spell-Storing'}
       - {weight:  1, name: 'Thawing'}
-      - {weight:  5, name: 'Throwing', limit: {not: [thrown]}, add: [thrown]}
+      - {weight:  5, name: 'Throwing', limit: {none: [thrown]}, add: [thrown]}
       - {weight:  5, name: 'Thundering'}
       - {weight:  1, name: 'Valiant'}
       - {weight:  3, name: 'Vicious'}
@@ -576,7 +576,7 @@ enchantments:
       - {weight:  9, name: 'Holy', exclude: ['Unholy']}
       - {weight:  9, name: 'Icy Burst', exclude: ['Frost']}
       - {weight:  1, name: 'Igniting', exclude: ['Flaming', 'Flaming Burst']}
-      - {weight:  1, name: 'Impact', limit: {not: [light]}}
+      - {weight:  1, name: 'Impact', limit: {none: [light]}}
       - {weight:  1, name: 'Invigorating'}
       - {weight:  1, name: 'Ki Intensifying'}
       - {weight:  1, name: 'Lifesurge'}
@@ -606,7 +606,7 @@ enchantments:
       - {weight:  9, name: '{{ keys.bane }} Bane'}
       - {weight:  1, name: 'Called'}
       - {weight:  3, name: 'Conductive'}
-      - {weight:  1, name: 'Conserving', limit: {not: [firearm]}}
+      - {weight:  1, name: 'Conserving', limit: {none: [firearm]}}
       - {weight:  4, name: 'Corrosive', exclude: ['Corrosive Burst']}
       - {weight:  1, name: 'Cruel'}
       - {weight:  3, name: 'Cunning'}
