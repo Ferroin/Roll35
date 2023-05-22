@@ -9,81 +9,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  prep-review:
-    name: Prepare Review Jobs
-    runs-on: ubuntu-latest
-    outputs:
-      actions: ${{ steps.actions.outputs.run }}
-      python: ${{ steps.python.outputs.run }}
-      markdown: ${{ steps.markdown.outputs.run }}
-      shell: ${{ steps.shell.outputs.run }}
-      yaml: ${{ steps.yaml.outputs.run }}
-    steps:
-      - name: Clone repository
-        uses: actions/checkout@v3
-        with:
-          submodules: recursive
-          fetch-depth: 0
-      - name: Check GitHub Actions files
-        id: actions
-        run: |
-          if [ "${{ contains(github.event.pull_request.labels.*.name, 'ci/actions') }}" = "true" ]; then
-            echo 'run=true' >> "${GITHUB_OUTPUT}"
-          elif git diff --name-only origin/${{ github.base_ref }} HEAD | grep -Eq '\.github/workflows/.*' ; then
-            echo 'run=true' >> "${GITHUB_OUTPUT}"
-            echo 'GitHub Actions workflows have changed, need to run actionlint.'
-          else
-            echo 'run=false' >> "${GITHUB_OUTPUT}"
-          fi
-      - name: Check Python files
-        id: python
-        run: |
-          if [ "${{ contains(github.event.pull_request.labels.*.name, 'ci/python') }}" = "true" ]; then
-            echo 'run=true' >> "${GITHUB_OUTPUT}"
-          elif git diff --name-only origin/${{ github.base_ref }} HEAD | grep -Eq '.*\.py' ; then
-            echo 'run=true' >> "${GITHUB_OUTPUT}"
-            echo 'Python files have changed, need to run python linters.'
-          else
-            echo 'run=false' >> "${GITHUB_OUTPUT}"
-          fi
-      - name: Check Markdown files
-        id: markdown
-        run: |
-          if [ "${{ contains(github.event.pull_request.labels.*.name, 'ci/markdown') }}" = "true" ]; then
-            echo 'run=true' >> "${GITHUB_OUTPUT}"
-          elif git diff --name-only origin/${{ github.base_ref }} HEAD | grep -Eq '.*\.md' ; then
-            echo 'run=true' >> "${GITHUB_OUTPUT}"
-            echo 'Markdown files have changed, need to run markdown linters.'
-          else
-            echo 'run=false' >> "${GITHUB_OUTPUT}"
-          fi
-      - name: Check shell files
-        id: shell
-        run: |
-          if [ "${{ contains(github.event.pull_request.labels.*.name, 'ci/shell') }}" = "true" ]; then
-            echo 'run=true' >> "${GITHUB_OUTPUT}"
-          elif git diff --name-only origin/${{ github.base_ref }} HEAD | grep -Eq '.*\.sh' ; then
-            echo 'run=true' >> "${GITHUB_OUTPUT}"
-            echo 'Shell scripts have changed, need to run shellcheck.'
-          else
-            echo 'run=false' >> "${GITHUB_OUTPUT}"
-          fi
-      - name: Check YAML files
-        id: yaml
-        run: |
-          if [ "${{ contains(github.event.pull_request.labels.*.name, 'ci/yaml') }}" = "true" ]; then
-            echo 'run=true' >> "${GITHUB_OUTPUT}"
-          elif git diff --name-only origin/${{ github.base_ref }} HEAD | grep -Eq '.*\.ya?ml' ; then
-            echo 'run=true' >> "${GITHUB_OUTPUT}"
-            echo 'YAML files have changed, need to run yamllint.'
-          else
-            echo 'run=false' >> "${GITHUB_OUTPUT}"
-          fi
-
   actionlint:
     name: actionlint
-    needs: prep-review
-    if: needs.prep-review.outputs.actions == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository
@@ -94,51 +21,8 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-review
 
-  flake8:
-    name: flake8
-    needs: prep-review
-    if: needs.prep-review.outputs.python == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Clone repository
-        uses: actions/checkout@v3
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-      - name: Run flake8
-        uses: reviewdog/action-flake8@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          reporter: github-pr-review
-
-  mypy:
-    name: mypy
-    needs: prep-review
-    if: needs.prep-review.outputs.python == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Clone repository
-        uses: actions/checkout@v3
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-      - name: Install dependencies
-        run: poetry install
-      - name: Run mypy
-        uses: tsuyoshicho/action-mypy@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          reporter: github-pr-review
-          execute_command: 'poetry run mypy'
-
   languagetool:
     name: languagetool
-    needs: prep-review
-    if: needs.prep-review.outputs.markdown == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository
@@ -151,8 +35,6 @@ jobs:
 
   markdownlint:
     name: markdownlint
-    needs: prep-review
-    if: needs.prep-review.outputs.markdown == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository
@@ -181,22 +63,6 @@ jobs:
           pattern: "*.sh*"
           exclude: "./.git/*"
 
-  yamllint:
-    name: yamllint
-    needs: prep-review
-    if: needs.prep-review.outputs.yaml == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Clone repository
-        uses: actions/checkout@v3
-      - name: Run yamllint
-        uses: reviewdog/action-yamllint@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          reporter: github-pr-review
-
-# Following jobs always run
-
   detect-secrets:
     name: detect-secrets
     runs-on: ubuntu-latest
@@ -224,3 +90,56 @@ jobs:
         run: pip install ruamel.yaml
       - name: Run scripts/check-labels.py
         run: scripts/check-labels.py
+
+  yamllint:
+    name: yamllint
+    needs: prep-review
+    if: needs.prep-review.outputs.yaml == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+      - name: Install dependencies
+        run: poetry install
+      - name: Run yamllint
+        run: poetry run yamllint .
+
+  flake8:
+    name: flake8
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+      - name: Install dependencies
+        run: poetry install
+      - name: Run flake8
+        run: poetry run flake8
+
+  mypy:
+    name: mypy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+      - name: Install dependencies
+        run: poetry install
+      - name: Run mypy
+        run: poetry run mypy roll35
