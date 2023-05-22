@@ -289,7 +289,7 @@ enchantments:
     2:
       - {weight: 15, name: 'Rallying', bonuscost: 5000}
       - {weight: 15, name: 'Wyrmbreath ({{ keys.elemental }})', bonuscost: 5000}
-      - {weight: 20, name: 'Animated', limit: {not: [tower]}}
+      - {weight: 20, name: 'Animated', limit: {none: [tower]}}
       - {weight: 17, name: 'Arrow Deflection'}
       - {weight: 15, name: 'Merging', limit: {only: [light, heavy]}}
       - {weight: 18, name: 'Spell Resistance (13)', exclude: ['Spell Resistance (15)', 'Spell Resistance (17)', 'Spell Resistance (19)']}

@@ -335,7 +335,7 @@ async def _assemble_magic_item(
     if pattern.bonus is None or pattern.enchants is None:
         raise ValueError('Cannot assemble magic item without bonus or enchants properties.')
 
-    item_cost = cast(int | float, base_item.cost) + masterwork
+    item_cost = cast(types.Cost, base_item.cost) + masterwork
     item_cost += (pattern.bonus ** 2) * bonus_cost
     group = base_item.type
     if base_item.tags is not None and base_item.tags:
