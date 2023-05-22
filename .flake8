@@ -1,2 +1,12 @@
 [flake8]
 max-line-length=150
+extend-ignore=SFS301
+
+inline-quotes=single
+multiline-quotes='''
+docstring-quotes='''
+
+per-file-ignores=
+    scripts/check-labels.py: DB100
+    scripts/convert_spells_csv.py: DB100
+    scripts/gen-docker-tags.py: DB100

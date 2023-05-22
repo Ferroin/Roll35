@@ -19,7 +19,7 @@ modification, are permitted provided that the following conditions are met:
    contributors may be used to endorse or promote products derived from
    this software without specific prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER AND CONTRIBUTORS "AS IS"
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER AND CONTRIBUTORS 'AS IS'
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
 ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
@@ -52,7 +52,7 @@ LABEL_REGEX = re.compile('^([a-zA-Z0-9 ._/-])+$')
 # Regex for matching six-digit hexadecimal strings.
 COLOR_REGEX = re.compile('^[a-fA-F0-9]{6}$')
 
-YAML = Yaml(typ="safe")
+YAML = Yaml(typ='safe')
 
 
 def validate_labels_config(labels_config):
@@ -118,7 +118,7 @@ def validate_labeler_config(labeler_config):
 
     for key, value in labeler_config.items():
         if not isinstance(key, str):
-            print(f'!!! \'{ key }\' in labeler config is not a string.')
+            print(f"!!! \'{ key }\' in labeler config is not a string.")
             ret = False
 
         if not isinstance(value, list):
