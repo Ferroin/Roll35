@@ -40,11 +40,10 @@ class R35Cog(commands.Cog):
            Also handles logging of commands when log level is set to debug.'''
         await ctx.trigger_typing()
 
-        assert ctx.command is not None
-
-        logger.debug(
-            f'Invoking { ctx.command.name } from message { ctx.message.content }.'
-        )
+        if ctx.command is not None:
+            logger.debug(
+                f'Invoking { ctx.command.name } from message { ctx.message.content }.'
+            )
 
     async def cog_command_error(self: R35Cog, /, ctx: commands.Context, err: Exception) -> NoReturn:
         '''Explicitly notify the user about errors encountered while running a command.'''

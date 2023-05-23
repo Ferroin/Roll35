@@ -27,6 +27,7 @@ flake8-debug = "^0.2.0"
 flake8-async = "^22.11.14"
 flake8-sfs = "^0.0.4"
 yamllint = "^1.32.0"
+bandit = "^1.7.5"
 
 [tool.mypy]
 python_version = "3.10"

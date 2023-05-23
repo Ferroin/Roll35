@@ -185,25 +185,25 @@ class SpellAgent(agent.Agent):
 
         match (cls, level):
             case ('spellpage', _):
-                cls = random.choice([
+                cls = random.choice([  # nosec # not being used for crypto purposes
                     'spellpage_arcane',
                     'spellpage_divine',
                 ])
             case ('arcane' | 'divine' | 'occult' as typ, None):
                 valid = [k for (k, v) in classes.items()
                          if v.type == typ]
-                cls = random.choice(valid)
+                cls = random.choice(valid)  # nosec # not being used for crypto purposes
             case ('arcane' | 'divine' | 'occult' as typ, level):
                 valid = [k for (k, v) in classes.items()
                          if await self._level_in_cls(cast(int, level), k)
                          and v.type == typ]
-                cls = random.choice(valid)
+                cls = random.choice(valid)  # nosec # not being used for crypto purposes
             case ('random', None):
-                cls = random.choice(list(classes.keys()))
+                cls = random.choice(list(classes.keys()))  # nosec # not being used for crypto purposes
             case ('random', level):
                 valid = [k for (k, v) in classes.items()
                          if await self._level_in_cls(cast(int, level), k)]
-                cls = random.choice(valid)
+                cls = random.choice(valid)  # nosec # Not being used for crypto purposes
             case ('minimum', _):
                 pass
             case (cls, level) if cls in valid_classes and not await self._level_in_cls(cast(int, level), cls):
@@ -222,7 +222,8 @@ class SpellAgent(agent.Agent):
                     f'{ ", ".join(valid_classes) }'
                 )
 
-        assert cls is not None  # Mypy still thinks cls might be None at this point for some reason.
+        if cls is None:  # Mypy still thinks cls might be None at this point for some reason.
+            raise RuntimeError
 
         possible: Sequence[types.Spell] = self._data.spells
 
@@ -242,7 +243,7 @@ class SpellAgent(agent.Agent):
                     'No spells found matching the requested parameters.'
                 )
             case [*items]:
-                spell = random.choice(items)
+                spell = random.choice(items)  # nosec # not being used for crypto purposes
 
         match cls:
             case 'minimum':
@@ -252,7 +253,8 @@ class SpellAgent(agent.Agent):
             case 'spellpage_divine':
                 cls = spell.spellpage_divine
 
-        assert cls is not None
+        if cls is None:  # Mypy still thinks cls might be None at this point for some reason.
+            raise RuntimeError
 
         if level is None:
             level = spell.classes[cls]

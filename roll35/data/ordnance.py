@@ -80,8 +80,8 @@ def get_enchant_bonus_costs(data: OrdnanceData, base: types.item.OrdnanceBaseIte
 
 def get_costs_and_bonus(enchants: Iterable[types.item.OrdnanceEnchant], /) -> tuple[types.item.Cost, types.item.Cost, Bonus, Bonus]:
     '''Figure out the range of extra costs that a given list of enchantments might have.'''
-    min_cost: types.item.Cost = -1
-    max_cost: types.item.Cost = 0
+    min_cost: types.item.Cost = -1.0
+    max_cost: types.item.Cost = 0.0
     min_bonus: Bonus = 0
     max_bonus: Bonus = 0
     has_non_bonus = False
@@ -89,19 +89,17 @@ def get_costs_and_bonus(enchants: Iterable[types.item.OrdnanceEnchant], /) -> tu
     for item in enchants:
         match item:
             case types.item.OrdnanceEnchant(bonuscost=None, bonus=None):
-                min_cost = 0
+                min_cost = 0.0
                 has_non_bonus = True
-            case types.item.OrdnanceEnchant(bonuscost=c, bonus=None):
-                assert c is not None
-                if min_cost == -1:
+            case types.item.OrdnanceEnchant(bonuscost=float() as c, bonus=None):
+                if min_cost == -1.0:
                     min_cost = c
                 else:
                     min_cost = min(min_cost, c)
                 max_cost = max(max_cost, c)
                 has_non_bonus = True
-            case types.item.OrdnanceEnchant(bonuscost=None, bonus=b):
-                assert b is not None
-                min_cost = 0
+            case types.item.OrdnanceEnchant(bonuscost=None, bonus=int() as b):
+                min_cost = 0.0
                 if min_bonus == 0:
                     min_bonus = b
                 else:
@@ -284,32 +282,35 @@ class OrdnanceAgent(agent.Agent):
             maxcost: types.item.Cost | None = None) -> \
             types.item.OrdnancePattern | types.Ret:
         '''Return a random item pattern to use to generate a random item from.'''
+        if self._data.ranked is None:
+            raise RuntimeError
+
         match rank:
             case None:
                 match await self.random_rank(mincost=mincost, maxcost=maxcost):
-                    case r1 if isinstance(r1, types.Ret):
-                        return r1
+                    case types.Ret.NO_MATCH:
+                        return types.Ret.NO_MATCH
+                    case types.Rank() as r1:
+                        rank = r1
                     case r2:
-                        rank = cast(types.Rank, r2)
-            case rank if self._valid_rank(rank):
+                        logger.error(bad_return(r2))
+                        raise RuntimeError
+            case types.Rank as rank if self._valid_rank(rank):
                 pass
             case _:
                 raise ValueError(f'Invalid rank for { self.name }: { rank }')
 
-        assert rank is not None
-
         if subrank is None:
             match await self.random_subrank(rank, mincost=mincost, maxcost=maxcost):
-                case r3 if isinstance(r3, types.Ret):
-                    return r3
+                case types.Ret.NO_MATCH:
+                    return types.Ret.NO_MATCH
+                case types.Subrank() as r3:
+                    subrank = r3
                 case r4:
-                    subrank = cast(types.Subrank, r4)
+                    logger.error(bad_return(r4))
+                    raise RuntimeError
         elif not self._valid_subrank(rank, subrank):
             raise ValueError(f'Invalid subrank for { self.name }: { subrank }')
-
-        assert subrank is not None
-
-        assert self._data.ranked is not None
 
         items = cast(
             Sequence[types.item.OrdnancePattern],
@@ -385,7 +386,7 @@ class OrdnanceAgent(agent.Agent):
                 raise ValueError('Tags must be a list.')
 
         if items:
-            return random.choice(items)
+            return random.choice(items)  # nosec # not used for crypto purposes
         else:
             return types.Ret.NO_MATCH
 
