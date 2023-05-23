@@ -151,10 +151,10 @@ def rnd(items: Iterable[types.WeightedValue] | Iterable[T], /) -> str | T | type
         pass
     elif all(map(lambda x: isinstance(x, types.WeightedValue), items)):
         i1 = expand_weighted_list(cast(Iterable[types.WeightedValue], items))
-        ret = random.choice(i1)
+        ret = random.choice(i1)  # nosec # Not used for crypto purposes
     else:
         i2 = cast(list[T], list(items))
-        ret = random.choice(i2)
+        ret = random.choice(i2)  # nosec # Not used for crypto purposes
 
     return ret
 
