@@ -73,7 +73,7 @@ async def roll_settlement(population: int, pool: Executor, ds: DataSet, renderer
                     case None:
                         response += f'\nNo additional { rank.value } magic items are available.\n'
                     case [low, high]:
-                        slots = random.randint(low, high)
+                        slots = random.randint(low, high)  # nosec # Not used for crypto purposes
                         response += f'\nThe following { slots } additional { rank.value } items are available irrespective of cost:\n'
                         for item in asyncio.as_completed(roll_many(pool, ds, slots, {'rank': rank, 'mincost': settlement.base + 1})):
                             match await item:
