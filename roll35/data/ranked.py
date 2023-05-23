@@ -185,9 +185,7 @@ class RankedAgent(agent.Agent):
                     case types.Ret.NOT_READY:
                         return types.Ret.NOT_READY
                     case (types.Ret.OK, types.item.Spell() as s1):
-                        if hasattr(item, 'costmult') and item.costmult is not None:
-                            assert s1.rolled_caster_level is not None
-
+                        if hasattr(item, 'costmult') and item.costmult is not None and s1.rolled_caster_level is not None:
                             item.cost = item.costmult * s1.rolled_caster_level
 
                         item.rolled_spell = s1

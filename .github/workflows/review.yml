@@ -143,3 +143,20 @@ jobs:
         run: poetry install
       - name: Run mypy
         run: poetry run mypy roll35
+
+  bandit:
+    name: bandit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+      - name: Install dependencies
+        run: poetry install
+      - name: Run mypy
+        run: poetry run bandit -r roll35

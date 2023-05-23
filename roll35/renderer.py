@@ -34,7 +34,7 @@ class Renderer(ReadyState):
     def __init__(self: Renderer, /, dataset: DataSet) -> None:
         self.env = jinja2.Environment(
             loader=jinja2.FunctionLoader(lambda x: None),
-            autoescape=False,
+            autoescape=True,
             enable_async=True,
         )
 
@@ -138,13 +138,14 @@ class Renderer(ReadyState):
                 if item.rolled_spell is not None:
                     spell = item.rolled_spell.name
                     item.cls = item.rolled_spell.rolled_cls
-                    assert item.cls is not None
+                    if item.cls is None:
+                        raise RuntimeError
                     item.caster_level = item.rolled_spell.rolled_caster_level
                     item.level = item.rolled_spell.classes[item.cls]
                 else:
                     match await self.get_spell(item):
-                        case (types.Ret.OK, types.item.Spell() as s):
-                            assert s.rolled_cls is not None
+                        case (types.Ret.OK, types.item.Spell(rolled_cls=str()) as s):
+                            assert s.rolled_cls is not None  # nosec  # This is ensured by the match statement above.
                             item.cls = s.rolled_cls
                             item.caster_level = s.rolled_caster_level
                             item.level = s.classes[s.rolled_cls]

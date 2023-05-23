@@ -37,8 +37,7 @@ class Bot(commands.Bot):
 
        This overrides a few specific methods of the base class to get
        desired behavior.'''
-    def __init__(self: Bot, *args: Any, pool: Executor | None = None, **kwargs: Any) -> None:
-        assert isinstance(pool, Executor)
+    def __init__(self: Bot, *args: Any, pool: Executor, **kwargs: Any) -> None:
         self.pool: Executor = pool
         super().__init__(*args, **kwargs)
 
@@ -51,8 +50,8 @@ class Bot(commands.Bot):
             renderer: Renderer | None = None) -> \
             Any:
         '''Overridden to schedule data loads in parallel with bot startup.'''
-        assert ds is not None
-        assert renderer is not None
+        if ds is None or renderer is None:
+            raise RuntimeError('Both dataset and render must be provided.')
 
         return await asyncio.gather(
             ds.load_data(self.pool),

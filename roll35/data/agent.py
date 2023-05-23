@@ -18,7 +18,7 @@ from typing import TypeVar, ParamSpec, cast, TYPE_CHECKING
 
 from . import constants
 from .. import types
-from ..common import rnd, yaml
+from ..common import rnd, yaml, bad_return
 from ..log import log_call
 
 if TYPE_CHECKING:
@@ -235,8 +235,9 @@ class Agent(types.ReadyState):
                     return types.Ret.NO_MATCH
                 case types.Rank() as r:
                     rank = r
-
-        assert rank is not None
+                case r1:
+                    logger.error(bad_return(r1))
+                    raise RuntimeError
 
         if subrank is None and self._valid_rank(rank):
             match await self.random_subrank(rank, mincost=mincost, maxcost=maxcost):
@@ -244,10 +245,11 @@ class Agent(types.ReadyState):
                     return types.Ret.NO_MATCH
                 case types.Subrank() as s:
                     subrank = s
+                case r2:
+                    logger.error(bad_return(r2))
+                    raise RuntimeError
         else:
             raise ValueError(f'Invalid rank for { self.name }: { rank }')
-
-        assert subrank is not None
 
         if not self._valid_subrank(rank, subrank):
             raise ValueError(f'Invalid subrank for { self.name }: { subrank }')
@@ -275,11 +277,12 @@ class Agent(types.ReadyState):
                         return types.Ret.NO_MATCH
                     case types.Rank() as r:
                         rank = r
+                    case r1:
+                        logger.error(bad_return(r1))
+                        raise RuntimeError
             case rank if self._valid_rank(rank):
                 pass
             case _:
                 raise ValueError(f'Invalid rank for { self.name }: { rank }')
-
-        assert rank is not None
 
         return cast(types.item.CompoundItem | str, rnd(costfilter(self._data.compound[rank], mincost=mincost, maxcost=maxcost)))
