@@ -218,7 +218,7 @@ base:
   - {cost:    2, type:   ammo, tags: [martial, piercing], name: 'Whistling Arrows (20)', count: 20}
   - {cost:    5, type:  melee, tags: [exotic, light, performance, trip, bludgeoning], name: 'Aklys'}
   - {cost:   16, type:  melee, tags: [exotic, light, blocking, disarm, slashing], name: 'Dwarven Light Axe Gauntlet'}
-  - {cost:    9, type:  melee, tags: [exotic, light, monk, performance,slashing], name: 'Knuckle Axe'}
+  - {cost:    9, type:  melee, tags: [exotic, light, monk, performance, slashing], name: 'Knuckle Axe'}
   - {cost:   25, type:  melee, tags: [exotic, light, slashing], name: 'Babazu Beard'}
   - {cost:    5, type:  melee, tags: [exotic, light, fire], name: 'Battle Poi'}
   - {cost:   10, type:  melee, tags: [exotic, light, disarm, sunder, slashing], name: 'Swordbreaker Dagger'}
@@ -226,7 +226,7 @@ base:
   - {cost:   10, type:  melee, tags: [exotic, light, disarm, bludgeoning], name: 'Gnome Pincher'}
   - {cost:    1, type:  melee, tags: [exotic, light, disarm, bludgeoning], name: 'Halfling Rope-Shot'}
   - {cost:   20, type:  melee, tags: [exotic, light, bludgeoning], name: 'Dwarven Boulder Helmet'}
-  - {cost:    2, type:  melee, tags: [exotic, light, monk, trip,slashing], name: 'Kama'}
+  - {cost:    2, type:  melee, tags: [exotic, light, monk, trip, slashing], name: 'Kama'}
   - {cost:    5, type:  melee, tags: [exotic, light, piercing, slashing], name: 'Butterfly Knife'}
   - {cost:   10, type:  melee, tags: [exotic, light, blocking, monk, piercing], name: 'Deer-Horn Knife'}
   - {cost:   25, type:  melee, tags: [exotic, light, bludgeoning, slashing], name: 'Dwarven Maulaxe'}
@@ -242,7 +242,7 @@ base:
   - {cost:   50, type:  melee, tags: [exotic, light], name: 'Dwarven War Shield'}
   - {cost:    5, type:  melee, tags: [exotic, light, monk], name: 'Wveblade'}
   - {cost:    5, type:  melee, tags: [exotic, light, reach, disarm, trip, performance, slashing], name: 'Scorpion Whip'}
-  - {cost:   21, type:  melee, tags: [exotic, 1hand, blocking, disarm,slashing], name: 'Dwarven heavy Axe Gauntlet'}
+  - {cost:   21, type:  melee, tags: [exotic, 1hand, blocking, disarm, slashing], name: 'Dwarven heavy Axe Gauntlet'}
   - {cost:   20, type:  melee, tags: [exotic, 1hand, disarm, performance, trip, slashing], name: 'Hooked Axe'}
   - {cost:   40, type:  melee, tags: [exotic, 1hand, piercing, slashing], name: 'Broken Back Seax'}
   - {cost:   50, type:  melee, tags: [exotic, 1hand, piercing], name: 'Estoc'}
@@ -289,7 +289,7 @@ base:
   - {cost:   15, type:  melee, tags: [exotic, 2hand, reach, bludgeoning], name: 'Orc Skull Ram'}
   - {cost:   70, type:  melee, tags: [exotic, 2hand, bludgeoning], name: 'Gnome Piston Maul'}
   - {cost:   30, type:  melee, tags: [exotic, 2hand, reach, slashing], name: 'Gnome Ripsaw Glaive'}
-  - {cost:   12, type:  melee, tags: [exotic, 2hand, disarm, trip,slashing], name: 'Bladed Scarf'}
+  - {cost:   12, type:  melee, tags: [exotic, 2hand, disarm, trip, slashing], name: 'Bladed Scarf'}
   - {cost:   25, type:  melee, tags: [exotic, 2hand, thrown, piercing, slashing], name: 'Totem Spear'}
   - {cost:   45, type:  melee, tags: [exotic, 2hand, thrown, bludgeoning], name: 'Dwarven Sphinx Hammer'}
   - {cost:   18, type:  melee, tags: [exotic, 2hand, trip, piercing, slashing], name: 'Switchscythe'}
@@ -403,7 +403,7 @@ base:
   - {cost:    8, type:  melee, tags: [eastern, exotic, 2hand, disarm, trip, slashing], name: 'Double Chained Kama'}
   - {cost:   50, type:  melee, tags: [eastern, exotic, 2hand, slashing], name: 'Double Katana Walking Stick'}
   - {cost:   12, type:  melee, tags: [eastern, exotic, 2hand, double, monk, reach, trip, grapple, bludgeoning, slashing], name: 'Kusarigama'}
-  - {cost:    6, type:  melee, tags: [eastern, exotic, 2hand, thrown, disarm, grapple, monk, reach,  piercing, slashing], name: 'Kyoketsu Shoge'}
+  - {cost:    6, type:  melee, tags: [eastern, exotic, 2hand, thrown, disarm, grapple, monk, reach, piercing, slashing], name: 'Kyoketsu Shoge'}
   - {cost:   10, type:  melee, tags: [eastern, exotic, 2hand, reach, trip, bludgeoning], name: 'Meteor Hammer'}
   - {cost:   50, type:  melee, tags: [eastern, exotic, 2hand, disarm, monk, slashing], name: 'Seven Branched Sword'}
   - {cost:   20, type:  melee, tags: [eastern, exotic, 2hand, bludgeoning], name: 'Tetsubo'}

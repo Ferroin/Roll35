@@ -4,7 +4,7 @@ extends: default
 
 rules:
   colons:
-    max-spaces-after: 6
+    max-spaces-after: 8
   document-end:
     present: false
   indentation:
