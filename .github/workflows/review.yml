@@ -48,8 +48,6 @@ jobs:
 
   shellcheck:
     name: shellcheck
-    needs: prep-review
-    if: needs.prep-review.outputs.shell == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository
@@ -93,8 +91,6 @@ jobs:
 
   yamllint:
     name: yamllint
-    needs: prep-review
-    if: needs.prep-review.outputs.yaml == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Clone repository
