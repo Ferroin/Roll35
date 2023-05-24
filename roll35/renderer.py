@@ -13,14 +13,15 @@ from typing import TYPE_CHECKING, Literal, cast
 import jinja2
 
 from . import types
-from .common import bad_return
+from .common import bad_return, yaml, ismapping
 from .data.spell import SpellAgent
 from .types.renderdata import RenderData
 from .types.readystate import ReadyState, check_ready
-from .log import LogRun, log_call_async
+from .log import log_call_async
 
 if TYPE_CHECKING:
     from concurrent.futures import Executor
+    from collections.abc import Mapping, Sequence
 
     from .data import DataSet
 
@@ -45,20 +46,24 @@ class Renderer(ReadyState):
         super().__init__()
 
     @staticmethod
-    def _loader(name: str, /) -> RenderData:
-        from .common import yaml
-        from .data import DATA_ROOT
+    def _process_data(data: Mapping | Sequence, /) -> RenderData:
+        if not ismapping(data):
+            raise ValueError('Renderer data must be a mapping')
 
-        with open(DATA_ROOT / f'{ name }.yaml') as f:
-            return RenderData(yaml.load(f))
+        return RenderData(data)
 
     async def load_data(self: Renderer, pool: Executor, /) -> types.Ret:
         '''Load required data.'''
         if not self._ready.is_set():
             loop = asyncio.get_running_loop()
+            logger.info('Loading renderer data')
 
-            with LogRun(logger, logging.INFO, 'load renderer data'):
-                self._data = await loop.run_in_executor(pool, self._loader, self._ds.renderdata)
+            with open(self._ds.src / f'{ self._ds.renderdata }.yaml') as f:
+                data = yaml.load(f)
+
+            self._data = await loop.run_in_executor(pool, self._process_data, [data])
+
+            logger.info('Finished loading renderer data')
 
             self._ready.set()
 

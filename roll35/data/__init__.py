@@ -9,11 +9,10 @@ import asyncio
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Union
+from pathlib import Path
 
 from ..common import yaml
 from ..types import Ret
-
-from .constants import DATA_ROOT
 
 from .agent import Agent
 
@@ -52,6 +51,9 @@ AnyAgent = Union[
 ]
 
 
+DEFAULT_DATA_ROOT = Path(__file__).parent / 'files'
+
+
 class DataSet:
     '''Represents a dataset for the module.
 
@@ -60,11 +62,12 @@ class DataSet:
 
        Individual categories within the data set are accessed by name
        via subscripting.'''
-    def __init__(self: DataSet, /):
+    def __init__(self: DataSet, src: Path = DEFAULT_DATA_ROOT, /):
         self._agents: Mapping[str, Agent] = dict()
+        self.src = src
         self.ready = False
 
-        with open(DATA_ROOT / 'structure.yaml') as f:
+        with open(self.src / 'structure.yaml') as f:
             structure = yaml.load(f)
 
         self.renderdata = structure['renderdata']

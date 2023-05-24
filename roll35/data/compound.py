@@ -10,7 +10,6 @@ import logging
 from typing import Any, TypeVar, TYPE_CHECKING, cast
 
 from . import agent
-from . import constants
 from .classes import ClassesAgent
 from .spell import SpellAgent
 from .. import types
@@ -94,7 +93,7 @@ class CompoundAgent(agent.Agent):
 
             logger.info(f'Loading { self.name } data.')
 
-            with open(constants.DATA_ROOT / f'{ self.name }.yaml') as f:
+            with open(self._ds.src / f'{ self.name }.yaml') as f:
                 data = yaml.load(f)
 
             self._data = await self._process_async(pool, self._process_data, [data, classes])
