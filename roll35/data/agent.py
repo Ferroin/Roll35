@@ -156,15 +156,41 @@ class Agent(types.ReadyState):
         loop = asyncio.get_running_loop()
         return await loop.run_in_executor(pool, func, *args)
 
+    async def _post_validate(self: Agent, data: AgentData) -> bool:
+        '''Async callback to do any post-load data validation.
+
+           Called by the default Agent.load_data() implementation with
+           the data that will be assigned to self._data.
+
+           If this returns False, a RuntimeError will be raised.
+
+           The default is a no-op.
+
+           Subclasses that need to perform checks on their data which
+           require access to other agents should override this if they
+           are using the default Agent.load_data() implementation.
+
+           Care should be taken to not introduce recursive dependencies
+           between agents, as no protections are in place to prevent
+           such deadlocks.'''
+        return True
+
     async def load_data(self: Agent, pool: Executor, /) -> types.Ret:
         '''Load data for this agent.'''
         if not self._ready.is_set():
             logger.info(f'Loading { self.name } data')
 
             with open(self._ds.src / f'{ self.name }.yaml') as f:
-                data = yaml.load(f)
+                raw_data = yaml.load(f)
 
-            self._data = await self._process_async(pool, self._process_data, [data])
+            data = await self._process_async(pool, self._process_data, [raw_data])
+
+            logger.info(f'Validating { self.name } data')
+
+            if not await self._post_validate(data):
+                raise RuntimeError(f'{ self.name } data valid post load validation')
+
+            self._data = data
 
             logger.info(f'Finished loading { self.name } data')
 
