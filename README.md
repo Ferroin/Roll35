@@ -17,7 +17,6 @@ Pathfinder 1e and related games.
 
 ## Planned Features
 
-- Roll wands or scrolls for a specific spell level.
 - Roll for random weather conditions.
 - Automatically roll random spells present in items that store spells.
 - Automatically roll for intelligence/special markings on magic items.
@@ -63,6 +62,9 @@ The following environment variables are used by the image:
   to connect to Discord. See the excellent [guide provided by
   `discord.py`](https://discordpy.readthedocs.io/en/latest/discord.html)
   for info on how to create a bot account and invite it to your server.
+- `R35_DATA_PATH`: Specifies a path to a custom data set directory. If not
+  set, Roll35 will use the bundled data set (located in
+  `roll35/data/files` in the source tree).
 - `LOG_LEVEL`: Specifies the minimum severity level of log messages to
   produce. Valid values (in descending order of severity) are:
   `emergency`, `CRITICAL`, `ERROR`, `WARNING`, `INFO`, `DEBUG`. It is
@@ -90,7 +92,7 @@ tables. In particular:
   annotated in the datset to actually provide this.
 - In a couple of places, we group multiple items that are identical in
   cost and proportion relative to each other into a single item which rolls
-  for the variant automatically. This is done to make the datast maller
+  for the variant automatically. This is done to make the dataset smaller
   and slightly improve performance and resource usage of the bot itself.
 - In a handful of places, the official tables are, quite simply, broken
   (they either have missing ranges of dice values, or have specific
@@ -99,7 +101,7 @@ tables. In particular:
   simply did not exist (that is, all the other items keep their
   proper relative proportions), and if there are duplicate values we
   adjust accordingly. All such cases are documented in comments in the
-  files in `apps/roll35_core/priv`.
+  files in `roll35/data/files`.
 
 Spell data is pulled from the spell database on
 [D20PFSRD](https://www.d20pfsrd), converted to the required format

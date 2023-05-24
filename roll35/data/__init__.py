@@ -6,6 +6,8 @@
 from __future__ import annotations
 
 import asyncio
+import logging
+import os
 
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Union
@@ -27,6 +29,8 @@ from .wondrous import WondrousAgent
 
 if TYPE_CHECKING:
     from concurrent.futures import Executor
+
+logger = logging.getLogger(__name__)
 
 agents = {
     'category': CategoryAgent,
@@ -51,7 +55,25 @@ AnyAgent = Union[
 ]
 
 
-DEFAULT_DATA_ROOT = Path(__file__).parent / 'files'
+BUNDLED_DATA_ROOT = Path(__file__).parent / 'files'
+DEFAULT_DATA_ROOT = BUNDLED_DATA_ROOT
+
+if (_dr := os.environ.get('R35_DATA_ROOT', None)) is not None:
+    try:
+        _root = Path(_dr)
+    except Exception:
+        logger.warning(f'Requested data root path { _dr } does not appear to be a valid path. Using default path instead.')
+    else:
+        if _root.exists():
+            if _root.is_dir():
+                if (_root / 'structure.yaml').exists() and (_root / 'structure.yaml').is_file():
+                    DEFAULT_DATA_ROOT = _root
+                else:
+                    logger.warning(f'Requested data root path { _root } does not include a structure.yaml file, using default path instead.')
+            else:
+                logger.warning(f'Requested data root path { _root } is not a directory. Using default path instead')
+        else:
+            raise ValueError(f'Requested data root path { _root } does not exist. Using default path instead')
 
 
 class DataSet:
@@ -66,6 +88,12 @@ class DataSet:
         self._agents: Mapping[str, Agent] = dict()
         self.src = src
         self.ready = False
+
+        if not src.exists():
+            raise ValueError(f'Requested data source path { src } does not exist.')
+
+        if not src.is_dir():
+            raise ValueError(f'Requested data source path { src } is not a directory.')
 
         with open(self.src / 'structure.yaml') as f:
             structure = yaml.load(f)
