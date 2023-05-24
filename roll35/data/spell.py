@@ -14,7 +14,6 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, cast
 
 from . import agent
-from . import constants
 from .classes import ClassesAgent
 from .. import types
 from ..common import chunk, flatten, yaml, bad_return
@@ -94,7 +93,7 @@ class SpellAgent(agent.Agent):
         '''Load the data for this agent, using the specified executor pool.
 
            This requires a specific overide as it involves a large amount
-           of custom logic and handles the aprallelization in a different
+           of custom logic and handles the parallelization in a different
            way from most other agents.
 
            This also requires the dataset to have a `classes` agent either
@@ -106,7 +105,7 @@ class SpellAgent(agent.Agent):
 
             logger.info('Reading spell data.')
 
-            with open(constants.DATA_ROOT / f'{ self.name }.yaml') as f:
+            with open(self._ds.src / f'{ self.name }.yaml') as f:
                 data = yaml.load(f)
 
             if not isinstance(data, Sequence):

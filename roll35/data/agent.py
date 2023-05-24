@@ -16,7 +16,6 @@ from collections.abc import Iterable, Mapping, Sequence, Callable
 from dataclasses import dataclass, KW_ONLY
 from typing import TypeVar, ParamSpec, cast, TYPE_CHECKING
 
-from . import constants
 from .. import types
 from ..common import rnd, yaml, bad_return
 from ..log import log_call
@@ -162,7 +161,7 @@ class Agent(types.ReadyState):
         if not self._ready.is_set():
             logger.info(f'Loading { self.name } data')
 
-            with open(constants.DATA_ROOT / f'{ self.name }.yaml') as f:
+            with open(self._ds.src / f'{ self.name }.yaml') as f:
                 data = yaml.load(f)
 
             self._data = await self._process_async(pool, self._process_data, [data])
