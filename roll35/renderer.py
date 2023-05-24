@@ -61,7 +61,7 @@ class Renderer(ReadyState):
             with open(self._ds.src / f'{ self._ds.renderdata }.yaml') as f:
                 data = yaml.load(f)
 
-            self._data = await loop.run_in_executor(pool, self._process_data, [data])
+            self._data = await loop.run_in_executor(pool, self._process_data, data)
 
             logger.info('Finished loading renderer data')
 
