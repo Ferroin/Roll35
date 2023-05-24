@@ -9,6 +9,7 @@ repository = "https://github.com/Ferroin/Roll35/"
 
 [tool.poetry.scripts]
 roll35-bot = "roll35.bot:main"
+roll35-check-dataset = "roll35.data:test_dataset"
 
 [tool.poetry.dependencies]
 python = "^3.10"

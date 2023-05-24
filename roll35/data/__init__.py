@@ -84,7 +84,7 @@ class DataSet:
 
        Individual categories within the data set are accessed by name
        via subscripting.'''
-    def __init__(self: DataSet, src: Path = DEFAULT_DATA_ROOT, /):
+    def __init__(self: DataSet, /, *, src: Path = DEFAULT_DATA_ROOT):
         self._agents: Mapping[str, Agent] = dict()
         self.src = src
         self.ready = False
@@ -128,19 +128,52 @@ class DataSet:
         return Ret.OK
 
 
-def _inspect_dataset() -> DataSet:
+def _get_dataset(src: Path = DEFAULT_DATA_ROOT) -> DataSet:
     '''Return a DataSet instance with data loaded for inspection.
 
-       This is intended for developer usage only, and _should not_
-       be called from module code.'''
+       This is intended to allow inspection of a dataset for debugging
+       purposes.
+
+       Behavior of this function is _not_ guaranteed in any way across
+       versions of Roll35, and it should thus not be used by external
+       code. If you need to construct a DataSet instance to use in
+       your own code, you should instantiate the DataSet class directly
+       instead.'''
     from concurrent.futures import ProcessPoolExecutor
 
     pool = ProcessPoolExecutor()
-    ds = DataSet()
+    ds = DataSet(src=src)
 
     async def setup() -> None:
         await ds.load_data(pool)
 
     asyncio.run(setup())
 
+    pool.shutdown()
+
     return ds
+
+
+def test_dataset(src: Path = DEFAULT_DATA_ROOT) -> bool:
+    '''Test a data set located at src.
+
+       This verifies loading the data (including the renderer data),
+       but does nothing more. Throws appropriate errors if there are
+       issues with the dataset.'''
+    from concurrent.futures import ProcessPoolExecutor
+
+    from ..renderer import Renderer
+
+    pool = ProcessPoolExecutor()
+    ds = DataSet(src=src)
+    renderer = Renderer(ds)
+
+    async def setup() -> None:
+        await ds.load_data(pool)
+        await renderer.load_data(pool)
+
+    asyncio.run(setup())
+
+    pool.shutdown()
+
+    return True
