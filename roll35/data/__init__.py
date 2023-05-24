@@ -9,6 +9,7 @@ import asyncio
 import logging
 import os
 
+from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING, Union, Type
 from pathlib import Path
 
@@ -29,7 +30,6 @@ from .spell import SpellAgent
 from .wondrous import WondrousAgent
 
 if TYPE_CHECKING:
-    from collections.abc import Mapping, Sequence
     from concurrent.futures import Executor
 
 logger = logging.getLogger(__name__)
@@ -107,6 +107,9 @@ class StructureData(BaseModel):
         return v
 
 
+StructureData.update_forward_refs()
+
+
 class DataSet:
     '''Represents a dataset for the module.
 
@@ -138,6 +141,9 @@ class DataSet:
 
     def __getitem__(self: DataSet, key: str, /) -> Agent:
         return self._agents[key]
+
+    def __contains__(self: DataSet, key: str, /) -> bool:
+        return key in self._agents
 
     @property
     def types(self: DataSet, /) -> Mapping[str, set[str]]:

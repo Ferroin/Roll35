@@ -56,6 +56,13 @@ class CategoryAgent(agent.Agent):
             compound=by_rank,
         )
 
+    async def _post_validate(self: CategoryAgent, data: CategoryData) -> bool:  # type: ignore[override]
+        for category in data.categories:
+            if category not in self._ds:
+                raise ValueError(f'Category { category } does not have an associated agent.')
+
+        return True
+
     @log_call_async(logger, 'roll random category')
     async def random(self: CategoryAgent, /, rank: types.Rank | None = None) -> str | types.Ret:
         match await super().random_compound(rank=rank):
