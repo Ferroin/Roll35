@@ -9,9 +9,10 @@ import asyncio
 import logging
 import os
 
-from collections.abc import Mapping
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Union, Type
 from pathlib import Path
+
+from pydantic import BaseModel, validator
 
 from ..common import yaml
 from ..types import Ret
@@ -28,6 +29,7 @@ from .spell import SpellAgent
 from .wondrous import WondrousAgent
 
 if TYPE_CHECKING:
+    from collections.abc import Mapping, Sequence
     from concurrent.futures import Executor
 
 logger = logging.getLogger(__name__)
@@ -76,6 +78,35 @@ if (_dr := os.environ.get('R35_DATA_ROOT', None)) is not None:
             raise ValueError(f'Requested data root path { _root } does not exist. Using default path instead')
 
 
+class AgentEntry(BaseModel):
+    '''An entry describing a data agent in a dataset.'''
+    name: str
+    type: str
+
+    @validator('type')
+    @classmethod
+    def check_type(cls: Type[AgentEntry], v: str) -> str:
+        if v not in agents:
+            raise ValueError(f'Unrecognized agent type in structure file { v }.')
+
+        return v
+
+
+class StructureData(BaseModel):
+    '''Structure data for a dataset.'''
+    agents: Sequence[AgentEntry]
+    renderdata: str
+
+    @validator('agents')
+    @classmethod
+    def check_agents(cls: Type[StructureData], v: Sequence[AgentEntry]) -> Sequence[AgentEntry]:
+        '''Sanity check agent information.'''
+        if len({x.name for x in v}) != len(v):
+            raise ValueError('Duplicate names found in agent list.')
+
+        return v
+
+
 class DataSet:
     '''Represents a dataset for the module.
 
@@ -96,14 +127,14 @@ class DataSet:
             raise ValueError(f'Requested data source path { src } is not a directory.')
 
         with open(self.src / 'structure.yaml') as f:
-            structure = yaml.load(f)
+            structure = StructureData(**yaml.load(f))
 
-        self.renderdata = structure['renderdata']
+        self.renderdata = structure.renderdata
         self._types: Mapping[str, set[str]] = {k: set() for k in agents.keys()}
 
-        for item in structure['agents']:
-            self._agents[item['name']] = agents[item['type']](self, item['name'])
-            self._types[item['type']].add(item['name'])
+        for item in structure.agents:
+            self._agents[item.name] = agents[item.type](self, item.name)
+            self._types[item.type].add(item.name)
 
     def __getitem__(self: DataSet, key: str, /) -> Agent:
         return self._agents[key]
