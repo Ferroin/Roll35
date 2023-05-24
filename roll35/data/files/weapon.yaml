@@ -640,7 +640,7 @@ enchantments:
       - {weight: 10, name: 'Unholy', exclude: ['Holy']}
     3:
       - {weight: 25, name: 'Greater Lucky', exclude: ['Lucky'], limit: {only: [firearm]}}
-      - {weight: 20, name: 'Greatre Reliable', exclude: ['Reliable'], limit: {only: [firearm]}}
+      - {weight: 20, name: 'Greater Reliable', exclude: ['Reliable'], limit: {only: [firearm]}}
       - {weight: 40, name: 'Speed'}
     4:
       - {weight:  9, name: 'Brilliant Energy'}

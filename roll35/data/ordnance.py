@@ -28,7 +28,7 @@ if TYPE_CHECKING:
 
     TagData = set[str]
     Bonus = int
-    EnchantmentTable = types.R35Map[str, dict[Bonus, Sequence[types.item.OrdnanceEnchant]]]
+    EnchantmentTable = types.R35Map[str, dict[Bonus, list[types.item.OrdnanceEnchant]]]
     SpecificItemList = types.RankedItemList | types.R35Map[str, types.RankedItemList]
 
 
@@ -43,20 +43,34 @@ class OrdnanceData(agent.AgentData):
     enchant_base_cost: types.Cost
 
 
-def process_enchantment_table(items: Mapping, /, basevalue: types.item.Cost) -> EnchantmentTable:
+def process_enchantment_table(items: Mapping, /, basevalue: types.item.Cost, tags: set[str]) -> EnchantmentTable:
     '''Process an armor or weapon enchantment table.'''
     ret: EnchantmentTable = types.R35Map()
 
     for group in items:
-        groupdata: dict[int, Sequence[types.item.OrdnanceEnchant]] = dict()
+        groupdata: dict[int, list[types.item.OrdnanceEnchant]] = dict()
+        enchant_names: set[str] = set()
 
         for value in items[group]:
-            groupdata[value] = list(
-                map(
-                    lambda x: types.item.OrdnanceEnchant(**x),
-                    items[group][value]
-                )
-            )
+            groupdata[value] = []
+
+            for item in items[group][value]:
+                enchant = types.item.OrdnanceEnchant(**item)
+
+                try:
+                    enchant.check_tags(tags)
+                except (ValueError, TypeError) as e:
+                    raise ValueError(f'Invalid enchantment tags for { enchant.name } in { group }:{ value }: { e }.')
+
+                enchant_names.add(enchant.name)
+                groupdata[value].append(enchant)
+
+        for value in groupdata:
+            for enchant in groupdata[value]:
+                if enchant.exclude is not None:
+                    for name in enchant.exclude:
+                        if name not in enchant_names:
+                            raise ValueError(f'Unrecognized enchantment name { name } in exclude tag for { enchant.name } in { group }:{ value }.')
 
         ret[group] = groupdata
 
@@ -208,7 +222,17 @@ class OrdnanceAgent(agent.Agent):
         if not ismapping(data):
             raise ValueError('Ordnance data must be a mapping.')
 
-        enchantments = process_enchantment_table(data['enchantments'], data['enchant_base_cost'])
+        base: types.R35List[types.item.OrdnanceBaseItem] = types.R35List()
+
+        for item in data['base']:
+            try:
+                base.append(types.item.OrdnanceBaseItem(**item))
+            except TypeError:
+                raise RuntimeError(f'Invalid ordnance base item entry: { item }')
+
+        tags = generate_tags_entry(base)
+
+        enchantments = process_enchantment_table(data['enchantments'], data['enchant_base_cost'], tags)
 
         d_specific = data['specific']
 
@@ -228,16 +252,6 @@ class OrdnanceAgent(agent.Agent):
                 specific,
             ),
         )
-
-        base: types.R35List[types.item.OrdnanceBaseItem] = types.R35List()
-
-        for item in data['base']:
-            try:
-                base.append(types.item.OrdnanceBaseItem(**item))
-            except TypeError:
-                raise RuntimeError(f'Invalid ordnance base item entry: { item }')
-
-        tags = generate_tags_entry(base)
 
         return OrdnanceData(
             base=base,
