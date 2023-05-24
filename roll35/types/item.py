@@ -361,6 +361,17 @@ class EnchantLimits(BaseModel):
     only: Sequence[Tag] | None = None
     none: Sequence[Tag] | None = None
 
+    def check_tags(self: EnchantLimits, tags: set[Tag]) -> None:
+        if self.only is not None:
+            for tag in self.only:
+                if tag not in tags:
+                    raise ValueError(f'Invalid tag in enchantment limits: { tag }')
+
+        if self.none is not None:
+            for tag in self.none:
+                if tag not in tags:
+                    raise ValueError(f'Invalid tag in enchantment limits: { tag }')
+
 
 class OrdnanceEnchant(BaseItem):
     '''An enchantment entry for ordnance items.'''
@@ -368,8 +379,8 @@ class OrdnanceEnchant(BaseItem):
     bonuscost: Cost | None = None
     bonus: EnchantBonus | None = None
     exclude: list[str] | None = None
-    remove: list[str] | None = None
-    add: list[str] | None = None
+    remove: list[Tag] | None = None
+    add: list[Tag] | None = None
     limit: EnchantLimits | None = None
 
     _check_bonus = validator('bonus', allow_reuse=True)(check_enchant_bonus)
@@ -382,6 +393,23 @@ class OrdnanceEnchant(BaseItem):
                 raise ValueError('Bonus cost for enchantment must be at least 0.')
 
         return v
+
+    def check_tags(self: OrdnanceEnchant, tags: set[Tag]) -> None:
+        if self.limit is not None:
+            try:
+                self.limit.check_tags(tags)
+            except Exception as e:
+                raise ValueError(f'Invalid enchantment limits for { self.name }: { e }')
+
+        if self.add is not None:
+            for tag in self.add:
+                if tag not in tags:
+                    raise ValueError(f'Invalid tag in add key for { self.name }: { tag }')
+
+        if self.remove is not None:
+            for tag in self.remove:
+                if tag not in tags:
+                    raise ValueError(f'Invalid tag in remove key for { self.name }: { tag }')
 
 
 Item = TypeVar(
