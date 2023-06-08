@@ -191,7 +191,7 @@ def _get_dataset(src: Path = DEFAULT_DATA_ROOT) -> DataSet:
     return ds
 
 
-def test_dataset(src: Path = DEFAULT_DATA_ROOT) -> bool:
+def test_dataset(src: Path = DEFAULT_DATA_ROOT) -> int:
     '''Test a data set located at src.
 
        This verifies loading the data (including the renderer data),
@@ -213,4 +213,4 @@ def test_dataset(src: Path = DEFAULT_DATA_ROOT) -> bool:
 
     pool.shutdown()
 
-    return True
+    return 0
