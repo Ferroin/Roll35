@@ -69,6 +69,10 @@ The following environment variables are used by the image:
   produce. Valid values (in descending order of severity) are:
   `emergency`, `CRITICAL`, `ERROR`, `WARNING`, `INFO`, `DEBUG`. It is
   not recommended to set this any higher than `ERROR`.
+- `R35_POOL_SIZE`: Specifies the maximum number of worker processes
+  to use. Default is the number of CPU cores on the system. This impacts
+  how quickly the bot loads the dataset on startup, and how quickly large
+  numbers of spells or magic items can be rolled.
 
 If you just want to run the bot locally to test it though, you can do
 so using the `scripts/run.sh` script. It utilizes the exact same
