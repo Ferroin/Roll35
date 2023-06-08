@@ -17,7 +17,7 @@ from ..common import yaml, bad_return, ismapping, rnd, flatten, make_weighted_en
 from ..log import log_call_async
 
 if TYPE_CHECKING:
-    from collections.abc import Mapping, Sequence, Iterable, Callable
+    from collections.abc import Mapping, Sequence, Iterable
     from concurrent.futures import Executor
 
 logger = logging.getLogger(__name__)
@@ -25,20 +25,11 @@ logger = logging.getLogger(__name__)
 T = TypeVar('T')
 
 
-def convert_compound_item(item: Mapping[str, Any], /) -> types.item.CompoundItem:
-    '''Convert a compound item entry to the appropriate dataclass.'''
-    match item:
-        case {'spell': _}:
-            return types.item.CompoundSpellItem(**item)
-        case _:
-            return types.item.CompoundItem(**item)
-
-
 def process_compound_itemlist(
-        items: Iterable[types.Item],
-        /, *,
-        typ: Callable[[Any], types.CompoundItem],
-        xform: Callable[[types.CompoundItem], types.CompoundItem] = lambda x: x) -> \
+        items: Iterable[Mapping[str, Any]],
+        classes: types.item.ClassMap,
+        extra_classes: set[str],
+        /) -> \
         types.CompoundItemList:
     '''Process a compound list of weighted values.
 
@@ -47,22 +38,36 @@ def process_compound_itemlist(
        a weight to use for the entry when rolling a random item of the
        corresponding rank.'''
     ret: types.CompoundItemList = types.R35Map()
+    valid_classes = {x for x in classes} | extra_classes
 
     for rank in types.Rank:
-        ilist: types.R35List[types.CompoundItem] = types.R35List()
+        ilist: types.CompoundItemSublist = types.R35List()
 
         for item in items:
-            try:
-                entry = typ(item)
-            except TypeError:
-                raise RuntimeError(f'Failed to process entry for compound item list: { item }')
+            match item:
+                case {'spell': _}:
+                    try:
+                        e1 = types.item.CompoundSpellItem(**item)
+                    except (ValueError, TypeError) as e:
+                        raise ValueError(f'Invalid compound item entry: { e }: { item }.')
 
-            if getattr(entry, rank.value):
-                entry.weight = getattr(entry, rank.value)
-                ilist.append(make_weighted_entry(
-                    entry,
-                    costmult_handler=xform,
-                ))
+                    if e1.spell.cls is not None and e1.spell.cls not in valid_classes:
+                        raise ValueError(f'Unrecognized class name { e1.spell.cls } in compound item entry for { e1.name }.')
+
+                    if getattr(e1, rank.value):
+                        e1.weight = getattr(e1, rank.value)
+                        ilist.append(make_weighted_entry(
+                            e1,
+                            costmult_handler=agent.create_spellmult_xform(classes),
+                        ))
+                case _:
+                    e2 = types.item.CompoundItem(**item)
+
+                    if getattr(e2, rank.value):
+                        e2.weight = getattr(e2, rank.value)
+                        ilist.append(make_weighted_entry(
+                            e2,
+                        ))
 
         ret[rank] = ilist
 
@@ -72,16 +77,12 @@ def process_compound_itemlist(
 class CompoundAgent(agent.Agent):
     '''Basic data agent for compound item lists.'''
     @staticmethod
-    def _process_data(data: Mapping | Sequence, /, classes: types.item.ClassMap = dict()) -> agent.AgentData:
+    def _process_data(data: Mapping | Sequence, /, classes: types.item.ClassMap = dict(), extra_classes: set[str] = set()) -> agent.AgentData:
         if ismapping(data):
             raise ValueError('Compound Spell data must be a sequence')
 
         return agent.AgentData(
-            compound=process_compound_itemlist(
-                data,
-                typ=convert_compound_item,
-                xform=agent.create_spellmult_xform(classes),
-            )
+            compound=process_compound_itemlist(data, classes, extra_classes)
         )
 
     async def load_data(self: CompoundAgent, pool: Executor, /) -> types.Ret:
@@ -90,13 +91,14 @@ class CompoundAgent(agent.Agent):
             logger.info('Fetching class data.')
 
             classes = await cast(ClassesAgent, self._ds['classes']).W_classdata()
+            extra_classes = cast(SpellAgent, self._ds['spell']).EXTRA_CLASS_NAMES
 
             logger.info(f'Loading { self.name } data.')
 
             with open(self._ds.src / f'{ self.name }.yaml') as f:
                 data = yaml.load(f)
 
-            self._data = await self._process_async(pool, self._process_data, [data, classes])
+            self._data = await self._process_async(pool, self._process_data, [data, classes, extra_classes])
             logger.info(f'Finished loading { self.name } data.')
 
             self._ready.set()
