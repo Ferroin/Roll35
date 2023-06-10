@@ -32,7 +32,7 @@ class Ordnance(R35Cog):
             case Ret.NO_MATCH:
                 await ctx.send('No item found matching requested tags.')
             case OrdnanceBaseItem() as item:
-                _ret, msg = await self.renderer.render(item)
+                _ret, msg = await self.render(item)
                 await ctx.send(msg)
             case ret:
                 logger.warning(bad_return(ret))

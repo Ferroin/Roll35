@@ -32,7 +32,7 @@ class R35Cog(commands.Cog):
 
     async def render(self: R35Cog, /, item: Item | Spell) -> Result[str]:
         '''Render an item using the renderer passed on initialization.'''
-        return await self.renderer.render(item)
+        return await self.renderer.render(self.pool, item)
 
     async def cog_before_invoke(self: R35Cog, /, ctx: commands.Context) -> None:
         '''Flag the bot as typing to indicate that it’s processing the command.

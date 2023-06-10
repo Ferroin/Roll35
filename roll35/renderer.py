@@ -13,8 +13,7 @@ from typing import TYPE_CHECKING, Literal, cast
 import jinja2
 
 from . import types
-from .common import bad_return, yaml, ismapping
-from .data.spell import SpellAgent
+from .common import yaml, ismapping
 from .types.renderdata import RenderData
 from .types.readystate import ReadyState, check_ready
 from .log import log_call_async
@@ -33,14 +32,7 @@ MAX_TEMPLATE_RECURSION = 5
 class Renderer(ReadyState):
     '''Encapsulates the state required for rendering items.'''
     def __init__(self: Renderer, /, dataset: DataSet) -> None:
-        self.env = jinja2.Environment(
-            loader=jinja2.FunctionLoader(lambda x: None),
-            autoescape=True,
-            enable_async=True,
-        )
-
         self._data: RenderData = RenderData(dict())
-        self._ready = asyncio.Event()
         self._ds = dataset
 
         super().__init__()
@@ -69,26 +61,8 @@ class Renderer(ReadyState):
 
         return types.Ret.OK
 
-    async def get_spell(self: Renderer, /, item: types.item.SpellItem) -> types.Result[types.item.Spell]:
-        '''Get a random spell for the given item.'''
-        match await cast(SpellAgent, self._ds['spell']).random(**item.spell.dict()):
-            case (types.Ret.OK, types.item.Spell() as spell):
-                return (types.Ret.OK, spell)
-            case (types.Ret() as r1, str() as msg) if r1 is not types.Ret.OK:
-                return (r1, msg)
-            case types.Ret.NOT_READY:
-                return (types.Ret.NOT_READY, 'Unable to get spell for item.')
-            case ret:
-                logger.error(bad_return(ret))
-                return (types.Ret.FAILED, 'Unknown internal error.')
-
-        # The below line should never actually be run, as the above match clauses are (theoretically) exhaustive.
-        #
-        # However, mypy thinks this function is missing a return statement, and this line convinces it otherwise.
-        raise RuntimeError
-
     @log_call_async(logger, 'render item')
-    async def render(self: Renderer, /, item: types.item.BaseItem | types.item.Spell | str) -> types.Result[str]:
+    async def render(self: Renderer, pool: Executor, /, item: types.item.BaseItem | types.item.Spell | str) -> types.Result[str]:
         '''Render an item.
 
            This recursively evaluates the item name as a jinja2 template,
@@ -96,14 +70,54 @@ class Renderer(ReadyState):
 
            Returns either (roll35.retcode.Ret.OK, x) where x is the rendered item, or
            (roll35.retcode.Ret.*, msg) where msg is an error message.'''
-        match await self._render(item):
+        match await self._render(pool, item):
             case types.Ret.NOT_READY:
                 return (types.Ret.NOT_READY, 'Unable to render item as renderer is not yet fully initilized.')
             case r2:
                 return cast(types.Result[str], r2)
 
+    @staticmethod
+    def render_loop(tmpl: str, data: DataSet, item: types.item.BaseItem) -> types.Result[str]:
+        n = ''
+        i = 0
+
+        env = jinja2.Environment(
+            loader=jinja2.FunctionLoader(lambda x: None),
+            autoescape=True,
+        )
+
+        while True:
+            i += 1
+
+            if i > MAX_TEMPLATE_RECURSION:
+                logger.error('Too many levels of recursion in template: { template }.')
+                return (types.Ret.LIMITED, 'Failed to render item.')
+
+            if isinstance(item, types.item.SpellItem):
+                if item.rolled_spell is not None:
+                    spell = item.rolled_spell.name
+                    item.cls = item.rolled_spell.rolled_cls
+                    if item.cls is None:
+                        raise RuntimeError
+                    item.caster_level = item.rolled_spell.rolled_caster_level
+                    item.level = item.rolled_spell.classes[item.cls]
+                else:
+                    logger.error('Got a SpellItem without a rolled spell: { item }.')
+                    return (types.Ret.FAILED, 'Failed to render item.')
+
+            else:
+                spell = None
+
+            n = env.from_string(tmpl).render({'keys': data, 'spell': spell, 'item': item})
+
+            if n == tmpl:
+                return (types.Ret.OK, n)
+            else:
+                tmpl = n
+
     @check_ready(logger)
-    async def _render(self: Renderer, /, item: types.item.BaseItem | types.item.Spell | str) -> types.Result[str] | Literal[types.Ret.NOT_READY]:
+    async def _render(self: Renderer, pool: Executor, /, item: types.item.BaseItem | types.item.Spell | str) -> \
+            types.Result[str] | Literal[types.Ret.NOT_READY]:
         match item:
             case types.item.Spell(name=name, rolled_cls=c, rolled_caster_level=cl) if c is not None and cl is not None:
                 t = '{{ item.name }} ({{ item.rolled_cls.capitalize() }} {{ item.classes[item.rolled_cls] }}, CL {{ item.rolled_caster_level }})'
@@ -129,43 +143,6 @@ class Renderer(ReadyState):
                 logger.error(f'Failed to render item: { item }.')
                 return (types.Ret.INVALID, 'Failed to render item.')
 
-        n = ''
-        i = 0
+        loop = asyncio.get_running_loop()
 
-        while True:
-            i += 1
-
-            if i > MAX_TEMPLATE_RECURSION:
-                logger.error('Too many levels of recursion in template: { template }.')
-                return (types.Ret.LIMITED, 'Failed to render item.')
-
-            if isinstance(item, types.item.SpellItem):
-                if item.rolled_spell is not None:
-                    spell = item.rolled_spell.name
-                    item.cls = item.rolled_spell.rolled_cls
-                    if item.cls is None:
-                        raise RuntimeError
-                    item.caster_level = item.rolled_spell.rolled_caster_level
-                    item.level = item.rolled_spell.classes[item.cls]
-                else:
-                    match await self.get_spell(item):
-                        case (types.Ret.OK, types.item.Spell(rolled_cls=str()) as s):
-                            assert s.rolled_cls is not None  # nosec  # This is ensured by the match statement above.
-                            item.cls = s.rolled_cls
-                            item.caster_level = s.rolled_caster_level
-                            item.level = s.classes[s.rolled_cls]
-                            spell = s.name
-                        case (types.Ret.NOT_READY, str() as msg):
-                            return (types.Ret.NOT_READY, msg)
-                        case ret:
-                            logger.error(bad_return(ret))
-                            return (types.Ret.FAILED, 'Unknown internal error.')
-            else:
-                spell = None
-
-            n = await self.env.from_string(t).render_async({'keys': self._data, 'spell': spell, 'item': item})
-
-            if n == t:
-                return (types.Ret.OK, n)
-            else:
-                t = n
+        return await loop.run_in_executor(pool, self.render_loop, t, self._data, item)
