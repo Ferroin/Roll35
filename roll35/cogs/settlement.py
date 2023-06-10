@@ -78,7 +78,7 @@ async def roll_settlement(population: int, pool: Executor, ds: DataSet, renderer
                         for item in asyncio.as_completed(roll_many(pool, ds, slots, {'rank': rank, 'mincost': settlement.base + 1})):
                             match await item:
                                 case (types.Ret.OK, types.item.BaseItem() as i1):
-                                    match await renderer.render(i1):
+                                    match await renderer.render(pool, i1):
                                         case (types.Ret.OK, str() as msg):
                                             response += f'- { msg }\n'
                                         case (types.Ret() as r1, str() as msg) if r1 is not types.Ret.OK:
