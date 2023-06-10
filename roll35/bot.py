@@ -89,6 +89,11 @@ def main() -> None:
     LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO')
     POOL_SIZE = os.environ.get('R35_POOL_SIZE', None)
 
+    if POOL_SIZE is not None:
+        proc_count = int(POOL_SIZE)
+    else:
+        proc_count = None
+
     logging.config.dictConfig({
         'version': 1,
         'formatters': {
@@ -115,7 +120,7 @@ def main() -> None:
 
     intents = nextcord.Intents.default()
     intents.message_content = True
-    pool = ProcessPoolExecutor(max_workers=POOL_SIZE)
+    pool = ProcessPoolExecutor(max_workers=proc_count)
 
     bot = Bot(
         case_insensitive=True,
