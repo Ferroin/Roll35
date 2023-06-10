@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 
 NOT_READY = 'Spell data is not yet available, please try again later.'
 
-MAX_COUNT = 20
+MAX_COUNT = 32
 
 SPELL_PARSER = Parser({
     'cls': ParserEntry(
