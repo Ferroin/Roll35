@@ -66,19 +66,19 @@ class ClassesAgent(agent.Agent):
         return self._data.classes
 
     @log_call_async(logger, 'get class data')
-    @types.check_ready(logger)
+    @types.check_ready_async(logger)
     async def classdata(self: ClassesAgent, /) -> types.item.ClassMap:
         '''Return the bulk data.'''
         return self._data.classes
 
     @log_call_async(logger, 'get class list')
-    @types.check_ready(logger)
+    @types.check_ready_async(logger)
     async def classes(self: ClassesAgent, /) -> Sequence[str]:
         '''Return the list of classes.'''
         return list(self._data.classes.keys())
 
     @log_call_async(logger, 'get class')
-    @types.check_ready(logger)
+    @types.check_ready_async(logger)
     async def get_class(self: ClassesAgent, /, cls: str) -> types.item.ClassEntry:
         '''Return the data for a specific class, by name.'''
         return self._data.classes[cls]

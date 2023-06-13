@@ -142,7 +142,7 @@ class SpellAgent(agent.Agent):
         return types.Ret.OK
 
     @log_call_async(logger, 'roll random spell')
-    @types.check_ready(logger)
+    @types.check_ready_async(logger)
     async def random(
             self: SpellAgent,
             /,
@@ -264,7 +264,7 @@ class SpellAgent(agent.Agent):
         return (types.Ret.OK, spell)
 
     @log_call_async(logger, 'get spell tags')
-    @types.check_ready(logger)
+    @types.check_ready_async(logger)
     async def tags(self: SpellAgent, /) -> Sequence[str] | types.Ret:
         '''Return a list of recognized tags.'''
         if self._data.tags:

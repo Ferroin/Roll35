@@ -17,7 +17,7 @@ from .ranks import Rank, Subrank
 
 from .retcode import Ret, Result
 
-from .readystate import ReadyState, check_ready
+from .readystate import ReadyState, check_ready, check_ready_async
 
 SubrankedItemList = R35Map[Subrank, R35List[Item]]
 RankedItemList = R35Map[Rank, SubrankedItemList]
@@ -41,6 +41,7 @@ __all__ = (
     'Result',
     'ReadyState',
     'check_ready',
+    'check_ready_async',
     'SubrankedItemList',
     'RankedItemList',
     'CompoundItemSublist',

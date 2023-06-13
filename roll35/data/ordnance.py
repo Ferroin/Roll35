@@ -284,7 +284,7 @@ class OrdnanceAgent(agent.Agent):
 
     @agent.ensure_costs
     @log_call_async(logger, 'roll random ordnance pattern')
-    @types.check_ready(logger)
+    @types.check_ready_async(logger)
     async def random_pattern(
             self: OrdnanceAgent,
             /,
@@ -347,7 +347,7 @@ class OrdnanceAgent(agent.Agent):
                     return types.Ret.FAILED
 
     @log_call_async(logger, 'get base ordnance item')
-    @types.check_ready(logger)
+    @types.check_ready_async(logger)
     async def get_base(self: OrdnanceAgent, pool: Executor, /, name: str) -> \
             types.Result[types.item.OrdnanceBaseItem]:
         '''Get a base item by name.
@@ -379,7 +379,7 @@ class OrdnanceAgent(agent.Agent):
         raise RuntimeError
 
     @log_call_async(logger, 'roll random base ordnance item')
-    @types.check_ready(logger)
+    @types.check_ready_async(logger)
     async def random_base(self: OrdnanceAgent, /, tags: Sequence[str] = []) -> types.item.OrdnanceBaseItem | types.Ret:
         '''Get a base item at random.'''
         items = self._data.base
@@ -405,7 +405,7 @@ class OrdnanceAgent(agent.Agent):
             return types.Ret.NO_MATCH
 
     @log_call_async(logger, 'roll random ordnance enchantment')
-    @types.check_ready(logger)
+    @types.check_ready_async(logger)
     async def random_enchant(
             self: OrdnanceAgent,
             /,
@@ -442,7 +442,7 @@ class OrdnanceAgent(agent.Agent):
 
     @agent.ensure_costs
     @log_call_async(logger, 'roll random specific ordnance item.')
-    @types.check_ready(logger)
+    @types.check_ready_async(logger)
     async def random_specific(
             self: OrdnanceAgent,
             /,
@@ -490,13 +490,13 @@ class OrdnanceAgent(agent.Agent):
             return types.Ret.NO_MATCH
 
     @log_call_async(logger, 'get ordnance bonus costs')
-    @types.check_ready(logger)
+    @types.check_ready_async(logger)
     async def get_bonus_costs(self: OrdnanceAgent, /, base: types.item.OrdnanceBaseItem) -> tuple[types.item.Cost, types.item.Cost]:
         '''Get the bonus costs associated with the given item.'''
         return get_enchant_bonus_costs(self._data, base)
 
     @log_call_async(logger, 'get ordnance tags')
-    @types.check_ready(logger)
+    @types.check_ready_async(logger)
     async def tags(self: OrdnanceAgent, /) -> Sequence[str] | types.Ret:
         '''Get a list of recognized tags.'''
         if self._data.tags:
