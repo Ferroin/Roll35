@@ -56,7 +56,7 @@ class CategoryAgent(agent.Agent):
             compound=by_rank,
         )
 
-    async def _post_validate(self: CategoryAgent, data: CategoryData) -> bool:  # type: ignore[override]
+    def _post_validate(self: CategoryAgent, data: CategoryData) -> bool:  # type: ignore[override]
         for category in data.categories:
             if category not in self._ds:
                 raise ValueError(f'Category { category } does not have an associated agent.')
