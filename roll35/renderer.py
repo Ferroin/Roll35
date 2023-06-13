@@ -83,7 +83,7 @@ class Renderer(ReadyState):
 
         env = jinja2.Environment(
             loader=jinja2.FunctionLoader(lambda x: None),
-            autoescape=True,
+            autoescape=False,  # nosec # data is realistically trusted
         )
 
         while True:
