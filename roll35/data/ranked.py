@@ -93,7 +93,7 @@ class RankedAgent(agent.Agent):
             )
         )
 
-    async def load_data(self: RankedAgent, pool: Executor, /) -> types.Ret:
+    async def load_data_async(self: RankedAgent, pool: Executor, /) -> types.Ret:
         '''Load data for this agent.'''
         if not self._ready.is_set():
             logger.info('Fetching class data.')

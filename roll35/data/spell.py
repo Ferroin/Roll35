@@ -89,7 +89,7 @@ class SpellAgent(agent.Agent):
 
         return len(levels) > level and levels[level] is not None
 
-    async def load_data(self: SpellAgent, pool: Executor, /) -> types.Ret:
+    async def load_data_async(self: SpellAgent, pool: Executor, /) -> types.Ret:
         '''Load the data for this agent, using the specified executor pool.
 
            This requires a specific overide as it involves a large amount

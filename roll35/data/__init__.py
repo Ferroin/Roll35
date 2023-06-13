@@ -114,7 +114,7 @@ class DataSet:
     '''Represents a dataset for the module.
 
        Data must be loaded at runtime by calling and awaiting the
-       `load_data()` coroutine.
+       `load_data_async()` coroutine.
 
        Individual categories within the data set are accessed by name
        via subscripting.'''
@@ -150,13 +150,13 @@ class DataSet:
         '''A list of the categories within the data set, grouped by type.'''
         return self._types
 
-    async def load_data(self: DataSet, pool: Executor, /) -> Ret:
+    async def load_data_async(self: DataSet, pool: Executor, /) -> Ret:
         '''Load the data for this dataset.'''
         if not self.ready:
             loaders = []
 
             for agent in self._agents.values():
-                loaders.append(asyncio.create_task(agent.load_data(pool)))
+                loaders.append(asyncio.create_task(agent.load_data_async(pool)))
 
             await asyncio.gather(*loaders)
 
@@ -182,7 +182,7 @@ def _get_dataset(src: Path = DEFAULT_DATA_ROOT) -> DataSet:
     ds = DataSet(src=src)
 
     async def setup() -> None:
-        await ds.load_data(pool)
+        await ds.load_data_async(pool)
 
     asyncio.run(setup())
 
@@ -206,7 +206,7 @@ def test_dataset(src: Path = DEFAULT_DATA_ROOT) -> int:
     renderer = Renderer(ds)
 
     async def setup() -> None:
-        await ds.load_data(pool)
+        await ds.load_data_async(pool)
         await renderer.load_data(pool)
 
     asyncio.run(setup())
