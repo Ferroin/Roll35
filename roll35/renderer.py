@@ -15,7 +15,7 @@ import jinja2
 from . import types
 from .common import yaml, ismapping
 from .types.renderdata import RenderData
-from .types.readystate import ReadyState, check_ready
+from .types.readystate import ReadyState, check_ready_async
 from .log import log_call_async
 
 if TYPE_CHECKING:
@@ -115,7 +115,7 @@ class Renderer(ReadyState):
             else:
                 tmpl = n
 
-    @check_ready(logger)
+    @check_ready_async(logger)
     async def _render(self: Renderer, pool: Executor, /, item: types.item.BaseItem | types.item.Spell | str) -> \
             types.Result[str] | Literal[types.Ret.NOT_READY]:
         match item:

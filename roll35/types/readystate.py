@@ -42,7 +42,7 @@ class ReadyState:
                 raise ValueError
 
 
-def check_ready(logger: logging.Logger, /) -> \
+def check_ready_async(logger: logging.Logger, /) -> \
         Callable[
             [Callable[Concatenate[RS, P], Coroutine[Any, Any, T]]],
             Callable[Concatenate[RS, P], Coroutine[Any, Any, T | Literal[Ret.NOT_READY]]]
@@ -65,6 +65,32 @@ def check_ready(logger: logging.Logger, /) -> \
                 return Ret.NOT_READY
 
             return await func(self, *args, **kwargs)
+
+        return inner
+
+    return decorator
+
+
+def check_ready(logger: logging.Logger, /) -> \
+        Callable[
+            [Callable[Concatenate[RS, P], T]],
+            Callable[Concatenate[RS, P], T | Literal[Ret.NOT_READY]]
+        ]:
+    '''Decorate an method to check if it’s instance is be ready.
+
+        The method must be part of a class that inherits from ReadyState.
+
+        Note that this does not wait for the instance to be ready,
+        it returns immediately with Ret.NOT_READY if the instance is
+        not ready.'''
+    def decorator(func: Callable[Concatenate[RS, P], T]) -> \
+            Callable[Concatenate[RS, P], T | Literal[Ret.NOT_READY]]:
+        def inner(self: RS, *args: P.args, **kwargs: P.kwargs) -> T | Literal[Ret.NOT_READY]:
+            if not self.ready:
+                logger.warning('Data is not yet ready.')
+                return Ret.NOT_READY
+
+            return func(self, *args, **kwargs)
 
         return inner
 

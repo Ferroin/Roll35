@@ -18,7 +18,7 @@ from typing import TypeVar, ParamSpec, cast, TYPE_CHECKING
 
 from .. import types
 from ..common import rnd, yaml, bad_return
-from ..log import log_call
+from ..log import log_call_async
 
 if TYPE_CHECKING:
     from concurrent.futures import Executor
@@ -199,8 +199,8 @@ class Agent(types.ReadyState):
         return types.Ret.OK
 
     @ensure_costs
-    @log_call(logger, 'roll random rank')
-    @types.check_ready(logger)
+    @log_call_async(logger, 'roll random rank')
+    @types.check_ready_async(logger)
     async def random_rank(self: Agent, /, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> types.Rank | types.Ret:
         '''Return a random rank, possibly within the cost limits.'''
         if self._data.ranked is not None:
@@ -222,8 +222,8 @@ class Agent(types.ReadyState):
         return types.Ret.NO_MATCH
 
     @ensure_costs
-    @log_call(logger, 'roll random subrank')
-    @types.check_ready(logger)
+    @log_call_async(logger, 'roll random subrank')
+    @types.check_ready_async(logger)
     async def random_subrank(self: Agent, /, rank: types.Rank, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> \
             types.Subrank | types.Ret:
         '''Return a random subrank for the given rank, possibly within the cost limits.'''
@@ -240,8 +240,8 @@ class Agent(types.ReadyState):
         return types.Ret.NO_MATCH
 
     @ensure_costs
-    @log_call(logger, 'roll random ranked item')
-    @types.check_ready(logger)
+    @log_call_async(logger, 'roll random ranked item')
+    @types.check_ready_async(logger)
     async def random_ranked(
             self: Agent,
             /, *,
@@ -282,8 +282,8 @@ class Agent(types.ReadyState):
         return cast(types.item.BaseItem, rnd(costfilter(self._data.ranked[rank][subrank], mincost=mincost, maxcost=maxcost)))
 
     @ensure_costs
-    @log_call(logger, 'roll random compound item')
-    @types.check_ready(logger)
+    @log_call_async(logger, 'roll random compound item')
+    @types.check_ready_async(logger)
     async def random_compound(
             self: Agent,
             /, *,

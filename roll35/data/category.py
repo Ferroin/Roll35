@@ -75,7 +75,7 @@ class CategoryAgent(agent.Agent):
                 return types.Ret.FAILED
 
     @log_call_async(logger, 'get categories')
-    @types.check_ready(logger)
+    @types.check_ready_async(logger)
     async def categories(self: CategoryAgent, /) -> set[str]:
         '''Return a list of valid categories.'''
         return self._data.categories

@@ -63,13 +63,13 @@ class WondrousAgent(agent.Agent):
 
     @agent.ensure_costs
     @log_call_async(logger, 'roll random wondrous item slot')
-    @types.check_ready(logger)
+    @types.check_ready_async(logger)
     async def random(self: WondrousAgent, /, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> str | types.Ret:
         '''Return a random slot, possibly limited by cost.'''
         return rnd(agent.costfilter(self._data.slots, mincost=mincost, maxcost=maxcost))
 
     @log_call_async(logger, 'get wondrous item slots')
-    @types.check_ready(logger)
+    @types.check_ready_async(logger)
     async def slots(self: WondrousAgent, /) -> list[str]:
         '''Return a list of known slots.'''
         return list(map(lambda x: x.value, self._data.slots))
