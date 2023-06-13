@@ -76,19 +76,6 @@ class SpellAgent(agent.Agent):
             tags=set(),
         )
 
-    async def _level_in_cls(self: SpellAgent, level: int, cls: str, /) -> bool:
-        if cls in self.EXTRA_CLASS_NAMES:
-            return True
-
-        classinfo = await cast(ClassesAgent, self._ds['classes']).get_class_async(cls)
-
-        if classinfo is types.Ret.NOT_READY:
-            return False
-
-        levels = classinfo.levels
-
-        return len(levels) > level and levels[level] is not None
-
     async def load_data_async(self: SpellAgent, pool: Executor, /) -> types.Ret:
         '''Load the data for this agent, using the specified executor pool.
 
@@ -194,18 +181,18 @@ class SpellAgent(agent.Agent):
                 cls = random.choice(valid)  # nosec # not being used for crypto purposes
             case ('arcane' | 'divine' | 'occult' as typ, level):
                 valid = [k for (k, v) in classes.items()
-                         if await self._level_in_cls(cast(int, level), k)
+                         if v.level_in_cls(level)
                          and v.type == typ]
                 cls = random.choice(valid)  # nosec # not being used for crypto purposes
             case ('random', None):
                 cls = random.choice(list(classes.keys()))  # nosec # not being used for crypto purposes
             case ('random', level):
                 valid = [k for (k, v) in classes.items()
-                         if await self._level_in_cls(cast(int, level), k)]
+                         if v.level_in_cls(level)]
                 cls = random.choice(valid)  # nosec # Not being used for crypto purposes
             case ('minimum', _):
                 pass
-            case (cls, level) if cls in valid_classes and not await self._level_in_cls(cast(int, level), cls):
+            case (cls, level) if cls in valid_classes and not classes[cls].level_in_cls(level):
                 return (
                     types.Ret.INVALID,
                     f'Class { cls } does not have access to ' +
@@ -252,7 +239,7 @@ class SpellAgent(agent.Agent):
             case 'spellpage_divine':
                 cls = spell.spellpage_divine
 
-        if cls is None:  # Mypy still thinks cls might be None at this point for some reason.
+        if cls is None:  # It’s theoretically possible for cls to be None here, but should never happen in practice.
             raise RuntimeError
 
         if level is None:
