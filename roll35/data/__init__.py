@@ -153,9 +153,10 @@ class DataSet:
     async def load_data_async(self: DataSet, pool: Executor, /) -> Ret:
         '''Load the data for this dataset.'''
         if not self.ready:
-            loaders = []
+            classes_loader = asyncio.create_task(self._agents['classes'].load_data_async(pool))
+            loaders = [classes_loader]
 
-            for agent in self._agents.values():
+            for agent in [v for (k, v) in self._agents.items() if k != 'classes']:
                 loaders.append(asyncio.create_task(agent.load_data_async(pool)))
 
             await asyncio.gather(*loaders)
