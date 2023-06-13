@@ -625,6 +625,9 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
         case types.item.BaseItem() as i2:
             if i2.reroll is not None:
                 return await _reroll(pool, ds, i2.reroll, mincost=mincost, maxcost=maxcost, attempt=attempt)
+            elif i2.cost is None:
+                logger.error(bad_return(i2))
+                return (types.Ret.FAILED, 'Unknown internal error.')
             elif mincost is not None and i2.cost < mincost:
                 return await roll(pool, ds, args, attempt=attempt+1)
             elif maxcost is not None and i2.cost > maxcost:
