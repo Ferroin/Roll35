@@ -85,7 +85,7 @@ class CompoundAgent(agent.Agent):
             compound=process_compound_itemlist(data, classes, extra_classes)
         )
 
-    async def load_data(self: CompoundAgent, pool: Executor, /) -> types.Ret:
+    async def load_data_async(self: CompoundAgent, pool: Executor, /) -> types.Ret:
         '''Load data for this agent.'''
         if not self._ready.is_set():
             logger.info('Fetching class data.')

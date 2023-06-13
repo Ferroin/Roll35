@@ -130,7 +130,7 @@ class Agent(types.ReadyState):
         '''Callback to take the raw data for the agent and make it usable.
 
            Subclasses need to either override this, or provide their
-           own implementation of Agent.load_data().
+           own implementation of Agent.load_data_async().
 
            This will be called when loading data for the agent. It
            should be a static method that accepts a single argument,
@@ -159,7 +159,7 @@ class Agent(types.ReadyState):
     def _post_validate(self: Agent, data: AgentData) -> bool:
         '''Callback to do any post-load data validation.
 
-           Called by the default Agent.load_data() implementation with
+           Called by the default Agent.load_data_async() implementation with
            the data that will be assigned to self._data.
 
            If this returns False, a RuntimeError will be raised.
@@ -168,14 +168,14 @@ class Agent(types.ReadyState):
 
            Subclasses that need to perform checks on their data which
            require access to other agents should override this if they
-           are using the default Agent.load_data() implementation.
+           are using the default Agent.load_data_async() implementation.
 
            Care should be taken to not introduce recursive dependencies
            between agents, as no protections are in place to prevent
            such deadlocks.'''
         return True
 
-    async def load_data(self: Agent, pool: Executor, /) -> types.Ret:
+    async def load_data_async(self: Agent, pool: Executor, /) -> types.Ret:
         '''Load data for this agent.'''
         if not self._ready.is_set():
             logger.info(f'Loading { self.name } data')

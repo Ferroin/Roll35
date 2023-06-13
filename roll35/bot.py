@@ -54,7 +54,7 @@ class Bot(commands.Bot):
             raise RuntimeError('Both dataset and render must be provided.')
 
         return await asyncio.gather(
-            ds.load_data(self.pool),
+            ds.load_data_async(self.pool),
             renderer.load_data(self.pool),
             super().start(token, *args, reconnect=reconnect),
         )
