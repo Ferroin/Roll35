@@ -54,7 +54,7 @@ class WondrousAgent(agent.Agent):
             slots=slots,
         )
 
-    async def _post_validate(self: WondrousAgent, data: WondrousData) -> bool:  # type: ignore[override]
+    def _post_validate(self: WondrousAgent, data: WondrousData) -> bool:  # type: ignore[override]
         for slot in data.slots:
             if slot.value not in self._ds:
                 raise ValueError(f'Wondrous item slot { slot.value } does not have an associated agent.')

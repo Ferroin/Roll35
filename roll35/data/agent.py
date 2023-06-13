@@ -156,8 +156,8 @@ class Agent(types.ReadyState):
         loop = asyncio.get_running_loop()
         return await loop.run_in_executor(pool, func, *args)
 
-    async def _post_validate(self: Agent, data: AgentData) -> bool:
-        '''Async callback to do any post-load data validation.
+    def _post_validate(self: Agent, data: AgentData) -> bool:
+        '''Callback to do any post-load data validation.
 
            Called by the default Agent.load_data() implementation with
            the data that will be assigned to self._data.
@@ -187,8 +187,8 @@ class Agent(types.ReadyState):
 
             logger.info(f'Validating { self.name } data')
 
-            if not await self._post_validate(data):
-                raise RuntimeError(f'{ self.name } data valid post load validation')
+            if not self._post_validate(data):
+                raise RuntimeError(f'{ self.name } data failed post load validation')
 
             self._data = data
 
