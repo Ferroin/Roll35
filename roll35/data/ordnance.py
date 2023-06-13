@@ -328,7 +328,7 @@ class OrdnanceAgent(agent.Agent):
                     case r2:
                         logger.error(bad_return(r2))
                         raise RuntimeError
-            case types.Rank as rank if self._valid_rank(rank):
+            case types.Rank() as rank if self._valid_rank(rank):
                 pass
             case _:
                 raise ValueError(f'Invalid rank for { self.name }: { rank }')
