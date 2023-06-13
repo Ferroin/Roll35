@@ -222,7 +222,9 @@ class SpellAgent(agent.Agent):
             case ('random', int() as level):
                 valid = [k for (k, v) in classes.items()
                          if v.level_in_cls(level)]
+                logger.debug(f'Determining valid classes for level { level } spells: { valid }')
                 cls = random.choice(valid)  # nosec # Not being used for crypto purposes
+                logger.debug(f'Selected class { cls }')
             case ('minimum', _):
                 pass
             case (cls, int() as level) if cls in valid_classes and not classes[cls].level_in_cls(level):

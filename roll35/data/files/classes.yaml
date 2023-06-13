@@ -114,7 +114,7 @@ skald:
   type: arcane
   duplicate: bard
   levels: *half_caster_levels
-sorceror:
+sorcerer:
   type: arcane
   duplicate: wizard
   levels: *full_spontaneous_caster_levels
