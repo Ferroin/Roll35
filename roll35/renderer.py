@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import math
 
 from typing import TYPE_CHECKING, Literal, cast
 
@@ -81,10 +82,46 @@ class Renderer(ReadyState):
         n = ''
         i = 0
 
+        def render_cost(cost: int | float | str) -> str:
+            '''Transform a cost into a properly rendered value.'''
+            match cost:
+                case str():
+                    return cost
+                case int() as c1 if c1 >= 0:
+                    return f'{ c1 } gp'
+                case float() as c2 if c2.is_integer() and c2 >= 0:
+                    return f'{ int(c2) } gp'
+                case float() as c3 if c3 >= 0 and math.isfinite(c3):
+                    gp, sp, cp = 0.0, 0.0, 0.0
+
+                    frac, gp = math.modf(c3)
+
+                    ret = f'{ int(gp) } gp'
+
+                    if frac > 0:
+                        frac, sp = math.modf(frac * 10)
+
+                        if sp > 0:
+                            ret += f' { int(sp) } sp'
+
+                    if frac > 0:
+                        cp = frac
+
+                        if sp > 0:
+                            ret += f' { int(cp) if cp.is_integer() else cp } cp'
+
+                    return ret
+                case _:
+                    raise ValueError(f'Invalid value for cost: { cost }')
+
+            return ''  # This never gets executed because the above match statement is exhaustive, but it makes mypy happy.
+
         env = jinja2.Environment(
             loader=jinja2.FunctionLoader(lambda x: None),
             autoescape=False,  # nosec # data is realistically trusted
         )
+
+        env.globals['render_cost'] = render_cost
 
         while True:
             i += 1
@@ -123,9 +160,9 @@ class Renderer(ReadyState):
                 t = '{{ item.name }} ({{ item.rolled_cls.capitalize() }} {{ item.classes[item.rolled_cls] }}, CL {{ item.rolled_caster_level }})'
             case types.item.SimpleItem(name=name, cost=cost) if cost is not None:
                 if '{{ spell }}' in name:
-                    t = '{{ item.name }} ({{ item.cls.capitalize() }} {{ item.level }}, CL {{ item.caster_level }}, {{ item.cost }} gp)'
+                    t = '{{ item.name }} ({{ item.cls.capitalize() }} {{ item.level }}, CL {{ item.caster_level }}, {{ render_cost(item.cost) }})'
                 else:
-                    t = '{{ item.name }} ({{ item.cost }} gp)'
+                    t = '{{ item.name }} ({{ render_cost(item.cost) }})'
             case types.item.SimpleItem(name=name):
                 if '{{ spell }}' in name:
                     t = '{{ item.name }} ({{ item.cls.capitalize() }} {{ item.level }}, CL {{ item.caster_level }})'
