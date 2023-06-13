@@ -99,6 +99,17 @@ class ClassEntry(BaseModel):
 
         return values
 
+    def level_in_cls(self: ClassEntry, level: int) -> bool:
+        '''Check if a given level of spell is available in this class.'''
+        if level < 0:
+            raise ValueError('Negative spell levels are not supported.')
+        elif len(self.levels) <= level:
+            return False
+        elif self.levels[level] is None:
+            return False
+
+        return True
+
 
 ClassMap = Mapping[str, ClassEntry]
 
