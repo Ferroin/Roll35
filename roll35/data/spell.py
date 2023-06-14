@@ -80,7 +80,7 @@ class SpellAgent(agent.Agent):
         if cls in self.EXTRA_CLASS_NAMES:
             return True
 
-        classinfo = await cast(ClassesAgent, self._ds['classes']).get_class(cls)
+        classinfo = await cast(ClassesAgent, self._ds['classes']).get_class_async(cls)
 
         if classinfo is types.Ret.NOT_READY:
             return False
@@ -101,7 +101,7 @@ class SpellAgent(agent.Agent):
         if not self.ready:
             logger.info('Fetching class data.')
 
-            classes = await cast(ClassesAgent, self._ds['classes']).W_classdata()
+            classes = await cast(ClassesAgent, self._ds['classes']).W_classdata_async()
 
             logger.info('Reading spell data.')
 
@@ -143,7 +143,7 @@ class SpellAgent(agent.Agent):
 
     @log_call_async(logger, 'roll random spell')
     @types.check_ready_async(logger)
-    async def random(
+    async def random_async(
             self: SpellAgent,
             /,
             level: int | None = None,
@@ -151,7 +151,7 @@ class SpellAgent(agent.Agent):
             tag: str | None = None) -> \
             types.Result[types.Spell]:
         '''Get a random spell, optionally limited by level, class, or tag.'''
-        match await cast(ClassesAgent, self._ds['classes']).classdata():
+        match await cast(ClassesAgent, self._ds['classes']).classdata_async():
             case types.Ret.NOT_READY:
                 return (types.Ret.NOT_READY, 'Failed to fetch class data.')
             case dict() as r1:
@@ -265,7 +265,7 @@ class SpellAgent(agent.Agent):
 
     @log_call_async(logger, 'get spell tags')
     @types.check_ready_async(logger)
-    async def tags(self: SpellAgent, /) -> Sequence[str] | types.Ret:
+    async def tags_async(self: SpellAgent, /) -> Sequence[str] | types.Ret:
         '''Return a list of recognized tags.'''
         if self._data.tags:
             return list(self._data.tags)

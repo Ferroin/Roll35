@@ -201,7 +201,7 @@ class Agent(types.ReadyState):
     @ensure_costs
     @log_call_async(logger, 'roll random rank')
     @types.check_ready_async(logger)
-    async def random_rank(self: Agent, /, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> types.Rank | types.Ret:
+    async def random_rank_async(self: Agent, /, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> types.Rank | types.Ret:
         '''Return a random rank, possibly within the cost limits.'''
         if self._data.ranked is not None:
             if isinstance(self._data.ranked, types.R35Map):
@@ -224,7 +224,7 @@ class Agent(types.ReadyState):
     @ensure_costs
     @log_call_async(logger, 'roll random subrank')
     @types.check_ready_async(logger)
-    async def random_subrank(self: Agent, /, rank: types.Rank, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> \
+    async def random_subrank_async(self: Agent, /, rank: types.Rank, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> \
             types.Subrank | types.Ret:
         '''Return a random subrank for the given rank, possibly within the cost limits.'''
         if self._data.ranked is not None:
@@ -242,7 +242,7 @@ class Agent(types.ReadyState):
     @ensure_costs
     @log_call_async(logger, 'roll random ranked item')
     @types.check_ready_async(logger)
-    async def random_ranked(
+    async def random_ranked_async(
             self: Agent,
             /, *,
             rank: types.Rank | None = None,
@@ -255,7 +255,7 @@ class Agent(types.ReadyState):
             return types.Ret.NO_MATCH
 
         if rank is None:
-            match await self.random_rank(mincost=mincost, maxcost=maxcost):
+            match await self.random_rank_async(mincost=mincost, maxcost=maxcost):
                 case types.Ret.NO_MATCH:
                     return types.Ret.NO_MATCH
                 case types.Rank() as r:
@@ -265,7 +265,7 @@ class Agent(types.ReadyState):
                     raise RuntimeError
 
         if subrank is None and self._valid_rank(rank):
-            match await self.random_subrank(rank, mincost=mincost, maxcost=maxcost):
+            match await self.random_subrank_async(rank, mincost=mincost, maxcost=maxcost):
                 case types.Ret.NO_MATCH:
                     return types.Ret.NO_MATCH
                 case types.Subrank() as s:
@@ -284,7 +284,7 @@ class Agent(types.ReadyState):
     @ensure_costs
     @log_call_async(logger, 'roll random compound item')
     @types.check_ready_async(logger)
-    async def random_compound(
+    async def random_compound_async(
             self: Agent,
             /, *,
             rank: types.Rank | None = None,
@@ -297,7 +297,7 @@ class Agent(types.ReadyState):
 
         match rank:
             case None:
-                match await self.random_rank(mincost=mincost, maxcost=maxcost):
+                match await self.random_rank_async(mincost=mincost, maxcost=maxcost):
                     case types.Ret.NO_MATCH:
                         return types.Ret.NO_MATCH
                     case types.Rank() as r:

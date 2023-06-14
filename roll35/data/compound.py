@@ -90,7 +90,7 @@ class CompoundAgent(agent.Agent):
         if not self._ready.is_set():
             logger.info('Fetching class data.')
 
-            classes = await cast(ClassesAgent, self._ds['classes']).W_classdata()
+            classes = await cast(ClassesAgent, self._ds['classes']).W_classdata_async()
             extra_classes = cast(SpellAgent, self._ds['spell']).EXTRA_CLASS_NAMES
 
             logger.info(f'Loading { self.name } data.')
@@ -106,7 +106,7 @@ class CompoundAgent(agent.Agent):
         return types.Ret.OK
 
     @log_call_async(logger, 'roll compound item')
-    async def random(
+    async def random_async(
             self: CompoundAgent,
             /,
             rank: types.Rank | None = None,
@@ -119,7 +119,7 @@ class CompoundAgent(agent.Agent):
         '''Roll a random item, then roll a spell for it if needed.'''
         match level:
             case None:
-                item: types.CompoundItem | types.item.CompoundSpellItem | types.Ret = cast(types.CompoundItem, await super().random_compound(
+                item: types.CompoundItem | types.item.CompoundSpellItem | types.Ret = cast(types.CompoundItem, await super().random_compound_async(
                     rank=rank,
                     mincost=mincost,
                     maxcost=maxcost,
@@ -161,7 +161,7 @@ class CompoundAgent(agent.Agent):
                 if spell.cls is None and cls is not None:
                     spell.cls = cls
 
-                match await cast(SpellAgent, self._ds['spell']).random(**spell.dict()):
+                match await cast(SpellAgent, self._ds['spell']).random_async(**spell.dict()):
                     case types.Ret.NOT_READY:
                         return types.Ret.NOT_READY
                     case (types.Ret.OK, types.item.Spell() as s1):

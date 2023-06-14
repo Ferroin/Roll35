@@ -98,7 +98,7 @@ class RankedAgent(agent.Agent):
         if not self._ready.is_set():
             logger.info('Fetching class data.')
 
-            classes = await cast(ClassesAgent, self._ds['classes']).W_classdata()
+            classes = await cast(ClassesAgent, self._ds['classes']).W_classdata_async()
 
             logger.info(f'Loading { self.name } data.')
 
@@ -113,7 +113,7 @@ class RankedAgent(agent.Agent):
         return types.Ret.OK
 
     @log_call(logger, 'roll random ranked item')
-    async def random(
+    async def random_async(
             self: RankedAgent,
             /,
             rank: types.Rank | None = None,
@@ -127,7 +127,7 @@ class RankedAgent(agent.Agent):
         '''Roll a random ranked item, then roll a spell for it if needed.'''
         match level:
             case None:
-                item = await super().random_ranked(
+                item = await super().random_ranked_async(
                     rank=rank,
                     subrank=subrank,
                     mincost=mincost,
@@ -180,7 +180,7 @@ class RankedAgent(agent.Agent):
                 if spell.cls is None and cls is not None:
                     spell.cls = cls
 
-                match await cast(SpellAgent, self._ds['spell']).random(**spell.dict()):
+                match await cast(SpellAgent, self._ds['spell']).random_async(**spell.dict()):
                     case types.Ret.NOT_READY:
                         return types.Ret.NOT_READY
                     case (types.Ret.OK, types.item.Spell() as s1):

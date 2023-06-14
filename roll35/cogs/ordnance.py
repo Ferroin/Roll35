@@ -26,7 +26,7 @@ class Ordnance(R35Cog):
     '''Roll35 cog for handling mundane armor and weapons.'''
     async def get_item(self: Ordnance, ctx: commands.Context, typ: str, /, tags: Sequence[str]) -> None:
         '''Get a mundane item.'''
-        match await cast(OrdnanceAgent, self.ds[typ]).random_base(tags):
+        match await cast(OrdnanceAgent, self.ds[typ]).random_base_async(tags):
             case Ret.NOT_READY:
                 await ctx.send(NOT_READY)
             case Ret.NO_MATCH:
@@ -39,7 +39,7 @@ class Ordnance(R35Cog):
                 await ctx.send('Unknown internal error.')
 
     async def get_tags(self: Ordnance, ctx: commands.Context, typ: str, /) -> None:
-        match await cast(OrdnanceAgent, self.ds[typ]).tags():
+        match await cast(OrdnanceAgent, self.ds[typ]).tags_async():
             case Ret.NOT_READY:
                 await ctx.send(NOT_READY)
             case Ret.NO_MATCH:
