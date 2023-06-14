@@ -14,7 +14,7 @@ from .classes import ClassesAgent
 from .spell import SpellAgent
 from .. import types
 from ..common import yaml, bad_return, ismapping, rnd, flatten, make_weighted_entry
-from ..log import log_call
+from ..log import log_call_async, log_call
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence, Iterable, Callable
@@ -93,6 +93,28 @@ class RankedAgent(agent.Agent):
             )
         )
 
+    def load_data(self: RankedAgent, /) -> types.Ret:
+        '''Load data for this agent.'''
+        if not self.ready:
+            logger.info('Fetching class data.')
+
+            classes = cast(ClassesAgent, self._ds['classes']).classdata()
+
+            if classes == types.Ret.NOT_READY:
+                raise RuntimeError('Class data is not ready.')
+
+            logger.info(f'Loading { self.name } data.')
+
+            with open(self._ds.src / f'{ self.name }.yaml') as f:
+                data = yaml.load(f)
+
+            self._data = self._process_data(data, classes)
+            logger.info(f'Finished loading { self.name } data.')
+
+            self.ready = True
+
+        return types.Ret.OK
+
     async def load_data_async(self: RankedAgent, pool: Executor, /) -> types.Ret:
         '''Load data for this agent.'''
         if not self._ready.is_set():
@@ -112,75 +134,64 @@ class RankedAgent(agent.Agent):
 
         return types.Ret.OK
 
-    @log_call(logger, 'roll random ranked item')
-    async def random_async(
+    def __handle_level_search(
             self: RankedAgent,
             /,
             rank: types.Rank | None = None,
             subrank: types.Subrank | None = None,
             *,
-            level: int | None = None,
-            cls: str | None = None,
+            level: int,
             mincost: types.Cost | None = None,
             maxcost: types.Cost | None = None) -> \
             types.item.BaseItem | types.Ret:
-        '''Roll a random ranked item, then roll a spell for it if needed.'''
-        match level:
+        if self._data.ranked is None:
+            return types.Ret.NO_MATCH
+
+        match rank:
             case None:
-                item = await super().random_ranked_async(
-                    rank=rank,
-                    subrank=subrank,
-                    mincost=mincost,
-                    maxcost=maxcost,
-                )
-            case int():
-                if self._data.ranked is None:
-                    return types.Ret.NO_MATCH
+                searchitems: Iterable[types.item.BaseItem] = []
 
-                match rank:
+                for si1 in self._data.ranked.values():
+                    for si2 in si1.values():
+                        cast(list, searchitems).append(si2)
+            case rank if self._valid_rank(rank):
+                match subrank:
                     case None:
-                        searchitems: Iterable[types.item.BaseItem] = []
-
-                        for si1 in self._data.ranked.values():
-                            for si2 in si1.values():
-                                cast(list, searchitems).append(si2)
-                    case rank if self._valid_rank(rank):
-                        match subrank:
-                            case None:
-                                searchitems = flatten(self._data.ranked[rank].values())
-                            case subrank if self._valid_subrank(rank, subrank):
-                                searchitems = self._data.ranked[rank][subrank]
-                            case _:
-                                raise ValueError(f'Invalid sub-rank for { self.name }: { rank }')
+                        searchitems = flatten(self._data.ranked[rank].values())
+                    case subrank if self._valid_subrank(rank, subrank):
+                        searchitems = self._data.ranked[rank][subrank]
                     case _:
-                        raise ValueError(f'Invalid rank for { self.name }: { rank }')
-
-                possible = []
-
-                for i1 in searchitems:
-                    match i1:
-                        case types.item.SpellItem(spell={'level': int() as l1}) if l1 == level:
-                            possible.append(i1)
-
-                match rnd(agent.costfilter(possible, mincost=mincost, maxcost=maxcost)):
-                    case types.Ret.NO_MATCH:
-                        return types.Ret.NO_MATCH
-                    case types.item.BaseItem() as i2:
-                        item = i2
-                    case ret:
-                        logger.warning(bad_return(ret))
-                        return types.Ret.FAILED
+                        raise ValueError(f'Invalid sub-rank for { self.name }: { rank }')
             case _:
-                raise ValueError
+                raise ValueError(f'Invalid rank for { self.name }: { rank }')
 
+        possible = []
+
+        for i1 in searchitems:
+            match i1:
+                case types.item.SpellItem(spell={'level': int() as l1}) if l1 == level:
+                    possible.append(i1)
+
+        match rnd(agent.costfilter(possible, mincost=mincost, maxcost=maxcost)):
+            case types.Ret.NO_MATCH:
+                return types.Ret.NO_MATCH
+            case types.item.BaseItem() as i2:
+                return i2
+            case ret:
+                logger.warning(bad_return(ret))
+                return types.Ret.FAILED
+
+    def __handle_item(
+            self: RankedAgent,
+            /,
+            item: types.item.BaseItem | types.item.SpellItem | types.Ret,
+            spell: types.Result[types.item.Spell] | types.Ret | None) -> \
+            types.item.BaseItem | types.item.SpellItem | types.Ret:
         match item:
             case types.Ret.NO_MATCH:
                 return types.Ret.NO_MATCH
-            case types.item.SpellItem(spell=spell):
-                if spell.cls is None and cls is not None:
-                    spell.cls = cls
-
-                match await cast(SpellAgent, self._ds['spell']).random_async(**spell.dict()):
+            case types.item.SpellItem():
+                match spell:
                     case types.Ret.NOT_READY:
                         return types.Ret.NOT_READY
                     case (types.Ret.OK, types.item.Spell() as s1):
@@ -205,3 +216,75 @@ class RankedAgent(agent.Agent):
         #
         # However, mypy thinks this function is missing a return statement, and this line convinces it otherwise.
         raise RuntimeError
+
+    @log_call(logger, 'roll random ranked item')
+    def random(
+            self: RankedAgent,
+            /,
+            rank: types.Rank | None = None,
+            subrank: types.Subrank | None = None,
+            *,
+            level: int | None = None,
+            cls: str | None = None,
+            mincost: types.Cost | None = None,
+            maxcost: types.Cost | None = None) -> \
+            types.item.BaseItem | types.Ret:
+        '''Roll a random ranked item, then roll a spell for it if needed.'''
+        match level:
+            case None:
+                item = super().random_ranked(
+                    rank=rank,
+                    subrank=subrank,
+                    mincost=mincost,
+                    maxcost=maxcost,
+                )
+            case int():
+                item = self.__handle_level_search(rank=rank, subrank=subrank, level=level, mincost=mincost, maxcost=maxcost)
+            case _:
+                raise ValueError
+
+        if isinstance(item, types.item.SpellItem):
+            spellparams = item.spell
+
+            if spellparams.cls is None and cls is not None:
+                spellparams.cls = cls
+
+            spell = cast(SpellAgent, self._ds['spell']).random(**spellparams.dict())
+
+        return self.__handle_item(item, spell)
+
+    @log_call_async(logger, 'roll random ranked item')
+    async def random_async(
+            self: RankedAgent,
+            /,
+            rank: types.Rank | None = None,
+            subrank: types.Subrank | None = None,
+            *,
+            level: int | None = None,
+            cls: str | None = None,
+            mincost: types.Cost | None = None,
+            maxcost: types.Cost | None = None) -> \
+            types.item.BaseItem | types.Ret:
+        '''Roll a random ranked item, then roll a spell for it if needed.'''
+        match level:
+            case None:
+                item = await super().random_ranked_async(
+                    rank=rank,
+                    subrank=subrank,
+                    mincost=mincost,
+                    maxcost=maxcost,
+                )
+            case int():
+                item = self.__handle_level_search(rank=rank, subrank=subrank, level=level, mincost=mincost, maxcost=maxcost)
+            case _:
+                raise ValueError
+
+        if isinstance(item, types.item.SpellItem):
+            spellparams = item.spell
+
+            if spellparams.cls is None and cls is not None:
+                spellparams.cls = cls
+
+            spell = await cast(SpellAgent, self._ds['spell']).random_async(**spellparams.dict())
+
+        return self.__handle_item(item, spell)
