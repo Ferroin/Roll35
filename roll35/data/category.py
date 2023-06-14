@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING
 from . import agent
 from .. import types
 from ..common import make_weighted_entry, ismapping, bad_return
-from ..log import log_call_async
+from ..log import log_call_async, log_call
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
@@ -63,6 +63,17 @@ class CategoryAgent(agent.Agent):
 
         return True
 
+    @log_call(logger, 'roll random category')
+    def random(self: CategoryAgent, /, rank: types.Rank | None = None) -> str | types.Ret:
+        match super().random_compound(rank=rank):
+            case types.Ret() as r:
+                return r
+            case str() as s:
+                return s
+            case ret:
+                logger.warning(bad_return(ret))
+                return types.Ret.FAILED
+
     @log_call_async(logger, 'roll random category')
     async def random_async(self: CategoryAgent, /, rank: types.Rank | None = None) -> str | types.Ret:
         match await super().random_compound_async(rank=rank):
@@ -73,6 +84,12 @@ class CategoryAgent(agent.Agent):
             case ret:
                 logger.warning(bad_return(ret))
                 return types.Ret.FAILED
+
+    @log_call(logger, 'get categories')
+    @types.check_ready(logger)
+    def categories(self: CategoryAgent, /) -> set[str]:
+        '''Return a list of valid categories.'''
+        return self._data.categories
 
     @log_call_async(logger, 'get categories')
     @types.check_ready_async(logger)

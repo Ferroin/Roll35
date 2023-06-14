@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING
 from . import agent
 from .. import types
 from ..common import ismapping
-from ..log import log_call_async
+from ..log import log_call_async, log_call
 
 if TYPE_CHECKING:
     from . import DataSet
@@ -59,6 +59,12 @@ class ClassesAgent(agent.Agent):
             classes=classes
         )
 
+    @log_call(logger, 'get class data')
+    @types.check_ready(logger)
+    def classdata(self: ClassesAgent, /) -> types.item.ClassMap:
+        '''Return the bulk data.'''
+        return self._data.classes
+
     @log_call_async(logger, 'blocking get class data')
     async def W_classdata_async(self: ClassesAgent, /) -> types.item.ClassMap:
         '''Return the bulk data, but wait until the agent is ready.'''
@@ -71,11 +77,23 @@ class ClassesAgent(agent.Agent):
         '''Return the bulk data.'''
         return self._data.classes
 
+    @log_call(logger, 'get class list')
+    @types.check_ready(logger)
+    def classes(self: ClassesAgent, /) -> Sequence[str]:
+        '''Return the list of classes.'''
+        return list(self._data.classes.keys())
+
     @log_call_async(logger, 'get class list')
     @types.check_ready_async(logger)
     async def classes_async(self: ClassesAgent, /) -> Sequence[str]:
         '''Return the list of classes.'''
         return list(self._data.classes.keys())
+
+    @log_call(logger, 'get class')
+    @types.check_ready(logger)
+    def get_class(self: ClassesAgent, /, cls: str) -> types.item.ClassEntry:
+        '''Return the data for a specific class, by name.'''
+        return self._data.classes[cls]
 
     @log_call_async(logger, 'get class')
     @types.check_ready_async(logger)
