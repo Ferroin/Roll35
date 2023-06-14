@@ -18,7 +18,7 @@ from typing import TypeVar, ParamSpec, cast, TYPE_CHECKING
 
 from .. import types
 from ..common import rnd, yaml, bad_return
-from ..log import log_call_async
+from ..log import log_call, log_call_async
 
 if TYPE_CHECKING:
     from concurrent.futures import Executor
@@ -135,7 +135,11 @@ class Agent(types.ReadyState):
            This will be called when loading data for the agent. It
            should be a static method that accepts a single argument,
            consisting of the data to be processed. The return value will
-           be assigned to the agent’s `_data` attribute.'''
+           be assigned to the agent’s `_data` attribute.
+
+           When data is being loaded by the Agent.load_data_async()
+           function, this callback may not be called in a separate
+           process.'''
         return NotImplemented
 
     def _valid_rank(self: Agent, rank: types.Rank, /) -> bool:
@@ -175,9 +179,32 @@ class Agent(types.ReadyState):
            such deadlocks.'''
         return True
 
+    def load_data(self: Agent, /) -> types.Ret:
+        '''Load data for this agent.'''
+        if not self.ready:
+            logger.info(f'Loading { self.name } data')
+
+            with open(self._ds.src / f'{ self.name }.yaml') as f:
+                raw_data = yaml.load(f)
+
+            data = self._process_data(raw_data)
+
+            logger.info(f'Validating { self.name } data')
+
+            if not self._post_validate(data):
+                raise RuntimeError(f'{ self.name } data failed post load validation')
+
+            self._data = data
+
+            logger.info(f'Finished loading { self.name } data')
+
+            self.ready = True
+
+        return types.Ret.OK
+
     async def load_data_async(self: Agent, pool: Executor, /) -> types.Ret:
         '''Load data for this agent.'''
-        if not self._ready.is_set():
+        if not self.ready:
             logger.info(f'Loading { self.name } data')
 
             with open(self._ds.src / f'{ self.name }.yaml') as f:
@@ -194,15 +221,11 @@ class Agent(types.ReadyState):
 
             logger.info(f'Finished loading { self.name } data')
 
-            self._ready.set()
+            self.ready = True
 
         return types.Ret.OK
 
-    @ensure_costs
-    @log_call_async(logger, 'roll random rank')
-    @types.check_ready_async(logger)
-    async def random_rank_async(self: Agent, /, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> types.Rank | types.Ret:
-        '''Return a random rank, possibly within the cost limits.'''
+    def __random_rank(self: Agent, /, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> types.Rank | types.Ret:
         if self._data.ranked is not None:
             if isinstance(self._data.ranked, types.R35Map):
                 d1 = cast(types.RankedItemList, self._data.ranked)
@@ -222,11 +245,21 @@ class Agent(types.ReadyState):
         return types.Ret.NO_MATCH
 
     @ensure_costs
-    @log_call_async(logger, 'roll random subrank')
+    @log_call(logger, 'roll random rank')
+    @types.check_ready(logger)
+    def random_rank(self: Agent, /, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> types.Rank | types.Ret:
+        '''Return a random rank, possibly within the cost limits.'''
+        return self.__random_rank(mincost=mincost, maxcost=maxcost)
+
+    @ensure_costs
+    @log_call_async(logger, 'roll random rank')
     @types.check_ready_async(logger)
-    async def random_subrank_async(self: Agent, /, rank: types.Rank, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> \
+    async def random_rank_async(self: Agent, /, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> types.Rank | types.Ret:
+        '''Return a random rank, possibly within the cost limits.'''
+        return self.__random_rank(mincost=mincost, maxcost=maxcost)
+
+    def __random_subrank(self: Agent, /, rank: types.Rank, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> \
             types.Subrank | types.Ret:
-        '''Return a random subrank for the given rank, possibly within the cost limits.'''
         if self._data.ranked is not None:
             data = self._data.ranked
         else:
@@ -238,6 +271,64 @@ class Agent(types.ReadyState):
                 return cast(types.Subrank, rnd(subranks))
 
         return types.Ret.NO_MATCH
+
+    @ensure_costs
+    @log_call(logger, 'roll random subrank')
+    @types.check_ready(logger)
+    def random_subrank(self: Agent, /, rank: types.Rank, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> \
+            types.Subrank | types.Ret:
+        '''Return a random subrank for the given rank, possibly within the cost limits.'''
+        return self.__random_subrank(rank=rank, mincost=mincost, maxcost=maxcost)
+
+    @ensure_costs
+    @log_call_async(logger, 'roll random subrank')
+    @types.check_ready_async(logger)
+    async def random_subrank_async(self: Agent, /, rank: types.Rank, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> \
+            types.Subrank | types.Ret:
+        '''Return a random subrank for the given rank, possibly within the cost limits.'''
+        return self.__random_subrank(rank=rank, mincost=mincost, maxcost=maxcost)
+
+    @ensure_costs
+    @log_call(logger, 'roll random ranked item')
+    @types.check_ready(logger)
+    def random_ranked(
+            self: Agent,
+            /, *,
+            rank: types.Rank | None = None,
+            subrank: types.Subrank | None = None,
+            mincost: types.Cost | None = None,
+            maxcost: types.Cost | None = None) -> \
+            types.item.BaseItem | types.Ret:
+        '''Roll a random item for the given rank and subrank, possibly within the specified cost range.'''
+        if self._data.ranked is None:
+            return types.Ret.NO_MATCH
+
+        if rank is None:
+            match self.random_rank(mincost=mincost, maxcost=maxcost):
+                case types.Ret.NO_MATCH:
+                    return types.Ret.NO_MATCH
+                case types.Rank() as r:
+                    rank = r
+                case r1:
+                    logger.error(bad_return(r1))
+                    raise RuntimeError
+
+        if subrank is None and self._valid_rank(rank):
+            match self.random_subrank(rank, mincost=mincost, maxcost=maxcost):
+                case types.Ret.NO_MATCH:
+                    return types.Ret.NO_MATCH
+                case types.Subrank() as s:
+                    subrank = s
+                case r2:
+                    logger.error(bad_return(r2))
+                    raise RuntimeError
+        else:
+            raise ValueError(f'Invalid rank for { self.name }: { rank }')
+
+        if not self._valid_subrank(rank, subrank):
+            raise ValueError(f'Invalid subrank for { self.name }: { subrank }')
+
+        return cast(types.item.BaseItem, rnd(costfilter(self._data.ranked[rank][subrank], mincost=mincost, maxcost=maxcost)))
 
     @ensure_costs
     @log_call_async(logger, 'roll random ranked item')
@@ -280,6 +371,37 @@ class Agent(types.ReadyState):
             raise ValueError(f'Invalid subrank for { self.name }: { subrank }')
 
         return cast(types.item.BaseItem, rnd(costfilter(self._data.ranked[rank][subrank], mincost=mincost, maxcost=maxcost)))
+
+    @ensure_costs
+    @log_call(logger, 'roll random compound item')
+    @types.check_ready(logger)
+    def random_compound(
+            self: Agent,
+            /, *,
+            rank: types.Rank | None = None,
+            mincost: types.Cost | None = None,
+            maxcost: types.Cost | None = None) -> \
+            types.item.CompoundItem | str | types.Ret:
+        '''Roll a random item for the given rank, possibly within the specified cost range.'''
+        if self._data.compound is None:
+            return types.Ret.NO_MATCH
+
+        match rank:
+            case None:
+                match self.random_rank(mincost=mincost, maxcost=maxcost):
+                    case types.Ret.NO_MATCH:
+                        return types.Ret.NO_MATCH
+                    case types.Rank() as r:
+                        rank = r
+                    case r1:
+                        logger.error(bad_return(r1))
+                        raise RuntimeError
+            case rank if self._valid_rank(rank):
+                pass
+            case _:
+                raise ValueError(f'Invalid rank for { self.name }: { rank }')
+
+        return cast(types.item.CompoundItem | str, rnd(costfilter(self._data.compound[rank], mincost=mincost, maxcost=maxcost)))
 
     @ensure_costs
     @log_call_async(logger, 'roll random compound item')
