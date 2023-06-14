@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING
 from . import agent
 from .. import types
 from ..common import rnd, make_weighted_entry, ismapping
-from ..log import log_call_async
+from ..log import log_call_async, log_call
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
@@ -61,12 +61,29 @@ class WondrousAgent(agent.Agent):
 
         return True
 
+    def __random(self: WondrousAgent, /, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> str | types.Ret:
+        '''Return a random slot, possibly limited by cost.'''
+        return rnd(agent.costfilter(self._data.slots, mincost=mincost, maxcost=maxcost))
+
+    @agent.ensure_costs
+    @log_call(logger, 'roll random wondrous item slot')
+    @types.check_ready(logger)
+    def random(self: WondrousAgent, /, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> str | types.Ret:
+        '''Return a random slot, possibly limited by cost.'''
+        return self.__random(mincost=mincost, maxcost=maxcost)
+
     @agent.ensure_costs
     @log_call_async(logger, 'roll random wondrous item slot')
     @types.check_ready_async(logger)
     async def random_async(self: WondrousAgent, /, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> str | types.Ret:
         '''Return a random slot, possibly limited by cost.'''
-        return rnd(agent.costfilter(self._data.slots, mincost=mincost, maxcost=maxcost))
+        return self.__random(mincost=mincost, maxcost=maxcost)
+
+    @log_call(logger, 'get wondrous item slots')
+    @types.check_ready(logger)
+    def slots(self: WondrousAgent, /) -> list[str]:
+        '''Return a list of known slots.'''
+        return list(map(lambda x: x.value, self._data.slots))
 
     @log_call_async(logger, 'get wondrous item slots')
     @types.check_ready_async(logger)
