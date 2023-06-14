@@ -263,7 +263,7 @@ class OrdnanceAgent(agent.Agent):
             enchant_base_cost=data['enchant_base_cost'],
         )
 
-    async def random(
+    async def random_async(
             self: OrdnanceAgent,
             /,
             rank: types.Rank,
@@ -274,7 +274,7 @@ class OrdnanceAgent(agent.Agent):
             maxcost: types.item.Cost | None = None) -> \
             types.item.OrdnancePattern | types.Ret:
         '''Alias of random_pattern.'''
-        return await self.random_pattern(
+        return await self.random_pattern_async(
             rank=rank,
             subrank=subrank,
             allow_specific=allow_specific,
@@ -285,7 +285,7 @@ class OrdnanceAgent(agent.Agent):
     @agent.ensure_costs
     @log_call_async(logger, 'roll random ordnance pattern')
     @types.check_ready_async(logger)
-    async def random_pattern(
+    async def random_pattern_async(
             self: OrdnanceAgent,
             /,
             rank: types.Rank | None,
@@ -301,7 +301,7 @@ class OrdnanceAgent(agent.Agent):
 
         match rank:
             case None:
-                match await self.random_rank(mincost=mincost, maxcost=maxcost):
+                match await self.random_rank_async(mincost=mincost, maxcost=maxcost):
                     case types.Ret.NO_MATCH:
                         return types.Ret.NO_MATCH
                     case types.Rank() as r1:
@@ -315,7 +315,7 @@ class OrdnanceAgent(agent.Agent):
                 raise ValueError(f'Invalid rank for { self.name }: { rank }')
 
         if subrank is None:
-            match await self.random_subrank(rank, mincost=mincost, maxcost=maxcost):
+            match await self.random_subrank_async(rank, mincost=mincost, maxcost=maxcost):
                 case types.Ret.NO_MATCH:
                     return types.Ret.NO_MATCH
                 case types.Subrank() as r3:
@@ -348,7 +348,7 @@ class OrdnanceAgent(agent.Agent):
 
     @log_call_async(logger, 'get base ordnance item')
     @types.check_ready_async(logger)
-    async def get_base(self: OrdnanceAgent, pool: Executor, /, name: str) -> \
+    async def get_base_async(self: OrdnanceAgent, pool: Executor, /, name: str) -> \
             types.Result[types.item.OrdnanceBaseItem]:
         '''Get a base item by name.
 
@@ -380,7 +380,7 @@ class OrdnanceAgent(agent.Agent):
 
     @log_call_async(logger, 'roll random base ordnance item')
     @types.check_ready_async(logger)
-    async def random_base(self: OrdnanceAgent, /, tags: Sequence[str] = []) -> types.item.OrdnanceBaseItem | types.Ret:
+    async def random_base_async(self: OrdnanceAgent, /, tags: Sequence[str] = []) -> types.item.OrdnanceBaseItem | types.Ret:
         '''Get a base item at random.'''
         items = self._data.base
 
@@ -406,7 +406,7 @@ class OrdnanceAgent(agent.Agent):
 
     @log_call_async(logger, 'roll random ordnance enchantment')
     @types.check_ready_async(logger)
-    async def random_enchant(
+    async def random_enchant_async(
             self: OrdnanceAgent,
             /,
             group: str,
@@ -443,7 +443,7 @@ class OrdnanceAgent(agent.Agent):
     @agent.ensure_costs
     @log_call_async(logger, 'roll random specific ordnance item.')
     @types.check_ready_async(logger)
-    async def random_specific(
+    async def random_specific_async(
             self: OrdnanceAgent,
             /,
             args: Sequence[str],
@@ -491,13 +491,13 @@ class OrdnanceAgent(agent.Agent):
 
     @log_call_async(logger, 'get ordnance bonus costs')
     @types.check_ready_async(logger)
-    async def get_bonus_costs(self: OrdnanceAgent, /, base: types.item.OrdnanceBaseItem) -> tuple[types.item.Cost, types.item.Cost]:
+    async def get_bonus_costs_async(self: OrdnanceAgent, /, base: types.item.OrdnanceBaseItem) -> tuple[types.item.Cost, types.item.Cost]:
         '''Get the bonus costs associated with the given item.'''
         return get_enchant_bonus_costs(self._data, base)
 
     @log_call_async(logger, 'get ordnance tags')
     @types.check_ready_async(logger)
-    async def tags(self: OrdnanceAgent, /) -> Sequence[str] | types.Ret:
+    async def tags_async(self: OrdnanceAgent, /) -> Sequence[str] | types.Ret:
         '''Get a list of recognized tags.'''
         if self._data.tags:
             return list(self._data.tags)

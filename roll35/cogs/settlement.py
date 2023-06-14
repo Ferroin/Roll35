@@ -59,7 +59,7 @@ class Settlement(types.R35Cog):
 @log_call_async(logger, 'roll settlement items')
 async def roll_settlement(population: int, pool: Executor, ds: DataSet, renderer: Renderer, /) -> types.Result[str]:
     '''Roll magic items for a settlement of the given population.'''
-    match await cast(SettlementAgent, ds['settlement']).get_by_population(population):
+    match await cast(SettlementAgent, ds['settlement']).get_by_population_async(population):
         case types.Ret.NOT_READY:
             return (types.Ret.NOT_READY, NOT_READY)
         case SettlementEntry() as settlement:

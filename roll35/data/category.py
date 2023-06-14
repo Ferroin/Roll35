@@ -64,8 +64,8 @@ class CategoryAgent(agent.Agent):
         return True
 
     @log_call_async(logger, 'roll random category')
-    async def random(self: CategoryAgent, /, rank: types.Rank | None = None) -> str | types.Ret:
-        match await super().random_compound(rank=rank):
+    async def random_async(self: CategoryAgent, /, rank: types.Rank | None = None) -> str | types.Ret:
+        match await super().random_compound_async(rank=rank):
             case types.Ret() as r:
                 return r
             case str() as s:
@@ -76,6 +76,6 @@ class CategoryAgent(agent.Agent):
 
     @log_call_async(logger, 'get categories')
     @types.check_ready_async(logger)
-    async def categories(self: CategoryAgent, /) -> set[str]:
+    async def categories_async(self: CategoryAgent, /) -> set[str]:
         '''Return a list of valid categories.'''
         return self._data.categories

@@ -236,7 +236,7 @@ class MagicItem(types.R35Cog):
         await self._roll_magic_item(ctx, *args)
 
     async def _categories(self: MagicItem, ctx: commands.Context, /) -> None:
-        match await cast(CategoryAgent, self.ds['category']).categories():
+        match await cast(CategoryAgent, self.ds['category']).categories_async():
             case types.Ret.NOT_READY:
                 await ctx.send(NOT_READY)
             case set() as cats:
@@ -254,7 +254,7 @@ class MagicItem(types.R35Cog):
         await self._categories(ctx)
 
     async def _slots(self: MagicItem, ctx: commands.Context, /) -> None:
-        match await cast(WondrousAgent, self.ds['wondrous']).slots():
+        match await cast(WondrousAgent, self.ds['wondrous']).slots_async():
             case types.Ret.NOT_READY:
                 await ctx.send(NOT_READY)
             case list() as slots:
@@ -348,7 +348,7 @@ async def _assemble_magic_item(
     failed = False
 
     for ebonus in pattern.enchants:
-        match await agent.random_enchant(group, ebonus, enchants, tags):
+        match await agent.random_enchant_async(group, ebonus, enchants, tags):
             case types.Ret.NOT_READY:
                 failed = True
                 await asyncio.sleep(1)
@@ -440,8 +440,8 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
         logger.warning(f'Recursion limit hit while rolling magic item: { args }')
         return (types.Ret.LIMITED, 'Too many rerolls while attempting to generate item.')
 
-    slots = await cast(WondrousAgent, ds['wondrous']).slots()
-    categories = await cast(CategoryAgent, ds['category']).categories()
+    slots = await cast(WondrousAgent, ds['wondrous']).slots_async()
+    categories = await cast(CategoryAgent, ds['category']).categories_async()
 
     if categories is types.Ret.NOT_READY or slots is types.Ret.NOT_READY:
         return (types.Ret.NOT_READY, NOT_READY)
@@ -455,7 +455,7 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
 
     match args:
         case {'rank': types.Rank.MINOR, 'subrank': types.Subrank.LEAST, 'category': 'wondrous', 'slot': 'slotless'}:
-            item = await cast(RankedAgent, ds['slotless']).random(
+            item = await cast(RankedAgent, ds['slotless']).random_async(
                 rank=types.Rank.MINOR,
                 subrank=types.Subrank.LEAST,
                 mincost=mincost,
@@ -464,33 +464,33 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
         case {'subrank': types.Subrank.LEAST}:
             item = (types.Ret.INVALID, 'Only slotless wondrous items have a least subrank.')
         case {'rank': rank, 'subrank': subrank, 'category': 'wondrous', 'slot': slot} if slot in slots:
-            item = await cast(RankedAgent, ds[slot]).random(rank=rank, subrank=subrank, mincost=mincost, maxcost=maxcost)
+            item = await cast(RankedAgent, ds[slot]).random_async(rank=rank, subrank=subrank, mincost=mincost, maxcost=maxcost)
         case {'rank': rank, 'subrank': subrank, 'slot': slot} if slot in slots:
-            item = await cast(RankedAgent, ds[slot]).random(rank=rank, subrank=subrank, mincost=mincost, maxcost=maxcost)
+            item = await cast(RankedAgent, ds[slot]).random_async(rank=rank, subrank=subrank, mincost=mincost, maxcost=maxcost)
         case {'rank': rank, 'subrank': subrank, 'category': 'wondrous'}:
-            match await cast(WondrousAgent, ds['wondrous']).random():
+            match await cast(WondrousAgent, ds['wondrous']).random_async():
                 case types.Ret.NOT_READY:
                     item = (types.Ret.NOT_READY, NOT_READY)
                 case str() as slot:
-                    item = await cast(RankedAgent, ds[slot]).random(rank=rank, subrank=subrank, mincost=mincost, maxcost=maxcost)
+                    item = await cast(RankedAgent, ds[slot]).random_async(rank=rank, subrank=subrank, mincost=mincost, maxcost=maxcost)
                 case ret:
                     logger.warning(bad_return(ret))
                     item = (types.Ret.FAILED, 'Unknown internal error.')
         case {'rank': rank, 'subrank': subrank, 'category': category, 'base': None} if category in ordnance:
             agent = cast(OrdnanceAgent, ds[category])
-            match await agent.random_pattern(rank=rank, subrank=subrank, allow_specific=True, mincost=mincost, maxcost=maxcost):
+            match await agent.random_pattern_async(rank=rank, subrank=subrank, allow_specific=True, mincost=mincost, maxcost=maxcost):
                 case types.Ret.NOT_READY:
                     item = (types.Ret.NOT_READY, NOT_READY)
                 case types.Ret.NO_MATCH:
                     item = types.Ret.NO_MATCH
                 case types.item.OrdnancePattern(specific=specific) if specific is not None:
-                    item = await agent.random_specific(specific, mincost=mincost, maxcost=maxcost)
+                    item = await agent.random_specific_async(specific, mincost=mincost, maxcost=maxcost)
                 case types.item.OrdnancePattern() as pattern:
-                    match await agent.random_base():
+                    match await agent.random_base_async():
                         case types.Ret.NOT_READY:
                             item = (types.Ret.NOT_READY, NOT_READY)
                         case types.item.OrdnanceBaseItem() as base_item:
-                            match await agent.get_bonus_costs(base_item):
+                            match await agent.get_bonus_costs_async(base_item):
                                 case types.Ret.NOT_READY:
                                     item = (types.Ret.NOT_READY, NOT_READY)
                                 case (masterwork, bonus_cost):
@@ -503,19 +503,19 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
         case {'rank': rank, 'subrank': subrank, 'category': category, 'base': base} if category in ordnance:
             agent = cast(OrdnanceAgent, ds[category])
 
-            match await agent.get_base(pool, base):
+            match await agent.get_base_async(pool, base):
                 case types.Ret.NOT_READY:
                     item = (types.Ret.NOT_READY, NOT_READY)
                 case (types.Ret() as r1, str() as msg) if r1 is not types.Ret.OK:
                     item = (r1, msg)
                 case (types.Ret.OK, types.item.OrdnanceBaseItem() as base_item):
-                    match await agent.random_pattern(rank=rank, subrank=subrank, allow_specific=False, mincost=mincost, maxcost=maxcost):
+                    match await agent.random_pattern_async(rank=rank, subrank=subrank, allow_specific=False, mincost=mincost, maxcost=maxcost):
                         case types.Ret.NOT_READY:
                             item = (types.Ret.NOT_READY, NOT_READY)
                         case types.Ret.NO_MATCH:
                             item = types.Ret.NO_MATCH
                         case types.item.OrdnancePattern() as pattern:
-                            match await agent.get_bonus_costs(base_item):
+                            match await agent.get_bonus_costs_async(base_item):
                                 case types.Ret.NOT_READY:
                                     item = (types.Ret.NOT_READY, NOT_READY)
                                 case (masterwork, bonus_cost):
@@ -531,14 +531,14 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
         case {'rank': _, 'subrank': subrank, 'category': category} if category in compound and subrank is not None:
             item = (types.Ret.INVALID, f'Invalid parmeters specified, { category } does not take a subrank.')
         case {'rank': rank, 'subrank': subrank, 'category': category, 'cls': cls, 'level': level} if cls is not None or level is not None:
-            match await cast(ClassesAgent, ds['classes']).classes():
+            match await cast(ClassesAgent, ds['classes']).classes_async():
                 case types.Ret.NOT_READY:
                     item = (types.Ret.NOT_READY, NOT_READY)
                 case classes:
                     valid = set(cast(set[types.item.ClassEntry], classes)) | cast(SpellAgent, ds['spell']).EXTRA_CLASS_NAMES
 
                     if cls in valid or cls is None:
-                        match await cast(CompoundAgent, ds[category]).random(rank=rank, cls=cls, level=level, mincost=mincost, maxcost=maxcost):
+                        match await cast(CompoundAgent, ds[category]).random_async(rank=rank, cls=cls, level=level, mincost=mincost, maxcost=maxcost):
                             case types.item.BaseItem() as i1:
                                 item = (types.Ret.OK, i1)
                             case types.Ret.NO_MATCH:
@@ -551,9 +551,9 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
                     else:
                         item = (types.Ret.FAILED, f'Unknown spellcasting class { cls }. For a list of known classes, use the `classes` command.')
         case {'rank': rank, 'category': category} if category in compound:
-            item = await cast(CompoundAgent, ds[category]).random(rank=rank, mincost=mincost, maxcost=maxcost)
+            item = await cast(CompoundAgent, ds[category]).random_async(rank=rank, mincost=mincost, maxcost=maxcost)
         case {'rank': rank, 'subrank': subrank, 'category': category} if category in ranked:
-            item = await cast(RankedAgent, ds[category]).random(rank=rank, subrank=subrank, mincost=mincost, maxcost=maxcost)
+            item = await cast(RankedAgent, ds[category]).random_async(rank=rank, subrank=subrank, mincost=mincost, maxcost=maxcost)
         case {'rank': _, 'subrank': _, 'category': None, 'base': base} if base is not None:
             item = (
                 types.Ret.INVALID,
@@ -561,7 +561,7 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
             )
         case {'rank': None, 'subrank': None, 'category': None}:
             while item is types.Ret.FAILED:
-                args['rank'] = (await ds['category'].random_rank(mincost=mincost, maxcost=maxcost))
+                args['rank'] = (await ds['category'].random_rank_async(mincost=mincost, maxcost=maxcost))
                 attempt += 1
 
                 match await roll(pool, ds, args, attempt=attempt):
@@ -584,7 +584,7 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
             item = (types.Ret.INVALID, 'Invalid parmeters specified, must specify a rank for the item.')
         case {'rank': rank, 'subrank': subrank, 'category': None}:
             while item is types.Ret.FAILED:
-                args['category'] = await cast(CategoryAgent, ds['category']).random(rank=rank)
+                args['category'] = await cast(CategoryAgent, ds['category']).random_async(rank=rank)
 
                 attempt += 1
 

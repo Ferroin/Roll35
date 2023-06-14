@@ -153,7 +153,7 @@ class Spell(R35Cog):
         await self._spell(ctx, *args)
 
     async def _spelltags(self: Spell, ctx: commands.Context, /) -> None:
-        match await cast(SpellAgent, self.ds['spell']).tags():
+        match await cast(SpellAgent, self.ds['spell']).tags_async():
             case Ret.NOT_READY:
                 await ctx.send(NOT_READY)
             case Ret.NO_MATCH:
@@ -173,7 +173,7 @@ class Spell(R35Cog):
         await self._spelltags(ctx)
 
     async def _classes(self: Spell, ctx: commands.Context, /) -> None:
-        match await cast(ClassesAgent, self.ds['classes']).classes():
+        match await cast(ClassesAgent, self.ds['classes']).classes_async():
             case Ret.NOT_READY:
                 await ctx.send(NOT_READY)
             case list() as classes:
@@ -203,4 +203,4 @@ class Spell(R35Cog):
 @log_call(logger, 'roll spell')
 def roll_spell(ds: DataSet, /, args: Mapping[str, Any]) -> Awaitable[Result[SpellEntry] | Literal[Ret.NOT_READY]]:
     '''Return a coroutine that will return a spell.'''
-    return cast(SpellAgent, ds['spell']).random(**args)
+    return cast(SpellAgent, ds['spell']).random_async(**args)

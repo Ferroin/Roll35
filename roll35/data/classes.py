@@ -60,25 +60,25 @@ class ClassesAgent(agent.Agent):
         )
 
     @log_call_async(logger, 'blocking get class data')
-    async def W_classdata(self: ClassesAgent, /) -> types.item.ClassMap:
+    async def W_classdata_async(self: ClassesAgent, /) -> types.item.ClassMap:
         '''Return the bulk data, but wait until the agent is ready.'''
         await self._ready.wait()
         return self._data.classes
 
     @log_call_async(logger, 'get class data')
     @types.check_ready_async(logger)
-    async def classdata(self: ClassesAgent, /) -> types.item.ClassMap:
+    async def classdata_async(self: ClassesAgent, /) -> types.item.ClassMap:
         '''Return the bulk data.'''
         return self._data.classes
 
     @log_call_async(logger, 'get class list')
     @types.check_ready_async(logger)
-    async def classes(self: ClassesAgent, /) -> Sequence[str]:
+    async def classes_async(self: ClassesAgent, /) -> Sequence[str]:
         '''Return the list of classes.'''
         return list(self._data.classes.keys())
 
     @log_call_async(logger, 'get class')
     @types.check_ready_async(logger)
-    async def get_class(self: ClassesAgent, /, cls: str) -> types.item.ClassEntry:
+    async def get_class_async(self: ClassesAgent, /, cls: str) -> types.item.ClassEntry:
         '''Return the data for a specific class, by name.'''
         return self._data.classes[cls]
