@@ -17,8 +17,8 @@ from . import agent
 from .classes import ClassesAgent
 from .. import types
 from ..common import chunk, flatten, yaml, bad_return
-from ..log import log_call_async, LogRun
-from ..types.item import MAX_SPELL_LEVEL
+from ..log import log_call_async, log_call, LogRun
+from ..types.item import MAX_SPELL_LEVEL, ClassMap
 
 logger = logging.getLogger(__name__)
 
@@ -76,6 +76,56 @@ class SpellAgent(agent.Agent):
             tags=set(),
         )
 
+    def load_data(self: SpellAgent, /) -> types.Ret:
+        '''Load the data for this agent.
+
+           This requires a specific overide as it involves a large amount
+           of custom logic and handles the parallelization in a different
+           way from most other agents.
+
+           This also requires the dataset to have a `classes` agent with
+           data properly loaded.'''
+        if not self.ready:
+            logger.info('Fetching class data.')
+
+            classes = cast(ClassesAgent, self._ds['classes']).classdata()
+
+            if classes == types.Ret.NOT_READY:
+                raise RuntimeError('Classes data is not ready.')
+
+            logger.info('Reading spell data.')
+
+            with open(self._ds.src / f'{ self.name }.yaml') as f:
+                data = yaml.load(f)
+
+            if not isinstance(data, Sequence):
+                raise ValueError('Spell data must be a sequence.')
+
+            logger.info('Processing spell data.')
+
+            results = []
+
+            for idx, spell_chunk in enumerate(chunk(data, size=100)):
+                results.append(process_spell_chunk(
+                    spell_chunk,
+                    classes,
+                    idx,
+                ))
+
+            spells = list(flatten(map(lambda x: x[0], results)))
+            tags = set.union(*map(lambda x: x[1], results))
+
+            self._data = SpellData(
+                spells=spells,
+                tags=tags,
+            )
+
+            logger.info('Finished loading spell data.')
+
+            self.ready = True
+
+        return types.Ret.OK
+
     async def load_data_async(self: SpellAgent, pool: Executor, /) -> types.Ret:
         '''Load the data for this agent, using the specified executor pool.
 
@@ -128,25 +178,8 @@ class SpellAgent(agent.Agent):
 
         return types.Ret.OK
 
-    @log_call_async(logger, 'roll random spell')
-    @types.check_ready_async(logger)
-    async def random_async(
-            self: SpellAgent,
-            /,
-            level: int | None = None,
-            cls: str | None = None,
-            tag: str | None = None) -> \
+    def __random(self: SpellAgent, classes: ClassMap, /, level: int | None = None, cls: str | None = None, tag: str | None = None) -> \
             types.Result[types.Spell]:
-        '''Get a random spell, optionally limited by level, class, or tag.'''
-        match await cast(ClassesAgent, self._ds['classes']).classdata_async():
-            case types.Ret.NOT_READY:
-                return (types.Ret.NOT_READY, 'Failed to fetch class data.')
-            case dict() as r1:
-                classes = r1
-            case r2:
-                logger.warning(bad_return(r2))
-                return (types.Ret.FAILED, 'Unknown internal error.')
-
         valid_classes = set(classes.keys()) | {
             'minimum',
             'spellpage_arcane',
@@ -179,20 +212,20 @@ class SpellAgent(agent.Agent):
                 valid = [k for (k, v) in classes.items()
                          if v.type == typ]
                 cls = random.choice(valid)  # nosec # not being used for crypto purposes
-            case ('arcane' | 'divine' | 'occult' as typ, level):
+            case ('arcane' | 'divine' | 'occult' as typ, int() as level):
                 valid = [k for (k, v) in classes.items()
                          if v.level_in_cls(level)
                          and v.type == typ]
                 cls = random.choice(valid)  # nosec # not being used for crypto purposes
             case ('random', None):
                 cls = random.choice(list(classes.keys()))  # nosec # not being used for crypto purposes
-            case ('random', level):
+            case ('random', int() as level):
                 valid = [k for (k, v) in classes.items()
                          if v.level_in_cls(level)]
                 cls = random.choice(valid)  # nosec # Not being used for crypto purposes
             case ('minimum', _):
                 pass
-            case (cls, level) if cls in valid_classes and not classes[cls].level_in_cls(level):
+            case (cls, int() as level) if cls in valid_classes and not classes[cls].level_in_cls(level):
                 return (
                     types.Ret.INVALID,
                     f'Class { cls } does not have access to ' +
@@ -249,6 +282,57 @@ class SpellAgent(agent.Agent):
         spell.rolled_caster_level = classes[cls].levels[level]
 
         return (types.Ret.OK, spell)
+
+    @log_call(logger, 'roll random spell')
+    @types.check_ready(logger)
+    def random(
+            self: SpellAgent,
+            /,
+            level: int | None = None,
+            cls: str | None = None,
+            tag: str | None = None) -> \
+            types.Result[types.Spell]:
+        '''Get a random spell, optionally limited by level, class, or tag.'''
+        match cast(ClassesAgent, self._ds['classes']).classdata():
+            case types.Ret.NOT_READY:
+                return (types.Ret.NOT_READY, 'Failed to fetch class data.')
+            case dict() as r1:
+                classes = r1
+            case r2:
+                logger.warning(bad_return(r2))
+                return (types.Ret.FAILED, 'Unknown internal error.')
+
+        return self.__random(classes, level=level, cls=cls, tag=tag)
+
+    @log_call_async(logger, 'roll random spell')
+    @types.check_ready_async(logger)
+    async def random_async(
+            self: SpellAgent,
+            /,
+            level: int | None = None,
+            cls: str | None = None,
+            tag: str | None = None) -> \
+            types.Result[types.Spell]:
+        '''Get a random spell, optionally limited by level, class, or tag.'''
+        match await cast(ClassesAgent, self._ds['classes']).classdata_async():
+            case types.Ret.NOT_READY:
+                return (types.Ret.NOT_READY, 'Failed to fetch class data.')
+            case dict() as r1:
+                classes = r1
+            case r2:
+                logger.warning(bad_return(r2))
+                return (types.Ret.FAILED, 'Unknown internal error.')
+
+        return self.__random(classes, level=level, cls=cls, tag=tag)
+
+    @log_call(logger, 'get spell tags')
+    @types.check_ready(logger)
+    async def tags(self: SpellAgent, /) -> Sequence[str] | types.Ret:
+        '''Return a list of recognized tags.'''
+        if self._data.tags:
+            return list(self._data.tags)
+        else:
+            return types.Ret.NO_MATCH
 
     @log_call_async(logger, 'get spell tags')
     @types.check_ready_async(logger)
