@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING, Literal, cast, overload
 from . import agent
 from .. import types
 from ..common import ismapping
-from ..log import log_call_async
+from ..log import log_call_async, log_call
 
 if TYPE_CHECKING:
     from . import DataSet
@@ -145,6 +145,15 @@ class SettlementAgent(agent.Agent):
             population=PopulationMap(entries),
         )
 
+    @log_call(logger, 'get settlement by name')
+    @types.check_ready(logger)
+    def get_by_name(self: SettlementAgent, /, name: str) -> SettlementEntry | types.Ret:
+        '''Look up a settlement category by name.'''
+        if name in self._data.name:
+            return self._data.name[name]
+        else:
+            return types.Ret.NO_MATCH
+
     @log_call_async(logger, 'get settlement by name')
     @types.check_ready_async(logger)
     async def get_by_name_async(self: SettlementAgent, /, name: str) -> SettlementEntry | types.Ret:
@@ -153,6 +162,12 @@ class SettlementAgent(agent.Agent):
             return self._data.name[name]
         else:
             return types.Ret.NO_MATCH
+
+    @log_call(logger, 'get settlement by population')
+    @types.check_ready(logger)
+    def get_by_population(self: SettlementAgent, /, population: int) -> SettlementEntry:
+        '''Look up a settlement category by population.'''
+        return self._data.population[population]
 
     @log_call_async(logger, 'get settlement by population')
     @types.check_ready_async(logger)
