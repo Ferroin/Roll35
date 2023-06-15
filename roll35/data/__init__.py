@@ -150,6 +150,19 @@ class DataSet:
         '''A list of the categories within the data set, grouped by type.'''
         return self._types
 
+    def load_data(self: DataSet, /) -> Ret:
+        '''Load the data for this dataset.'''
+        if not self.ready:
+            self._agents['classes'].load_data()
+            self._agents['spell'].load_data()
+
+            for agent in [v for (k, v) in self._agents.items() if k not in {'classes', 'spell'}]:
+                agent.load_data()
+
+            self.ready = True
+
+        return Ret.OK
+
     async def load_data_async(self: DataSet, pool: Executor, /) -> Ret:
         '''Load the data for this dataset.'''
         if not self.ready:
@@ -161,16 +174,18 @@ class DataSet:
 
             await asyncio.gather(*loaders)
 
-        self.ready = True
+            self.ready = True
 
         return Ret.OK
 
 
-def _get_dataset(src: Path = DEFAULT_DATA_ROOT) -> DataSet:
+def _get_dataset_async(src: Path = DEFAULT_DATA_ROOT) -> DataSet:
     '''Return a DataSet instance with data loaded for inspection.
 
-       This is intended to allow inspection of a dataset for debugging
-       purposes.
+       This is intended to allow testing of the async data loading
+       interface. If you just want a dataset to work with without having
+       to deal with asyncio, instead instantiate DataSet directly and
+       use the `load_data()` method to synchronously load the data.
 
        Behavior of this function is _not_ guaranteed in any way across
        versions of Roll35, and it should thus not be used by external
