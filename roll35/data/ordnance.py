@@ -17,7 +17,7 @@ from . import agent
 from .ranked import process_ranked_itemlist
 from .. import types
 from ..common import norm_string, did_you_mean, bad_return, rnd, ismapping
-from ..log import log_call_async
+from ..log import log_call_async, log_call
 
 logger = logging.getLogger(__name__)
 
@@ -263,7 +263,7 @@ class OrdnanceAgent(agent.Agent):
             enchant_base_cost=data['enchant_base_cost'],
         )
 
-    async def random_async(
+    def random(
             self: OrdnanceAgent,
             /,
             rank: types.Rank,
@@ -274,6 +274,25 @@ class OrdnanceAgent(agent.Agent):
             maxcost: types.item.Cost | None = None) -> \
             types.item.OrdnancePattern | types.Ret:
         '''Alias of random_pattern.'''
+        return self.random_pattern(
+            rank=rank,
+            subrank=subrank,
+            allow_specific=allow_specific,
+            mincost=mincost,
+            maxcost=maxcost,
+        )
+
+    async def random_async(
+            self: OrdnanceAgent,
+            /,
+            rank: types.Rank,
+            subrank: types.Subrank,
+            *,
+            allow_specific: bool = True,
+            mincost: types.item.Cost | None = None,
+            maxcost: types.item.Cost | None = None) -> \
+            types.item.OrdnancePattern | types.Ret:
+        '''Alias of random_pattern_async.'''
         return await self.random_pattern_async(
             rank=rank,
             subrank=subrank,
@@ -281,6 +300,70 @@ class OrdnanceAgent(agent.Agent):
             mincost=mincost,
             maxcost=maxcost,
         )
+
+    @agent.ensure_costs
+    @log_call(logger, 'roll random ordnance pattern')
+    @types.check_ready(logger)
+    def random_pattern(
+            self: OrdnanceAgent,
+            /,
+            rank: types.Rank | None,
+            subrank: types.Subrank | None,
+            *,
+            allow_specific: bool = True,
+            mincost: types.item.Cost | None = None,
+            maxcost: types.item.Cost | None = None) -> \
+            types.item.OrdnancePattern | types.Ret:
+        '''Return a random item pattern to use to generate a random item from.'''
+        if self._data.ranked is None:
+            raise RuntimeError
+
+        match rank:
+            case None:
+                match self.random_rank(mincost=mincost, maxcost=maxcost):
+                    case types.Ret.NO_MATCH:
+                        return types.Ret.NO_MATCH
+                    case types.Rank() as r1:
+                        rank = r1
+                    case r2:
+                        logger.error(bad_return(r2))
+                        raise RuntimeError
+            case types.Rank as rank if self._valid_rank(rank):
+                pass
+            case _:
+                raise ValueError(f'Invalid rank for { self.name }: { rank }')
+
+        if subrank is None:
+            match self.random_subrank(rank, mincost=mincost, maxcost=maxcost):
+                case types.Ret.NO_MATCH:
+                    return types.Ret.NO_MATCH
+                case types.Subrank() as r3:
+                    subrank = r3
+                case r4:
+                    logger.error(bad_return(r4))
+                    raise RuntimeError
+        elif not self._valid_subrank(rank, subrank):
+            raise ValueError(f'Invalid subrank for { self.name }: { subrank }')
+
+        items = cast(
+            Sequence[types.item.OrdnancePattern],
+            agent.costfilter(self._data.ranked[rank][subrank], mincost=mincost, maxcost=maxcost)
+        )
+
+        if allow_specific:
+            if items:
+                return rnd(items)
+            else:
+                return types.Ret.NO_MATCH
+        else:
+            match list(filter(lambda x: x.specific is None, items)):
+                case []:
+                    return types.Ret.NO_MATCH
+                case [*items]:
+                    return rnd(items)
+                case ret:
+                    logger.error(bad_return(ret))
+                    return types.Ret.FAILED
 
     @agent.ensure_costs
     @log_call_async(logger, 'roll random ordnance pattern')
@@ -346,6 +429,28 @@ class OrdnanceAgent(agent.Agent):
                     logger.error(bad_return(ret))
                     return types.Ret.FAILED
 
+    @log_call(logger, 'get base ordnance item')
+    @types.check_ready(logger)
+    def get_base(self: OrdnanceAgent, pool: Executor, /, name: str) -> \
+            types.Result[types.item.OrdnanceBaseItem]:
+        '''Get a base item by name.'''
+        items = self._data.base
+        norm_name = norm_string(name)
+
+        match next((x for x in items if norm_string(x.name) == norm_name), None):
+            case item if item is not None:
+                return (types.Ret.OK, item)
+            case _:
+                return (
+                    types.Ret.FAILED,
+                    f'{ name } is not a recognized item.\n'
+                )
+
+        # The below line should never actually be run, as the above match clauses are (theoretically) exhaustive.
+        #
+        # However, mypy thinks this function is missing a return statement, and this line convinces it otherwise.
+        raise RuntimeError
+
     @log_call_async(logger, 'get base ordnance item')
     @types.check_ready_async(logger)
     async def get_base_async(self: OrdnanceAgent, pool: Executor, /, name: str) -> \
@@ -378,10 +483,7 @@ class OrdnanceAgent(agent.Agent):
         # However, mypy thinks this function is missing a return statement, and this line convinces it otherwise.
         raise RuntimeError
 
-    @log_call_async(logger, 'roll random base ordnance item')
-    @types.check_ready_async(logger)
-    async def random_base_async(self: OrdnanceAgent, /, tags: Sequence[str] = []) -> types.item.OrdnanceBaseItem | types.Ret:
-        '''Get a base item at random.'''
+    def __random_base(self: OrdnanceAgent, /, tags: Sequence[str] = []) -> types.item.OrdnanceBaseItem | types.Ret:
         items = self._data.base
 
         match tags:
@@ -404,9 +506,19 @@ class OrdnanceAgent(agent.Agent):
         else:
             return types.Ret.NO_MATCH
 
-    @log_call_async(logger, 'roll random ordnance enchantment')
+    @log_call(logger, 'roll random base ordnance item')
+    @types.check_ready(logger)
+    def random_base(self: OrdnanceAgent, /, tags: Sequence[str] = []) -> types.item.OrdnanceBaseItem | types.Ret:
+        '''Get a base item at random.'''
+        return self.__random_base(tags)
+
+    @log_call_async(logger, 'roll random base ordnance item')
     @types.check_ready_async(logger)
-    async def random_enchant_async(
+    async def random_base_async(self: OrdnanceAgent, /, tags: Sequence[str] = []) -> types.item.OrdnanceBaseItem | types.Ret:
+        '''Get a base item at random.'''
+        return self.__random_base(tags)
+
+    def __random_enchant(
             self: OrdnanceAgent,
             /,
             group: str,
@@ -414,7 +526,6 @@ class OrdnanceAgent(agent.Agent):
             enchants: Sequence[str] = [],
             tags: set[str] = set()) -> \
             types.item.OrdnanceEnchant | types.Ret:
-        '''Roll a random enchantment.'''
         items = self._data.enchantments[group][bonus]
 
         def _efilter(x: types.item.OrdnanceEnchant) -> bool:
@@ -440,10 +551,33 @@ class OrdnanceAgent(agent.Agent):
             case _:
                 raise ValueError
 
-    @agent.ensure_costs
-    @log_call_async(logger, 'roll random specific ordnance item.')
+    @log_call(logger, 'roll random ordnance enchantment')
+    @types.check_ready(logger)
+    def random_enchant(
+            self: OrdnanceAgent,
+            /,
+            group: str,
+            bonus: Bonus,
+            enchants: Sequence[str] = [],
+            tags: set[str] = set()) -> \
+            types.item.OrdnanceEnchant | types.Ret:
+        '''Roll a random enchantment.'''
+        return self.__random_enchant(group, bonus, enchants, tags)
+
+    @log_call_async(logger, 'roll random ordnance enchantment')
     @types.check_ready_async(logger)
-    async def random_specific_async(
+    async def random_enchant_async(
+            self: OrdnanceAgent,
+            /,
+            group: str,
+            bonus: Bonus,
+            enchants: Sequence[str] = [],
+            tags: set[str] = set()) -> \
+            types.item.OrdnanceEnchant | types.Ret:
+        '''Roll a random enchantment.'''
+        return self.__random_enchant(group, bonus, enchants, tags)
+
+    def __random_specific(
             self: OrdnanceAgent,
             /,
             args: Sequence[str],
@@ -451,7 +585,6 @@ class OrdnanceAgent(agent.Agent):
             mincost: types.item.Cost | None = None,
             maxcost: types.item.Cost | None = None) -> \
             types.item.OrdnanceSpecific | types.Ret:
-        '''Roll a random specific item.'''
         match args:
             case [_, _, _]:
                 group = args[0]
@@ -489,11 +622,62 @@ class OrdnanceAgent(agent.Agent):
         else:
             return types.Ret.NO_MATCH
 
+    @agent.ensure_costs
+    @log_call(logger, 'roll random specific ordnance item.')
+    @types.check_ready(logger)
+    def random_specific(
+            self: OrdnanceAgent,
+            /,
+            args: Sequence[str],
+            *,
+            mincost: types.item.Cost | None = None,
+            maxcost: types.item.Cost | None = None) -> \
+            types.item.OrdnanceSpecific | types.Ret:
+        '''Roll a random specific item.'''
+        return self.__random_specific(
+            args=args,
+            mincost=mincost,
+            maxcost=maxcost,
+        )
+
+    @agent.ensure_costs
+    @log_call_async(logger, 'roll random specific ordnance item.')
+    @types.check_ready_async(logger)
+    async def random_specific_async(
+            self: OrdnanceAgent,
+            /,
+            args: Sequence[str],
+            *,
+            mincost: types.item.Cost | None = None,
+            maxcost: types.item.Cost | None = None) -> \
+            types.item.OrdnanceSpecific | types.Ret:
+        '''Roll a random specific item.'''
+        return self.__random_specific(
+            args=args,
+            mincost=mincost,
+            maxcost=maxcost,
+        )
+
+    @log_call(logger, 'get ordnance bonus costs')
+    @types.check_ready(logger)
+    def get_bonus_costs(self: OrdnanceAgent, /, base: types.item.OrdnanceBaseItem) -> tuple[types.item.Cost, types.item.Cost]:
+        '''Get the bonus costs associated with the given item.'''
+        return get_enchant_bonus_costs(self._data, base)
+
     @log_call_async(logger, 'get ordnance bonus costs')
     @types.check_ready_async(logger)
     async def get_bonus_costs_async(self: OrdnanceAgent, /, base: types.item.OrdnanceBaseItem) -> tuple[types.item.Cost, types.item.Cost]:
         '''Get the bonus costs associated with the given item.'''
         return get_enchant_bonus_costs(self._data, base)
+
+    @log_call(logger, 'get ordnance tags')
+    @types.check_ready(logger)
+    def tags(self: OrdnanceAgent, /) -> Sequence[str] | types.Ret:
+        '''Get a list of recognized tags.'''
+        if self._data.tags:
+            return list(self._data.tags)
+        else:
+            return types.Ret.NO_MATCH
 
     @log_call_async(logger, 'get ordnance tags')
     @types.check_ready_async(logger)
