@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "roll35"
-version = "5.1.1"
+version = "6.0.0"
 description = "A Python module and Discord bot for rolling random items for Pathfinder 1e."
 authors = ["Austin S. Hemmelgarn <ahferroin7@gmail.com>"]
 license = "MITNFA AND OGL-1.1a"
