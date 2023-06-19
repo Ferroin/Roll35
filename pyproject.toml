@@ -16,7 +16,7 @@ python = "^3.10"
 jaro-winkler = "^2.0"
 Jinja2 = "^3.1.2"
 nextcord = {version = "^2.4.2", extras = ["speed"]}
-ruamel-yaml = "^0.17.31"
+ruamel-yaml = "^0.17.32"
 pydantic = "^1.10.9"
 
 [tool.poetry.group.dev.dependencies]
