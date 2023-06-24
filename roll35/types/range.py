@@ -60,6 +60,8 @@ class R35Range(Container):
             return self.min <= v <= self.max
         elif isinstance(v, R35Range):
             return v.min in self and v.max in self
+        elif v == 'varies':
+            return self.min <= 0 <= self.max
         else:
             raise ValueError(f'{ type(v) } is not supported by R35Range objects.')
 

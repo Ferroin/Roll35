@@ -33,7 +33,7 @@ if TYPE_CHECKING:
 NOT_READY = 'Magic item data is not yet available, please try again later.'
 NO_ITEMS_IN_COST_RANGE = 'No items found in requested cost range.'
 
-MAX_REROLLS = 32
+MAX_REROLLS = 128
 MAX_COUNT = 32
 
 ITEM_PARSER = Parser({
@@ -617,9 +617,9 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
         case (types.Ret.OK, types.item.BaseItem() as i1):
             if i1.reroll is not None:
                 return await _reroll(pool, ds, i1.reroll, mincost=mincost, maxcost=maxcost, attempt=attempt)
-            elif mincost is not None and i1.cost < mincost:
+            elif mincost is not None and ((isinstance(i1.cost, str) and mincost == 0) or (not isinstance(i1.cost, str) and i1.cost < mincost)):
                 return await roll(pool, ds, args['o_args'], attempt=attempt+1)
-            elif maxcost is not None and i1.cost > maxcost:
+            elif maxcost is not None and (isinstance(i1.cost, str) or i1.cost > maxcost):
                 return await roll(pool, ds, args['o_args'], attempt=attempt+1)
             else:
                 return (types.Ret.OK, i1)
@@ -629,9 +629,9 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
             elif i2.cost is None:
                 logger.error(bad_return(i2))
                 return (types.Ret.FAILED, 'Unknown internal error.')
-            elif mincost is not None and i2.cost < mincost:
+            elif mincost is not None and ((isinstance(i2.cost, str) and mincost == 0) or (not isinstance(i2.cost, str) and i2.cost < mincost)):
                 return await roll(pool, ds, args['o_args'], attempt=attempt+1)
-            elif maxcost is not None and i2.cost > maxcost:
+            elif maxcost is not None and (isinstance(i2.cost, str) or i2.cost > maxcost):
                 return await roll(pool, ds, args['o_args'], attempt=attempt+1)
             else:
                 return (types.Ret.OK, i2)

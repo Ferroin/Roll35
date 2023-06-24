@@ -44,9 +44,9 @@ class Settlement(types.R35Cog):
 
         match await roll_settlement(pop, self.pool, self.ds, self.renderer):
             case (types.Ret.OK, str() as msg):
-                await ctx.send(msg)
+                return await ctx.send(msg)
             case (types.Ret() as ret, str() as msg) if ret is not types.Ret.OK:
-                await ctx.send(msg)
+                return await ctx.send(msg)
 
         raise RuntimeError
 
