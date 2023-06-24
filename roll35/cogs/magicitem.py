@@ -433,6 +433,7 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
         'level': args.get('level', None),
         'mincost': args.get('mincost', 0),
         'maxcost': args.get('maxcost', float('inf')),
+        'o_args': args.get('o_args', args),
     }
     ret: Any = None
 
@@ -617,9 +618,9 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
             if i1.reroll is not None:
                 return await _reroll(pool, ds, i1.reroll, mincost=mincost, maxcost=maxcost, attempt=attempt)
             elif mincost is not None and i1.cost < mincost:
-                return await roll(pool, ds, args, attempt=attempt+1)
+                return await roll(pool, ds, args['o_args'], attempt=attempt+1)
             elif maxcost is not None and i1.cost > maxcost:
-                return await roll(pool, ds, args, attempt=attempt+1)
+                return await roll(pool, ds, args['o_args'], attempt=attempt+1)
             else:
                 return (types.Ret.OK, i1)
         case types.item.BaseItem() as i2:
@@ -629,9 +630,9 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
                 logger.error(bad_return(i2))
                 return (types.Ret.FAILED, 'Unknown internal error.')
             elif mincost is not None and i2.cost < mincost:
-                return await roll(pool, ds, args, attempt=attempt+1)
+                return await roll(pool, ds, args['o_args'], attempt=attempt+1)
             elif maxcost is not None and i2.cost > maxcost:
-                return await roll(pool, ds, args, attempt=attempt+1)
+                return await roll(pool, ds, args['o_args'], attempt=attempt+1)
             else:
                 return (types.Ret.OK, i2)
         case (types.Ret() as r1, str() as msg) if r1 is not types.Ret.OK:
