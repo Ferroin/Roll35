@@ -243,6 +243,8 @@ class RankedAgent(agent.Agent):
             case _:
                 raise ValueError
 
+        spell = None
+
         if isinstance(item, types.item.SpellItem):
             spellparams = item.spell
 
@@ -278,6 +280,8 @@ class RankedAgent(agent.Agent):
                 item = self.__handle_level_search(rank=rank, subrank=subrank, level=level, mincost=mincost, maxcost=maxcost)
             case _:
                 raise ValueError
+
+        spell = None
 
         if isinstance(item, types.item.SpellItem):
             spellparams = item.spell
