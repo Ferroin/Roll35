@@ -19,7 +19,16 @@ T = TypeVar('T')
 
 @dataclass
 class ParserEntry(Generic[T]):
-    '''Describes a parameter for a parser schema.'''
+    '''Describes a parameter for a parser schema.
+
+       `type` is a callable that transforms a string into the required
+       parameter type.
+
+       `name` is a sequence of strings that define what names to recognize
+       for the parameter.
+
+       `default` defines the default value to return for the parameter
+       if it was not specified by the user.'''
     type: Callable[[str], T]
     names: Sequence[str]
     default: T | None
@@ -28,16 +37,11 @@ class ParserEntry(Generic[T]):
 class Parser:
     '''A simple class for parsing commands into a dictionary.
 
-       Takes a schema in the form of a dict. Keys correspond to target
-       keys for the parsed output, while values are dicts that define
-       how to produce the value for that key.
+       Takes a schema consisting of a mapping of strings to
+       roll35.parser.ParserEntry instances.
 
-       Each value recognizes the following keys:
-       - `type`: Specifies a callable to pass the token to to convert
-         it to the desired type.
-       - `names`: A list of strings which are used to indicate the
-         specified token.
-       '''
+       Behavior if a schema contains multiple parameters that have the
+       same name is undefined.'''
     def __init__(self: Parser, schema: Mapping[str, ParserEntry], /):
         self._schema = schema
         self._rindex = dict()
@@ -49,8 +53,9 @@ class Parser:
     def parse(self: Parser, data: str, /) -> Result[dict[str, Any]]:
         '''Parse a string using the schema.
 
-           Returns either a tuple of True and the dictionary produced
-           by the parser, or False and an error message.'''
+           Returns either a tuple of roll35.types.Ret.OK and the
+           dictionary produced by the parser, or roll35.types.Ret.FAILED
+           and an error message.'''
         ret: dict[str, Any] = {k: v.default for k, v in self._schema.items()}
 
         lexer = shlex.shlex(StringIO(data), posix=True)
