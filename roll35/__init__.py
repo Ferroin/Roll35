@@ -24,26 +24,8 @@
 
 import sys
 
-from . import cogs, common, data, parser, renderer, types
+from . import cogs, common, data, parser, renderer, roller, types
 from .common import VERSION
-
-BOT_HELP = '''Roll items and spells for first-edition Pathfinder.
-
-Note that currently we do not support:
-
-- Rolling random materials for magic armor and weapons.
-- Rolling stored spells for items capable of storing spells.
-- Rolling for whether an item is intelligent or not.
-- Rolling for whether magic items have special markings or not.
-- Rolling skills for items that provide skill ranks.
-
-This bot is capable of responding to direct messages, though you will
-still need to use the command prefix.
-
-Commands, and most of ther parameters, are case-insensitive.
-
-Supported commands, grouped by category:
-'''
 
 __version__ = f'{VERSION[0]}.{VERSION[1]}.{VERSION[2]}'
 
@@ -53,6 +35,7 @@ __all__ = [
     'data',
     'parser',
     'renderer',
+    'roller',
     'types',
 ]
 
