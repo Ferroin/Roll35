@@ -22,12 +22,29 @@ import nextcord
 
 from nextcord.ext import commands
 
-from . import BOT_HELP
 from .cogs import COGS
 from .common import bad_return, did_you_mean
 from .data import DataSet
 from .renderer import Renderer
 from .types import Ret
+
+BOT_HELP = '''Roll items and spells for first-edition Pathfinder.
+
+Note that currently we do not support:
+
+- Rolling random materials for magic armor and weapons.
+- Rolling stored spells for items capable of storing spells.
+- Rolling for whether an item is intelligent or not.
+- Rolling for whether magic items have special markings or not.
+- Rolling skills for items that provide skill ranks.
+
+This bot is capable of responding to direct messages, though you will
+still need to use the command prefix.
+
+Commands, and most of ther parameters, are case-insensitive.
+
+Supported commands, grouped by category:
+'''
 
 logger = logging.getLogger('roll35')
 
@@ -85,6 +102,8 @@ class Bot(commands.Bot):
 
 
 def main() -> None:
+    '''Main logic for running as a bot.'''
+
     TOKEN = os.environ['DISCORD_TOKEN']
     LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO')
     POOL_SIZE = os.environ.get('R35_POOL_SIZE', None)
