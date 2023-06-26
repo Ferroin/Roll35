@@ -1,6 +1,8 @@
 # Copyright (c) 2023 Austin S. Hemmelgarn
 # SPDX-License-Identifier: MITNFA
 
+'''Cog for rolling magic items.'''
+
 from __future__ import annotations
 
 import asyncio
@@ -127,7 +129,7 @@ logger = logging.getLogger(__name__)
 
 class MagicItem(types.R35Cog):
     '''Roll35 cog for handling magic items.'''
-    async def _roll_magic_item(self: MagicItem, ctx: commands.Context, *args: str) -> None:
+    async def __roll_magic_item(self: MagicItem, ctx: commands.Context, *args: str) -> None:
         match ITEM_PARSER.parse(' '.join(args)):
             case (types.Ret.FAILED, msg):
                 await ctx.send(
@@ -204,8 +206,8 @@ class MagicItem(types.R35Cog):
              or scrolls.
            - `base`: Specify the base item to use when rolling magic
              armor or a magic weapon. Base items should be quoted
-             if their names contain spaces (for example: `‘studded
-             leather’` instead of `studded leather`). Only accepted if
+             if their names contain spaces (for example: `'studded
+             leather'` instead of `studded leather`). Only accepted if
              `category armor` or `category weapon` is specified. See also
              the `/r35 armor` and `/r35 weapon` commands for generating
              random mundane armor and weapons.
@@ -214,14 +216,14 @@ class MagicItem(types.R35Cog):
            - `count`: Roll this many items using the same parameters.
 
            Parameters which are not specified are generated randomly.'''
-        await self._roll_magic_item(ctx, *args)
+        await self.__roll_magic_item(ctx, *args)
 
     @commands.command()  # type: ignore
     async def mi(self, ctx, *args):
         '''Alias for `magicitem`.'''
-        await self._roll_magic_item(ctx, *args)
+        await self.__roll_magic_item(ctx, *args)
 
-    async def _categories(self: MagicItem, ctx: commands.Context, /) -> None:
+    async def __categories(self: MagicItem, ctx: commands.Context, /) -> None:
         match await cast(CategoryAgent, self.ds['category']).categories_async():
             case types.Ret.NOT_READY:
                 await ctx.send(NOT_READY)
@@ -237,9 +239,9 @@ class MagicItem(types.R35Cog):
     @commands.command()  # type: ignore
     async def categories(self, ctx, /):
         '''List known magic item categories.'''
-        await self._categories(ctx)
+        await self.__categories(ctx)
 
-    async def _slots(self: MagicItem, ctx: commands.Context, /) -> None:
+    async def __slots(self: MagicItem, ctx: commands.Context, /) -> None:
         match await cast(WondrousAgent, self.ds['wondrous']).slots_async():
             case types.Ret.NOT_READY:
                 await ctx.send(NOT_READY)
@@ -255,4 +257,4 @@ class MagicItem(types.R35Cog):
     @commands.command()  # type: ignore
     async def slots(self, ctx, /) -> None:
         '''List known wondrous item slots.'''
-        await self._slots(ctx)
+        await self.__slots(ctx)
