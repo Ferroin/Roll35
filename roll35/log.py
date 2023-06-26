@@ -68,7 +68,10 @@ def log_call_async(logger: logging.Logger, msg: str, /) -> Callable[[Callable[P,
     '''Decorate an async function to log calls to that function.
 
        Function arguments are logged on entry, and the return value is
-       logged on exit.'''
+       logged on exit.
+
+       This differs from the regular log_call decorator in that it
+       ensures proper reporting of the return value.'''
     def decorator(func: Callable[P, Awaitable[T]]) -> Callable[P, Awaitable[T]]:
         async def inner(*args: P.args, **kwargs: P.kwargs) -> T:
             seq = time.monotonic_ns()
