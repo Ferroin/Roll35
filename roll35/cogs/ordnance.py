@@ -1,6 +1,8 @@
 # Copyright (c) 2023 Austin S. Hemmelgarn
 # SPDX-License-Identifier: MITNFA
 
+'''Cog for rolling mundane ordnance items.'''
+
 from __future__ import annotations
 
 import logging
@@ -24,7 +26,7 @@ NOT_READY = 'Item data is not yet available, please try again later.'
 
 class Ordnance(R35Cog):
     '''Roll35 cog for handling mundane armor and weapons.'''
-    async def get_item(self: Ordnance, ctx: commands.Context, typ: str, /, tags: Sequence[str]) -> None:
+    async def __get_item(self: Ordnance, ctx: commands.Context, typ: str, /, tags: Sequence[str]) -> None:
         '''Get a mundane item.'''
         match await cast(OrdnanceAgent, self.ds[typ]).random_base_async(tags):
             case Ret.NOT_READY:
@@ -38,7 +40,7 @@ class Ordnance(R35Cog):
                 logger.warning(bad_return(ret))
                 await ctx.send('Unknown internal error.')
 
-    async def get_tags(self: Ordnance, ctx: commands.Context, typ: str, /) -> None:
+    async def __get_tags(self: Ordnance, ctx: commands.Context, typ: str, /) -> None:
         match await cast(OrdnanceAgent, self.ds[typ]).tags_async():
             case Ret.NOT_READY:
                 await ctx.send(NOT_READY)
@@ -60,12 +62,12 @@ class Ordnance(R35Cog):
            Optionally takes a space-separated list of tags to limit what
            armor items can be returned. To list recognized tags, run
            `/r35 armortags`.'''
-        await self.get_item(ctx, 'armor', tags)
+        await self.__get_item(ctx, 'armor', tags)
 
     @commands.command()  # type: ignore
     async def armortags(self, ctx, /):
         '''List known armor tags.'''
-        await self.get_tags(ctx, 'armor')
+        await self.__get_tags(ctx, 'armor')
 
     @commands.command()  # type: ignore
     async def weapon(self, ctx, *tags):
@@ -74,9 +76,9 @@ class Ordnance(R35Cog):
            Optionally takes a space-separated list of tags to limit what
            weapon items can be returned. To list recognized tags, run
            `/r35 weapontags`'''
-        await self.get_item(ctx, 'weapon', tags)
+        await self.__get_item(ctx, 'weapon', tags)
 
     @commands.command()  # type: ignore
     async def weapontags(self, ctx, /):
         '''List known weapon tags.'''
-        await self.get_tags(ctx, 'weapon')
+        await self.__get_tags(ctx, 'weapon')

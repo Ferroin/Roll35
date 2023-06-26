@@ -1,6 +1,8 @@
 # Copyright (c) 2023 Austin S. Hemmelgarn
 # SPDX-License-Identifier: MITNFA
 
+'''Cog for rolling items for settlements.'''
+
 from __future__ import annotations
 
 import logging
@@ -15,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 class Settlement(types.R35Cog):
     '''Roll35 cog for handling settlements.'''
-    async def _settlement(self: Settlement, ctx: commands.Context, /, population: int) -> None:
+    async def __settlement(self: Settlement, ctx: commands.Context, /, population: int) -> None:
         try:
             pop = int(population)
         except ValueError:
@@ -34,9 +36,12 @@ class Settlement(types.R35Cog):
                 await ctx.send(msg)
                 return
 
+        # The below line should never actually be run, as the above match clauses are (theoretically) exhaustive.
+        #
+        # However, mypy thinks this function is missing a return statement, and this line convinces it otherwise.
         raise RuntimeError
 
     @commands.command()  # type: ignore
     async def settlement(self, ctx, population: int, /):
         '''Roll magic items for a settlement with the given population.'''
-        await self._settlement(ctx, population)
+        await self.__settlement(ctx, population)
