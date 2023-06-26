@@ -53,7 +53,10 @@ def ismapping(item: Any, /) -> TypeGuard[Mapping]:
 
 
 def bad_return(value: Any, /) -> str:
-    '''Produce a log message indicating a bad return code, including call site info.'''
+    '''Produce a log message indicating a bad return code, including call site info.
+
+       This does not actually log the message, it simply returns the
+       string to be used as the message.'''
     import inspect
     frame = inspect.getframeinfo(inspect.stack()[1][0])
     return f'Unexpected return code {value} at {frame.filename}:{frame.lineno}'
@@ -76,7 +79,11 @@ def expand_weighted_list(items: Iterable[types.Item]) -> list[types.Item]: ...
 
 
 def expand_weighted_list(items: Iterable[types.WeightedValue] | Iterable[types.Item]) -> list[str] | list[types.Item]:
-    '''Transform a list of items with weights into a list of items usable with random.choice().'''
+    '''Transform a list of items with weights into a list of items usable with random.choice().
+
+       `items` must be either a list of roll35.types.WeightedValue
+       instances or a list of roll35.types.item.BaseItem instances
+       (or subclasses of instances).'''
     if all(map(lambda x: isinstance(x, types.WeightedValue), items)):
         return list(flatten([itertools.repeat(x.value, x.weight) for x in cast(Iterable[types.WeightedValue], items)]))
     elif all(map(lambda x: isinstance(x, types.item.BaseItem), items)):
@@ -142,9 +149,8 @@ def rnd(items: Iterable[str], /) -> str | types.Ret: ...
 def rnd(items: Iterable[types.WeightedValue] | Iterable[T], /) -> str | T | types.Ret:
     '''Select a random item from items.
 
-       If the items are types.WeightedValue or types.Item instances,
-       return one of their values based on their weights. Otherwise,
-       act like random.choice(items).'''
+       If the items are roll35.types.WeightedValue or roll35.types.Item instances, return one of their values
+       based on their weights. Otherwise, act like random.choice(items).'''
     ret: str | T | types.Ret = types.Ret.NO_MATCH
 
     if not list(items):
@@ -178,7 +184,9 @@ def chunk(items: Iterable[T], /, *, size: int) -> Generator[list[T], None, None]
 
 
 def flatten(items: Iterable[Iterable[T]], /) -> Generator[T, None, None]:
-    '''Flatten a list of lists.'''
+    '''Flatten a list of lists.
+
+       Only flattens one level.'''
     for i in items:
         for j in i:
             yield j
@@ -200,7 +208,10 @@ def did_you_mean(items: list[str], name: str) -> types.Result[str]:
        The five highest ranking items are listed as possibilites
        if any are found, with prefix and suffix matches outranking
        substring matches, and substring matches outranking similar
-       names.'''
+       names.
+
+       This is an expensive and computationally intensive operation,
+       so it should be avoided in latency-sensitive contexts.'''
     possible = []
 
     for idx, item in enumerate(norm_string(x) for x in items):
