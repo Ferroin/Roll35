@@ -6,26 +6,17 @@ from __future__ import annotations
 import asyncio
 import logging
 
-from typing import TYPE_CHECKING, Any, Literal, cast
+from typing import Any, cast
 
 from nextcord.ext import commands
 
 from ..common import bad_return
 from ..data.spell import SpellAgent
 from ..data.classes import ClassesAgent
-from ..log import log_call
 from ..parser import Parser, ParserEntry
-from ..types import R35Cog, Ret, Result
+from ..roller.spell import roll_many_async, NOT_READY
+from ..types import R35Cog, Ret
 from ..types import Spell as SpellEntry
-
-if TYPE_CHECKING:
-    from collections.abc import Mapping, Awaitable
-
-    from ..data import DataSet
-
-NOT_READY = 'Spell data is not yet available, please try again later.'
-
-MAX_COUNT = 32
 
 SPELL_PARSER = Parser({
     'cls': ParserEntry(
@@ -89,18 +80,15 @@ class Spell(R35Cog):
 
         match parsed:
             case {'count': c} if isinstance(c, int) and c > 0:
-                if c > MAX_COUNT:
-                    await ctx.send(f'Too many spells requested, no more than { MAX_COUNT } may be rolled at a time.')
-                    return
-
-                coros = []
-
-                for i in range(0, c):
-                    coros.append(roll_spell(self.ds, {
+                coros = roll_many_async(
+                    self.ds,
+                    c,
+                    {
                         'level': parsed['level'],
                         'cls': parsed['cls'],
                         'tag': parsed['tag'],
-                    }))
+                    },
+                )
 
                 await ctx.trigger_typing()
 
@@ -198,9 +186,3 @@ class Spell(R35Cog):
     async def classes(self, ctx, /):
         '''List known classes for spells.'''
         await self._classes(ctx)
-
-
-@log_call(logger, 'roll spell')
-def roll_spell(ds: DataSet, /, args: Mapping[str, Any]) -> Awaitable[Result[SpellEntry] | Literal[Ret.NOT_READY]]:
-    '''Return a coroutine that will return a spell.'''
-    return cast(SpellAgent, ds['spell']).random_async(**args)
