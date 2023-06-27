@@ -72,7 +72,7 @@ class Bot(commands.Bot):
 
         return await asyncio.gather(
             ds.load_data_async(self.pool),
-            renderer.load_data(self.pool),
+            renderer.load_data_async(self.pool),
             super().start(token, *args, reconnect=reconnect),
         )
 
