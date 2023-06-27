@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 NOT_READY = 'Magic item data is not yet available, please try again later.'
 NO_ITEMS_IN_COST_RANGE = 'No items found in requested cost range.'
 
-MAX_REROLLS = 128
+MAX_REROLLS = 32
 MAX_COUNT = 32
 
 logger = logging.getLogger(__name__)
@@ -51,7 +51,7 @@ async def _reroll_async(
     '''Reroll a magic item using the specified parameters.'''
     match path:
         case [category, slot, rank, subrank]:
-            return await roll(
+            return await roll_async(
                 pool,
                 ds,
                 {
@@ -65,7 +65,7 @@ async def _reroll_async(
                 attempt=attempt+1
             )
         case [category, rank, subrank]:
-            return await roll(
+            return await roll_async(
                 pool,
                 ds,
                 {
@@ -90,13 +90,18 @@ async def _assemble_magic_item(
         /,
         base_item: types.item.OrdnanceBaseItem,
         pattern: types.item.OrdnancePattern,
-        masterwork: int | float,
-        bonus_cost: int | float,
         *,
         attempt: int = 0) -> \
         types.Result[types.item.SimpleItem]:
     '''Assemble a magic weapon or armor item.'''
-    logger.debug(f'Assembling magic item with parameters: {base_item}, {pattern}, {masterwork}, {bonus_cost}')
+    logger.debug(f'Assembling magic item with parameters: {base_item}, {pattern}')
+
+    match await agent.get_bonus_costs_async(base_item):
+        case types.Ret.NOT_READY:
+            return (types.Ret.NOT_READY, NOT_READY)
+        case (c1, c2):
+            masterwork = c1
+            bonus_cost = c2
 
     if pattern.bonus is None or pattern.enchants is None:
         raise ValueError('Cannot assemble magic item without bonus or enchants properties.')
@@ -152,7 +157,7 @@ async def _assemble_magic_item(
                 'Failed to generate valid enchantments for magic item, retrying (attempt { attempt }).'
             )
             return await _assemble_magic_item(
-                agent, base_item, pattern, masterwork, bonus_cost,
+                agent, base_item, pattern,
                 attempt=attempt
             )
     else:
@@ -181,13 +186,13 @@ def roll_many_async(pool: Executor, ds: DataSet, /, count: int, args: Mapping[st
     coros = []
 
     for i in range(0, count):
-        coros.append(roll(pool, ds, args))
+        coros.append(roll_async(pool, ds, args))
 
     return coros
 
 
 @log_call_async(logger, 'roll magic item')
-async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attempt: int = 0) -> MIResult:
+async def roll_async(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attempt: int = 0) -> MIResult:
     '''Roll a magic item.'''
     args = {
         'rank': args.get('rank', None),
@@ -257,13 +262,10 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
                         case types.Ret.NOT_READY:
                             item = (types.Ret.NOT_READY, NOT_READY)
                         case types.item.OrdnanceBaseItem() as base_item:
-                            match await agent.get_bonus_costs_async(base_item):
-                                case types.Ret.NOT_READY:
-                                    item = (types.Ret.NOT_READY, NOT_READY)
-                                case (masterwork, bonus_cost):
-                                    item = await _assemble_magic_item(
-                                        agent, base_item, pattern, masterwork, bonus_cost
-                                    )
+                            item = await _assemble_magic_item(agent, base_item, pattern)
+                        case ret:
+                            logger.error(bad_return(ret))
+                            item = (types.Ret.FAILED, 'Unknown internal error.')
                 case ret:
                     logger.warning(bad_return(ret))
                     item = (types.Ret.FAILED, 'Unknown internal error.')
@@ -282,13 +284,7 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
                         case types.Ret.NO_MATCH:
                             item = types.Ret.NO_MATCH
                         case types.item.OrdnancePattern() as pattern:
-                            match await agent.get_bonus_costs_async(base_item):
-                                case types.Ret.NOT_READY:
-                                    item = (types.Ret.NOT_READY, NOT_READY)
-                                case (masterwork, bonus_cost):
-                                    item = await _assemble_magic_item(
-                                        agent, base_item, pattern, masterwork, bonus_cost
-                                    )
+                            item = await _assemble_magic_item(agent, base_item, pattern)
                         case ret:
                             logger.error(bad_return(ret))
                             item = (types.Ret.FAILED, 'Unknown internal error.')
@@ -331,7 +327,7 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
                 args['rank'] = (await ds['category'].random_rank_async(mincost=mincost, maxcost=maxcost))
                 attempt += 1
 
-                match await roll(pool, ds, args, attempt=attempt):
+                match await roll_async(pool, ds, args, attempt=attempt):
                     case (types.Ret.OK, types.item.BaseItem() as i1):
                         item = i1
                     case (types.Ret.NO_MATCH, _):
@@ -355,7 +351,7 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
 
                 attempt += 1
 
-                match await roll(pool, ds, args, attempt=attempt):
+                match await roll_async(pool, ds, args, attempt=attempt):
                     case (types.Ret.OK, types.item.BaseItem() as i1):
                         item = i1
                     case (types.Ret.NO_MATCH, _):
@@ -384,9 +380,9 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
             if i1.reroll is not None:
                 return await _reroll_async(pool, ds, i1.reroll, mincost=mincost, maxcost=maxcost, attempt=attempt)
             elif mincost is not None and ((isinstance(i1.cost, str) and mincost == 0) or (not isinstance(i1.cost, str) and i1.cost < mincost)):
-                return await roll(pool, ds, args['o_args'], attempt=attempt+1)
+                return await roll_async(pool, ds, args['o_args'], attempt=attempt+1)
             elif maxcost is not None and (isinstance(i1.cost, str) or i1.cost > maxcost):
-                return await roll(pool, ds, args['o_args'], attempt=attempt+1)
+                return await roll_async(pool, ds, args['o_args'], attempt=attempt+1)
             else:
                 return (types.Ret.OK, i1)
         case types.item.BaseItem() as i2:
@@ -396,9 +392,9 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
                 logger.error(bad_return(i2))
                 return (types.Ret.FAILED, 'Unknown internal error.')
             elif mincost is not None and ((isinstance(i2.cost, str) and mincost == 0) or (not isinstance(i2.cost, str) and i2.cost < mincost)):
-                return await roll(pool, ds, args['o_args'], attempt=attempt+1)
+                return await roll_async(pool, ds, args['o_args'], attempt=attempt+1)
             elif maxcost is not None and (isinstance(i2.cost, str) or i2.cost > maxcost):
-                return await roll(pool, ds, args['o_args'], attempt=attempt+1)
+                return await roll_async(pool, ds, args['o_args'], attempt=attempt+1)
             else:
                 return (types.Ret.OK, i2)
         case (types.Ret() as r1, str() as msg) if r1 is not types.Ret.OK:
