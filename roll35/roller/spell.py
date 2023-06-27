@@ -49,7 +49,7 @@ def roll_many_async(ds: DataSet, /, count: int, args: Mapping[str, Any]) -> Sequ
 
 @log_call_async(logger, 'roll spell')
 async def roll_spell_async(ds: DataSet, /, args: Mapping[str, Any]) -> SResult:
-    '''Return a coroutine that will return a spell.'''
+    '''Roll a random spell with the given parameters.'''
     match await cast(SpellAgent, ds['spell']).random_async(**args):
         case (types.Ret.OK, types.Spell() as spell):
             return (types.Ret.OK, spell)
