@@ -46,9 +46,9 @@ class Renderer(ReadyState):
 
         return RenderData(data)
 
-    async def load_data(self: Renderer, pool: Executor, /) -> types.Ret:
+    async def load_data_async(self: Renderer, pool: Executor, /) -> types.Ret:
         '''Load required data.'''
-        if not self._ready.is_set():
+        if not self.ready:
             loop = asyncio.get_running_loop()
             logger.info('Loading renderer data')
 
@@ -59,7 +59,7 @@ class Renderer(ReadyState):
 
             logger.info('Finished loading renderer data')
 
-            self._ready.set()
+            self.ready = True
 
         return types.Ret.OK
 
@@ -72,14 +72,14 @@ class Renderer(ReadyState):
 
            Returns either (roll35.retcode.Ret.OK, x) where x is the rendered item, or
            (roll35.retcode.Ret.*, msg) where msg is an error message.'''
-        match await self._render(pool, item):
+        match await self.__render(pool, item):
             case types.Ret.NOT_READY:
                 return (types.Ret.NOT_READY, 'Unable to render item as renderer is not yet fully initilized.')
             case r2:
                 return cast(types.Result[str], r2)
 
     @staticmethod
-    def render_loop(tmpl: str, data: RenderData, item: types.item.BaseItem | types.item.Spell | str) -> types.Result[str]:
+    def __render_loop(tmpl: str, data: RenderData, item: types.item.BaseItem | types.item.Spell | str) -> types.Result[str]:
         n = ''
         i = 0
 
@@ -152,7 +152,7 @@ class Renderer(ReadyState):
                 tmpl = n
 
     @check_ready_async(logger)
-    async def _render(self: Renderer, pool: Executor, /, item: types.item.BaseItem | types.item.Spell | str) -> \
+    async def __render(self: Renderer, pool: Executor, /, item: types.item.BaseItem | types.item.Spell | str) -> \
             types.Result[str] | Literal[types.Ret.NOT_READY]:
         match item:
             case types.item.Spell(name=name, rolled_cls=c, rolled_caster_level=cl) if c is not None and cl is not None:
@@ -181,4 +181,4 @@ class Renderer(ReadyState):
 
         loop = asyncio.get_running_loop()
 
-        return await loop.run_in_executor(pool, self.render_loop, t, self._data, item)
+        return await loop.run_in_executor(pool, self.__render_loop, t, self._data, item)

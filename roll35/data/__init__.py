@@ -221,7 +221,7 @@ def test_dataset(src: Path = DEFAULT_DATA_ROOT) -> int:
 
     async def setup() -> None:
         await ds.load_data_async(pool)
-        await renderer.load_data(pool)
+        await renderer.load_data_async(pool)
 
     asyncio.run(setup())
 
