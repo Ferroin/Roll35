@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 NOT_READY = 'Magic item data is not yet available, please try again later.'
 NO_ITEMS_IN_COST_RANGE = 'No items found in requested cost range.'
 
-MAX_REROLLS = 32
+MAX_REROLLS = 256
 MAX_COUNT = 32
 
 logger = logging.getLogger(__name__)
