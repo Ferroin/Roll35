@@ -78,7 +78,7 @@ class Renderer(ReadyState):
                 return cast(types.Result[str], r2)
 
     @staticmethod
-    def __render_loop(tmpl: str, data: DataSet, item: types.item.BaseItem) -> types.Result[str]:
+    def _render_loop(tmpl: str, data: DataSet, item: types.item.BaseItem) -> types.Result[str]:
         n = ''
         i = 0
 
@@ -182,4 +182,4 @@ class Renderer(ReadyState):
 
         loop = asyncio.get_running_loop()
 
-        return await loop.run_in_executor(pool, self.__render_loop, t, self._data, item)
+        return await loop.run_in_executor(pool, self._render_loop, t, self._data, item)
