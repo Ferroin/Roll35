@@ -31,7 +31,9 @@ class R35Cog(commands.Cog):
         self.renderer = renderer
 
     async def render(self: R35Cog, /, item: Item | Spell) -> Result[str]:
-        '''Render an item using the renderer passed on initialization.'''
+        '''Render an item using the renderer passed on initialization.
+
+           This exists just to make rendering of items in cogs cleaner.'''
         return await self.renderer.render(self.pool, item)
 
     async def cog_before_invoke(self: R35Cog, /, ctx: commands.Context) -> None:

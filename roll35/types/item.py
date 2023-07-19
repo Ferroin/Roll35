@@ -1,7 +1,7 @@
 # Copyright (c) 2023 Austin S. Hemmelgarn
 # SPDX-License-Identifier: MITNFA
 
-'''Classes defining item formats.'''
+'''Pydantic models defining data entry formats used by roll35.data.'''
 
 from __future__ import annotations
 
@@ -69,6 +69,11 @@ class ClassEntry(BaseModel):
     @field_validator('levels')
     @classmethod
     def check_levels(cls: Type[ClassEntry], v: list[int | None], info: ValidationInfo) -> list[int | None]:
+        '''Validate the list of caster levels for spells for this class.
+
+           No more than MAX_SPELL_LEVEL may be specified. Values must
+           be positive integers or None and each value must not be less
+           than the preceeding level.'''
         if len(v) > MAX_SPELL_LEVEL + 1:
             raise ValueError(f'Too many spell levels in {info.data["name"]} class entry, no more than {MAX_SPELL_LEVEL + 1} may be specified.')
 
@@ -127,6 +132,7 @@ class BaseItem(BaseModel):
     @field_validator('cost')
     @classmethod
     def check_cost(cls: Type[BaseItem], v: _Cost) -> _Cost:
+        '''Check the cost field for validity.'''
         if v is not None and v != 'varies':
             if v < 0:
                 raise ValueError('Cost must be at least zero.')
@@ -136,6 +142,10 @@ class BaseItem(BaseModel):
     @field_validator('costrange')
     @classmethod
     def check_costrange(cls: Type[BaseItem], v: CostRange, info: ValidationInfo) -> CostRange:
+        '''Check the costrange field for validity.
+
+           Also confirms that the cost or costmult fields are not also
+           specified if the costrange field is specified.'''
         if v is not None:
             if info.data.get('cost') is not None or info.data.get('costmult') is not None:
                 raise TypeError('If costrange is specified, cost and costmult may not be specified.')
@@ -159,11 +169,11 @@ class BaseItem(BaseModel):
 
     @field_validator('costmult')
     @classmethod
-    @classmethod
     def check_costmult(cls: Type[BaseItem], v: Cost) -> Cost:
+        '''Check the costmult field for validity.'''
         if v is not None:
             if v < 1:
-                raise ValueError('Cost must be at least one.')
+                raise ValueError('Cost multiplier must be at least one.')
 
         return v
 
@@ -373,11 +383,10 @@ class OrdnancePattern(BaseItem):
 OrdnanceSpecific = SimpleItem
 
 
-class OrdnanceBaseItem(BaseItem):
+class OrdnanceBaseItem(SimpleItem):
     '''A base ordnance item entry.'''
     type: str
     tags: set[Tag]
-    name: str
     count: int | None = None
 
     @field_validator('count')

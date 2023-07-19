@@ -16,11 +16,7 @@ class R35List(R35Container, MutableSequence, Generic[T]):
 
        Costs are only updated for contained items that are one of:
        - Another roll35.types.R35Container.
-       - A mapping with a key called 'cost' that has a value that is
-         either an integer or a float.
-       - A mapping with a key called 'costrange' that has a value which
-         is an list with two values, one for the minimum cost and one
-         for the maximum cost.
+       - A roll35.types.item.BaseItem isntance or subclass instance.
 
        This class is (intentionally) optimized for WORM access
        patterns. In-place replacement of items is expensive as it requires
