@@ -15,7 +15,12 @@ T = TypeVar('T')
 
 
 class R35Container(abc.ABC, Collection):
-    '''Base class used by roll35 container types.'''
+    '''Base class used by roll35 container types.
+
+       Subclasses of this are used internally for item data. Most of
+       the reason this exists is to simplify cost filtering and push
+       it earlier into the item selection process so that we can avoid
+       rerolls as much as possible.'''
     def __init__(self: R35Container, /) -> None:
         self._data: Collection | None = None
         self._costs = R35Range()
@@ -40,7 +45,7 @@ class R35Container(abc.ABC, Collection):
 
     @property
     def costs(self: R35Container, /) -> R35Range:
-        '''A R35Range instance that tracks the costs of items added to the container.'''
+        '''A roll35.types.range.R35Range instance that tracks the costs of items added to the container.'''
         return self._costs
 
     @staticmethod
@@ -61,4 +66,7 @@ class R35Container(abc.ABC, Collection):
 
     @abc.abstractmethod
     def _recompute_costs(self: R35Container, /) -> None:
+        '''Callback to recompute the costs of items in the container.
+
+           This _must_ be overridden by subclasses.'''
         return None
