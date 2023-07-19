@@ -8,7 +8,7 @@ from __future__ import annotations
 from collections.abc import Sequence, Mapping, MutableMapping
 from typing import Literal, TypeVar, Type, Any, cast
 
-from pydantic import BaseModel, Field, validator, root_validator
+from pydantic import field_validator, model_validator, BaseModel, Field, FieldValidationInfo
 
 from .ranks import RankWeights
 
@@ -55,7 +55,7 @@ class WeightedValue(BaseModel):
     weight: int
     value: str
 
-    _check_weight = validator('weight', allow_reuse=True)(check_weight)
+    _check_weight = field_validator('weight')(check_weight)
 
 
 class ClassEntry(BaseModel):
@@ -66,31 +66,31 @@ class ClassEntry(BaseModel):
     duplicate: str | None = None
     merge: Sequence[str] | None = None
 
-    @validator('levels')
+    @field_validator('levels')
     @classmethod
-    def check_levels(cls: Type[ClassEntry], v: list[int | None], values: dict[str, Any]) -> list[int | None]:
+    def check_levels(cls: Type[ClassEntry], v: list[int | None], info: FieldValidationInfo) -> list[int | None]:
         if len(v) > MAX_SPELL_LEVEL + 1:
-            raise ValueError(f'Too many spell levels in { values["name"] } class entry, no more than { MAX_SPELL_LEVEL + 1 } may be specified.')
+            raise ValueError(f'Too many spell levels in { info.data["name"] } class entry, no more than { MAX_SPELL_LEVEL + 1 } may be specified.')
 
         last = v[0]
 
         if last is not None and last < 1:
-            raise ValueError(f'Spell level 0 level is less than 1 in { values["name"] } class entry.')
+            raise ValueError(f'Spell level 0 level is less than 1 in { info.data["name"] } class entry.')
 
         for idx, level in enumerate(v[1:]):
             if last is not None:
                 if level is None:
                     raise ValueError('Sparse spell lists are not supported.')
                 elif level < last:
-                    raise ValueError(f'Spell level { idx } level is lower than spell level { idx } level in { values["name"] } class entry.')
+                    raise ValueError(f'Spell level { idx } level is lower than spell level { idx } level in { info.data["name"] } class entry.')
                 elif level < 1:
-                    raise ValueError(f'Spell level { idx } level is less than 1 in { values["name"] } class entry.')
+                    raise ValueError(f'Spell level { idx } level is less than 1 in { info.data["name"] } class entry.')
 
             last = level
 
         return v
 
-    @root_validator
+    @model_validator(mode='before')
     @classmethod
     def mutex_duplicate_merge(cls: Type[ClassEntry], values: dict[str, Any]) -> dict[str, Any]:
         '''Duplicate and merge keys are mutually exclusive.'''
@@ -122,9 +122,9 @@ class BaseItem(BaseModel):
     costrange: CostRange | None = None
     costmult: Cost | None = None
 
-    _check_weight = validator('weight', allow_reuse=True)(check_weight)
+    _check_weight = field_validator('weight')(check_weight)
 
-    @validator('cost')
+    @field_validator('cost')
     @classmethod
     def check_cost(cls: Type[BaseItem], v: _Cost) -> _Cost:
         if v is not None and v != 'varies':
@@ -133,11 +133,11 @@ class BaseItem(BaseModel):
 
         return v
 
-    @validator('costrange')
+    @field_validator('costrange')
     @classmethod
-    def check_costrange(cls: Type[BaseItem], v: CostRange, values: dict[str, Any]) -> CostRange:
+    def check_costrange(cls: Type[BaseItem], v: CostRange, info: FieldValidationInfo) -> CostRange:
         if v is not None:
-            if values.get('cost') is not None or values.get('costmult') is not None:
+            if info.data.get('cost') is not None or info.data.get('costmult') is not None:
                 raise TypeError('If costrange is specified, cost and costmult may not be specified.')
 
             if v[0] < 0:
@@ -157,7 +157,8 @@ class BaseItem(BaseModel):
 
         return v
 
-    @validator('costmult')
+    @field_validator('costmult')
+    @classmethod
     @classmethod
     def check_costmult(cls: Type[BaseItem], v: Cost) -> Cost:
         if v is not None:
@@ -172,7 +173,7 @@ class SpellParams(BaseModel):
     level: int | None = None
     cls: str | None = None
 
-    _check_level = validator('level', allow_reuse=True)(check_spell_level)
+    _check_level = field_validator('level')(check_spell_level)
 
 
 class Spell(BaseModel):
@@ -190,49 +191,49 @@ class Spell(BaseModel):
     rolled_cls: str | None = None
     rolled_caster_level: int | None = None
 
-    @validator('tags', always=True)
+    @field_validator('tags', mode='before')
     @classmethod
-    def populate_tags(cls: Type[Spell], v: set[str], values: dict[str, Any]) -> set[str]:
+    def populate_tags(cls: Type[Spell], v: set[str], info: FieldValidationInfo) -> set[str]:
         if not v:
-            t = {x for x in cast(str, values['descriptor']).split(', ') if x}
+            t = {x for x in cast(str, info.data['descriptor']).split(', ') if x}
 
-            if values['school']:
-                t.add(cast(str, values['school']))
+            if info.data['school']:
+                t.add(cast(str, info.data['school']))
 
-            if values['subschool']:
-                t.add(cast(str, values['subschool']))
+            if info.data['subschool']:
+                t.add(cast(str, info.data['subschool']))
         else:
             t = v
 
         return t
 
-    @validator('classes')
+    @field_validator('classes')
     @classmethod
-    def check_classes(cls: Type[Spell], v: MutableMapping[str, int], values: dict[str, Any]) -> MutableMapping[str, int]:
+    def check_classes(cls: Type[Spell], v: MutableMapping[str, int], info: FieldValidationInfo) -> MutableMapping[str, int]:
         for c, l in v.items():
             try:
                 check_spell_level(l)
             except (ValueError, TypeError) as e:
-                raise ValueError(f'Invalid spell level for class { c } in { values["name"] }: { e }')
+                raise ValueError(f'Invalid spell level for class { c } in { info.data["name"] }: { e }')
 
         return v
 
-    @validator('domains')
+    @field_validator('domains')
     @classmethod
-    def check_domains(cls: Type[Spell], v: MutableMapping[str, int], values: dict[str, Any]) -> MutableMapping[str, int]:
+    def check_domains(cls: Type[Spell], v: MutableMapping[str, int], info: FieldValidationInfo) -> MutableMapping[str, int]:
         for c, l in v.items():
             try:
                 check_spell_level(l)
             except (ValueError, TypeError) as e:
-                raise ValueError(f'Invalid spell level for domain { c } in { values["name"] }: { e }')
+                raise ValueError(f'Invalid spell level for domain { c } in { info.data["name"] }: { e }')
 
         return v
 
-    @validator('school')
+    @field_validator('school')
     @classmethod
-    def check_school(cls: Type[Spell], v: str, values: dict[str, Any]) -> str:
+    def check_school(cls: Type[Spell], v: str, info: FieldValidationInfo) -> str:
         if not v:
-            raise ValueError(f'Missing school for { values["name"] }.')
+            raise ValueError(f'Missing school for { info.data["name"] }.')
 
         return v
 
@@ -282,9 +283,10 @@ class SpellItem(BaseItem):
     level: int | None = None
     caster_level: int | None = None
 
-    _check_level = validator('level', allow_reuse=True)(check_spell_level)
+    _check_level = field_validator('level')(check_spell_level)
 
-    @validator('caster_level')
+    @field_validator('caster_level')
+    @classmethod
     @classmethod
     def check_caster_level(cls: Type[SpellItem], v: int | None) -> int | None:
         if v is not None:
@@ -320,9 +322,10 @@ class OrdnancePattern(BaseItem):
     enchants: Sequence[EnchantBonus] | None = None
     specific: Sequence[str] | None = None
 
-    _check_bonus = validator('bonus', allow_reuse=True)(check_enchant_bonus)
+    _check_bonus = field_validator('bonus')(check_enchant_bonus)
 
-    @validator('enchants')
+    @field_validator('enchants')
+    @classmethod
     @classmethod
     def check_enchants(cls: Type[OrdnancePattern], v: Sequence[EnchantBonus] | None) -> Sequence[EnchantBonus] | None:
         if v is not None:
@@ -334,11 +337,11 @@ class OrdnancePattern(BaseItem):
 
         return v
 
-    @validator('specific')
+    @field_validator('specific')
     @classmethod
-    def check_specific(cls: Type[OrdnancePattern], v: Sequence[str] | None, values: dict[str, Any]) -> Sequence[str] | None:
+    def check_specific(cls: Type[OrdnancePattern], v: Sequence[str] | None, info: FieldValidationInfo) -> Sequence[str] | None:
         if v is not None:
-            if values.get('bonus') is not None or values.get('enchants') is not None:
+            if info.data.get('bonus') is not None or info.data.get('enchants') is not None:
                 raise TypeError('specific key is mutually exclusive with bonus and enchants keys.')
 
             if len(v) not in {2, 3}:
@@ -357,7 +360,8 @@ class OrdnanceBaseItem(BaseItem):
     name: str
     count: int | None = None
 
-    @validator('count')
+    @field_validator('count')
+    @classmethod
     @classmethod
     def check_count(cls: Type[OrdnanceBaseItem], v: int | None) -> int | None:
         if v is not None:
@@ -394,9 +398,10 @@ class OrdnanceEnchant(BaseItem):
     add: list[Tag] | None = None
     limit: EnchantLimits | None = None
 
-    _check_bonus = validator('bonus', allow_reuse=True)(check_enchant_bonus)
+    _check_bonus = field_validator('bonus')(check_enchant_bonus)
 
-    @validator('bonuscost')
+    @field_validator('bonuscost')
+    @classmethod
     @classmethod
     def check_bonuscost(cls: Type[OrdnanceEnchant], v: Cost | None) -> Cost | None:
         if v is not None:

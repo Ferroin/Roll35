@@ -9,7 +9,7 @@ import enum
 
 from typing import Type
 
-from pydantic import BaseModel, validator
+from pydantic import field_validator, BaseModel
 
 
 @enum.unique
@@ -34,7 +34,7 @@ class RankWeights(BaseModel):
     medium: int
     major: int
 
-    @validator('minor', 'medium', 'major')
+    @field_validator('minor', 'medium', 'major')
     @classmethod
     def check_weight(cls: Type[RankWeights], v: int) -> int:
         if v < 0:
