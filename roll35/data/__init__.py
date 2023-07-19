@@ -13,7 +13,7 @@ from collections.abc import Mapping, Sequence
 from typing import TYPE_CHECKING, Union, Type
 from pathlib import Path
 
-from pydantic import BaseModel, validator
+from pydantic import field_validator, BaseModel
 
 from ..common import yaml
 from ..types import Ret
@@ -83,7 +83,7 @@ class AgentEntry(BaseModel):
     name: str
     type: str
 
-    @validator('type')
+    @field_validator('type')
     @classmethod
     def check_type(cls: Type[AgentEntry], v: str) -> str:
         if v not in agents:
@@ -97,7 +97,7 @@ class StructureData(BaseModel):
     agents: Sequence[AgentEntry]
     renderdata: str
 
-    @validator('agents')
+    @field_validator('agents')
     @classmethod
     def check_agents(cls: Type[StructureData], v: Sequence[AgentEntry]) -> Sequence[AgentEntry]:
         '''Sanity check agent information.'''
