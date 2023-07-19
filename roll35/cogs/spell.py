@@ -1,31 +1,24 @@
 # Copyright (c) 2023 Austin S. Hemmelgarn
 # SPDX-License-Identifier: MITNFA
 
+'''Cog for rolling random spells.'''
+
 from __future__ import annotations
 
 import asyncio
 import logging
 
-from typing import TYPE_CHECKING, Any, Literal, cast
+from typing import Any, cast
 
 from nextcord.ext import commands
 
 from ..common import bad_return
 from ..data.spell import SpellAgent
 from ..data.classes import ClassesAgent
-from ..log import log_call
 from ..parser import Parser, ParserEntry
-from ..types import R35Cog, Ret, Result
+from ..roller.spell import roll_many_async, NOT_READY
+from ..types import R35Cog, Ret
 from ..types import Spell as SpellEntry
-
-if TYPE_CHECKING:
-    from collections.abc import Mapping, Awaitable
-
-    from ..data import DataSet
-
-NOT_READY = 'Spell data is not yet available, please try again later.'
-
-MAX_COUNT = 32
 
 SPELL_PARSER = Parser({
     'cls': ParserEntry(
@@ -57,7 +50,7 @@ SPELL_PARSER = Parser({
     'count': ParserEntry(
         type=int,
         names=[
-            'cost',
+            'count',
             'co',
             'number',
             'num',
@@ -71,7 +64,7 @@ logger = logging.getLogger(__name__)
 
 class Spell(R35Cog):
     '''Roll35 cog for handling spells.'''
-    async def _spell(self: Spell, ctx: commands.Context, *args: str) -> None:
+    async def __spell(self: Spell, ctx: commands.Context, *args: str) -> None:
         match SPELL_PARSER.parse(' '.join(args)):
             case (Ret.FAILED, msg):
                 await ctx.send(
@@ -89,18 +82,15 @@ class Spell(R35Cog):
 
         match parsed:
             case {'count': c} if isinstance(c, int) and c > 0:
-                if c > MAX_COUNT:
-                    await ctx.send(f'Too many spells requested, no more than { MAX_COUNT } may be rolled at a time.')
-                    return
-
-                coros = []
-
-                for i in range(0, c):
-                    coros.append(roll_spell(self.ds, {
+                coros = roll_many_async(
+                    self.ds,
+                    c,
+                    {
                         'level': parsed['level'],
                         'cls': parsed['cls'],
                         'tag': parsed['tag'],
-                    }))
+                    },
+                )
 
                 await ctx.trigger_typing()
 
@@ -113,18 +103,18 @@ class Spell(R35Cog):
                                 case (Ret.OK, str() as msg):
                                     results.append(msg)
                                 case (r1, msg) if r1 is not Ret.OK:
-                                    results.append(f'\nFailed to generate remaining items: { msg }')
+                                    results.append(f'\nFailed to generate remaining spells: { msg }')
                                     break
                                 case r2:
                                     logger.error(bad_return(r2))
-                                    results.append('\nFailed to generate remaining items: Unknown internal error.')
+                                    results.append('\nFailed to generate remaining spells: Unknown internal error.')
                                     break
                         case (r3, msg) if r3 is not Ret.OK:
-                            results.append(f'\nFailed to generate remaining items: { msg }')
+                            results.append(f'\nFailed to generate remaining spells: { msg }')
                             break
                         case r4:
                             logger.error(bad_return(r4))
-                            results.append('\nFailed to generate remaining items: Unknown internal error.')
+                            results.append('\nFailed to generate remaining spells: Unknown internal error.')
                             break
 
                 await ctx.trigger_typing()
@@ -150,9 +140,9 @@ class Spell(R35Cog):
              subschool or descriptor. To list recognized tags, run
              `/r35 spelltags`.
            - `count`: Roll this many spells at once.'''
-        await self._spell(ctx, *args)
+        await self.__spell(ctx, *args)
 
-    async def _spelltags(self: Spell, ctx: commands.Context, /) -> None:
+    async def __spelltags(self: Spell, ctx: commands.Context, /) -> None:
         match await cast(SpellAgent, self.ds['spell']).tags_async():
             case Ret.NOT_READY:
                 await ctx.send(NOT_READY)
@@ -172,7 +162,7 @@ class Spell(R35Cog):
         '''List known spell tags.'''
         await self._spelltags(ctx)
 
-    async def _classes(self: Spell, ctx: commands.Context, /) -> None:
+    async def __classes(self: Spell, ctx: commands.Context, /) -> None:
         match await cast(ClassesAgent, self.ds['classes']).classes_async():
             case Ret.NOT_READY:
                 await ctx.send(NOT_READY)
@@ -197,10 +187,4 @@ class Spell(R35Cog):
     @commands.command()  # type: ignore
     async def classes(self, ctx, /):
         '''List known classes for spells.'''
-        await self._classes(ctx)
-
-
-@log_call(logger, 'roll spell')
-def roll_spell(ds: DataSet, /, args: Mapping[str, Any]) -> Awaitable[Result[SpellEntry] | Literal[Ret.NOT_READY]]:
-    '''Return a coroutine that will return a spell.'''
-    return cast(SpellAgent, ds['spell']).random_async(**args)
+        await self.__classes(ctx)
