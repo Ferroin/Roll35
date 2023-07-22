@@ -261,7 +261,8 @@ class Spell(BaseModel):
         self.classes |= add_classes
 
         for cls2 in [x for x in classes.values() if x.merge is not None]:
-            assert cls2.merge is not None  # Needed to convince mypy of this fact
+            if cls2.merge is None:  # Needed to convince mypy of this fact
+                raise RuntimeError
 
             levels = [v for k, v in self.classes.items() if k in cls2.merge]
 
