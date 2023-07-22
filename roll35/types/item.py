@@ -239,6 +239,8 @@ class Spell(BaseModel):
 
     def process_classes(self: Spell, classes: ClassMap) -> None:
         '''Determine derived classes for this spell based on classes and sanity check levels.'''
+        add_classes: dict[str, int] = dict()
+
         for cls, level in self.classes.items():
             if cls in {'minimum', 'spellpage_arcane', 'spellpage_divine'}:
                 continue
@@ -248,6 +250,23 @@ class Spell(BaseModel):
 
             if level > len(classes[cls].levels) - 1:
                 raise ValueError(f'Spell level for class { cls } in { self.name } is higher than the number of levels defined for that class.')
+
+            match [x.name for x in classes.values() if x.duplicate == cls]:
+                case []:
+                    pass
+                case [*items]:
+                    for cls in items:
+                        add_classes[cls] = level
+
+        self.classes |= add_classes
+
+        for cls2 in [x for x in classes.values() if x.merge is not None]:
+            assert cls2.merge is not None  # Needed to convince mypy of this fact
+
+            levels = [v for k, v in self.classes.items() if k in cls2.merge]
+
+            if levels:
+                self.classes[cls2.name] = min(levels)
 
         self.minimum = min(self.classes, key=lambda x: self.classes[x])
         self.classes['minimum'] = self.classes[self.minimum]
