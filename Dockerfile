@@ -1,4 +1,4 @@
-FROM alpine:3.18
+FROM alpine:3.19
 
 ARG VERSION=dev
 ARG BUILD_PKGS="alpine-sdk libffi-dev py3-setuptools-rust python3-dev"
