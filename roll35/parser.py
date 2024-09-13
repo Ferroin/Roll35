@@ -10,10 +10,9 @@ import shlex
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from io import StringIO
-from typing import Any, Callable, TypeVar, Generic
+from typing import Any, Callable, Generic, TypeVar
 
-from .types import Ret, Result
-
+from .types import Result, Ret
 
 T = TypeVar('T')
 
@@ -66,13 +65,13 @@ class Parser:
                     schema = self._schema[key]
 
                     if value == lexer.eof:
-                        return (Ret.FAILED, f'Unexpected end of arguments after `{ token }`.')
+                        return (Ret.FAILED, f'Unexpected end of arguments after `{token}`.')
                     elif value is None:
                         return (Ret.FAILED, 'Failed to parse arguments, Unknown internal error.')
 
                     try:
                         ret[key] = schema.type(value.casefold())
                     except Exception:
-                        return (Ret.FAILED, f'Failed to parse `{ value }` as value for `{ token }`.')
+                        return (Ret.FAILED, f'Failed to parse `{value}` as value for `{token}`.')
                 case token:
-                    return (Ret.FAILED, f'Unrecognized token `{ token }`.')
+                    return (Ret.FAILED, f'Unrecognized token `{token}`.')

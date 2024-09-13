@@ -12,12 +12,14 @@ from __future__ import annotations
 import asyncio
 import logging
 
-from collections.abc import Iterable, Mapping, Sequence, Callable
-from dataclasses import dataclass, KW_ONLY
-from typing import TypeVar, ParamSpec, cast, TYPE_CHECKING
+from collections.abc import Callable, Iterable, Mapping, Sequence
+from dataclasses import KW_ONLY, dataclass
+from typing import TYPE_CHECKING, ParamSpec, TypeVar, cast
+
+import aiofiles
 
 from .. import types
-from ..common import rnd, yaml, bad_return
+from ..common import bad_return, rnd, yaml
 from ..log import log_call, log_call_async
 
 if TYPE_CHECKING:
@@ -123,7 +125,7 @@ class Agent(types.ReadyState):
         self.name = name
 
     def __repr__(self: Agent, /) -> str:
-        return f'roll35.data.Agent[{ self.name }, ready: { self._ready.is_set() }]'
+        return f'roll35.data.Agent[{self.name}, ready: {self._ready.is_set()}]'
 
     @staticmethod
     def _process_data(data: Mapping | Sequence, /) -> AgentData:
@@ -182,21 +184,21 @@ class Agent(types.ReadyState):
     def load_data(self: Agent, /) -> types.Ret:
         '''Load data for this agent.'''
         if not self.ready:
-            logger.info(f'Loading { self.name } data')
+            logger.info(f'Loading {self.name} data')
 
-            with open(self._ds.src / f'{ self.name }.yaml') as f:
+            with open(self._ds.src / f'{self.name}.yaml') as f:
                 raw_data = yaml.load(f)
 
             data = self._process_data(raw_data)
 
-            logger.info(f'Validating { self.name } data')
+            logger.info(f'Validating {self.name} data')
 
             if not self._post_validate(data):
-                raise RuntimeError(f'{ self.name } data failed post load validation')
+                raise RuntimeError(f'{self.name} data failed post load validation')
 
             self._data = data
 
-            logger.info(f'Finished loading { self.name } data')
+            logger.info(f'Finished loading {self.name} data')
 
             self.ready = True
 
@@ -205,21 +207,21 @@ class Agent(types.ReadyState):
     async def load_data_async(self: Agent, pool: Executor, /) -> types.Ret:
         '''Load data for this agent.'''
         if not self.ready:
-            logger.info(f'Loading { self.name } data')
+            logger.info(f'Loading {self.name} data')
 
-            with open(self._ds.src / f'{ self.name }.yaml') as f:
-                raw_data = yaml.load(f)
+            async with aiofiles.open(self._ds.src / f'{self.name}.yaml') as f:
+                raw_data = await f.read()
 
-            data = await self._process_async(pool, self._process_data, [raw_data])
+            data = await self._process_async(pool, self._process_data, [yaml.load(raw_data)])
 
-            logger.info(f'Validating { self.name } data')
+            logger.info(f'Validating {self.name} data')
 
             if not self._post_validate(data):
-                raise RuntimeError(f'{ self.name } data failed post load validation')
+                raise RuntimeError(f'{self.name} data failed post load validation')
 
             self._data = data
 
-            logger.info(f'Finished loading { self.name } data')
+            logger.info(f'Finished loading {self.name} data')
 
             self.ready = True
 
@@ -323,10 +325,10 @@ class Agent(types.ReadyState):
                     logger.error(bad_return(r2))
                     raise RuntimeError
         else:
-            raise ValueError(f'Invalid rank for { self.name }: { rank }')
+            raise ValueError(f'Invalid rank for {self.name}: {rank}')
 
         if not self._valid_subrank(rank, subrank):
-            raise ValueError(f'Invalid subrank for { self.name }: { subrank }')
+            raise ValueError(f'Invalid subrank for {self.name}: {subrank}')
 
         return cast(types.item.BaseItem, rnd(costfilter(self._data.ranked[rank][subrank], mincost=mincost, maxcost=maxcost)))
 
@@ -365,10 +367,10 @@ class Agent(types.ReadyState):
                     logger.error(bad_return(r2))
                     raise RuntimeError
         else:
-            raise ValueError(f'Invalid rank for { self.name }: { rank }')
+            raise ValueError(f'Invalid rank for {self.name}: {rank}')
 
         if not self._valid_subrank(rank, subrank):
-            raise ValueError(f'Invalid subrank for { self.name }: { subrank }')
+            raise ValueError(f'Invalid subrank for {self.name}: {subrank}')
 
         return cast(types.item.BaseItem, rnd(costfilter(self._data.ranked[rank][subrank], mincost=mincost, maxcost=maxcost)))
 
@@ -399,7 +401,7 @@ class Agent(types.ReadyState):
             case rank if self._valid_rank(rank):
                 pass
             case _:
-                raise ValueError(f'Invalid rank for { self.name }: { rank }')
+                raise ValueError(f'Invalid rank for {self.name}: {rank}')
 
         return cast(types.item.CompoundItem | str, rnd(costfilter(self._data.compound[rank], mincost=mincost, maxcost=maxcost)))
 
@@ -430,6 +432,6 @@ class Agent(types.ReadyState):
             case rank if self._valid_rank(rank):
                 pass
             case _:
-                raise ValueError(f'Invalid rank for { self.name }: { rank }')
+                raise ValueError(f'Invalid rank for {self.name}: {rank}')
 
         return cast(types.item.CompoundItem | str, rnd(costfilter(self._data.compound[rank], mincost=mincost, maxcost=maxcost)))

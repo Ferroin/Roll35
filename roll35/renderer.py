@@ -11,17 +11,18 @@ import math
 
 from typing import TYPE_CHECKING, Literal, cast
 
+import aiofiles
 import jinja2
 
 from . import types
-from .common import yaml, ismapping
-from .types.renderdata import RenderData
-from .types.readystate import ReadyState, check_ready_async
+from .common import ismapping, yaml
 from .log import log_call_async
+from .types.readystate import ReadyState, check_ready_async
+from .types.renderdata import RenderData
 
 if TYPE_CHECKING:
-    from concurrent.futures import Executor
     from collections.abc import Mapping, Sequence
+    from concurrent.futures import Executor
 
     from .data import DataSet
 
@@ -51,10 +52,10 @@ class Renderer(ReadyState):
             loop = asyncio.get_running_loop()
             logger.info('Loading renderer data')
 
-            with open(self._ds.src / f'{ self._ds.renderdata }.yaml') as f:
-                data = yaml.load(f)
+            async with aiofiles.open(self._ds.src / f'{self._ds.renderdata}.yaml') as f:
+                data = await f.read()
 
-            self._data = await loop.run_in_executor(pool, self._process_data, data)
+            self._data = await loop.run_in_executor(pool, self._process_data, yaml.load(data))
 
             logger.info('Finished loading renderer data')
 
@@ -78,7 +79,7 @@ class Renderer(ReadyState):
                 return cast(types.Result[str], r2)
 
     @staticmethod
-    def render_loop(tmpl: str, data: DataSet, item: types.item.BaseItem) -> types.Result[str]:
+    def render_loop(tmpl: str, data: RenderData, item: types.item.BaseItem | types.item.Spell | str) -> types.Result[str]:
         n = ''
         i = 0
 
@@ -88,33 +89,31 @@ class Renderer(ReadyState):
                 case str():
                     return cost
                 case int() as c1 if c1 >= 0:
-                    return f'{ c1 } gp'
+                    return f'{c1} gp'
                 case float() as c2 if c2.is_integer() and c2 >= 0:
-                    return f'{ int(c2) } gp'
+                    return f'{int(c2)} gp'
                 case float() as c3 if c3 >= 0 and math.isfinite(c3):
                     gp, sp, cp = 0.0, 0.0, 0.0
 
                     frac, gp = math.modf(c3)
 
-                    ret = f'{ int(gp) } gp'
+                    ret = f'{int(gp)} gp'
 
                     if frac > 0:
                         frac, sp = math.modf(frac * 10)
 
                         if sp > 0:
-                            ret += f' { int(sp) } sp'
+                            ret += f' {int(sp)} sp'
 
                     if frac > 0:
                         cp = frac
 
                         if sp > 0:
-                            ret += f' { int(cp) if cp.is_integer() else cp } cp'
+                            ret += f' {int(cp)} cp'
 
                     return ret
                 case _:
-                    raise ValueError(f'Invalid value for cost: { cost }')
-
-            return ''  # This never gets executed because the above match statement is exhaustive, but it makes mypy happy.
+                    raise ValueError(f'Invalid value for cost: {cost}')
 
         env = jinja2.Environment(
             loader=jinja2.FunctionLoader(lambda x: None),
@@ -127,7 +126,7 @@ class Renderer(ReadyState):
             i += 1
 
             if i > MAX_TEMPLATE_RECURSION:
-                logger.error('Too many levels of recursion in template: { template }.')
+                logger.error('Too many levels of recursion in template: {template}.')
                 return (types.Ret.LIMITED, 'Failed to render item.')
 
             if isinstance(item, types.item.SpellItem):
@@ -139,7 +138,7 @@ class Renderer(ReadyState):
                     item.caster_level = item.rolled_spell.rolled_caster_level
                     item.level = item.rolled_spell.classes[item.cls]
                 else:
-                    logger.error('Got a SpellItem without a rolled spell: { item }.')
+                    logger.error('Got a SpellItem without a rolled spell: {item}.')
                     return (types.Ret.FAILED, 'Failed to render item.')
 
             else:
@@ -177,7 +176,7 @@ class Renderer(ReadyState):
                 else:
                     t = name
             case _:
-                logger.error(f'Failed to render item: { item }.')
+                logger.error(f'Failed to render item: {item}.')
                 return (types.Ret.INVALID, 'Failed to render item.')
 
         loop = asyncio.get_running_loop()

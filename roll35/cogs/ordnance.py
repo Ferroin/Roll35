@@ -10,9 +10,9 @@ from typing import TYPE_CHECKING, cast
 from nextcord.ext import commands
 
 from ..common import bad_return
+from ..data.ordnance import OrdnanceAgent
 from ..types import R35Cog, Ret
 from ..types.item import OrdnanceBaseItem
-from ..data.ordnance import OrdnanceAgent
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -46,8 +46,8 @@ class Ordnance(R35Cog):
                 await ctx.send('No tags found.')
             case list() as tags:
                 await ctx.send(
-                    f'The following { typ } tags are recognized: ' +
-                    f'`{ "`, `".join(sorted(tags)) }`'
+                    f'The following {typ} tags are recognized: ' +
+                    f'`{"`, `".join(sorted(tags))}`'
                 )
             case ret:
                 logger.warning(bad_return(ret))

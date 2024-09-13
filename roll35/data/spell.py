@@ -9,15 +9,17 @@ import asyncio
 import logging
 import random
 
-from collections.abc import Mapping, Iterable, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, cast
+
+import aiofiles
 
 from . import agent
 from .classes import ClassesAgent
 from .. import types
-from ..common import chunk, flatten, yaml, bad_return
-from ..log import log_call_async, log_call, LogRun
+from ..common import bad_return, chunk, flatten, yaml
+from ..log import LogRun, log_call, log_call_async
 from ..types.item import MAX_SPELL_LEVEL, ClassMap
 
 logger = logging.getLogger(__name__)
@@ -30,7 +32,7 @@ if TYPE_CHECKING:
 
 def process_spell_chunk(spells: Iterable[Mapping], classes: types.item.ClassMap, idx: int) -> tuple[Iterable[types.Spell], set[str]]:
     '''Process a chunk of the spell data.'''
-    with LogRun(logger, logging.DEBUG, f'processing spell chunk { idx }'):
+    with LogRun(logger, logging.DEBUG, f'processing spell chunk {idx}'):
         ret = list(map(lambda x: types.Spell(**x), spells))
         tags = set()
 
@@ -95,7 +97,7 @@ class SpellAgent(agent.Agent):
 
             logger.info('Reading spell data.')
 
-            with open(self._ds.src / f'{ self.name }.yaml') as f:
+            with open(self._ds.src / f'{self.name}.yaml') as f:
                 data = yaml.load(f)
 
             if not isinstance(data, Sequence):
@@ -142,8 +144,10 @@ class SpellAgent(agent.Agent):
 
             logger.info('Reading spell data.')
 
-            with open(self._ds.src / f'{ self.name }.yaml') as f:
-                data = yaml.load(f)
+            async with aiofiles.open(self._ds.src / f'{self.name}.yaml') as f:
+                raw_data = await f.read()
+
+            data = yaml.load(raw_data)
 
             if not isinstance(data, Sequence):
                 raise ValueError('Spell data must be a sequence.')
@@ -164,8 +168,8 @@ class SpellAgent(agent.Agent):
 
             results = await asyncio.gather(*coros)
 
-            spells = list(flatten(map(lambda x: cast(Iterable[types.Spell], x[0]), results)))
-            tags = set.union(*map(lambda x: cast(set[str], x[1]), results))
+            spells = list(flatten(map(lambda x: x[0], results)))
+            tags = set.union(*map(lambda x: x[1], results))
 
             self._data = SpellData(
                 spells=spells,
@@ -190,13 +194,13 @@ class SpellAgent(agent.Agent):
             return (
                 types.Ret.INVALID,
                 'Level must be an integer between ' +
-                f'0 and { MAX_SPELL_LEVEL }.'
+                f'0 and {MAX_SPELL_LEVEL}.'
             )
 
         if tag is not None and tag not in self._data.tags:
             return (
                 types.Ret.INVALID,
-                f'{ tag } is not a recognized spell tag.',
+                f'{tag} is not a recognized spell tag.',
             )
 
         if cls is None:
@@ -222,16 +226,16 @@ class SpellAgent(agent.Agent):
             case ('random', int() as level):
                 valid = [k for (k, v) in classes.items()
                          if v.level_in_cls(level)]
-                logger.debug(f'Determining valid classes for level { level } spells: { valid }')
+                logger.debug(f'Determining valid classes for level {level} spells: {valid}')
                 cls = random.choice(valid)  # nosec # Not being used for crypto purposes
-                logger.debug(f'Selected class { cls }')
+                logger.debug(f'Selected class {cls}')
             case ('minimum', _):
                 pass
             case (cls, int() as level) if cls in valid_classes and not classes[cls].level_in_cls(level):
                 return (
                     types.Ret.INVALID,
-                    f'Class { cls } does not have access to ' +
-                    f'level { level } spells.'
+                    f'Class {cls} does not have access to ' +
+                    f'level {level} spells.'
                 )
             case (cls, _) if cls in valid_classes:
                 pass
@@ -240,7 +244,7 @@ class SpellAgent(agent.Agent):
                     types.Ret.INVALID,
                     'Invalid class name. ' +
                     'Must be one of: random, spellpage, ' +
-                    f'{ ", ".join(valid_classes) }'
+                    f'{", ".join(valid_classes)}'
                 )
 
         if cls is None:  # Mypy still thinks cls might be None at this point for some reason.

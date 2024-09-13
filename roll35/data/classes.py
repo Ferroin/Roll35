@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING
 from . import agent
 from .. import types
 from ..common import ismapping
-from ..log import log_call_async, log_call
+from ..log import log_call, log_call_async
 
 if TYPE_CHECKING:
     from . import DataSet
@@ -49,11 +49,11 @@ class ClassesAgent(agent.Agent):
         for cls in classes.values():
             if cls.duplicate is not None:
                 if cls.duplicate not in classes.keys():
-                    raise ValueError(f'{ cls.name }’s `duplicate` key references non-existent class { cls.duplicate }')
+                    raise ValueError(f'{cls.name}’s `duplicate` key references non-existent class {cls.duplicate}')
             elif cls.merge is not None:
                 for mcls in cls.merge:
                     if mcls not in classes.keys():
-                        raise ValueError(f'{ cls.name }’s `merge` key references non-existent class { mcls }')
+                        raise ValueError(f'{cls.name}’s `merge` key references non-existent class {mcls}')
 
         return ClassesData(
             classes=classes

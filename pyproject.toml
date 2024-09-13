@@ -12,35 +12,46 @@ roll35-bot = "roll35.bot:main"
 roll35-check-dataset = "roll35.data:test_dataset"
 
 [tool.poetry.dependencies]
-python = "^3.10"
-jaro-winkler = "^2.0"
-Jinja2 = "^3.1.2"
+python = "^3.12"
+aiofiles = "^24.1.0"
+jaro-winkler = "^2.0.3"
+Jinja2 = "^3.1.4"
 nextcord = {version = "^2.6.0", extras = ["speed"]}
-ruamel-yaml = "^0.18.3"
-pydantic = "^2.3"
+pydantic = "^2.9.1"
+ruamel-yaml = "^0.18.6"
 
 [tool.poetry.group.dev.dependencies]
-mypy = "^1.4.1"
-flake8 = "^6.1.0"
-flake8-2020 = "^1.8.1"
-flake8-quotes = "^3.3.2"
-flake8-debug = "^0.2.0"
-flake8-async = "^22.11.14"
-flake8-sfs = "^0.0.4"
-yamllint = "^1.32.0"
 bandit = "^1.7.5"
+flake8-2020 = "^1.8.1"
+flake8 = "^7.1.1"
+flake8-async = "^24.9.1"
+flake8-debug = "^0.2.0"
+flake8-isort = "^6.1.1"
+flake8-quotes = "^3.4.0"
+flake8-sfs = "^1.0.0"
+isort = "^5.13.2"
+mypy = "^1.11.2"
+ruamel-yaml = "^0.18.6"
+types-aiofiles = "^24.1.0.20240626"
+yamllint = "^1.32.0"
 
 [tool.mypy]
-python_version = "3.10"
-incremental = false
-warn_unused_configs = true
-disallow_untyped_defs = true
+python_version = "3.12"
+cache_fine_grained = true
 disallow_incomplete_defs = true
 disallow_untyped_decorators = true
+disallow_untyped_defs = true
+exclude = [
+    '^.git/*',
+    '^.cache/*',
+]
+files = "**/*.py"
+sqlite_cache = true
 warn_redundant_casts = true
-warn_unused_ignores = true
 warn_return_any = true
 warn_unreachable = true
+warn_unused_configs = true
+warn_unused_ignores = true
 
 [[tool.mypy.overrides]]
 module = "jaro"
@@ -51,6 +62,18 @@ module = "roll35.cogs.*"
 disallow_untyped_defs = false
 disallow_incomplete_defs = false
 disallow_untyped_decorators = false
+
+[tool.isort]
+balanced_wrapping = true
+combine_as_imports = true
+combine_star = true
+include_trailing_comma = false
+line_length = 150
+lines_between_types = 1
+remove_redundant_aliases = true
+reverse_relative = true
+skip_gitignore = true
+use_parentheses = true
 
 [build-system]
 requires = ["poetry-core"]

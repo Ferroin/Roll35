@@ -12,8 +12,8 @@ from typing import TYPE_CHECKING
 
 from . import agent
 from .. import types
-from ..common import make_weighted_entry, ismapping, bad_return
-from ..log import log_call_async, log_call
+from ..common import bad_return, ismapping, make_weighted_entry
+from ..log import log_call, log_call_async
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
@@ -59,7 +59,7 @@ class CategoryAgent(agent.Agent):
     def _post_validate(self: CategoryAgent, data: CategoryData) -> bool:  # type: ignore[override]
         for category in data.categories:
             if category not in self._ds:
-                raise ValueError(f'Category { category } does not have an associated agent.')
+                raise ValueError(f'Category {category} does not have an associated agent.')
 
         return True
 

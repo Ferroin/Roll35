@@ -9,7 +9,6 @@ from .ordnance import Ordnance
 from .settlement import Settlement
 from .spell import Spell
 
-
 COGS = [
     Core,
     MagicItem,

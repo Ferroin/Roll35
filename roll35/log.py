@@ -9,8 +9,8 @@ import contextlib
 import logging
 import time
 
-from typing import Callable, TypeVar, ParamSpec, Awaitable
 from types import TracebackType
+from typing import Awaitable, Callable, ParamSpec, TypeVar
 
 T = TypeVar('T')
 P = ParamSpec('P')
@@ -32,11 +32,11 @@ class LogRun(contextlib.AbstractContextManager, contextlib.AbstractAsyncContextM
         self.msg = msg
 
     def __enter__(self: LogRun) -> LogRun:
-        self.logger.log(self.level, f'Starting: { self.msg }')
+        self.logger.log(self.level, f'Starting: {self.msg}')
         return self
 
     def __exit__(self: LogRun, _exc_type: type | None, _exc_value: BaseException | None, _traceback: TracebackType | None) -> None:
-        self.logger.log(self.level, f'Finished: { self.msg }')
+        self.logger.log(self.level, f'Finished: {self.msg}')
         return None
 
     async def __aenter__(self: LogRun) -> LogRun:
@@ -54,9 +54,9 @@ def log_call(logger: logging.Logger, msg: str, /) -> Callable[[Callable[P, T]], 
     def decorator(func: Callable[P, T]) -> Callable[P, T]:
         def inner(*args: P.args, **kwargs: P.kwargs) -> T:
             seq = time.monotonic_ns()
-            logger.debug(f'{ msg }, seq: { seq }, called with: { args } and { kwargs }')
+            logger.debug(f'{msg}, seq: {seq}, called with: {args} and {kwargs}')
             ret = func(*args, **kwargs)
-            logger.debug(f'{ msg }, seq: { seq }, returned: { ret }')
+            logger.debug(f'{msg}, seq: {seq}, returned: {ret}')
             return ret
 
         return inner
@@ -72,9 +72,9 @@ def log_call_async(logger: logging.Logger, msg: str, /) -> Callable[[Callable[P,
     def decorator(func: Callable[P, Awaitable[T]]) -> Callable[P, Awaitable[T]]:
         async def inner(*args: P.args, **kwargs: P.kwargs) -> T:
             seq = time.monotonic_ns()
-            logger.debug(f'{ msg }, seq: { seq }, called with: { args } and { kwargs }')
+            logger.debug(f'{msg}, seq: {seq}, called with: {args} and {kwargs}')
             ret = await func(*args, **kwargs)
-            logger.debug(f'{ msg }, seq: { seq }, returned: { ret }')
+            logger.debug(f'{msg}, seq: {seq}, returned: {ret}')
             return ret
 
         return inner

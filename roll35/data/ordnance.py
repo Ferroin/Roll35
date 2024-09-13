@@ -8,7 +8,7 @@ from __future__ import annotations
 import logging
 import random
 
-from collections.abc import Mapping, Sequence, Iterable
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from functools import reduce
 from typing import TYPE_CHECKING, Callable, cast
@@ -16,8 +16,8 @@ from typing import TYPE_CHECKING, Callable, cast
 from . import agent
 from .ranked import process_ranked_itemlist
 from .. import types
-from ..common import norm_string, did_you_mean, bad_return, rnd, ismapping
-from ..log import log_call_async, log_call
+from ..common import bad_return, did_you_mean, ismapping, norm_string, rnd
+from ..log import log_call, log_call_async
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +60,7 @@ def process_enchantment_table(items: Mapping, /, basevalue: types.item.Cost, tag
                 try:
                     enchant.check_tags(tags)
                 except (ValueError, TypeError) as e:
-                    raise ValueError(f'Invalid enchantment tags for { enchant.name } in { group }:{ value }: { e }.')
+                    raise ValueError(f'Invalid enchantment tags for {enchant.name} in {group}:{value}: {e}.')
 
                 enchant_names.add(enchant.name)
                 groupdata[value].append(enchant)
@@ -70,7 +70,7 @@ def process_enchantment_table(items: Mapping, /, basevalue: types.item.Cost, tag
                 if enchant.exclude is not None:
                     for name in enchant.exclude:
                         if name not in enchant_names:
-                            raise ValueError(f'Unrecognized enchantment name { name } in exclude tag for { enchant.name } in { group }:{ value }.')
+                            raise ValueError(f'Unrecognized enchantment name {name} in exclude tag for {enchant.name} in {group}:{value}.')
 
         ret[group] = groupdata
 
@@ -120,7 +120,7 @@ def get_costs_and_bonus(enchants: Iterable[types.item.OrdnanceEnchant], /) -> tu
                     min_bonus = min(min_bonus, b)
                 max_bonus = max(max_bonus, b)
             case _:
-                raise ValueError(f'{ item } has both bonuscost and bonus keys.')
+                raise ValueError(f'{item} has both bonuscost and bonus keys.')
 
     if has_non_bonus:
         min_bonus = 0
@@ -179,7 +179,7 @@ def create_xform(base: int | float, enchantments: EnchantmentTable, specific: Sp
                 min_cost = cast(types.RankedItemList, specific)[types.Rank(rank)][types.Subrank(subrank)].costs.min
                 max_cost = cast(types.RankedItemList, specific)[types.Rank(rank)][types.Subrank(subrank)].costs.max
             case _:
-                ValueError(f'{ x } is not a valid enchantment combination entry.')
+                ValueError(f'{x} is not a valid enchantment combination entry.')
 
         if min_cost == 'varies':
             min_cost = 0
@@ -228,7 +228,7 @@ class OrdnanceAgent(agent.Agent):
             try:
                 base.append(types.item.OrdnanceBaseItem(**item))
             except TypeError:
-                raise RuntimeError(f'Invalid ordnance base item entry: { item }')
+                raise RuntimeError(f'Invalid ordnance base item entry: {item}')
 
         tags = generate_tags_entry(base)
 
@@ -331,7 +331,7 @@ class OrdnanceAgent(agent.Agent):
             case types.Rank() as rank if self._valid_rank(rank):
                 pass
             case _:
-                raise ValueError(f'Invalid rank for { self.name }: { rank }')
+                raise ValueError(f'Invalid rank for {self.name}: {rank}')
 
         if subrank is None:
             match self.random_subrank(rank, mincost=mincost, maxcost=maxcost):
@@ -343,7 +343,7 @@ class OrdnanceAgent(agent.Agent):
                     logger.error(bad_return(r4))
                     raise RuntimeError
         elif not self._valid_subrank(rank, subrank):
-            raise ValueError(f'Invalid subrank for { self.name }: { subrank }')
+            raise ValueError(f'Invalid subrank for {self.name}: {subrank}')
 
         items = cast(
             Sequence[types.item.OrdnancePattern],
@@ -395,7 +395,7 @@ class OrdnanceAgent(agent.Agent):
             case types.Rank() as rank if self._valid_rank(rank):
                 pass
             case _:
-                raise ValueError(f'Invalid rank for { self.name }: { rank }')
+                raise ValueError(f'Invalid rank for {self.name}: {rank}')
 
         if subrank is None:
             match await self.random_subrank_async(rank, mincost=mincost, maxcost=maxcost):
@@ -407,7 +407,7 @@ class OrdnanceAgent(agent.Agent):
                     logger.error(bad_return(r4))
                     raise RuntimeError
         elif not self._valid_subrank(rank, subrank):
-            raise ValueError(f'Invalid subrank for { self.name }: { subrank }')
+            raise ValueError(f'Invalid subrank for {self.name}: {subrank}')
 
         items = cast(
             Sequence[types.item.OrdnancePattern],
@@ -443,7 +443,7 @@ class OrdnanceAgent(agent.Agent):
             case _:
                 return (
                     types.Ret.FAILED,
-                    f'{ name } is not a recognized item.\n'
+                    f'{name} is not a recognized item.\n'
                 )
 
         # The below line should never actually be run, as the above match clauses are (theoretically) exhaustive.
@@ -470,7 +470,7 @@ class OrdnanceAgent(agent.Agent):
                     case (types.Ret.OK, msg):
                         return (
                             types.Ret.FAILED,
-                            f'{ name } is not a recognized item.\n { msg }'
+                            f'{name} is not a recognized item.\n {msg}'
                         )
                     case (types.Ret() as ret, str() as msg) if ret is not types.Ret.OK:
                         return (ret, msg)
@@ -595,22 +595,22 @@ class OrdnanceAgent(agent.Agent):
                 rank = types.Rank(args[0])
                 subrank = types.Subrank(args[1])
             case _:
-                raise ValueError(f'Invalid arguments for { self.name }.random_specific: { args }')
+                raise ValueError(f'Invalid arguments for {self.name}.random_specific: {args}')
 
         match rank:
             case rank if self._valid_rank(rank):
                 pass
             case _:
-                raise ValueError(f'Invalid rank for { self.name }: { rank }')
+                raise ValueError(f'Invalid rank for {self.name}: {rank}')
 
         if not self._valid_subrank(rank, subrank):
-            raise ValueError(f'Invalid subrank for { self.name }: { subrank }')
+            raise ValueError(f'Invalid subrank for {self.name}: {subrank}')
 
         items = self._data.specific
 
         if group:
             if group not in items:
-                raise ValueError(f'Unrecognized item type for { self.name }: { rank }')
+                raise ValueError(f'Unrecognized item type for {self.name}: {rank}')
 
             items = cast(Mapping[str, types.RankedItemList], items)[group]
 

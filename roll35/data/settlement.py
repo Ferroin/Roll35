@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import logging
 
-from collections.abc import Sequence, Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from itertools import repeat
 from typing import TYPE_CHECKING, Literal, cast, overload
@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING, Literal, cast, overload
 from . import agent
 from .. import types
 from ..common import ismapping
-from ..log import log_call_async, log_call
+from ..log import log_call, log_call_async
 
 if TYPE_CHECKING:
     from . import DataSet
@@ -138,7 +138,7 @@ class SettlementAgent(agent.Agent):
             try:
                 entries.append(SettlementEntry(**item))
             except TypeError:
-                raise RuntimeError(f'Invalid settlement entry: { item }')
+                raise RuntimeError(f'Invalid settlement entry: {item}')
 
         return SettlementData(
             name={x.name: x for x in entries},

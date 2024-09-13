@@ -69,4 +69,4 @@ data.sort(key=lambda i: i['name'])
 print('Writing data...')
 
 with open('./spells.yaml', 'w') as yamlfile:
-    yamlfile.write(yaml.dump(data, width=120, indent=2))
+    yamlfile.write(yaml.dump(data, width=120, indent=2))  # type: ignore

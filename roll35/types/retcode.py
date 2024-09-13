@@ -9,9 +9,9 @@
 
 from __future__ import annotations
 
-from typing import Literal, TypeVar
-
 import enum
+
+from typing import Literal, TypeVar
 
 
 class Ret(enum.Enum):

@@ -5,10 +5,10 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence, Mapping, MutableMapping
-from typing import Literal, TypeVar, Type, Any, cast
+from collections.abc import Mapping, MutableMapping, Sequence
+from typing import Any, Literal, Type, TypeVar, cast
 
-from pydantic import field_validator, model_validator, BaseModel, Field, FieldValidationInfo
+from pydantic import BaseModel, Field, ValidationInfo, field_validator, model_validator
 
 from .ranks import RankWeights
 
@@ -68,23 +68,23 @@ class ClassEntry(BaseModel):
 
     @field_validator('levels')
     @classmethod
-    def check_levels(cls: Type[ClassEntry], v: list[int | None], info: FieldValidationInfo) -> list[int | None]:
+    def check_levels(cls: Type[ClassEntry], v: list[int | None], info: ValidationInfo) -> list[int | None]:
         if len(v) > MAX_SPELL_LEVEL + 1:
-            raise ValueError(f'Too many spell levels in { info.data["name"] } class entry, no more than { MAX_SPELL_LEVEL + 1 } may be specified.')
+            raise ValueError(f'Too many spell levels in {info.data["name"]} class entry, no more than {MAX_SPELL_LEVEL + 1} may be specified.')
 
         last = v[0]
 
         if last is not None and last < 1:
-            raise ValueError(f'Spell level 0 level is less than 1 in { info.data["name"] } class entry.')
+            raise ValueError(f'Spell level 0 level is less than 1 in {info.data["name"]} class entry.')
 
         for idx, level in enumerate(v[1:]):
             if last is not None:
                 if level is None:
                     raise ValueError('Sparse spell lists are not supported.')
                 elif level < last:
-                    raise ValueError(f'Spell level { idx } level is lower than spell level { idx } level in { info.data["name"] } class entry.')
+                    raise ValueError(f'Spell level {idx} level is lower than spell level {idx} level in {info.data["name"]} class entry.')
                 elif level < 1:
-                    raise ValueError(f'Spell level { idx } level is less than 1 in { info.data["name"] } class entry.')
+                    raise ValueError(f'Spell level {idx} level is less than 1 in {info.data["name"]} class entry.')
 
             last = level
 
@@ -135,7 +135,7 @@ class BaseItem(BaseModel):
 
     @field_validator('costrange')
     @classmethod
-    def check_costrange(cls: Type[BaseItem], v: CostRange, info: FieldValidationInfo) -> CostRange:
+    def check_costrange(cls: Type[BaseItem], v: CostRange, info: ValidationInfo) -> CostRange:
         if v is not None:
             if info.data.get('cost') is not None or info.data.get('costmult') is not None:
                 raise TypeError('If costrange is specified, cost and costmult may not be specified.')
@@ -179,7 +179,7 @@ class SpellParams(BaseModel):
 class Spell(BaseModel):
     '''Data model representing a spell.'''
     name: str
-    classes: MutableMapping[str, int]
+    classes: dict[str, int]
     domains: Mapping[str, int] = Field(default_factory=dict)
     descriptor: str
     school: str
@@ -193,7 +193,7 @@ class Spell(BaseModel):
 
     @field_validator('tags', mode='before')
     @classmethod
-    def populate_tags(cls: Type[Spell], v: set[str], info: FieldValidationInfo) -> set[str]:
+    def populate_tags(cls: Type[Spell], v: set[str], info: ValidationInfo) -> set[str]:
         if not v:
             t = {x for x in cast(str, info.data['descriptor']).split(', ') if x}
 
@@ -209,31 +209,31 @@ class Spell(BaseModel):
 
     @field_validator('classes')
     @classmethod
-    def check_classes(cls: Type[Spell], v: MutableMapping[str, int], info: FieldValidationInfo) -> MutableMapping[str, int]:
+    def check_classes(cls: Type[Spell], v: MutableMapping[str, int], info: ValidationInfo) -> MutableMapping[str, int]:
         for c, l in v.items():
             try:
                 check_spell_level(l)
             except (ValueError, TypeError) as e:
-                raise ValueError(f'Invalid spell level for class { c } in { info.data["name"] }: { e }')
+                raise ValueError(f'Invalid spell level for class {c} in {info.data["name"]}: {e}')
 
         return v
 
     @field_validator('domains')
     @classmethod
-    def check_domains(cls: Type[Spell], v: MutableMapping[str, int], info: FieldValidationInfo) -> MutableMapping[str, int]:
+    def check_domains(cls: Type[Spell], v: MutableMapping[str, int], info: ValidationInfo) -> MutableMapping[str, int]:
         for c, l in v.items():
             try:
                 check_spell_level(l)
             except (ValueError, TypeError) as e:
-                raise ValueError(f'Invalid spell level for domain { c } in { info.data["name"] }: { e }')
+                raise ValueError(f'Invalid spell level for domain {c} in {info.data["name"]}: {e}')
 
         return v
 
     @field_validator('school')
     @classmethod
-    def check_school(cls: Type[Spell], v: str, info: FieldValidationInfo) -> str:
+    def check_school(cls: Type[Spell], v: str, info: ValidationInfo) -> str:
         if not v:
-            raise ValueError(f'Missing school for { info.data["name"] }.')
+            raise ValueError(f'Missing school for {info.data["name"]}.')
 
         return v
 
@@ -246,10 +246,10 @@ class Spell(BaseModel):
                 continue
 
             if cls not in classes:
-                raise ValueError(f'Spell entry for { self.name } references non-existent class { cls }.')
+                raise ValueError(f'Spell entry for {self.name} references non-existent class {cls}.')
 
             if level > len(classes[cls].levels) - 1:
-                raise ValueError(f'Spell level for class { cls } in { self.name } is higher than the number of levels defined for that class.')
+                raise ValueError(f'Spell level for class {cls} in {self.name} is higher than the number of levels defined for that class.')
 
             match [x.name for x in classes.values() if x.duplicate == cls]:
                 case []:
@@ -353,13 +353,13 @@ class OrdnancePattern(BaseItem):
                 try:
                     check_enchant_bonus(i)
                 except (ValueError, TypeError) as e:
-                    raise ValueError(f'Invalid enchantment bonus in enchantment list: { e }')
+                    raise ValueError(f'Invalid enchantment bonus in enchantment list: {e}')
 
         return v
 
     @field_validator('specific')
     @classmethod
-    def check_specific(cls: Type[OrdnancePattern], v: Sequence[str] | None, info: FieldValidationInfo) -> Sequence[str] | None:
+    def check_specific(cls: Type[OrdnancePattern], v: Sequence[str] | None, info: ValidationInfo) -> Sequence[str] | None:
         if v is not None:
             if info.data.get('bonus') is not None or info.data.get('enchants') is not None:
                 raise TypeError('specific key is mutually exclusive with bonus and enchants keys.')
@@ -400,12 +400,12 @@ class EnchantLimits(BaseModel):
         if self.only is not None:
             for tag in self.only:
                 if tag not in tags:
-                    raise ValueError(f'Invalid tag in enchantment limits: { tag }')
+                    raise ValueError(f'Invalid tag in enchantment limits: {tag}')
 
         if self.none is not None:
             for tag in self.none:
                 if tag not in tags:
-                    raise ValueError(f'Invalid tag in enchantment limits: { tag }')
+                    raise ValueError(f'Invalid tag in enchantment limits: {tag}')
 
 
 class OrdnanceEnchant(BaseItem):
@@ -435,17 +435,17 @@ class OrdnanceEnchant(BaseItem):
             try:
                 self.limit.check_tags(tags)
             except Exception as e:
-                raise ValueError(f'Invalid enchantment limits for { self.name }: { e }')
+                raise ValueError(f'Invalid enchantment limits for {self.name}: {e}')
 
         if self.add is not None:
             for tag in self.add:
                 if tag not in tags:
-                    raise ValueError(f'Invalid tag in add key for { self.name }: { tag }')
+                    raise ValueError(f'Invalid tag in add key for {self.name}: {tag}')
 
         if self.remove is not None:
             for tag in self.remove:
                 if tag not in tags:
-                    raise ValueError(f'Invalid tag in remove key for { self.name }: { tag }')
+                    raise ValueError(f'Invalid tag in remove key for {self.name}: {tag}')
 
 
 Item = TypeVar(
