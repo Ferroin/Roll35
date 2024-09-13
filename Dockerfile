@@ -1,4 +1,4 @@
-FROM alpine:3.18
+FROM alpine:3.20
 
 ARG VERSION=dev
 ARG BUILD_PKGS="alpine-sdk libffi-dev py3-setuptools-rust python3-dev"
@@ -6,7 +6,8 @@ ARG BUILD_PKGS="alpine-sdk libffi-dev py3-setuptools-rust python3-dev"
 RUN apk update && \
     apk upgrade --no-cache && \
     apk add --no-cache poetry \
-                       libffi
+                       libffi \
+                       py3-setuptools
 
 WORKDIR /app
 
