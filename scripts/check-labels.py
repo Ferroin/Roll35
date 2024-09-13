@@ -3,7 +3,7 @@
 '''
 Validate GitHub label configuration.
 
-Copyright (C) 2023 Austin S. Hemmelgarn
+Copyright (C) 2024 Austin S. Hemmelgarn
 
 All rights reserved.
 
@@ -32,12 +32,13 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 '''
 
-import re
 import sys
 
+from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any
 
+from pydantic import BaseModel, Discriminator, Field, Tag, TypeAdapter
 from ruamel.yaml import YAML as Yaml, YAMLError
 
 SCRIPT_PATH = Path(__file__).resolve()
@@ -46,64 +47,154 @@ SRC_DIR = SCRIPT_DIR.parent
 
 # Regex defining accepted label names.
 # The limitations it describes are our own and are imposed for consistency.
-LABEL_REGEX = re.compile('^([a-zA-Z0-9 ._/-])+$')
+LABEL_REGEX = r'^([a-zA-Z0-9 ._/-])+$'
 
 # Regex for matching six-digit hexadecimal strings.
-COLOR_REGEX = re.compile('^[a-fA-F0-9]{6}$')
+COLOR_REGEX = r'^[a-fA-F0-9]{6}$'
 
 YAML = Yaml(typ='safe')
 
 
+class LabelEntry(BaseModel):
+    name: Annotated[str, Field(pattern=LABEL_REGEX)]
+    description: Annotated[str, Field(min_length=1, max_length=100)]
+    color: Annotated[str, Field(pattern=COLOR_REGEX)]
+
+
+LabelListAdapter = TypeAdapter(Annotated[Sequence[LabelEntry], Field(min_length=1)])  # type: ignore
+
+REGEX_LIST = Annotated[Sequence[Annotated[str, Field(min_length=1)]], Field(min_length=1)]
+
+
+class ChangedFiles1(BaseModel):
+    any_glob_to_any_file: REGEX_LIST = Field(alias='any-glob-to-any-file')
+
+
+class ChangedFiles2(BaseModel):
+    any_glob_to_all_files: REGEX_LIST = Field(alias='any-glob-to-all-files')
+
+
+class ChangedFiles3(BaseModel):
+    all_globs_to_any_file: REGEX_LIST = Field(alias='all-globs-to-any-file')
+
+
+class ChangedFiles4(BaseModel):
+    all_globs_to_all_files: REGEX_LIST = Field(alias='all-globs-to-all-files')
+
+
+def cf_disc(item: Any) -> str:
+    match item:
+        case {'any-glob-to-any-file': _}:
+            return 'CF1'
+        case {'any-glob-to-all-files': _}:
+            return 'CF2'
+        case {'all-globs-to-any-file': _}:
+            return 'CF3'
+        case {'all-globs-to-all-files': _}:
+            return 'CF4'
+        case _:
+            raise ValueError
+
+
+CF = Annotated[
+    Annotated[ChangedFiles1, Tag('CF1')] |
+    Annotated[ChangedFiles2, Tag('CF2')] |
+    Annotated[ChangedFiles3, Tag('CF3')] |
+    Annotated[ChangedFiles4, Tag('CF4')],
+    Discriminator(cf_disc)
+]
+
+
+class ChangedFilesEntry(BaseModel):
+    changed_files: Annotated[Sequence[CF], Field(min_length=1, max_length=1)] = Field(alias='changed-files')
+
+
+class HeadBranchEntry(BaseModel):
+    head_branches: REGEX_LIST = Field(alias='head-branches')
+
+
+class BaseBranchEntry(BaseModel):
+    base_branches: REGEX_LIST = Field(alias='base-branches')
+
+
+def ll_disc(item: Any) -> str:
+    match item:
+        case {'changed-files': _}:
+            return 'CF'
+        case {'head-branches': _}:
+            return 'HB'
+        case {'base-branches': _}:
+            return 'BB'
+        case _:
+            raise ValueError
+
+
+LL = Annotated[
+    Annotated[ChangedFilesEntry, Tag('CF')] |
+    Annotated[HeadBranchEntry, Tag('HB')] |
+    Annotated[BaseBranchEntry, Tag('BB')],
+    Discriminator(ll_disc)
+]
+
+
+class LabelAnyLimits(BaseModel):
+    any: Annotated[Sequence[LL], Field(min_length=1)]
+
+
+class LabelAllLimits(BaseModel):
+    all: Annotated[Sequence[LL], Field(min_length=1)]
+
+
+def lal_disc(item: Any) -> str:
+    match item:
+        case {'any': _}:
+            return 'any'
+        case {'all': _}:
+            return 'all'
+        case _:
+            raise ValueError
+
+
+LAL = Annotated[
+    Annotated[LabelAnyLimits, Tag('any')] |
+    Annotated[LabelAllLimits, Tag('all')],
+    Discriminator(lal_disc)
+]
+
+LabelerMapAdapter = TypeAdapter(  # type: ignore
+    Annotated[
+        Mapping[
+            Annotated[
+                str,
+                Field(pattern=LABEL_REGEX),
+            ],
+            Annotated[
+                Sequence[LAL],
+                Field(min_length=1),
+            ]
+        ],
+        Field(min_length=1),
+    ]
+)
+
+
 def validate_labels_config(labels_config: Any) -> bool:
     '''Validate the labels config file.'''
-    if not isinstance(labels_config, list):
-        print('!!! Top level of labels configuration is not a list.')
-        sys.exit(1)
-
     ret = True
 
+    labels_config = LabelListAdapter.validate_python(labels_config)
+
+    seen_labels = set()
+
     for idx, item in enumerate(labels_config):
-        match item:
-            case {'name': n, 'description': d, 'color': c, **other}:
-                if other:
-                    print(f'!!! Unrecognized keys for {n} in labels config.')
-                    ret = False
+        if item.name in seen_labels:
+            print(f'!!! Duplicate label name at index {idx} in labels config.')  # noqa: DB100
+            ret = False
 
-                if not isinstance(n, str):
-                    print(f'!!! Label name is not a string at index {idx}' +
-                          ' in labels config.')
-                    ret = False
-                elif not LABEL_REGEX.match(n):
-                    print(f'!!! Label name {n} is not valid. ' +
-                          'Label names must consist only of English letters, numbers, ' +
-                          '`/`, `-`, `_`, `.`, or spaces.')
-                    ret = False
-
-                if not isinstance(d, str):
-                    print(f'!!! Description for label {n} is not a string.')
-                    ret = False
-                elif len(d) > 100:
-                    print(f'!!! Description for label {n} is too long. GitHub limits descriptions to 100 characters.')
-                    ret = False
-
-                if not isinstance(c, str):
-                    print(f'!!! Color for label {n} is not a string. Did you forget to quote it?')
-                    ret = False
-                elif not COLOR_REGEX.match(c):
-                    print(f'!!! Color for label {n} is not a six-digit hexidecimal string.')
-                    ret = False
-            case {**other}:
-                for k in {'name', 'description', 'color'}:
-                    if k not in other.keys():
-                        print(f'!!! Missing {k} entry at index {idx}' +
-                              ' in labels config.')
-                        ret = False
-            case _:
-                print(f'!!! Incorrect type at index {idx} in labels config.')
-                sys.exit(1)
+        seen_labels.add(item.name)
 
     if ret:
-        print('>>> Labels config has valid syntax.')
+        print('>>> Labels config has valid syntax.')  # noqa: DB100
 
     return ret
 
@@ -111,38 +202,14 @@ def validate_labels_config(labels_config: Any) -> bool:
 def validate_labeler_config(labeler_config: Any) -> bool:
     '''Validate the labeler config file.'''
     if not isinstance(labeler_config, dict):
-        print('!!! Top level of labeler configuration is not a mapping.')
+        print('!!! Top level of labeler configuration is not a mapping.')  # noqa: DB100
 
     ret = True
 
-    for key, value in labeler_config.items():
-        if not isinstance(key, str):
-            print(f"!!! \'{key}\' in labeler config is not a string.")
-            ret = False
-
-        if not isinstance(value, list):
-            print(f'!!! Invalid type for value of {key} in labeler config.')
-            ret = False
-            continue
-
-        match value:
-            case [{'all': [*_], 'any': [*_]}]:
-                pass
-            case [{'all': [*_]}]:
-                pass
-            case [{'any': [*_]}]:
-                pass
-            case [*results] if all(map(lambda x: isinstance(x, str), results)):
-                pass
-            case [*results]:
-                for idx, item in enumerate(results):
-                    if not isinstance(item, str):
-                        print(f'!!! Invalid item at index {idx} for '
-                              f'{key} in labeler configuration')
-                        ret = False
+    labeler_config = LabelerMapAdapter.validate_python(labeler_config)
 
     if ret:
-        print('>>> Labeler config has valid syntax.')
+        print('>>> Labeler config has valid syntax.')  # noqa: DB100
 
     return ret
 
@@ -153,11 +220,11 @@ def check_labeler_labels(labels: Any, labeler_config: Any) -> bool:
                               if x not in labels}
 
     if missing_labeler_labels:
-        print('!!! Missing labels found in labeler config:' +
+        print('!!! Missing labels found in labeler config:' +  # noqa: DB100
               f'{str(missing_labeler_labels)}')
         return False
 
-    print('>>> All labels in labeler config are defined in labels config.')
+    print('>>> All labels in labeler config are defined in labels config.')  # noqa: DB100
     return True
 
 
@@ -170,12 +237,12 @@ def check_dependabot_labels(labels: Any, dependabot_config: Any) -> bool:
             missing_labels = {x for x in entry['labels'] if x not in labels}
 
             if missing_labels:
-                print('!!! Missing labels found in dependabot config entry { idx }:' +
+                print('!!! Missing labels found in dependabot config entry { idx }:' +  # noqa: DB100
                       f'{str(missing_labels)}')
                 ret = False
 
     if ret:
-        print('>>> All labels in dependabot config are defined in labels config.')
+        print('>>> All labels in dependabot config are defined in labels config.')  # noqa: DB100
 
     return ret
 
@@ -183,19 +250,19 @@ def check_dependabot_labels(labels: Any, dependabot_config: Any) -> bool:
 try:
     LABELS_CONFIG = YAML.load(SRC_DIR / '.github' / 'labels.yml')
 except (YAMLError, IOError, OSError):
-    print('!!! Failed to load labels configuration file.')
+    print('!!! Failed to load labels configuration file.')  # noqa: DB100
     sys.exit(1)
 
 try:
     LABELER_CONFIG = YAML.load(SRC_DIR / '.github' / 'labeler.yml')
 except (YAMLError, IOError, OSError):
-    print('!!! Failed to load labeler configuration file.')
+    print('!!! Failed to load labeler configuration file.')  # noqa: DB100
     sys.exit(1)
 
 try:
     DEPENDABOT_CONFIG = YAML.load(SRC_DIR / '.github' / 'dependabot.yml')
 except (YAMLError, IOError, OSError):
-    print('!!! Failed to load labeler configuration file.')
+    print('!!! Failed to load labeler configuration file.')  # noqa: DB100
     sys.exit(1)
 
 if not all([

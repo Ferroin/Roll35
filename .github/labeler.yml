@@ -2,57 +2,93 @@
 # Configuration for the pr-labeler workflow.
 
 area/bot:
-  - roll35/__main__.py
-  - roll35/bot.py
-  - roll35/cogs/*.py
-  - roll35/cogs/**/*.py
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - roll35/__main__.py
+              - roll35/bot.py
+              - roll35/cogs/*.py
+              - roll35/cogs/**/*.py
 
 area/common:
-  - roll35/__init__.py
-  - roll35/common.py
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - roll35/__init__.py
+              - roll35/common.py
 
 area/data-handling:
-  - roll35/data/*.py
-  - roll35/data/**/*.py
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - roll35/data/*.py
+              - roll35/data/**/*.py
 
 area/parser:
-  - roll35/parser.py
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - roll35/parser.py
 
 area/renderer:
-  - roll35/renderer.py
-  - roll35/types/render*.py
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - roll35/renderer.py
+              - roll35/types/render*.py
 
 area/scripts:
-  - scripts/*
-  - scripts/**/*
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - scripts/*
+              - scripts/**/*
 
 area/types:
-  - roll35/types/*.py
-  - roll35/types/**/*.py
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - roll35/types/*.py
+              - roll35/types/**/*.py
 
 dataset:
-  - roll35/data/files/*
-  - roll35/data/files/**/*
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - roll35/data/files/*
+              - roll35/data/files/**/*
 
 documentation:
-  - LICENSE.md
-  - README.md
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - LICENSE.md
+              - README.md
 
 infra:
-  - .gigignore
-  - .gitmodules
-  - .github/labeler.yml
-  - .github/labels.yml
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - .gigignore
+              - .gitmodules
+              - .github/labeler.yml
+              - .github/labels.yml
 
 infra/ci:
-  - scripts/check-labels.py
-  - .flake8
-  - .github/dependabot.yml
-  - .github/workflows/**
-  - .mdl-style.rb
-  - .yamllint.yml
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - scripts/check-labels.py
+              - .flake8
+              - .github/dependabot.yml
+              - .github/workflows/**
+              - .mdl-style.rb
+              - .yamllint.yml
 
 infra/packaging:
-  - Dockerfile
-  - poetry.lock
-  - pyproject.toml
+  - any:
+      - changed-files:
+          - any-glob-to-any-file:
+              - Dockerfile
+              - poetry.lock
+              - pyproject.toml
