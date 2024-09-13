@@ -15,7 +15,7 @@ import logging.config
 import os
 import sys
 
-from concurrent.futures import ProcessPoolExecutor, Executor
+from concurrent.futures import Executor, ProcessPoolExecutor
 from typing import Any
 
 import nextcord
@@ -23,11 +23,11 @@ import nextcord
 from nextcord.ext import commands
 
 from . import BOT_HELP
-from .types import Ret
 from .cogs import COGS
-from .common import did_you_mean, bad_return
+from .common import bad_return, did_you_mean
 from .data import DataSet
 from .renderer import Renderer
+from .types import Ret
 
 logger = logging.getLogger('roll35')
 
@@ -66,12 +66,12 @@ class Bot(commands.Bot):
 
             match await loop.run_in_executor(self.pool, did_you_mean, [x.name for x in self.walk_commands()], exception.command_name):
                 case (Ret.OK, msg):
-                    return await ctx.send(f'{ exception.command_name } is not a recognized command. { msg }')
+                    return await ctx.send(f'{exception.command_name} is not a recognized command. {msg}')
                 case (Ret.NO_MATCH, _):
-                    return await ctx.send(f'{ exception.command_name } is not a recognized command.')
+                    return await ctx.send(f'{exception.command_name} is not a recognized command.')
                 case ret:
                     logger.error(bad_return(ret))
-                    return await ctx.send(f'{ exception.command_name } is not a recognized command.')
+                    return await ctx.send(f'{exception.command_name} is not a recognized command.')
 
         await super().on_command_error(ctx, exception)
 
@@ -142,7 +142,7 @@ def main() -> None:
         cog = entry(pool, ds, renderer)
         bot.add_cog(cog)
 
-    logger.info(f'Starting bot with token: { TOKEN }')
+    logger.info(f'Starting bot with token: {TOKEN}')
 
     try:
         bot.run(TOKEN, ds=ds, renderer=renderer)

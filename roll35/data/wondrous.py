@@ -12,8 +12,8 @@ from typing import TYPE_CHECKING
 
 from . import agent
 from .. import types
-from ..common import rnd, make_weighted_entry, ismapping
-from ..log import log_call_async, log_call
+from ..common import ismapping, make_weighted_entry, rnd
+from ..log import log_call, log_call_async
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
@@ -48,7 +48,7 @@ class WondrousAgent(agent.Agent):
             try:
                 slots.append(make_weighted_entry(entry))
             except TypeError:
-                raise RuntimeError(f'Invalid wondrous item slot entry: { entry }')
+                raise RuntimeError(f'Invalid wondrous item slot entry: {entry}')
 
         return WondrousData(
             slots=slots,
@@ -57,7 +57,7 @@ class WondrousAgent(agent.Agent):
     def _post_validate(self: WondrousAgent, data: WondrousData) -> bool:  # type: ignore[override]
         for slot in data.slots:
             if slot.value not in self._ds:
-                raise ValueError(f'Wondrous item slot { slot.value } does not have an associated agent.')
+                raise ValueError(f'Wondrous item slot {slot.value} does not have an associated agent.')
 
         return True
 

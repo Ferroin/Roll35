@@ -3,12 +3,12 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence, Iterator
+from collections.abc import Iterator, Mapping, Sequence
 from typing import Any, NoReturn, cast
 
 from .item import WeightedValue
 from .retcode import Ret
-from ..common import rnd, make_weighted_entry
+from ..common import make_weighted_entry, rnd
 
 
 class RenderMap(Mapping):
@@ -33,7 +33,7 @@ class RenderMap(Mapping):
                 k = str(k)
 
                 if not k.isidentifier():
-                    raise KeyError(f'{ k }: RenderMap keys must be valid Python identifiers.')
+                    raise KeyError(f'{k}: RenderMap keys must be valid Python identifiers.')
             except TypeError:
                 raise KeyError('RenderMap keys must be strings.')
 

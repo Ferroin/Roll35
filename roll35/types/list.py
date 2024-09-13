@@ -3,8 +3,8 @@
 
 from __future__ import annotations
 
-from collections.abc import MutableSequence, Iterable
-from typing import TypeVar, Generic, SupportsIndex, overload, cast
+from collections.abc import Iterable, MutableSequence
+from typing import Generic, SupportsIndex, TypeVar, cast, overload
 
 from .container import R35Container
 
@@ -34,7 +34,7 @@ class R35List(R35Container, MutableSequence, Generic[T]):
                 self.append(i)
 
     def __repr__(self: R35List, /) -> str:
-        return f'R35List({ self.costs }, { self._data })'
+        return f'R35List({self.costs}, {self._data})'
 
     @overload
     def __getitem__(self: R35List, index: SupportsIndex, /) -> T: ...
@@ -51,7 +51,7 @@ class R35List(R35Container, MutableSequence, Generic[T]):
             case slice():
                 pass
             case _:
-                raise IndexError(f'{ index } is not a supported index for R35List objects.')
+                raise IndexError(f'{index} is not a supported index for R35List objects.')
 
         return self._data[index]
 

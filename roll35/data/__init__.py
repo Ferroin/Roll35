@@ -10,16 +10,12 @@ import logging
 import os
 
 from collections.abc import Mapping, Sequence
-from typing import TYPE_CHECKING, Union, Type
 from pathlib import Path
+from typing import TYPE_CHECKING, Type, Union
 
-from pydantic import field_validator, BaseModel
-
-from ..common import yaml
-from ..types import Ret
+from pydantic import BaseModel, field_validator
 
 from .agent import Agent
-
 from .category import CategoryAgent
 from .classes import ClassesAgent
 from .compound import CompoundAgent
@@ -28,6 +24,8 @@ from .ranked import RankedAgent
 from .settlement import SettlementAgent
 from .spell import SpellAgent
 from .wondrous import WondrousAgent
+from ..common import yaml
+from ..types import Ret
 
 if TYPE_CHECKING:
     from concurrent.futures import Executor
@@ -64,18 +62,18 @@ if (_dr := os.environ.get('R35_DATA_ROOT', None)) is not None:
     try:
         _root = Path(_dr)
     except Exception:
-        logger.warning(f'Requested data root path { _dr } does not appear to be a valid path. Using default path instead.')
+        logger.warning(f'Requested data root path {_dr} does not appear to be a valid path. Using default path instead.')
     else:
         if _root.exists():
             if _root.is_dir():
                 if (_root / 'structure.yaml').exists() and (_root / 'structure.yaml').is_file():
                     DEFAULT_DATA_ROOT = _root
                 else:
-                    logger.warning(f'Requested data root path { _root } does not include a structure.yaml file, using default path instead.')
+                    logger.warning(f'Requested data root path {_root} does not include a structure.yaml file, using default path instead.')
             else:
-                logger.warning(f'Requested data root path { _root } is not a directory. Using default path instead')
+                logger.warning(f'Requested data root path {_root} is not a directory. Using default path instead')
         else:
-            raise ValueError(f'Requested data root path { _root } does not exist. Using default path instead')
+            raise ValueError(f'Requested data root path {_root} does not exist. Using default path instead')
 
 
 class AgentEntry(BaseModel):
@@ -87,7 +85,7 @@ class AgentEntry(BaseModel):
     @classmethod
     def check_type(cls: Type[AgentEntry], v: str) -> str:
         if v not in agents:
-            raise ValueError(f'Unrecognized agent type in structure file { v }.')
+            raise ValueError(f'Unrecognized agent type in structure file {v}.')
 
         return v
 
@@ -124,10 +122,10 @@ class DataSet:
         self.ready = False
 
         if not src.exists():
-            raise ValueError(f'Requested data source path { src } does not exist.')
+            raise ValueError(f'Requested data source path {src} does not exist.')
 
         if not src.is_dir():
-            raise ValueError(f'Requested data source path { src } is not a directory.')
+            raise ValueError(f'Requested data source path {src} is not a directory.')
 
         with open(self.src / 'structure.yaml') as f:
             structure = StructureData(**yaml.load(f))

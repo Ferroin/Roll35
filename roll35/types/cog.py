@@ -7,9 +7,9 @@ from __future__ import annotations
 
 import logging
 
-from nextcord.ext import commands
+from typing import TYPE_CHECKING, NoReturn
 
-from typing import NoReturn, TYPE_CHECKING
+from nextcord.ext import commands
 
 if TYPE_CHECKING:
     from concurrent.futures import Executor
@@ -42,7 +42,7 @@ class R35Cog(commands.Cog):
 
         if ctx.command is not None:
             logger.debug(
-                f'Invoking { ctx.command.name } from message { ctx.message.content }.'
+                f'Invoking {ctx.command.name} from message {ctx.message.content}.'
             )
 
     async def cog_command_error(self: R35Cog, /, ctx: commands.Context, err: Exception) -> NoReturn:

@@ -9,7 +9,7 @@ import enum
 
 from typing import Type
 
-from pydantic import field_validator, BaseModel
+from pydantic import BaseModel, field_validator
 
 
 @enum.unique

@@ -45,7 +45,7 @@ Commands, and most of ther parameters, are case-insensitive.
 Supported commands, grouped by category:
 '''
 
-__version__ = f'{ VERSION[0] }.{ VERSION[1] }.{ VERSION[2] }'
+__version__ = f'{VERSION[0]}.{VERSION[1]}.{VERSION[2]}'
 
 __all__ = [
     'cogs',

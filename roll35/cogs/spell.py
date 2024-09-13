@@ -11,15 +11,14 @@ from typing import TYPE_CHECKING, Any, Literal, cast
 from nextcord.ext import commands
 
 from ..common import bad_return
-from ..data.spell import SpellAgent
 from ..data.classes import ClassesAgent
+from ..data.spell import SpellAgent
 from ..log import log_call
 from ..parser import Parser, ParserEntry
-from ..types import R35Cog, Ret, Result
-from ..types import Spell as SpellEntry
+from ..types import R35Cog, Result, Ret, Spell as SpellEntry
 
 if TYPE_CHECKING:
-    from collections.abc import Mapping, Awaitable
+    from collections.abc import Awaitable, Mapping
 
     from ..data import DataSet
 
@@ -76,7 +75,7 @@ class Spell(R35Cog):
             case (Ret.FAILED, msg):
                 await ctx.send(
                     'Invalid arguments for command `spell`: ' +
-                    f'{ msg }\n' +
+                    f'{msg}\n' +
                     'See `/r35 help spell` for supported arguments.'
                 )
                 return
@@ -90,7 +89,7 @@ class Spell(R35Cog):
         match parsed:
             case {'count': c} if isinstance(c, int) and c > 0:
                 if c > MAX_COUNT:
-                    await ctx.send(f'Too many spells requested, no more than { MAX_COUNT } may be rolled at a time.')
+                    await ctx.send(f'Too many spells requested, no more than {MAX_COUNT} may be rolled at a time.')
                     return
 
                 coros = []
@@ -108,19 +107,19 @@ class Spell(R35Cog):
 
                 for item in asyncio.as_completed(coros):
                     match await item:
-                        case (Ret.OK, SpellEntry() as msg):
-                            match await self.render(msg):
-                                case (Ret.OK, str() as msg):
-                                    results.append(msg)
-                                case (r1, msg) if r1 is not Ret.OK:
-                                    results.append(f'\nFailed to generate remaining items: { msg }')
+                        case (Ret.OK, SpellEntry() as sp):
+                            match await self.render(sp):
+                                case (Ret.OK, str() as msg2):
+                                    results.append(msg2)
+                                case (r1, msg2) if r1 is not Ret.OK:
+                                    results.append(f'\nFailed to generate remaining items: {msg2}')
                                     break
                                 case r2:
                                     logger.error(bad_return(r2))
                                     results.append('\nFailed to generate remaining items: Unknown internal error.')
                                     break
-                        case (r3, msg) if r3 is not Ret.OK:
-                            results.append(f'\nFailed to generate remaining items: { msg }')
+                        case (r3, msg3) if r3 is not Ret.OK:
+                            results.append(f'\nFailed to generate remaining items: {msg3}')
                             break
                         case r4:
                             logger.error(bad_return(r4))
@@ -131,7 +130,7 @@ class Spell(R35Cog):
 
                 msg = '\n'.join(results)
 
-                await ctx.send(f'{ len(results) } results: \n{ msg }')
+                await ctx.send(f'{len(results)} results: \n{msg}')
             case {'count': c} if c < 1:
                 await ctx.send('Count must be an integer greater than 0.')
             case _:
@@ -161,7 +160,7 @@ class Spell(R35Cog):
             case list() as tags:
                 await ctx.send(
                     'The following spell tags are recognized: ' +
-                    f'`{ "`, `".join(sorted(tags)) }`'
+                    f'`{"`, `".join(sorted(tags))}`'
                 )
             case ret:
                 logger.warning(bad_return(ret))
@@ -179,7 +178,7 @@ class Spell(R35Cog):
             case list() as classes:
                 await ctx.send(
                     'The following spellcasting classes are recognized: ' +
-                    f'`{ "`, `".join(sorted(classes)) }`\n\n' +
+                    f'`{"`, `".join(sorted(classes))}`\n\n' +
                     'Additionally, the following special terms are recognized in places of a class name: \n' +
                     '- `minimum`: The class with the lowest level for each spell.\n' +
                     '- `random`: Select a class at random.\n' +

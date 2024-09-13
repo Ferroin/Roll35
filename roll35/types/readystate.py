@@ -8,12 +8,12 @@ from __future__ import annotations
 import asyncio
 import logging
 
-from typing import Any, ParamSpec, TypeVar, Literal, Concatenate, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Concatenate, Literal, ParamSpec, TypeVar
 
 from .retcode import Ret
 
 if TYPE_CHECKING:
-    from collections.abc import Coroutine, Callable
+    from collections.abc import Callable, Coroutine
 
 P = ParamSpec('P')
 T = TypeVar('T')

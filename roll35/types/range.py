@@ -51,7 +51,7 @@ class R35Range(Container):
                 self._empty = True
 
     def __repr__(self: R35Range, /) -> str:
-        return f'R35Range({ self.min }, { self.max }, empty={ self._empty })'
+        return f'R35Range({self.min}, {self.max}, empty={self._empty})'
 
     def __contains__(self: R35Range, v: Any, /) -> bool:
         if self._empty:
@@ -63,7 +63,7 @@ class R35Range(Container):
         elif v == 'varies':
             return self.min <= 0 <= self.max
         else:
-            raise ValueError(f'{ type(v) } is not supported by R35Range objects.')
+            raise ValueError(f'{type(v)} is not supported by R35Range objects.')
 
     @classmethod
     def _rangecheck(cls, v: RangeMember, /) -> bool:
@@ -96,9 +96,9 @@ class R35Range(Container):
                             self._min = min(e, self._min)
                             self._max = max(e, self._max)
                     else:
-                        raise ValueError(f'{ e } is out of range for R35Range objects.')
+                        raise ValueError(f'{e} is out of range for R35Range objects.')
                 case e:
-                    raise TypeError(f'{ type(e) } is not supported by R35Range objects.')
+                    raise TypeError(f'{type(e)} is not supported by R35Range objects.')
 
     def reset(self: R35Range, /) -> None:
         '''Reset the cost range to the default values.'''

@@ -8,8 +8,8 @@ import abc
 from collections.abc import Collection, Iterator
 from typing import Any, TypeVar
 
+from .item import BaseItem, Cost, Item
 from .range import R35Range
-from .item import Item, BaseItem, Cost
 
 T = TypeVar('T')
 

@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, Any, cast
 from nextcord.ext import commands
 
 from .. import types
-from ..common import ret_async, bad_return
+from ..common import bad_return, ret_async
 from ..data.category import CategoryAgent
 from ..data.classes import ClassesAgent
 from ..data.compound import CompoundAgent
@@ -23,7 +23,7 @@ from ..log import log_call_async
 from ..parser import Parser, ParserEntry
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence, Mapping, Awaitable
+    from collections.abc import Awaitable, Mapping, Sequence
     from concurrent.futures import Executor
 
     from ..data import DataSet
@@ -146,7 +146,7 @@ class MagicItem(types.R35Cog):
             case (types.Ret.FAILED, msg):
                 await ctx.send(
                     'Invalid arguments for command `magicitem`: ' +
-                    f'{ msg }\n' +
+                    f'{msg}\n' +
                     'See `/r35 help magicitem` for supported arguments.'
                 )
             case (types.Ret.OK, a):
@@ -170,7 +170,7 @@ class MagicItem(types.R35Cog):
                         case (types.Ret.OK, msg):
                             match await self.render(cast(types.item.BaseItem, msg)):
                                 case (r1, msg) if r1 is not types.Ret.OK:
-                                    results.append(f'\nFailed to generate remaining items: { msg }')
+                                    results.append(f'\nFailed to generate remaining items: {msg}')
                                     break
                                 case (types.Ret.OK, msg) if isinstance(msg, str):
                                     results.append(msg)
@@ -179,7 +179,7 @@ class MagicItem(types.R35Cog):
                                     results.append('\nFailed to generate remaining items: Unknown internal error.')
                                     break
                         case (r1, msg) if isinstance(r1, types.Ret) and r1 is not types.Ret.OK and isinstance(msg, str):
-                            results.append(f'\nFailed to generate remaining items: { msg }')
+                            results.append(f'\nFailed to generate remaining items: {msg}')
                             break
                         case r2:
                             logger.error(bad_return(r2))
@@ -190,7 +190,7 @@ class MagicItem(types.R35Cog):
 
                 msg = '\n'.join(results)
 
-                await ctx.send(f'{ len(results) } results: \n{ msg }')
+                await ctx.send(f'{len(results)} results: \n{msg}')
             case {'count': c} if c < 1:
                 await ctx.send('Count must be an integer greater than 0.')
             case _:
@@ -242,7 +242,7 @@ class MagicItem(types.R35Cog):
             case set() as cats:
                 await ctx.send(
                     'The following item categories are recognized: ' +
-                    f'`{ "`, `".join(sorted(list(cats))) }`'
+                    f'`{"`, `".join(sorted(list(cats)))}`'
                 )
             case ret:
                 logger.warning(bad_return(ret))
@@ -260,7 +260,7 @@ class MagicItem(types.R35Cog):
             case list() as slots:
                 await ctx.send(
                     'The following wobndrous item slots are recognized: ' +
-                    f'`{ "`, `".join(sorted(slots)) }`'
+                    f'`{"`, `".join(sorted(slots))}`'
                 )
             case ret:
                 logger.warning(bad_return(ret))
@@ -330,7 +330,7 @@ async def _assemble_magic_item(
         attempt: int = 0) -> \
         types.Result[types.item.SimpleItem]:
     '''Assemble a magic weapon or armor item.'''
-    logger.debug(f'Assembling magic item with parameters: { base_item }, { pattern }, { masterwork }, { bonus_cost }')
+    logger.debug(f'Assembling magic item with parameters: {base_item}, {pattern}, {masterwork}, {bonus_cost}')
 
     if pattern.bonus is None or pattern.enchants is None:
         raise ValueError('Cannot assemble magic item without bonus or enchants properties.')
@@ -391,11 +391,11 @@ async def _assemble_magic_item(
             )
     else:
         item_cost += ((cbonus ** 2) * bonus_cost) + extra_ecost
-        etitle = ''.join(list(map(lambda x: f'{ x } ', enchants)))
+        etitle = ''.join(list(map(lambda x: f'{x} ', enchants)))
         return (
             types.Ret.OK,
             types.item.SimpleItem(
-                name=f'+{ pattern.bonus } { etitle }{ base_item.name }',
+                name=f'+{pattern.bonus} {etitle}{base_item.name}',
                 cost=item_cost,
             )
         )
@@ -410,7 +410,7 @@ def roll_many(pool: Executor, ds: DataSet, /, count: int, args: Mapping[str, Any
         return [ret_async((types.Ret.NOT_READY, NOT_READY))]
 
     if count > MAX_COUNT:
-        return [ret_async((types.Ret.LIMITED, f'Too many items requested, no more than { MAX_COUNT } may be rolled at a time.'))]
+        return [ret_async((types.Ret.LIMITED, f'Too many items requested, no more than {MAX_COUNT} may be rolled at a time.'))]
 
     coros = []
 
@@ -438,7 +438,7 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
     ret: Any = None
 
     if attempt >= MAX_REROLLS:
-        logger.warning(f'Recursion limit hit while rolling magic item: { args }')
+        logger.warning(f'Recursion limit hit while rolling magic item: {args}')
         return (types.Ret.LIMITED, 'Too many rerolls while attempting to generate item.')
 
     slots = await cast(WondrousAgent, ds['wondrous']).slots_async()
@@ -530,7 +530,7 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
                     logger.error(bad_return(ret))
                     item = (types.Ret.FAILED, 'Unknown internal error.')
         case {'rank': _, 'subrank': subrank, 'category': category} if category in compound and subrank is not None:
-            item = (types.Ret.INVALID, f'Invalid parmeters specified, { category } does not take a subrank.')
+            item = (types.Ret.INVALID, f'Invalid parmeters specified, {category} does not take a subrank.')
         case {'rank': rank, 'subrank': subrank, 'category': category, 'cls': cls, 'level': level} if cls is not None or level is not None:
             match await cast(ClassesAgent, ds['classes']).classes_async():
                 case types.Ret.NOT_READY:
@@ -550,7 +550,7 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
                                 logger.error(bad_return(ret))
                                 item = (types.Ret.FAILED, 'Unknown internal error.')
                     else:
-                        item = (types.Ret.FAILED, f'Unknown spellcasting class { cls }. For a list of known classes, use the `classes` command.')
+                        item = (types.Ret.FAILED, f'Unknown spellcasting class {cls}. For a list of known classes, use the `classes` command.')
         case {'rank': rank, 'category': category} if category in compound:
             item = await cast(CompoundAgent, ds[category]).random_async(rank=rank, mincost=mincost, maxcost=maxcost)
         case {'rank': rank, 'subrank': subrank, 'category': category} if category in ranked:
@@ -606,7 +606,7 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
                         logger.error(bad_return(ret))
                         item = (types.Ret.FAILED, 'Unknown internal error.')
         case _:
-            logger.warning(f'Invalid parameters when rolling magic item: { args }')
+            logger.warning(f'Invalid parameters when rolling magic item: {args}')
             item = (types.Ret.INVALID, 'Invalid parmeters specified.')
 
     match item:
@@ -640,8 +640,3 @@ async def roll(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *, attem
         case r2:
             logger.error(bad_return(r2))
             return (types.Ret.FAILED, 'Unknown internal error.')
-
-    # The below line should never actually be run, as the above match clauses are (theoretically) exhaustive.
-    #
-    # However, mypy thinks this function is missing a return statement, and this line convinces it otherwise.
-    raise RuntimeError

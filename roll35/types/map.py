@@ -3,9 +3,9 @@
 
 from __future__ import annotations
 
-from collections.abc import MutableMapping, Mapping, ItemsView, KeysView, ValuesView
+from collections.abc import ItemsView, KeysView, Mapping, MutableMapping, ValuesView
 from enum import Enum
-from typing import TypeVar, Generic, cast
+from typing import Generic, TypeVar, cast
 
 from .container import R35Container
 
@@ -39,7 +39,7 @@ class R35Map(R35Container, MutableMapping, Generic[K, V]):
                 self[k] = v
 
     def __repr__(self: R35Map, /) -> str:
-        return f'R35Map({ self.costs }, { self._data })'
+        return f'R35Map({self.costs}, {self._data})'
 
     def __getitem__(self: R35Map, key: K, /) -> V:
         if key in self._data:

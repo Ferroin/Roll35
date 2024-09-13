@@ -3,12 +3,12 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence, Iterator
-from typing import TypedDict, Literal, Union, Dict, Any, cast
+from collections.abc import Iterator, Mapping, Sequence
+from typing import Any, Dict, Literal, TypedDict, Union, cast
 
 from .item import WeightedValue
 from .rendermap import RenderMap
-from ..common import rnd, make_weighted_entry
+from ..common import make_weighted_entry, rnd
 
 
 class TFlatEntry(TypedDict):
@@ -62,7 +62,7 @@ class RenderData(Mapping):
                 k = str(k)
 
                 if not k.isidentifier():
-                    raise KeyError(f'{ k }: RenderData keys must be valid Python identifiers.')
+                    raise KeyError(f'{k}: RenderData keys must be valid Python identifiers.')
             except TypeError:
                 raise KeyError('RenderData keys must be strings.')
 
@@ -80,7 +80,7 @@ class RenderData(Mapping):
                 case {'type': 'flat', 'data': d}:
                     self._data[k] = cast(Sequence[str], d)
                 case _:
-                    raise ValueError(f'{ v } is not a valid value for RenderData.')
+                    raise ValueError(f'{v} is not a valid value for RenderData.')
 
     def __getattr__(self: RenderData, key: str, /) -> RenderMap | str:
         data = object.__getattribute__(self, '_data')

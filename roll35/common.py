@@ -10,9 +10,9 @@ import logging
 import random
 import unicodedata
 
-from collections.abc import Mapping, Iterable, Callable
+from collections.abc import Callable, Iterable, Mapping
 from functools import lru_cache
-from typing import Any, Generator, TypeVar, TypeGuard, cast, overload
+from typing import Any, Generator, TypeGuard, TypeVar, cast, overload
 
 from jaro import jaro_winkler_metric as jwm
 from ruamel.yaml import YAML
@@ -56,7 +56,7 @@ def bad_return(value: Any, /) -> str:
     '''Produce a log message indicating a bad return code, including call site info.'''
     import inspect
     frame = inspect.getframeinfo(inspect.stack()[1][0])
-    return f'Unexpected return code { value } at { frame.filename }:{ frame.lineno }'
+    return f'Unexpected return code {value} at {frame.filename}:{frame.lineno}'
 
 
 @lru_cache(maxsize=256)
@@ -222,7 +222,7 @@ def did_you_mean(items: list[str], name: str) -> types.Result[str]:
 
         return (
             types.Ret.OK,
-            f'Did you possibly mean one of: { possible3 }'
+            f'Did you possibly mean one of: {possible3}'
         )
     else:
         return (types.Ret.NO_MATCH, 'No matching items found.')

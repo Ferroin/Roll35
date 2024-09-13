@@ -9,15 +9,17 @@ import logging
 
 from typing import TYPE_CHECKING, Any, TypeVar, cast
 
+import aiofiles
+
 from . import agent
 from .classes import ClassesAgent
 from .spell import SpellAgent
 from .. import types
-from ..common import yaml, bad_return, ismapping, rnd, flatten, make_weighted_entry
-from ..log import log_call_async, log_call
+from ..common import bad_return, flatten, ismapping, make_weighted_entry, rnd, yaml
+from ..log import log_call, log_call_async
 
 if TYPE_CHECKING:
-    from collections.abc import Mapping, Sequence, Iterable, Callable
+    from collections.abc import Callable, Iterable, Mapping, Sequence
     from concurrent.futures import Executor
 
 logger = logging.getLogger(__name__)
@@ -73,7 +75,7 @@ def process_subranked_itemlist(
             try:
                 ret[subrank].append(make_weighted_entry(cast(types.Item, xform(typ(item)))))
             except TypeError:
-                raise RuntimeError(f'Failed to process entry for ranked item list: { item }')
+                raise RuntimeError(f'Failed to process entry for ranked item list: {item}')
 
     return ret
 
@@ -103,13 +105,13 @@ class RankedAgent(agent.Agent):
             if classes == types.Ret.NOT_READY:
                 raise RuntimeError('Class data is not ready.')
 
-            logger.info(f'Loading { self.name } data.')
+            logger.info(f'Loading {self.name} data.')
 
-            with open(self._ds.src / f'{ self.name }.yaml') as f:
+            with open(self._ds.src / f'{self.name}.yaml') as f:
                 data = yaml.load(f)
 
             self._data = self._process_data(data, classes)
-            logger.info(f'Finished loading { self.name } data.')
+            logger.info(f'Finished loading {self.name} data.')
 
             self.ready = True
 
@@ -122,13 +124,13 @@ class RankedAgent(agent.Agent):
 
             classes = await cast(ClassesAgent, self._ds['classes']).W_classdata_async()
 
-            logger.info(f'Loading { self.name } data.')
+            logger.info(f'Loading {self.name} data.')
 
-            with open(self._ds.src / f'{ self.name }.yaml') as f:
-                data = yaml.load(f)
+            async with aiofiles.open(self._ds.src / f'{self.name}.yaml') as f:
+                data = await f.read()
 
-            self._data = await self._process_async(pool, self._process_data, [data, classes])
-            logger.info(f'Finished loading { self.name } data.')
+            self._data = await self._process_async(pool, self._process_data, [yaml.load(data), classes])
+            logger.info(f'Finished loading {self.name} data.')
 
             self._ready.set()
 
@@ -161,9 +163,9 @@ class RankedAgent(agent.Agent):
                     case subrank if self._valid_subrank(rank, subrank):
                         searchitems = self._data.ranked[rank][subrank]
                     case _:
-                        raise ValueError(f'Invalid sub-rank for { self.name }: { rank }')
+                        raise ValueError(f'Invalid sub-rank for {self.name}: {rank}')
             case _:
-                raise ValueError(f'Invalid rank for { self.name }: { rank }')
+                raise ValueError(f'Invalid rank for {self.name}: {rank}')
 
         possible = []
 
@@ -201,7 +203,7 @@ class RankedAgent(agent.Agent):
                         item.rolled_spell = s1
                         return item
                     case (types.Ret() as r1, msg) if r1 is not types.Ret.OK:
-                        logger.warning(f'Failed to roll random spell for item using parameters: { spell }, recieved: { msg }')
+                        logger.warning(f'Failed to roll random spell for item using parameters: {spell}, recieved: {msg}')
                         return r1
                     case r1:
                         logger.error(bad_return(r1))
