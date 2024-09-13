@@ -5,7 +5,6 @@
 
 from __future__ import annotations
 
-import asyncio
 import logging
 import random
 
@@ -19,7 +18,7 @@ from ..data.settlement import ItemSlots, SettlementAgent, SettlementEntry
 from ..log import log_call_async
 
 if TYPE_CHECKING:
-    from collections.abc import MutableMapping, Sequence, Awaitable
+    from collections.abc import Awaitable, MutableMapping, Sequence
     from concurrent.futures import Executor
 
     from ..data import DataSet
