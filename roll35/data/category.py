@@ -87,9 +87,35 @@ class CategoryAgent(agent.Agent):
 
         return True
 
+    def _populate_costs(self: CategoryAgent) -> None:
+        '''Populate the cost range information for the categories.
+
+           Must be called _after_ all other data types are loaded.'''
+        assert self._data.compound is not None
+
+        for category in self._data.categories:
+            data = self._ds[category]._data
+
+            if data.compound is not None:
+                for rank in data.compound:
+                    entry = next(filter(lambda x: x.name == category, self._data.compound[rank]))
+                    entry.costrange = data.compound[rank].costs
+            elif data.ranked is not None:
+                for rank in data.ranked:
+                    entry = next(filter(lambda x: x.name == category, self._data.compound[rank]))
+                    entry.costrange = data.ranked[rank].costs
+
+        self._data.compound.sync()
+
     @log_call(logger, 'roll random category')
-    def random(self: CategoryAgent, /, rank: types.Rank | None = None) -> str | types.Ret:
-        match super().random_compound(rank=rank):
+    def random(
+        self: CategoryAgent,
+        /,
+        rank: types.Rank | None = None,
+        mincost: types.Cost = agent.DEFAULT_MINCOST,
+        maxcost: types.Cost = agent.DEFAULT_MAXCOST,
+    ) -> str | types.Ret:
+        match super().random_compound(rank=rank, mincost=mincost, maxcost=maxcost):
             case types.Ret() as r:
                 return r
             case types.CompoundItem() as s:
@@ -99,8 +125,14 @@ class CategoryAgent(agent.Agent):
                 return types.Ret.FAILED
 
     @log_call_async(logger, 'roll random category')
-    async def random_async(self: CategoryAgent, /, rank: types.Rank | None = None) -> str | types.Ret:
-        match await super().random_compound_async(rank=rank):
+    async def random_async(
+        self: CategoryAgent,
+        /,
+        rank: types.Rank | None = None,
+        mincost: types.Cost = agent.DEFAULT_MINCOST,
+        maxcost: types.Cost = agent.DEFAULT_MAXCOST,
+    ) -> str | types.Ret:
+        match await super().random_compound_async(rank=rank, mincost=mincost, maxcost=maxcost):
             case types.Ret() as r:
                 return r
             case types.CompoundItem() as s:
