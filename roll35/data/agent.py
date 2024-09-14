@@ -99,7 +99,7 @@ class AgentData:
     '''Base class for agent data entries.'''
     _: KW_ONLY
     ranked: types.RankedItemList | None = None
-    compound: types.CompoundItemList | Mapping[types.Rank, Sequence[types.WeightedValue]] | None = None
+    compound: types.CompoundItemList | None = None
 
 
 class Agent(types.ReadyState):
@@ -226,9 +226,6 @@ class Agent(types.ReadyState):
                 match [x for x in d3 if d3[x].costs.overlaps(types.R35Range([mincost, maxcost]))]:
                     case [*ranks]:
                         return cast(types.Rank, rnd(ranks))
-            else:
-                d4 = [x for x in self._data.compound if x in {y for y in types.Rank}]
-                return rnd(d4)
 
         return types.Ret.NO_MATCH
 

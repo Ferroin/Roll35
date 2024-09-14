@@ -30,9 +30,9 @@ class Subrank(enum.Enum):
 
 class RankWeights(BaseModel):
     '''A set of weights for ranks for an item entry.'''
-    minor: int
-    medium: int
-    major: int
+    minor: int = 0
+    medium: int = 0
+    major: int = 0
 
     @field_validator('minor', 'medium', 'major')
     @classmethod
