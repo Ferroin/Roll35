@@ -136,8 +136,8 @@ class CompoundAgent(agent.Agent):
             rank: types.Rank | None = None,
             *,
             level: int,
-            mincost: types.item.Cost | None = None,
-            maxcost: types.item.Cost | None = None) -> \
+            mincost: types.Cost = agent.DEFAULT_MINCOST,
+            maxcost: types.Cost = agent.DEFAULT_MAXCOST) -> \
             types.CompoundItem | types.item.CompoundSpellItem | types.Ret:
         if self._data.compound is None:
             return types.Ret.NO_MATCH
@@ -204,15 +204,15 @@ class CompoundAgent(agent.Agent):
 
     @log_call(logger, 'roll compound item')
     def random(
-            self: CompoundAgent,
-            /,
-            rank: types.Rank | None = None,
-            *,
-            cls: str | None = None,
-            level: int | None = None,
-            mincost: types.item.Cost | None = None,
-            maxcost: types.item.Cost | None = None) -> \
-            types.CompoundItem | types.item.CompoundSpellItem | types.Ret:
+        self: CompoundAgent,
+        /,
+        rank: types.Rank | None = None,
+        *,
+        cls: str | None = None,
+        level: int | None = None,
+        mincost: types.Cost = agent.DEFAULT_MINCOST,
+        maxcost: types.Cost = agent.DEFAULT_MAXCOST,
+    ) -> types.CompoundItem | types.item.CompoundSpellItem | types.Ret:
         '''Roll a random item, then roll a spell for it if needed.'''
         match level:
             case None:
@@ -240,15 +240,15 @@ class CompoundAgent(agent.Agent):
 
     @log_call_async(logger, 'roll compound item')
     async def random_async(
-            self: CompoundAgent,
-            /,
-            rank: types.Rank | None = None,
-            *,
-            cls: str | None = None,
-            level: int | None = None,
-            mincost: types.item.Cost | None = None,
-            maxcost: types.item.Cost | None = None) -> \
-            types.CompoundItem | types.item.CompoundSpellItem | types.Ret:
+        self: CompoundAgent,
+        /,
+        rank: types.Rank | None = None,
+        *,
+        cls: str | None = None,
+        level: int | None = None,
+        mincost: types.Cost = agent.DEFAULT_MINCOST,
+        maxcost: types.Cost = agent.DEFAULT_MAXCOST,
+    ) -> types.CompoundItem | types.item.CompoundSpellItem | types.Ret:
         '''Roll a random item, then roll a spell for it if needed.'''
         match level:
             case None:

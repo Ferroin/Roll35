@@ -143,8 +143,8 @@ class RankedAgent(agent.Agent):
             subrank: types.Subrank | None = None,
             *,
             level: int,
-            mincost: types.Cost | None = None,
-            maxcost: types.Cost | None = None) -> \
+            mincost: types.Cost = agent.DEFAULT_MINCOST,
+            maxcost: types.Cost = agent.DEFAULT_MAXCOST) -> \
             types.item.BaseItem | types.Ret:
         if self._data.ranked is None:
             return types.Ret.NO_MATCH
@@ -221,16 +221,16 @@ class RankedAgent(agent.Agent):
 
     @log_call(logger, 'roll random ranked item')
     def random(
-            self: RankedAgent,
-            /,
-            rank: types.Rank | None = None,
-            subrank: types.Subrank | None = None,
-            *,
-            level: int | None = None,
-            cls: str | None = None,
-            mincost: types.Cost | None = None,
-            maxcost: types.Cost | None = None) -> \
-            types.item.BaseItem | types.Ret:
+        self: RankedAgent,
+        /,
+        rank: types.Rank | None = None,
+        subrank: types.Subrank | None = None,
+        *,
+        level: int | None = None,
+        cls: str | None = None,
+        mincost: types.Cost = agent.DEFAULT_MINCOST,
+        maxcost: types.Cost = agent.DEFAULT_MAXCOST,
+    ) -> types.item.BaseItem | types.Ret:
         '''Roll a random ranked item, then roll a spell for it if needed.'''
         match level:
             case None:
@@ -259,16 +259,16 @@ class RankedAgent(agent.Agent):
 
     @log_call_async(logger, 'roll random ranked item')
     async def random_async(
-            self: RankedAgent,
-            /,
-            rank: types.Rank | None = None,
-            subrank: types.Subrank | None = None,
-            *,
-            level: int | None = None,
-            cls: str | None = None,
-            mincost: types.Cost | None = None,
-            maxcost: types.Cost | None = None) -> \
-            types.item.BaseItem | types.Ret:
+        self: RankedAgent,
+        /,
+        rank: types.Rank | None = None,
+        subrank: types.Subrank | None = None,
+        *,
+        level: int | None = None,
+        cls: str | None = None,
+        mincost: types.Cost = agent.DEFAULT_MINCOST,
+        maxcost: types.Cost = agent.DEFAULT_MAXCOST,
+    ) ->  types.item.BaseItem | types.Ret:
         '''Roll a random ranked item, then roll a spell for it if needed.'''
         match level:
             case None:

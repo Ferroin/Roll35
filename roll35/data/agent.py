@@ -36,20 +36,6 @@ DEFAULT_MINCOST = 0
 DEFAULT_MAXCOST = float('inf')
 
 
-def ensure_costs(func: Callable[P, T], /) -> Callable[P, T]:
-    '''Decorate an async method to ensure that the mincost and maxcost arguments are valid.'''
-    def inner(*args: P.args, **kwargs: P.kwargs) -> T:
-        if getattr(kwargs, 'mincost', None) is None:
-            kwargs['mincost'] = DEFAULT_MINCOST
-
-        if getattr(kwargs, 'maxcost', None) is None:
-            kwargs['maxcost'] = DEFAULT_MAXCOST
-
-        return func(*args, **kwargs)
-
-    return inner
-
-
 def _cost_in_range(item: types.Item, /, *, mincost: types.Cost, maxcost: types.Cost) -> bool:
     return item.cost is not None and item.cost in types.R35Range([mincost, maxcost])
 
@@ -227,7 +213,7 @@ class Agent(types.ReadyState):
 
         return types.Ret.OK
 
-    def __random_rank(self: Agent, /, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> types.Rank | types.Ret:
+    def __random_rank(self: Agent, /, *, mincost: types.Cost = DEFAULT_MINCOST, maxcost: types.Cost = DEFAULT_MAXCOST) -> types.Rank | types.Ret:
         if self._data.ranked is not None:
             if isinstance(self._data.ranked, types.R35Map):
                 d1 = cast(types.RankedItemList, self._data.ranked)
@@ -246,21 +232,29 @@ class Agent(types.ReadyState):
 
         return types.Ret.NO_MATCH
 
-    @ensure_costs
     @log_call(logger, 'roll random rank')
     @types.check_ready(logger)
-    def random_rank(self: Agent, /, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> types.Rank | types.Ret:
+    def random_rank(
+        self: Agent,
+        /, *,
+        mincost: types.Cost = DEFAULT_MINCOST,
+        maxcost: types.Cost = DEFAULT_MAXCOST,
+    ) -> types.Rank | types.Ret:
         '''Return a random rank, possibly within the cost limits.'''
         return self.__random_rank(mincost=mincost, maxcost=maxcost)
 
-    @ensure_costs
     @log_call_async(logger, 'roll random rank')
     @types.check_ready_async(logger)
-    async def random_rank_async(self: Agent, /, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> types.Rank | types.Ret:
+    async def random_rank_async(
+        self: Agent,
+        /, *,
+        mincost: types.Cost = DEFAULT_MINCOST,
+        maxcost: types.Cost = DEFAULT_MAXCOST,
+    ) -> types.Rank | types.Ret:
         '''Return a random rank, possibly within the cost limits.'''
         return self.__random_rank(mincost=mincost, maxcost=maxcost)
 
-    def __random_subrank(self: Agent, /, rank: types.Rank, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> \
+    def __random_subrank(self: Agent, /, rank: types.Rank, *, mincost: types.Cost = DEFAULT_MINCOST, maxcost: types.Cost = DEFAULT_MAXCOST) -> \
             types.Subrank | types.Ret:
         if self._data.ranked is not None:
             data = self._data.ranked
@@ -274,33 +268,42 @@ class Agent(types.ReadyState):
 
         return types.Ret.NO_MATCH
 
-    @ensure_costs
     @log_call(logger, 'roll random subrank')
     @types.check_ready(logger)
-    def random_subrank(self: Agent, /, rank: types.Rank, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> \
-            types.Subrank | types.Ret:
+    def random_subrank(
+        self: Agent,
+        /,
+        rank: types.Rank,
+        *,
+        mincost: types.Cost = DEFAULT_MINCOST,
+        maxcost: types.Cost = DEFAULT_MAXCOST,
+    ) -> types.Subrank | types.Ret:
         '''Return a random subrank for the given rank, possibly within the cost limits.'''
         return self.__random_subrank(rank=rank, mincost=mincost, maxcost=maxcost)
 
-    @ensure_costs
     @log_call_async(logger, 'roll random subrank')
     @types.check_ready_async(logger)
-    async def random_subrank_async(self: Agent, /, rank: types.Rank, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> \
-            types.Subrank | types.Ret:
+    async def random_subrank_async(
+        self: Agent,
+        /,
+        rank: types.Rank,
+        *,
+        mincost: types.Cost = DEFAULT_MINCOST,
+        maxcost: types.Cost = DEFAULT_MAXCOST,
+    ) -> types.Subrank | types.Ret:
         '''Return a random subrank for the given rank, possibly within the cost limits.'''
         return self.__random_subrank(rank=rank, mincost=mincost, maxcost=maxcost)
 
-    @ensure_costs
     @log_call(logger, 'roll random ranked item')
     @types.check_ready(logger)
     def random_ranked(
-            self: Agent,
-            /, *,
-            rank: types.Rank | None = None,
-            subrank: types.Subrank | None = None,
-            mincost: types.Cost | None = None,
-            maxcost: types.Cost | None = None) -> \
-            types.item.BaseItem | types.Ret:
+        self: Agent,
+        /, *,
+        rank: types.Rank | None = None,
+        subrank: types.Subrank | None = None,
+        mincost: types.Cost = DEFAULT_MINCOST,
+        maxcost: types.Cost = DEFAULT_MAXCOST,
+    ) -> types.item.BaseItem | types.Ret:
         '''Roll a random item for the given rank and subrank, possibly within the specified cost range.'''
         if self._data.ranked is None:
             return types.Ret.NO_MATCH
@@ -332,17 +335,16 @@ class Agent(types.ReadyState):
 
         return cast(types.item.BaseItem, rnd(costfilter(self._data.ranked[rank][subrank], mincost=mincost, maxcost=maxcost)))
 
-    @ensure_costs
     @log_call_async(logger, 'roll random ranked item')
     @types.check_ready_async(logger)
     async def random_ranked_async(
-            self: Agent,
-            /, *,
-            rank: types.Rank | None = None,
-            subrank: types.Subrank | None = None,
-            mincost: types.Cost | None = None,
-            maxcost: types.Cost | None = None) -> \
-            types.item.BaseItem | types.Ret:
+        self: Agent,
+        /, *,
+        rank: types.Rank | None = None,
+        subrank: types.Subrank | None = None,
+        mincost: types.Cost = DEFAULT_MINCOST,
+        maxcost: types.Cost = DEFAULT_MAXCOST,
+    ) -> types.item.BaseItem | types.Ret:
         '''Roll a random item for the given rank and subrank, possibly within the specified cost range.'''
         if self._data.ranked is None:
             return types.Ret.NO_MATCH
@@ -374,16 +376,15 @@ class Agent(types.ReadyState):
 
         return cast(types.item.BaseItem, rnd(costfilter(self._data.ranked[rank][subrank], mincost=mincost, maxcost=maxcost)))
 
-    @ensure_costs
     @log_call(logger, 'roll random compound item')
     @types.check_ready(logger)
     def random_compound(
-            self: Agent,
-            /, *,
-            rank: types.Rank | None = None,
-            mincost: types.Cost | None = None,
-            maxcost: types.Cost | None = None) -> \
-            types.item.CompoundItem | str | types.Ret:
+        self: Agent,
+        /, *,
+        rank: types.Rank | None = None,
+        mincost: types.Cost = DEFAULT_MINCOST,
+        maxcost: types.Cost = DEFAULT_MAXCOST,
+    ) -> types.item.CompoundItem | str | types.Ret:
         '''Roll a random item for the given rank, possibly within the specified cost range.'''
         if self._data.compound is None:
             return types.Ret.NO_MATCH
@@ -405,16 +406,15 @@ class Agent(types.ReadyState):
 
         return cast(types.item.CompoundItem | str, rnd(costfilter(self._data.compound[rank], mincost=mincost, maxcost=maxcost)))
 
-    @ensure_costs
     @log_call_async(logger, 'roll random compound item')
     @types.check_ready_async(logger)
     async def random_compound_async(
-            self: Agent,
-            /, *,
-            rank: types.Rank | None = None,
-            mincost: types.Cost | None = None,
-            maxcost: types.Cost | None = None) -> \
-            types.item.CompoundItem | str | types.Ret:
+        self: Agent,
+        /, *,
+        rank: types.Rank | None = None,
+        mincost: types.Cost = DEFAULT_MINCOST,
+        maxcost: types.Cost = DEFAULT_MAXCOST,
+    ) -> types.item.CompoundItem | str | types.Ret:
         '''Roll a random item for the given rank, possibly within the specified cost range.'''
         if self._data.compound is None:
             return types.Ret.NO_MATCH
