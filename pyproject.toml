@@ -12,13 +12,14 @@ roll35-bot = "roll35.bot:main"
 roll35-check-dataset = "roll35.data:test_dataset"
 
 [tool.poetry.dependencies]
-python = "^3.12"
 aiofiles = "^24.1.0"
 jaro-winkler = "^2.0.3"
 Jinja2 = "^3.1.4"
 nextcord = {version = "^2.6.0", extras = ["speed"]}
 pydantic = "^2.9.1"
+python = "^3.12"
 ruamel-yaml = "^0.18.6"
+setuptools = "^74.1.2"
 
 [tool.poetry.group.dev.dependencies]
 bandit = "^1.7.5"
