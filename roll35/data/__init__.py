@@ -11,7 +11,7 @@ import os
 
 from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import TYPE_CHECKING, Type, Union
+from typing import TYPE_CHECKING, Type, Union, cast
 
 from pydantic import BaseModel, field_validator
 
@@ -157,6 +157,8 @@ class DataSet:
             for agent in [v for (k, v) in self._agents.items() if k not in {'classes', 'spell'}]:
                 agent.load_data()
 
+            cast(CategoryAgent, self._agents['category'])._populate_costs()
+
             self.ready = True
 
         return Ret.OK
@@ -171,6 +173,8 @@ class DataSet:
                 loaders.append(asyncio.create_task(agent.load_data_async(pool)))
 
             await asyncio.gather(*loaders)
+
+            cast(CategoryAgent, self._agents['category'])._populate_costs()
 
             self.ready = True
 

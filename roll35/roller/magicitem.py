@@ -347,7 +347,11 @@ async def roll_async(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *,
             item = (types.Ret.INVALID, 'Invalid parmeters specified, must specify a rank for the item.')
         case {'rank': rank, 'subrank': subrank, 'category': None}:
             while item is types.Ret.FAILED:
-                args['category'] = await cast(CategoryAgent, ds['category']).random_async(rank=rank)
+                args['category'] = await cast(CategoryAgent, ds['category']).random_async(
+                    rank=rank,
+                    mincost=mincost,
+                    maxcost=maxcost,
+                )
 
                 attempt += 1
 
