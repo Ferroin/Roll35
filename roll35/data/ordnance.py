@@ -43,7 +43,7 @@ class OrdnanceData(agent.AgentData):
     enchant_base_cost: types.Cost
 
 
-def process_enchantment_table(items: Mapping, /, basevalue: types.item.Cost, tags: set[str]) -> EnchantmentTable:
+def process_enchantment_table(items: Mapping, /, basevalue: types.Cost, tags: set[str]) -> EnchantmentTable:
     '''Process an armor or weapon enchantment table.'''
     ret: EnchantmentTable = types.R35Map()
 
@@ -77,7 +77,7 @@ def process_enchantment_table(items: Mapping, /, basevalue: types.item.Cost, tag
     return ret
 
 
-def get_enchant_bonus_costs(data: OrdnanceData, base: types.item.OrdnanceBaseItem, /) -> tuple[types.item.Cost, types.item.Cost]:
+def get_enchant_bonus_costs(data: OrdnanceData, base: types.item.OrdnanceBaseItem, /) -> tuple[types.Cost, types.Cost]:
     '''Compute the enchantment bonus costs for the specified base item.'''
     if 'double' in base.tags:
         masterwork = data.masterwork * 2
@@ -92,10 +92,10 @@ def get_enchant_bonus_costs(data: OrdnanceData, base: types.item.OrdnanceBaseIte
     )
 
 
-def get_costs_and_bonus(enchants: Iterable[types.item.OrdnanceEnchant], /) -> tuple[types.item.Cost, types.item.Cost, Bonus, Bonus]:
+def get_costs_and_bonus(enchants: Iterable[types.item.OrdnanceEnchant], /) -> tuple[types.Cost, types.Cost, Bonus, Bonus]:
     '''Figure out the range of extra costs that a given list of enchantments might have.'''
-    min_cost: types.item.Cost = -1.0
-    max_cost: types.item.Cost = 0.0
+    min_cost: types.Cost = -1.0
+    max_cost: types.Cost = 0.0
     min_bonus: Bonus = 0
     max_bonus: Bonus = 0
     has_non_bonus = False
@@ -128,11 +128,11 @@ def get_costs_and_bonus(enchants: Iterable[types.item.OrdnanceEnchant], /) -> tu
     return (min_cost, max_cost, min_bonus, max_bonus)
 
 
-def get_costs(bonus: Bonus, base: types.item.Cost, enchants: list[Bonus], enchantments: EnchantmentTable, /) -> \
-        tuple[types.item.Cost, types.item.Cost]:
+def get_costs(bonus: Bonus, base: types.Cost, enchants: list[Bonus], enchantments: EnchantmentTable, /) -> \
+        tuple[types.Cost, types.Cost]:
     '''Determine the range of possible costs for a set of enchantments.'''
-    min_cost: types.item.Cost = float('inf')
-    max_cost: types.item.Cost = 0
+    min_cost: types.Cost = float('inf')
+    max_cost: types.Cost = 0
 
     for group in enchantments.values():
         minc_possible = []
@@ -164,8 +164,8 @@ def create_xform(base: int | float, enchantments: EnchantmentTable, specific: Sp
         Callable[[types.item.OrdnancePattern], types.item.OrdnancePattern]:
     '''Produce a mapping function for adding costs to enchantment combos.'''
     def xform(x: types.item.OrdnancePattern) -> types.item.OrdnancePattern:
-        min_cost: types.item.Cost = 0
-        max_cost: types.item.Cost = float('inf')
+        min_cost: types.Cost = 0
+        max_cost: types.Cost = float('inf')
         match x:
             case types.item.OrdnancePattern(bonus=bonus, enchants=[]) if bonus is not None:
                 min_cost = (bonus ** 2) * base
@@ -264,15 +264,15 @@ class OrdnanceAgent(agent.Agent):
         )
 
     def random(
-            self: OrdnanceAgent,
-            /,
-            rank: types.Rank,
-            subrank: types.Subrank,
-            *,
-            allow_specific: bool = True,
-            mincost: types.item.Cost | None = None,
-            maxcost: types.item.Cost | None = None) -> \
-            types.item.OrdnancePattern | types.Ret:
+        self: OrdnanceAgent,
+        /,
+        rank: types.Rank,
+        subrank: types.Subrank,
+        *,
+        allow_specific: bool = True,
+        mincost: types.Cost = agent.DEFAULT_MINCOST,
+        maxcost: types.Cost = agent.DEFAULT_MAXCOST,
+    ) -> types.item.OrdnancePattern | types.Ret:
         '''Alias of random_pattern.'''
         return self.random_pattern(
             rank=rank,
@@ -283,15 +283,15 @@ class OrdnanceAgent(agent.Agent):
         )
 
     async def random_async(
-            self: OrdnanceAgent,
-            /,
-            rank: types.Rank,
-            subrank: types.Subrank,
-            *,
-            allow_specific: bool = True,
-            mincost: types.item.Cost | None = None,
-            maxcost: types.item.Cost | None = None) -> \
-            types.item.OrdnancePattern | types.Ret:
+        self: OrdnanceAgent,
+        /,
+        rank: types.Rank,
+        subrank: types.Subrank,
+        *,
+        allow_specific: bool = True,
+        mincost: types.Cost = agent.DEFAULT_MINCOST,
+        maxcost: types.Cost = agent.DEFAULT_MAXCOST,
+    ) -> types.item.OrdnancePattern | types.Ret:
         '''Alias of random_pattern_async.'''
         return await self.random_pattern_async(
             rank=rank,
@@ -301,19 +301,18 @@ class OrdnanceAgent(agent.Agent):
             maxcost=maxcost,
         )
 
-    @agent.ensure_costs
     @log_call(logger, 'roll random ordnance pattern')
     @types.check_ready(logger)
     def random_pattern(
-            self: OrdnanceAgent,
-            /,
-            rank: types.Rank | None,
-            subrank: types.Subrank | None,
-            *,
-            allow_specific: bool = True,
-            mincost: types.item.Cost | None = None,
-            maxcost: types.item.Cost | None = None) -> \
-            types.item.OrdnancePattern | types.Ret:
+        self: OrdnanceAgent,
+        /,
+        rank: types.Rank | None,
+        subrank: types.Subrank | None,
+        *,
+        allow_specific: bool = True,
+        mincost: types.Cost = agent.DEFAULT_MINCOST,
+        maxcost: types.Cost = agent.DEFAULT_MAXCOST,
+    ) -> types.item.OrdnancePattern | types.Ret:
         '''Return a random item pattern to use to generate a random item from.'''
         if self._data.ranked is None:
             raise RuntimeError
@@ -365,19 +364,18 @@ class OrdnanceAgent(agent.Agent):
                     logger.error(bad_return(ret))
                     return types.Ret.FAILED
 
-    @agent.ensure_costs
     @log_call_async(logger, 'roll random ordnance pattern')
     @types.check_ready_async(logger)
     async def random_pattern_async(
-            self: OrdnanceAgent,
-            /,
-            rank: types.Rank | None,
-            subrank: types.Subrank | None,
-            *,
-            allow_specific: bool = True,
-            mincost: types.item.Cost | None = None,
-            maxcost: types.item.Cost | None = None) -> \
-            types.item.OrdnancePattern | types.Ret:
+        self: OrdnanceAgent,
+        /,
+        rank: types.Rank | None,
+        subrank: types.Subrank | None,
+        *,
+        allow_specific: bool = True,
+        mincost: types.Cost = agent.DEFAULT_MINCOST,
+        maxcost: types.Cost = agent.DEFAULT_MAXCOST,
+    ) -> types.item.OrdnancePattern | types.Ret:
         '''Return a random item pattern to use to generate a random item from.'''
         if self._data.ranked is None:
             raise RuntimeError
@@ -582,8 +580,8 @@ class OrdnanceAgent(agent.Agent):
             /,
             args: Sequence[str],
             *,
-            mincost: types.item.Cost | None = None,
-            maxcost: types.item.Cost | None = None) -> \
+            mincost: types.Cost = agent.DEFAULT_MINCOST,
+            maxcost: types.Cost = agent.DEFAULT_MAXCOST) -> \
             types.item.OrdnanceSpecific | types.Ret:
         match args:
             case [_, _, _]:
@@ -622,7 +620,6 @@ class OrdnanceAgent(agent.Agent):
         else:
             return types.Ret.NO_MATCH
 
-    @agent.ensure_costs
     @log_call(logger, 'roll random specific ordnance item.')
     @types.check_ready(logger)
     def random_specific(
@@ -630,8 +627,8 @@ class OrdnanceAgent(agent.Agent):
             /,
             args: Sequence[str],
             *,
-            mincost: types.item.Cost | None = None,
-            maxcost: types.item.Cost | None = None) -> \
+            mincost: types.Cost = agent.DEFAULT_MINCOST,
+            maxcost: types.Cost = agent.DEFAULT_MAXCOST) -> \
             types.item.OrdnanceSpecific | types.Ret:
         '''Roll a random specific item.'''
         return self.__random_specific(
@@ -640,7 +637,6 @@ class OrdnanceAgent(agent.Agent):
             maxcost=maxcost,
         )
 
-    @agent.ensure_costs
     @log_call_async(logger, 'roll random specific ordnance item.')
     @types.check_ready_async(logger)
     async def random_specific_async(
@@ -648,8 +644,8 @@ class OrdnanceAgent(agent.Agent):
             /,
             args: Sequence[str],
             *,
-            mincost: types.item.Cost | None = None,
-            maxcost: types.item.Cost | None = None) -> \
+            mincost: types.Cost = agent.DEFAULT_MINCOST,
+            maxcost: types.Cost = agent.DEFAULT_MAXCOST) -> \
             types.item.OrdnanceSpecific | types.Ret:
         '''Roll a random specific item.'''
         return self.__random_specific(
@@ -660,13 +656,13 @@ class OrdnanceAgent(agent.Agent):
 
     @log_call(logger, 'get ordnance bonus costs')
     @types.check_ready(logger)
-    def get_bonus_costs(self: OrdnanceAgent, /, base: types.item.OrdnanceBaseItem) -> tuple[types.item.Cost, types.item.Cost]:
+    def get_bonus_costs(self: OrdnanceAgent, /, base: types.item.OrdnanceBaseItem) -> tuple[types.Cost, types.Cost]:
         '''Get the bonus costs associated with the given item.'''
         return get_enchant_bonus_costs(self._data, base)
 
     @log_call_async(logger, 'get ordnance bonus costs')
     @types.check_ready_async(logger)
-    async def get_bonus_costs_async(self: OrdnanceAgent, /, base: types.item.OrdnanceBaseItem) -> tuple[types.item.Cost, types.item.Cost]:
+    async def get_bonus_costs_async(self: OrdnanceAgent, /, base: types.item.OrdnanceBaseItem) -> tuple[types.Cost, types.Cost]:
         '''Get the bonus costs associated with the given item.'''
         return get_enchant_bonus_costs(self._data, base)
 

@@ -61,21 +61,34 @@ class WondrousAgent(agent.Agent):
 
         return True
 
-    def __random(self: WondrousAgent, /, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> str | types.Ret:
+    def __random(
+        self: WondrousAgent,
+        /, *,
+        mincost: types.Cost = agent.DEFAULT_MINCOST,
+        maxcost: types.Cost = agent.DEFAULT_MAXCOST,
+    ) -> str | types.Ret:
         '''Return a random slot, possibly limited by cost.'''
         return rnd(agent.costfilter(self._data.slots, mincost=mincost, maxcost=maxcost))
 
-    @agent.ensure_costs
     @log_call(logger, 'roll random wondrous item slot')
     @types.check_ready(logger)
-    def random(self: WondrousAgent, /, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> str | types.Ret:
+    def random(
+        self: WondrousAgent,
+        /, *,
+        mincost: types.Cost = agent.DEFAULT_MINCOST,
+        maxcost: types.Cost = agent.DEFAULT_MAXCOST,
+    ) -> str | types.Ret:
         '''Return a random slot, possibly limited by cost.'''
         return self.__random(mincost=mincost, maxcost=maxcost)
 
-    @agent.ensure_costs
     @log_call_async(logger, 'roll random wondrous item slot')
     @types.check_ready_async(logger)
-    async def random_async(self: WondrousAgent, /, *, mincost: types.Cost | None = None, maxcost: types.Cost | None = None) -> str | types.Ret:
+    async def random_async(
+        self: WondrousAgent,
+        /, *,
+        mincost: types.Cost = agent.DEFAULT_MINCOST,
+        maxcost: types.Cost = agent.DEFAULT_MAXCOST,
+    ) -> str | types.Ret:
         '''Return a random slot, possibly limited by cost.'''
         return self.__random(mincost=mincost, maxcost=maxcost)
 
