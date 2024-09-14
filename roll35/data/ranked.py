@@ -268,7 +268,7 @@ class RankedAgent(agent.Agent):
         cls: str | None = None,
         mincost: types.Cost = agent.DEFAULT_MINCOST,
         maxcost: types.Cost = agent.DEFAULT_MAXCOST,
-    ) ->  types.item.BaseItem | types.Ret:
+    ) -> types.item.BaseItem | types.Ret:
         '''Roll a random ranked item, then roll a spell for it if needed.'''
         match level:
             case None:
