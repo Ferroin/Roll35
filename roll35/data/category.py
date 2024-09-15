@@ -91,7 +91,8 @@ class CategoryAgent(agent.Agent):
         '''Populate the cost range information for the categories.
 
            Must be called _after_ all other data types are loaded.'''
-        assert self._data.compound is not None
+        if self._data.compound is None:
+            raise RuntimeError
 
         for category in self._data.categories:
             data = self._ds[category]._data
