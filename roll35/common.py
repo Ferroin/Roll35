@@ -20,7 +20,7 @@ from ruamel.yaml import YAML
 from . import types
 from .log import log_call
 
-VERSION = (7, 0, 0)
+VERSION = (7, 1, 0)
 
 yaml = YAML(typ='safe')
 logger = logging.getLogger(__name__)
