@@ -31,7 +31,7 @@ jobs:
       - uses: softprops/turnstyle@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: docker/build-push-action@v5
+      - uses: docker/build-push-action@v6
         with:
           push: true
           platforms: linux/amd64,linux/arm64
