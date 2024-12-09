@@ -527,13 +527,13 @@ flake8 = ">=5"
 
 [[package]]
 name = "flake8-async"
-version = "24.9.5"
+version = "24.11.4"
 description = "A highly opinionated flake8 plugin for Trio-related problems."
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "flake8_async-24.9.5-py3-none-any.whl", hash = "sha256:794398223a9e5ac2917e69ce1d71e17996b39f48003e4ed24921f5738eb7584d"},
-    {file = "flake8_async-24.9.5.tar.gz", hash = "sha256:da8b649b2bd327dbc74d67f98db7ac4ea82475620c5c77c91aa8e80e9b923e18"},
+    {file = "flake8_async-24.11.4-py3-none-any.whl", hash = "sha256:f2f11191b05a92409205b2bf8f84776500aa05900f01c599e7ba03e9cff43fb8"},
+    {file = "flake8_async-24.11.4.tar.gz", hash = "sha256:b127ec63f9e68a95a271826518311b87332da9eba49ff2086333e7f498281f67"},
 ]
 
 [package.dependencies]
@@ -1758,4 +1758,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "6833786e986fe0faf0d40e1a2d635487a92d9958662b1043e505c94b5c78023c"
+content-hash = "3c66e726a0d79d884c9383bfbdf0889799657a5f10026d2a643519cdd9087a67"
