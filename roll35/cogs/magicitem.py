@@ -184,7 +184,7 @@ class MagicItem(types.R35Cog):
             case _:
                 await ctx.send('Unrecognized value for count.')
 
-    @commands.command()  # type: ignore
+    @commands.command()
     async def magicitem(self, ctx, *args):
         '''Roll a random magic item.
 
@@ -218,7 +218,7 @@ class MagicItem(types.R35Cog):
            Parameters which are not specified are generated randomly.'''
         await self.__roll_magic_item(ctx, *args)
 
-    @commands.command()  # type: ignore
+    @commands.command()
     async def mi(self, ctx, *args):
         '''Alias for `magicitem`.'''
         await self.__roll_magic_item(ctx, *args)
@@ -236,7 +236,7 @@ class MagicItem(types.R35Cog):
                 logger.warning(bad_return(ret))
                 await ctx.send('Unknown internal error.')
 
-    @commands.command()  # type: ignore
+    @commands.command()
     async def categories(self, ctx, /):
         '''List known magic item categories.'''
         await self.__categories(ctx)
@@ -254,7 +254,7 @@ class MagicItem(types.R35Cog):
                 logger.warning(bad_return(ret))
                 await ctx.send('Unknown internal error.')
 
-    @commands.command()  # type: ignore
+    @commands.command()
     async def slots(self, ctx, /) -> None:
         '''List known wondrous item slots.'''
         await self.__slots(ctx)

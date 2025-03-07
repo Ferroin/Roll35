@@ -128,7 +128,7 @@ class Agent(types.ReadyState):
            When data is being loaded by the Agent.load_data_async()
            function, this callback may not be called in a separate
            process.'''
-        return NotImplemented
+        return NotImplemented  # type: ignore
 
     def _valid_rank(self: Agent, rank: types.Rank, /) -> bool:
         if self._data.ranked is not None:

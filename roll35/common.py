@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 T = TypeVar('T')
 
 
-async def ret_async(value: T) -> T:
+async def ret_async(value: T) -> T:  # noqa: ASYNC124
     '''Simple async wrapper to directly return a value.
 
        This is used in a couple of places where we are passing around
