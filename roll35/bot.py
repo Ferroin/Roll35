@@ -54,25 +54,24 @@ class Bot(commands.Bot):
 
        This overrides a few specific methods of the base class to get
        desired behavior.'''
-    def __init__(self: Bot, *args: Any, pool: Executor, **kwargs: Any) -> None:
+    def __init__(self: Bot, *args: Any, pool: Executor, ds: DataSet, renderer: Renderer, **kwargs: Any) -> None:
         self.pool: Executor = pool
+        self.ds = ds
+        self.renderer = renderer
         super().__init__(*args, **kwargs)
 
     async def start(
-            self: Bot,
-            token: str,
-            *args: tuple[Any],
-            reconnect: bool = True,
-            ds: DataSet | None = None,
-            renderer: Renderer | None = None) -> \
-            Any:
+        self: Bot,
+        token: str,
+        *args: tuple[Any],
+        reconnect: bool = True,
+        renderer: Renderer | None = None
+    ) -> Any:
         '''Overridden to schedule data loads in parallel with bot startup.'''
-        if ds is None or renderer is None:
-            raise RuntimeError('Both dataset and render must be provided.')
 
         return await asyncio.gather(
-            ds.load_data_async(self.pool),
-            renderer.load_data_async(self.pool),
+            self.ds.load_data_async(self.pool),
+            self.renderer.load_data_async(self.pool),
             super().start(token, *args, reconnect=reconnect),
         )
 
@@ -141,6 +140,8 @@ def main() -> None:
     intents.message_content = True
     pool = ProcessPoolExecutor(max_workers=proc_count)
 
+    ds = DataSet()
+    renderer = Renderer(ds)
     bot = Bot(
         case_insensitive=True,
         command_prefix=[
@@ -151,9 +152,9 @@ def main() -> None:
         intents=intents,
         strip_after_prefix=True,
         pool=pool,
+        ds=ds,
+        renderer=renderer,
     )
-    ds = DataSet()
-    renderer = Renderer(ds)
 
     logger.info('Loading cogs.')
 
@@ -164,6 +165,6 @@ def main() -> None:
     logger.info(f'Starting bot with token: {TOKEN}')
 
     try:
-        bot.run(TOKEN, ds=ds, renderer=renderer)
+        bot.run(TOKEN)
     finally:
         pool.shutdown(cancel_futures=True)
