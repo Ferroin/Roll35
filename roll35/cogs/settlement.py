@@ -71,7 +71,7 @@ class Settlement(types.R35Cog):
                 await ctx.send(msg)
                 return
 
-    @commands.command()  # type: ignore
+    @commands.command()
     async def settlement(self, ctx, population: int, /):
         '''Roll magic items for a settlement with the given population.'''
         await self.__settlement(ctx, population)
