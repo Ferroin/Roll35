@@ -35,7 +35,7 @@ mypy = "^1.15.0"
 pydantic = "^2.10.3"
 ruamel-yaml = "^0.18.10"
 types-aiofiles = "^24.1.0.20241221"
-yamllint = "^1.35.1"
+yamllint = "^1.37.0"
 
 [tool.mypy]
 python_version = "3.12"
