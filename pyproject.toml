@@ -19,7 +19,7 @@ nextcord = {version = "^3.0.1", extras = ["speed"]}
 pydantic = "^2.10.3"
 python = "^3.12"
 ruamel-yaml = "^0.18.10"
-setuptools = "^76.0.0"
+setuptools = "^80.3.1"
 
 [tool.poetry.group.dev.dependencies]
 bandit = "^1.8.3"
