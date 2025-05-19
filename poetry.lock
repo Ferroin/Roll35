@@ -1883,14 +1883,14 @@ pbr = ">=2.0.0"
 
 [[package]]
 name = "types-aiofiles"
-version = "24.1.0.20241221"
+version = "24.1.0.20250516"
 description = "Typing stubs for aiofiles"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 groups = ["dev"]
 files = [
-    {file = "types_aiofiles-24.1.0.20241221-py3-none-any.whl", hash = "sha256:11d4e102af0627c02e8c1d17736caa3c39de1058bea37e2f4de6ef11a5b652ab"},
-    {file = "types_aiofiles-24.1.0.20241221.tar.gz", hash = "sha256:c40f6c290b0af9e902f7f3fa91213cf5bb67f37086fb21dc0ff458253586ad55"},
+    {file = "types_aiofiles-24.1.0.20250516-py3-none-any.whl", hash = "sha256:ec265994629146804b656a971c46f393ce860305834b3cacb4b8b6fb7dba7e33"},
+    {file = "types_aiofiles-24.1.0.20250516.tar.gz", hash = "sha256:7fd2a7f793bbe180b7b22cd4f59300fe61fdc9940b3bbc9899ffe32849b95188"},
 ]
 
 [[package]]
@@ -2024,4 +2024,4 @@ propcache = ">=0.2.0"
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "0877967732aa789651cda2b1d228943d4c6ae2aa49c4447a82d059a439bc907d"
+content-hash = "d729f43ec010f9cd3e0993a443eb83d7b0083791e8beec92960e4d032efe8c3a"
