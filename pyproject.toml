@@ -24,7 +24,7 @@ setuptools = "^76.0.0"
 [tool.poetry.group.dev.dependencies]
 bandit = "^1.8.3"
 flake8-2020 = "^1.8.1"
-flake8 = "^7.1.2"
+flake8 = "^7.3.0"
 flake8-async = "^25.3.1"
 flake8-debug = "^0.2.0"
 flake8-isort = "^6.1.2"
