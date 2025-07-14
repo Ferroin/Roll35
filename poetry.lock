@@ -1166,14 +1166,14 @@ files = [
 
 [[package]]
 name = "nextcord"
-version = "3.0.1"
+version = "3.1.0"
 description = "A Python wrapper for the Discord API forked from discord.py"
 optional = false
 python-versions = "<4.0,>=3.12"
 groups = ["main"]
 files = [
-    {file = "nextcord-3.0.1-py3-none-any.whl", hash = "sha256:1e7961a8e5445d48d3426fad9b5c1572719c59e47df978126d9375492eea2304"},
-    {file = "nextcord-3.0.1.tar.gz", hash = "sha256:41005b9616d8efaf1de82d584bbe8ed44c3f01e573800da546240099619410eb"},
+    {file = "nextcord-3.1.0-py3-none-any.whl", hash = "sha256:c7180ab9959a638f612d34a0661a94b42891f060992ae8f9af182fadcf5b94f1"},
+    {file = "nextcord-3.1.0.tar.gz", hash = "sha256:9a91b594803aed97a4d32616b3ce7655b34bb050422d4eb50e3f44cc337fa3e2"},
 ]
 
 [package.dependencies]
@@ -2039,4 +2039,4 @@ propcache = ">=0.2.0"
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "93101889258d6ff996ed80744dbcdd573ec80fa15a9cf9c81eadbbb6c7c19058"
+content-hash = "1f4050f88d1f989596ec66dc7fba9508d25eb15420f54ff218cc03ea744d3495"
