@@ -14,7 +14,7 @@ import logging
 
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import KW_ONLY, dataclass
-from typing import TYPE_CHECKING, ParamSpec, TypeVar, cast
+from typing import TYPE_CHECKING, cast
 
 import aiofiles
 
@@ -28,9 +28,6 @@ if TYPE_CHECKING:
     from . import DataSet
 
 logger = logging.getLogger(__name__)
-
-T = TypeVar('T')
-P = ParamSpec('P')
 
 DEFAULT_MINCOST = 0
 DEFAULT_MAXCOST = float('inf')
@@ -72,7 +69,7 @@ def create_spellmult_xform(classes: types.item.ClassMap, /) -> Callable[[types.I
     return xform
 
 
-def costfilter(items: Iterable[T], /, *, mincost: types.Cost | None, maxcost: types.Cost | None) -> list[T]:
+def costfilter[T](items: Iterable[T], /, *, mincost: types.Cost | None, maxcost: types.Cost | None) -> list[T]:
     '''Filter a list of items by cost.'''
     ret: list[T] = []
 
@@ -87,7 +84,7 @@ def costfilter(items: Iterable[T], /, *, mincost: types.Cost | None, maxcost: ty
             if (_cost_in_range(item, mincost=mincost, maxcost=maxcost) or
                _costrange_in_range(item, mincost=mincost, maxcost=maxcost) or
                (item.cost is None and item.costrange is None)):
-                ret.append(cast(T, item))
+                ret.append(item)
         else:
             ret.append(item)
 
@@ -144,7 +141,7 @@ class Agent(types.ReadyState):
         else:
             return False
 
-    async def _process_async(self: Agent, pool: Executor, func: Callable[..., T], args: Iterable, /) -> T:
+    async def _process_async[T](self: Agent, pool: Executor, func: Callable[..., T], args: Iterable, /) -> T:
         loop = asyncio.get_running_loop()
         return await loop.run_in_executor(pool, func, *args)
 
@@ -216,13 +213,13 @@ class Agent(types.ReadyState):
     def __random_rank(self: Agent, /, *, mincost: types.Cost = DEFAULT_MINCOST, maxcost: types.Cost = DEFAULT_MAXCOST) -> types.Rank | types.Ret:
         if self._data.ranked is not None:
             if isinstance(self._data.ranked, types.R35Map):
-                d1 = cast(types.RankedItemList, self._data.ranked)
+                d1 = self._data.ranked
                 match [x for x in d1 if d1[x].costs.overlaps(types.R35Range([mincost, maxcost]))]:
                     case [*ranks]:
                         return cast(types.Rank, rnd(ranks))
         elif self._data.compound is not None:
             if isinstance(self._data.compound, types.R35Map):
-                d3 = cast(types.CompoundItemList, self._data.compound)
+                d3 = self._data.compound
                 match [x for x in d3 if d3[x].costs.overlaps(types.R35Range([mincost, maxcost]))]:
                     case [*ranks]:
                         return cast(types.Rank, rnd(ranks))

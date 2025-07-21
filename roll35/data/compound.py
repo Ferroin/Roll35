@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import logging
 
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, cast
 
 import aiofiles
 
@@ -23,8 +23,6 @@ if TYPE_CHECKING:
     from concurrent.futures import Executor
 
 logger = logging.getLogger(__name__)
-
-T = TypeVar('T')
 
 
 def process_compound_itemlist(
