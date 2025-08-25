@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository == 'Ferroin/Roll35'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - id: tags
         run: |
           version="$(git describe --tags | cut -f 1 -d '-')"
