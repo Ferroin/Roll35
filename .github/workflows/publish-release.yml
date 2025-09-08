@@ -28,7 +28,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-      - uses: softprops/turnstyle@v2
+      - uses: softprops/turnstyle@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: docker/build-push-action@v6
