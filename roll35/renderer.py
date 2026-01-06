@@ -9,7 +9,7 @@ import asyncio
 import logging
 import math
 
-from typing import TYPE_CHECKING, Literal, cast
+from typing import TYPE_CHECKING, Literal
 
 import aiofiles
 import jinja2
