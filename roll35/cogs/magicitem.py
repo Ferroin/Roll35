@@ -233,7 +233,7 @@ class MagicItem(types.R35Cog):
                     f'`{"`, `".join(sorted(list(cats)))}`'
                 )
             case ret:
-                logger.warning(bad_return(ret))
+                logger.warning(bad_return(ret))  # type: ignore[unreachable]
                 await ctx.send('Unknown internal error.')
 
     @commands.command()
@@ -251,7 +251,7 @@ class MagicItem(types.R35Cog):
                     f'`{"`, `".join(sorted(slots))}`'
                 )
             case ret:
-                logger.warning(bad_return(ret))
+                logger.warning(bad_return(ret))  # type: ignore[unreachable]
                 await ctx.send('Unknown internal error.')
 
     @commands.command()

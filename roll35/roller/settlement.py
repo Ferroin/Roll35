@@ -62,5 +62,5 @@ async def roll_settlement_async(population: int, pool: Executor, ds: DataSet, re
                 items=items,
             ))
         case ret:
-            logger.error(bad_return(ret))
+            logger.error(bad_return(ret))  # type: ignore[unreachable]
             return (types.Ret.FAILED, 'Unknown internal error.')
