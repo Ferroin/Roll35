@@ -328,7 +328,7 @@ async def roll_async(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *,
                 attempt += 1
 
                 match await roll_async(pool, ds, args, attempt=attempt):
-                    case (types.Ret.OK, types.item.BaseItem() as i1):
+                    case (types.Ret.OK, types.item.BaseItem() as i1):  # type: ignore[misc] # XXX: MyPy misientifies things here.
                         item = i1
                     case (types.Ret.NO_MATCH, _):
                         continue
@@ -356,7 +356,7 @@ async def roll_async(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *,
                 attempt += 1
 
                 match await roll_async(pool, ds, args, attempt=attempt):
-                    case (types.Ret.OK, types.item.BaseItem() as i1):
+                    case (types.Ret.OK, types.item.BaseItem() as i1):  # type: ignore[misc] # XXX: MyPy misientifies things here.
                         item = i1
                     case (types.Ret.NO_MATCH, _):
                         continue
@@ -380,7 +380,7 @@ async def roll_async(pool: Executor, ds: DataSet, /, args: Mapping[str, Any], *,
             return (types.Ret.NO_MATCH, NO_ITEMS_IN_COST_RANGE)
         case types.Ret.NOT_READY:
             return (types.Ret.NOT_READY, NOT_READY)
-        case (types.Ret.OK, types.item.BaseItem() as i1):
+        case (types.Ret.OK, types.item.BaseItem() as i1):  # type: ignore[misc] # XXX: MyPy misientifies things here.
             if i1.reroll is not None:
                 return await _reroll_async(pool, ds, i1.reroll, mincost=mincost, maxcost=maxcost, attempt=attempt)
             elif mincost is not None and ((isinstance(i1.cost, str) and mincost == 0) or (not isinstance(i1.cost, str) and i1.cost < mincost)):

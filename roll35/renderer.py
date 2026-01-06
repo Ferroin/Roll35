@@ -76,7 +76,7 @@ class Renderer(ReadyState):
             case types.Ret.NOT_READY:
                 return (types.Ret.NOT_READY, 'Unable to render item as renderer is not yet fully initilized.')
             case r2:
-                return cast(types.Result[str], r2)
+                return r2
 
     @staticmethod
     def _render_loop(tmpl: str, data: RenderData, item: types.item.BaseItem | types.item.Spell | str) -> types.Result[str]:
