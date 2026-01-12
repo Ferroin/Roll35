@@ -623,14 +623,14 @@ flake8 = ["flake8 (>=6)"]
 
 [[package]]
 name = "flake8-debug"
-version = "0.2.0"
+version = "0.3.0"
 description = "Flake8 plugin to forbid debug function usage"
 optional = false
 python-versions = "*"
 groups = ["dev"]
 files = [
-    {file = "flake8-debug-0.2.0.tar.gz", hash = "sha256:6b5f61f983d8e1c079661b95c36cdf50369878b322a0fbbe8ce9bb6e288fa848"},
-    {file = "flake8_debug-0.2.0-py3-none-any.whl", hash = "sha256:f4d2f7c4804c93a4a67919a0cf26f66df950d4b40fd9121b9916f86852b02d2e"},
+    {file = "flake8_debug-0.3.0-py3-none-any.whl", hash = "sha256:8a909623a5f619dbd333d5c9859a4af0eb7b82a6047225d605993569f9769a45"},
+    {file = "flake8_debug-0.3.0.tar.gz", hash = "sha256:9c0be5325d3a5d7ba47ab71c447ea898d47397bd8cf532dda4e8f7c9e1d86b02"},
 ]
 
 [package.dependencies]
@@ -2413,4 +2413,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "9b5f91ac2de4f3c3750af7e96ae645456cf99410f0f7b6ad3bb72fab6283e457"
+content-hash = "7d26ce634d2e9d7805757cbd987fa80468c7571c05ab2fcaa25ba7bd308c2577"
