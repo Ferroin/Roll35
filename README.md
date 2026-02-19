@@ -54,7 +54,7 @@ command prefix for them.
 
 Roll35 is designed to be packaged as and run from a Docker image. Images
 built from the official repo with the standard data set are available on
-[Docker Hub](https://hub.docker.com/repository/docker/ahferroin7/roll35).
+[Docker Hub](https://hub.docker.com/r/ahferroin7/roll35).
 
 The following environment variables are used by the image:
 
